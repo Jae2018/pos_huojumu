@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/linearLayout5"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_64"
+        android:background="@color/colorPrimary"
+        android:paddingLeft="@dimen/d_16"
+        android:paddingRight="@dimen/d_16">
+
+        <ImageView
+            android:id="@+id/iv_work_daily_back"
+            android:layout_width="@dimen/d_48"
+            android:layout_height="@dimen/d_48"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/des"
+            android:src="@drawable/ic_back" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingLeft="@dimen/d_16"
+            android:paddingRight="@dimen/d_16"
+            android:text="盘点清单"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/f_30" />
+
+        <View
+            android:layout_width="@dimen/d_64"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_inventory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/d_8"
+        android:layout_marginTop="@dimen/d_8"
+        android:layout_marginEnd="@dimen/d_8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
+
+</android.support.constraint.ConstraintLayout>

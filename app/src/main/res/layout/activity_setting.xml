@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_48"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="@dimen/d_48"
+            android:layout_height="@dimen/d_32"
+            android:contentDescription="@string/des"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_back"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="设置"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/f_20"
+            android:layout_height="match_parent" />
+
+        <View
+            android:layout_width="@dimen/d_48"
+            android:layout_height="@dimen/d_48" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_clear_cache"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_48"
+        android:layout_marginTop="@dimen/d_48"
+        android:paddingLeft="@dimen/d_16"
+        android:text="清理缓存"
+        android:gravity="center_vertical"
+        android:textSize="@dimen/f_20"
+        android:paddingRight="@dimen/d_16"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_1"
+        android:background="@color/btn_den"
+        android:layout_marginStart="@dimen/d_16"
+        android:layout_marginEnd="@dimen/d_16"/>
+
+    <TextView
+        android:id="@+id/tv_logout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_48"
+        android:paddingLeft="@dimen/d_16"
+        android:text="登出"
+        android:gravity="center_vertical"
+        android:textSize="@dimen/f_20"
+        android:paddingRight="@dimen/d_16"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_1"
+        android:background="@color/btn_den"
+        android:layout_marginStart="@dimen/d_16"
+        android:layout_marginEnd="@dimen/d_16"/>
+
+    <TextView
+        android:id="@+id/tv_update"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_48"
+        android:text="检查更新"
+        android:gravity="center_vertical"
+        android:textSize="@dimen/f_20"
+        android:paddingLeft="@dimen/d_16"
+        android:paddingRight="@dimen/d_16"/>
+
+</LinearLayout>

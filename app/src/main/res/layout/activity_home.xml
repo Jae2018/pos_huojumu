@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".main.activity.home.HomeActivity">
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_80"
+        android:background="@color/colorPrimary"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/d_16"
+        android:paddingEnd="@dimen/d_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:layout_width="@dimen/d_101"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/d_16">
+
+            <TextView
+                android:id="@+id/button1"
+                android:layout_width="@dimen/d_101"
+                android:layout_height="@dimen/d_48"
+                android:background="@drawable/shape_home_btn"
+                android:gravity="center"
+                android:textSize="@dimen/f_16"
+                android:text="@string/hold_on"
+                android:textColor="@color/btn_text" />
+
+            <ImageView
+                android:id="@+id/iv_has_gua_dan"
+                android:layout_width="@dimen/d_16"
+                android:layout_height="@dimen/d_16"
+                android:contentDescription="@string/des"
+                android:layout_marginEnd="@dimen/d_8"
+                android:visibility="invisible"
+                android:layout_marginTop="@dimen/d_8"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/shape_circle_red"/>
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="@dimen/d_101"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/d_16"
+            android:background="@drawable/shape_home_btn"
+            android:text="@string/clear"
+            android:textColor="@android:color/holo_red_light" />
+
+        <Button
+            android:id="@+id/button3"
+            style="@style/HomeButtonStyle"
+            android:layout_marginStart="@dimen/d_16"
+            android:text="@string/set_meal" />
+
+        <Button
+            android:id="@+id/button4"
+            style="@style/HomeButtonStyle"
+            android:text="@string/referral" />
+
+        <Button
+            android:id="@+id/button5"
+            style="@style/HomeButtonStyle"
+            android:text="@string/big_class" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/d_64"
+            android:layout_marginStart="@dimen/d_30"
+            android:layout_marginTop="@dimen/d_8"
+            android:layout_marginEnd="@dimen/d_16"
+            android:layout_marginBottom="@dimen/d_8"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_32" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_32" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_home_more_function"
+            style="@style/HomeButtonStyle"
+            android:text="@string/function" />
+
+        <Button
+            android:id="@+id/btn_home_shutdown"
+            style="@style/HomeButtonStyle"
+            android:text="@string/shutdown" />
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="@dimen/d_250"
+        android:layout_height="match_parent"
+        android:layout_below="@id/linearLayout"
+        android:layout_above="@+id/relativeLayout"
+        android:background="@android:color/white" />
+
+    <LinearLayout
+        android:id="@+id/home_left_linear2"
+        android:layout_width="@dimen/d_250"
+        android:layout_height="@dimen/d_70"
+        android:background="@android:color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_below="@id/recyclerView"
+        android:visibility="gone"
+        android:paddingLeft="@dimen/d_16"
+        android:paddingRight="@dimen/d_16">
+
+        <Button
+            android:id="@+id/order_des"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/shape_home_corner_btn"
+            android:text="@string/order_des"
+            android:textColor="@color/btn_text" />
+
+        <View
+            android:layout_width="@dimen/d_16"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/delete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/shape_home_corner_btn"
+            android:text="@string/delete"
+            android:textColor="@android:color/holo_red_light" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="@dimen/d_250"
+        android:layout_height="@dimen/d_80"
+        android:background="@color/home_left_bottom"
+        android:paddingStart="@dimen/d_16"
+        android:paddingEnd="@dimen/d_16"
+        android:layout_alignParentBottom="true">
+
+        <TextView
+            android:id="@+id/total_number"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_40"
+            android:gravity="center_vertical"
+            android:text="@string/number" />
+
+        <TextView
+            android:id="@+id/cut_number"
+            android:layout_width="@dimen/d_100"
+            android:layout_height="@dimen/dp_40"
+            android:layout_below="@id/total_number"
+            android:layout_marginEnd="@dimen/d_18"
+            android:gravity="center_vertical"
+            android:text="@string/cut" />
+
+        <TextView
+            android:id="@+id/total_price"
+            android:layout_width="@dimen/d_100"
+            android:layout_height="@dimen/dp_40"
+            android:layout_below="@id/total_number"
+            android:layout_toEndOf="@id/cut_number"
+            android:gravity="center_vertical"
+            android:text="@string/price" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/linear1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_100"
+        android:layout_marginStart="@dimen/d_260"
+        android:background="@android:color/white"
+        android:layout_below="@+id/linearLayout">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView2"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_100" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_10"
+        android:layout_marginStart="@dimen/d_260"
+        android:background="@color/default_bg"
+        android:layout_below="@+id/linear1" />
+
+    <View
+        android:layout_width="@dimen/dp_10"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/d_80"
+        android:layout_toEndOf="@+id/recyclerView"
+        android:layout_marginBottom="@dimen/d_80"
+        android:background="@color/default_bg" />
+
+    <FrameLayout
+        android:id="@+id/linear2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/d_260"
+        android:background="@android:color/white"
+        android:layout_above="@id/linear3"
+        android:layout_below="@+id/view1">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/linear3"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_80"
+        android:layout_marginStart="@dimen/d_250"
+        android:background="@color/default_bg"
+        android:orientation="horizontal"
+        android:padding="@dimen/d_8"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/btn_home_quick_pay"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/home_quick_invoice" />
+
+        <Button
+            android:id="@+id/btn_home_check_out"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:enabled="false"
+            android:text="@string/checkout" />
+
+        <Button
+            android:id="@+id/btn_home_take_out"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:enabled="false"
+            android:text="@string/takeout" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/btn_home_hand_over"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/handover" />
+
+        <Button
+            android:id="@+id/btn_home_daily"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/daily" />
+
+    </LinearLayout>
+
+</RelativeLayout>

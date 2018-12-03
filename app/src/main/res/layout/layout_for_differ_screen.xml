@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@android:color/white">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_96"
+            android:background="@drawable/ic_plisttag"
+            android:padding="@dimen/d_16"
+            android:text="账单"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/f_30"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_2"
+            android:layout_below="@+id/tv_title"
+            android:background="@color/btn_den" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_for_differ"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/tv_title"
+            android:layout_marginTop="@dimen/d_2" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="@dimen/d_2"
+        android:layout_height="match_parent"
+        android:background="@android:color/white" />
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:background="@color/default_bg">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_96"
+            android:background="@color/colorPrimary"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/d_16"
+            android:paddingRight="@dimen/d_16">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/d_16"
+                android:contentDescription="@string/des"
+                android:src="@drawable/ic_triangle" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="请仔细核对账单明细，此次消费共计："
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/f_16" />
+
+            <TextView
+                android:id="@+id/tv_differ_money"
+                android:layout_width="@dimen/d_64"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/holo_red_light"
+                android:textSize="@dimen/f_20" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="元，"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/f_16" />
+
+            <TextView
+                android:id="@+id/tv_differ_cut"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="优惠100元"
+                android:textColor="@android:color/holo_red_light" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_2"
+            android:layout_marginTop="@dimen/d_96"
+            android:background="@android:color/white" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/d_97">
+
+            <SurfaceView
+                android:id="@+id/sv_differ_video"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/iv_pay_ali"
+                android:layout_width="@dimen/d_120"
+                android:layout_height="@dimen/d_120"
+                android:layout_marginStart="@dimen/d_96"
+                android:layout_marginTop="@dimen/d_96"
+                android:contentDescription="@string/des" />
+
+            <ImageView
+                android:id="@+id/iv_pay_wx"
+                android:layout_width="@dimen/d_120"
+                android:layout_height="@dimen/d_120"
+                android:layout_marginStart="@dimen/d_380"
+                android:layout_marginTop="@dimen/d_96"
+                android:contentDescription="@string/des" />
+
+            <!--<ImageView-->
+            <!--android:id="@+id/iv_pay_bank"-->
+            <!--android:layout_width="@dimen/d_200"-->
+            <!--android:layout_height="@dimen/d_200"-->
+            <!--android:layout_marginTop="@dimen/d_320"-->
+            <!--android:layout_marginStart="@dimen/d_280"-->
+            <!--android:contentDescription="@string/des"/>-->
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

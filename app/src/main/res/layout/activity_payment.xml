@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false">
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_56"
+            android:background="@color/colorPrimary"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/d_16"
+            android:paddingRight="@dimen/d_16"
+            android:text="结账"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/f_26" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_120"
+            android:layout_marginStart="@dimen/d_16"
+            android:layout_marginTop="@dimen/d_64"
+            android:layout_marginEnd="@dimen/d_16"
+            android:background="@drawable/shape_addon_background"
+            android:orientation="vertical"
+            android:padding="@dimen/d_8">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="总金额："
+                android:textSize="@dimen/f_26" />
+
+            <TextView
+                android:id="@+id/tv_total_cast"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="end|bottom"
+                android:paddingLeft="@dimen/d_4"
+                android:paddingRight="@dimen/d_4"
+                android:textSize="@dimen/f_30" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_pay_text"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_56"
+            android:layout_marginTop="@dimen/d_200"
+            android:background="@color/colorPrimary"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/d_16"
+            android:paddingRight="@dimen/d_16"
+            android:text="付款方式："
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/f_26" />
+
+        <LinearLayout
+            android:id="@+id/linear1"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_64"
+            android:layout_below="@id/tv_pay_text"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/d_32"
+            android:paddingRight="@dimen/d_32">
+
+            <Button
+                android:id="@+id/btn_pay_cash"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/d_56"
+                android:background="@drawable/btn_selector"
+                android:textColor="@color/addon_text_selector"
+                android:text="现金" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btn_pay_qrcode"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/d_56"
+                android:background="@drawable/btn_selector"
+                android:textColor="@color/addon_text_selector"
+                android:text="二维码" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btn_pay_gun"
+                android:layout_width="wrap_content"
+                android:background="@drawable/btn_selector"
+                android:textColor="@color/addon_text_selector"
+                android:layout_height="@dimen/d_56"
+                android:text="枪扫" />
+
+            <!--<View-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1" />-->
+
+            <!--<Button-->
+                <!--android:id="@+id/btn_pay_vip"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="@dimen/d_56"-->
+                <!--android:text="会员" />-->
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_120"
+            android:layout_below="@id/linear1"
+            android:layout_marginStart="@dimen/d_16"
+            android:layout_marginTop="@dimen/d_8"
+            android:layout_marginEnd="@dimen/d_16"
+            android:background="@drawable/shape_addon_background"
+            android:orientation="vertical"
+            android:padding="@dimen/d_8">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="会员账号："
+                android:textSize="@dimen/f_26" />
+
+            <EditText
+                android:id="@+id/et_vip_no"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:gravity="end" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="@dimen/d_1"
+        android:layout_height="match_parent"
+        android:background="@color/btn_den" />
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_120"
+            android:layout_marginStart="@dimen/d_16"
+            android:layout_marginTop="@dimen/d_64"
+            android:layout_marginEnd="@dimen/d_16"
+            android:background="@drawable/shape_addon_background"
+            android:orientation="vertical"
+            android:padding="@dimen/d_8">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="实收："
+                android:textSize="@dimen/f_26" />
+
+            <EditText
+                android:id="@+id/et_key_bord"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="end|bottom"
+                android:hint="¥ 0.0"
+                android:textSize="@dimen/f_30"
+                android:paddingLeft="@dimen/d_4"
+                android:paddingRight="@dimen/d_4"
+                android:background="@android:color/transparent"
+                android:inputType="number" />
+        </LinearLayout>
+
+        <android.inputmethodservice.KeyboardView
+            android:id="@+id/keyboard_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/d_190"
+            android:background="@color/main_view_back"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:keyBackground="@drawable/key"
+            android:keyTextColor="@color/colorPrimary"
+            android:keyTextSize="20sp"
+            android:labelTextSize="20sp"
+            android:shadowColor="@android:color/white"
+            android:shadowRadius="0.0" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true">
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="@dimen/d_120"
+                android:layout_height="@dimen/d_56"
+                android:text="取消"
+                android:background="@android:color/holo_red_light"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/f_20"
+                android:layout_marginBottom="@dimen/d_32"/>
+
+            <View
+                android:layout_width="@dimen/d_48"
+                android:layout_height="@dimen/d_56" />
+
+            <Button
+                android:id="@+id/btn_commit"
+                android:layout_width="@dimen/d_120"
+                android:layout_height="@dimen/d_56"
+                android:textSize="@dimen/f_20"
+                android:background="@color/colorPrimary"
+                android:textColor="@android:color/white"
+                android:text="确定"
+                android:layout_marginBottom="@dimen/d_32"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

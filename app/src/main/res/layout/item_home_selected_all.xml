@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/d_250"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/d_80"
+    android:orientation="vertical"
+    android:padding="@dimen/d_10">
+
+    <!--<ImageView-->
+        <!--android:id="@+id/iv_home_selected_url"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:contentDescription="@string/des" />-->
+
+    <TextView
+        android:id="@+id/tv_home_selected_name"
+        android:layout_width="@dimen/d_140"
+        android:layout_height="wrap_content"
+        android:maxLines="2"
+        android:layout_marginBottom="@dimen/d_8" />
+
+    <TextView
+        android:id="@+id/tv_home_selected_taste"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLength="30"
+        android:layout_below="@id/tv_home_selected_name"/>
+
+    <TextView
+        android:id="@+id/tv_home_selected_addon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLength="50"
+        android:layout_marginBottom="@dimen/d_8"
+        android:layout_below="@+id/tv_home_selected_taste" />
+
+    <TextView
+        android:id="@+id/tv_home_selected_number"
+        android:layout_width="@dimen/d_64"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="@dimen/d_8" />
+
+    <TextView
+        android:id="@+id/tv_home_selected_cost"
+        android:layout_width="@dimen/d_64"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:layout_below="@id/tv_home_selected_number"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#38b6f1</color>
+    <color name="colorPrimaryDark">#006898</color>
+    <color name="colorAccent">#333333</color>
+
+    <color name="black_overlay">#66000000</color>
+    <color name="home_left_bottom">#e8a82c</color>
+    <color name="default_bg">#e3e3e3</color>
+
+    <color name="btn_start">#fefefe</color>
+    <color name="btn_den">#c1c1c1</color>
+    <color name="btn_text">#333333</color>
+    <color name="main_view_back">#d7d5d5</color>
+    <color name="wx_green">#50b528</color>
+    <color name="display_start">#a0daf0</color>
+    <color name="display_end">#3795c7</color>
+    <color name="key_dowm">#9fe1ff</color>
+</resources>

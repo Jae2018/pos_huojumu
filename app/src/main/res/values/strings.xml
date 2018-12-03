@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name" translatable="false">ShiTongPOS</string>
+    <string name="des" translatable="false"> </string>
+    <!-- 激活设备页面 -->
+    <string name="active_des" translatable="false">请扫面下方二维码绑定设备</string>
+    <string name="active_btn" translatable="false">绑定完成，点击进入下一页</string>
+    <!-- 登录页面 -->
+    <string name="app_scan_des" translatable="false">—&#8195;通过微信登录&#8195;—</string>
+    <string name="wx_scan" translatable="false">微信扫一扫</string>
+    <string name="login" translatable="false">登&#8195;录</string>
+    <string name="account" translatable="false">账&#8195;号</string>
+    <string name="password" translatable="false">密&#8195;码</string>
+    <string name="input_account" translatable="false">请输入账号</string>
+    <!-- 主界面 -->
+    <string name="hold_on" translatable="false">挂单</string>
+    <string name="clear" translatable="false">删除全部</string>
+    <string name="set_meal" translatable="false">套餐</string>
+    <string name="referral" translatable="false">推介</string>
+    <string name="big_class" translatable="false">全部大类</string>
+    <string name="small_class" translatable="false">全部小类</string>
+    <string name="function" translatable="false">功能</string>
+    <string name="shutdown" translatable="false">关机</string>
+
+    <string name="order_des" translatable="false">整单备注</string>
+    <string name="delete" translatable="false">删除</string>
+    <string name="number" translatable="false">数量：</string>
+    <string name="cut" translatable="false">优惠：</string>
+    <string name="price" translatable="false">金额：</string>
+
+    <string name="home_quick_invoice" translatable="false">快捷支付</string>
+    <string name="checkout" translatable="false">结账</string>
+    <string name="takeout" translatable="false">外卖</string>
+    <string name="handover" translatable="false">交班</string>
+    <string name="daily" translatable="false">日结</string>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/d_140"
+    android:layout_height="@dimen/d_56"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_home_addon_taste"
+        android:layout_width="@dimen/d_120"
+        android:text="默认口味"
+        android:layout_height="@dimen/d_48"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:textSize="@dimen/f_18"/>
+
+</LinearLayout>

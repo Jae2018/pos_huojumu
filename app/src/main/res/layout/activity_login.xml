@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rl_login"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/iv_shutdown"
+        android:layout_width="@dimen/d_56"
+        android:layout_height="@dimen/d_56"
+        android:layout_marginTop="@dimen/d_32"
+        android:contentDescription="@string/des"
+        android:layout_marginEnd="@dimen/d_32"
+        android:src="@drawable/ic_shutdown"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <!--<TextView-->
+        <!--android:id="@+id/textView"-->
+        <!--style="@style/textView48"-->
+        <!--android:layout_marginTop="148dp"-->
+        <!--android:textSize="@dimen/f_16"-->
+        <!--android:text="@string/app_scan_des"-->
+        <!--app:layout_constraintEnd_toStartOf="@+id/view"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent" />-->
+
+    <!--<ImageView-->
+        <!--android:id="@+id/wx_qr_image"-->
+        <!--android:layout_width="@dimen/d_200"-->
+        <!--android:layout_height="@dimen/d_200"-->
+        <!--android:layout_marginTop="16dp"-->
+        <!--android:contentDescription="@string/des"-->
+        <!--app:layout_constraintEnd_toStartOf="@+id/view"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/textView"-->
+        <!--app:srcCompat="@mipmap/ic_launcher" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/textView4"-->
+        <!--style="@style/textView48"-->
+        <!--android:text="@string/wx_scan"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toStartOf="@+id/view"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/wx_qr_image"-->
+        <!--app:layout_constraintVertical_bias="0.105" />-->
+
+    <!--<View-->
+        <!--android:id="@+id/view"-->
+        <!--android:layout_width="@dimen/d_16"-->
+        <!--android:layout_height="@dimen/d_200"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:layout_marginBottom="8dp"-->
+        <!--android:background="@color/cardview_dark_background"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent" />-->
+
+    <LinearLayout
+        android:layout_width="@dimen/d_300"
+        android:layout_height="@dimen/d_300"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_56"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="@dimen/d_80"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/account" />
+
+            <EditText
+                android:id="@+id/ed_account"
+                android:layout_width="@dimen/d_200"
+                android:layout_height="match_parent"
+                android:hint="@string/account"
+                android:inputType="text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_56"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="@dimen/d_80"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/password" />
+
+            <EditText
+                android:id="@+id/ed_pwd"
+                android:layout_width="@dimen/d_200"
+                android:layout_height="match_parent"
+                android:hint="@string/account"
+                android:inputType="textPassword" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_56"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="@dimen/d_80"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="验证码"/>
+
+
+            <EditText
+                android:id="@+id/ed_code"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:hint="验证码" />
+
+            <ImageView
+                android:id="@+id/image_code"
+                android:contentDescription="@string/des"
+                android:background="@color/btn_den"
+                android:scaleType="fitXY"
+                android:layout_width="@dimen/d_96"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/login_btn"
+            android:layout_width="@dimen/d_200"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_16"
+            android:text="@string/login" />
+    </LinearLayout>
+
+
+
+</android.support.constraint.ConstraintLayout>

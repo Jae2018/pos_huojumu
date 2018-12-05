@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.data.OrderSave;
 import com.google.gson.Gson;
 import com.huojumu.model.OrderInfo;
 import com.huojumu.model.Products;
@@ -53,6 +54,13 @@ public class PrinterUtil {
         return gson.toJson(orderInfo);
     }
 
+    public static String toJson(List<OrderSave> orderInfo) {
+        if (gson == null) {
+            gson = new Gson();
+        }
+        return gson.toJson(orderInfo);
+    }
+
     /**
      * 连接打印机
      *
@@ -61,7 +69,7 @@ public class PrinterUtil {
     public static void connectPrinter(Context context) {
         mPrinter = new PrinterAPI();
         io = new USBAPI(context);
-        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA);
+        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         date = new Date(System.currentTimeMillis());
         if (PrinterAPI.SUCCESS == mPrinter.connect(io)) {
             ToastUtils.showLong("已连接打印机");
@@ -84,52 +92,62 @@ public class PrinterUtil {
         return simpleDateFormat.format(date);
     }
 
+    public static String getTime() {
+        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+        simpleDateFormat.format(date);
+        return simpleDateFormat.format(date);
+    }
+
     /**
      * 打印文本
      */
-    public static void printString(List<Products.ProductsBean> pList, double totalPrice, int totalNumber, String orderNo,String orderId,String time) {
-        try {
-            Log.e("print", "开始");
-            mPrinter.setCharSize(2, 2);
-            mPrinter.setAlignMode(1);
-            StringBuilder sb = new StringBuilder();
-            String s = "小玎小珰\n";
-            mPrinter.printString(s, "GBK");
-            mPrinter.setAlignMode(0);
-            s = SpUtil.getString(Constant.STORE_NAME) + "\n";
-            mPrinter.setCharSize(0, 0);
-            mPrinter.printString(s, "GBK");
-            mPrinter.printAndFeedLine(1);
-            mPrinter.printAndBackToStd();
-            s = "";
-            s += "门店编号：" + SpUtil.getString(Constant.STORE_ID) + "\n"
-                    + "门店地址：" + SpUtil.getString(Constant.STORE_ADDRESS) + "\n"
-                    + "服务专线：" + SpUtil.getString(Constant.STORE_TEL) + "\n"
-                    + "订单编号：" + orderId + "\n"
-                    + "付款时间：" + time + "\n"
-                    + "打印时间：" + simpleDateFormat.format(date) + "\n";
-            mPrinter.setCharSize(0, 0);
-            mPrinter.printString(s, "GBK");
-            mPrinter.printAndFeedLine(1);
-            sb.append("名称        数量   单价   金额\n ").append("----------------------------------\n");
-            for (Products.ProductsBean p : pList) {
-                sb.append(p.getProName())
-                        .append("   ").append(p.getNumber())
-                        .append("   ").append(p.getPrice())
-                        .append("   ").append(p.getPrice() * p.getNumber()).append("\n");
+    public static void printString(final List<Products.ProductsBean> pList, final double totalPrice, final int totalNumber, final String orderNo,final String orderId, final String time) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    mPrinter.setCharSize(2, 2);
+                    mPrinter.setAlignMode(1);
+                    StringBuilder sb = new StringBuilder();
+                    String s = "小玎小珰\n";
+                    mPrinter.printString(s, "GBK");
+                    mPrinter.setAlignMode(0);
+                    s = SpUtil.getString(Constant.STORE_NAME) + "\n";
+                    mPrinter.setCharSize(0, 0);
+                    mPrinter.printString(s, "GBK");
+                    mPrinter.printAndFeedLine(1);
+                    mPrinter.printAndBackToStd();
+                    s = "";
+                    s += "门店编号：" + SpUtil.getString(Constant.STORE_ID) + "\n"
+                            + "门店地址：" + SpUtil.getString(Constant.STORE_ADDRESS) + "\n"
+                            + "服务专线：" + SpUtil.getString(Constant.STORE_TEL) + "\n"
+                            + "订单编号：" + orderId + "\n"
+                            + "付款时间：" + time + "\n"
+                            + "打印时间：" + simpleDateFormat.format(date) + "\n";
+                    mPrinter.setCharSize(0, 0);
+                    mPrinter.printString(s, "GBK");
+                    mPrinter.printAndFeedLine(1);
+                    sb.append("名称        数量   单价   金额\n ").append("----------------------------------\n");
+                    for (Products.ProductsBean p : pList) {
+                        sb.append(p.getProName())
+                                .append("   ").append(p.getNumber())
+                                .append("   ").append(p.getPrice())
+                                .append("   ").append(p.getPrice() * p.getNumber()).append("\n");
+                    }
+                    sb.append("共计：").append("        ").append(totalNumber).append("           ").append(totalPrice).append("\n");
+                    mPrinter.printAndFeedLine(1);
+                    mPrinter.printString(sb.toString(), "GBK");
+                    s = "取货码，请妥善保管";
+                    mPrinter.setAlignMode(1);
+                    mPrinter.printString(s, "GBK");
+                    mPrinter.printAndFeedLine(1);
+                    printQRCode(orderNo);
+                    cutPaper();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-            sb.append("共计：").append("        ").append(totalNumber).append("           ").append(totalPrice).append("\n");
-            mPrinter.printAndFeedLine(1);
-            mPrinter.printString(sb.toString(), "GBK");
-            s = "取货码，请妥善保管";
-            mPrinter.setAlignMode(1);
-            mPrinter.printString(s, "GBK");
-            mPrinter.printAndFeedLine(1);
-            mPrinter.printQRCode(orderNo);
-            mPrinter.cutPaper(66, 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        }).start();
     }
 
     /**
@@ -148,7 +166,7 @@ public class PrinterUtil {
      *
      * @param s 二维码内容
      */
-    public static void printQRCode(String s) {
+    private static void printQRCode(String s) {
         if (PrinterAPI.SUCCESS == mPrinter.printQRCode(s)) {
             Log.d(TAG, "printQRCode: finish");
         }
@@ -189,20 +207,14 @@ public class PrinterUtil {
     /**
      * 切纸
      */
-    public static void cutPaper() {
+    private static void cutPaper() {
         if (PrinterAPI.SUCCESS == mPrinter.cutPaper(66, 0)) {
             Log.d(TAG, "cutPaper: finish");
         }
     }
 
-//    /**
-//     * 打开相册
-//     * @param a 调用activity
-//     */
-//    public void getImageFromAlbum(AppCompatActivity a) {
-//        Intent intent = new Intent(Intent.ACTION_PICK);
-//        intent.setType("image/*");
-//        a.startActivityForResult(intent, Constant.REQUEST_CODE_PICK_IMAGE);
-//    }
+    public static void getStatus() {
+        mPrinter.getStatus();
+    }
 
 }

@@ -7,48 +7,53 @@
     android:padding="@dimen/d_10">
 
     <!--<ImageView-->
-        <!--android:id="@+id/iv_home_selected_url"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:contentDescription="@string/des" />-->
+    <!--android:id="@+id/iv_home_selected_url"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:contentDescription="@string/des" />-->
 
     <TextView
         android:id="@+id/tv_home_selected_name"
         android:layout_width="@dimen/d_140"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/d_8"
         android:maxLines="2"
-        android:layout_marginBottom="@dimen/d_8" />
+        android:textColor="@android:color/black" />
 
     <TextView
         android:id="@+id/tv_home_selected_taste"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/tv_home_selected_name"
         android:ellipsize="end"
         android:maxLength="30"
-        android:layout_below="@id/tv_home_selected_name"/>
+        android:textColor="@android:color/black" />
 
     <TextView
         android:id="@+id/tv_home_selected_addon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxLength="50"
+        android:layout_below="@+id/tv_home_selected_taste"
         android:layout_marginBottom="@dimen/d_8"
-        android:layout_below="@+id/tv_home_selected_taste" />
+        android:maxLength="50"
+        android:textColor="@android:color/black" />
 
     <TextView
         android:id="@+id/tv_home_selected_number"
         android:layout_width="@dimen/d_64"
         android:layout_height="wrap_content"
-        android:gravity="end"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="@dimen/d_8" />
+        android:layout_marginBottom="@dimen/d_8"
+        android:gravity="end"
+        android:textColor="@android:color/black" />
 
     <TextView
         android:id="@+id/tv_home_selected_cost"
         android:layout_width="@dimen/d_64"
         android:layout_height="wrap_content"
-        android:gravity="end"
         android:layout_below="@id/tv_home_selected_number"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:gravity="end"
+        android:textColor="@android:color/black" />
 
 </RelativeLayout>

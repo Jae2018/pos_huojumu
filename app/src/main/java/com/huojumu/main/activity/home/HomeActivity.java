@@ -9,6 +9,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemSwipeListener;
 import com.data.DetailDao;
 import com.data.OrderDao;
@@ -115,6 +117,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     OrderInfo orderInfo;
     OkHttpClient client;
     Request request;
+    private ItemTouchHelper mItemTouchHelper;
+    private ItemDragAndSwipeCallback mItemDragAndSwipeCallback;
 
     @Override
     protected int setLayout() {
@@ -131,6 +135,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         left.setLayoutManager(linearLayoutManager);
         left.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         selectedAdapter.enableSwipeItem();
+        mItemDragAndSwipeCallback = new ItemDragAndSwipeCallback(selectedAdapter);
+        mItemTouchHelper = new ItemTouchHelper(mItemDragAndSwipeCallback);
+        mItemTouchHelper.attachToRecyclerView(left);
+        mItemDragAndSwipeCallback.setSwipeMoveFlags(ItemTouchHelper.START | ItemTouchHelper.END);
         selectedAdapter.setOnItemSwipeListener(new OnItemSwipeListener() {
             @Override
             public void onItemSwipeStart(RecyclerView.ViewHolder viewHolder, int pos) {

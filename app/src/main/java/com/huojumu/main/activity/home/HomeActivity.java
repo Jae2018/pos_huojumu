@@ -111,7 +111,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //数据库引用
     private OrderDao orderDao;
     private DetailDao detailDao;
-    SocketTool socketTool;
+//    SocketTool socketTool;
     OrderInfo orderInfo;
     OkHttpClient client;
     Request request;
@@ -590,7 +590,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
 
         pickUpCode = response.getData().getPickUpCode();
-        socketTool = new SocketTool(HomeActivity.this, String.format(Constant.PMENT, orderInfo.getOrderID(), SpUtil.getString(Constant.TOKEN)));
+        client.newWebSocket(request, new SocketTool(HomeActivity.this, String.format(Constant.PMENT, response.getData().getOrderId(), SpUtil.getString(Constant.TOKEN))));
+        client.dispatcher().executorService().shutdown();
     }
 
     @Override

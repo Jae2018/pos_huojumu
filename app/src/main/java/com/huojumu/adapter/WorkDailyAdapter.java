@@ -16,6 +16,7 @@ import java.util.List;
  */
 public class WorkDailyAdapter extends BaseQuickAdapter<OrderSave, BaseViewHolder> {
 
+    private int type;
 
     public WorkDailyAdapter(@Nullable List<OrderSave> data) {
         super(R.layout.item_wor_daily_takeover, data);
@@ -23,9 +24,19 @@ public class WorkDailyAdapter extends BaseQuickAdapter<OrderSave, BaseViewHolder
 
     @Override
     protected void convert(BaseViewHolder helper, OrderSave item) {
-        helper.setText(R.id.tv_daily_list_item_no, String.format("订单编号：%s", item.getProName()))
-                .setText(R.id.tv_daily_list_item_time, String.format("生成时间：%s", item.getTime()))
-                .setText(R.id.tv_daily_list_item_money, String.format("订单总价：%.2s", item.getPrice()));
+        if (type == 1) {
+            helper.setText(R.id.tv_daily_list_item_no, String.format("订单编号：%s", item.getOrderNo()))
+                    .setText(R.id.tv_daily_list_item_time, String.format("生成时间：%s", item.getTime()))
+                    .setText(R.id.tv_daily_list_item_money, String.format("订单总价：%.2s", item.getPrice()));
+        } else {
+            helper.setText(R.id.tv_daily_list_item_no, String.format("产品名称：%s", item.getProName()))
+                    .setText(R.id.tv_daily_list_item_time, String.format("单价：%s", item.getSell()))
+                    .setText(R.id.tv_daily_list_item_money, String.format("数量：%.2s", item.getNumber()));
+        }
     }
 
+    public void setType(int type) {
+        this.type = type;
+        notifyDataSetChanged();
+    }
 }

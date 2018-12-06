@@ -70,7 +70,7 @@ public class DailyTakeOverActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        type = getIntent().getIntExtra(Constant.TYPE, 0);
+        type = getIntent().getIntExtra(Constant.TYPE, 1);
         orderSaveList = MyApplication.getDb().getOrderDao().getOrderSaveList();
         dailyAdapter.setNewData(orderSaveList);
 
@@ -85,9 +85,19 @@ public class DailyTakeOverActivity extends BaseActivity {
         commissionTv.setText(String.valueOf(totalSell / 10));
     }
 
+    @OnClick(R.id.btn_work_daily_type1)
+    void onType1Show() {
+        dailyAdapter.setType(1);
+    }
+
+    @OnClick(R.id.btn_work_daily_type2)
+    void onType2Show() {
+        dailyAdapter.setType(2);
+    }
+
     @OnClick(R.id.btn_work_daily_cancel)
     void Cancel() {
-        startActivity(new Intent(DailyTakeOverActivity.this, HomeActivity.class));
+//        startActivity(new Intent(DailyTakeOverActivity.this, HomeActivity.class));
         finish();
     }
 
@@ -97,14 +107,14 @@ public class DailyTakeOverActivity extends BaseActivity {
         //清空表数据、清空缓存，调到登录页面
         if (type == 2) {//交班清空数据库内容
             MyApplication.getDb().getOrderDao().deleteAll();
+            startActivity(new Intent(DailyTakeOverActivity.this, LoginActivity.class));
         }
-        startActivity(new Intent(DailyTakeOverActivity.this, LoginActivity.class));
         finish();
     }
 
     @OnClick(R.id.iv_back)
     void back() {
-        startActivity(new Intent(DailyTakeOverActivity.this, HomeActivity.class));
+//        startActivity(new Intent(DailyTakeOverActivity.this, HomeActivity.class));
         finish();
     }
 

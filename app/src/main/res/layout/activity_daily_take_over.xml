@@ -41,10 +41,24 @@
 
         <TextView
             android:id="@+id/tv_work_daily_date"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/d_16"
+            android:layout_weight="1"
             android:textSize="@dimen/f_24" />
+
+        <Button
+            android:id="@+id/btn_work_daily_type1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="按订单"
+            android:layout_marginEnd="@dimen/d_16"/>
+
+        <Button
+            android:id="@+id/btn_work_daily_type2"
+            android:text="按明细"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <View

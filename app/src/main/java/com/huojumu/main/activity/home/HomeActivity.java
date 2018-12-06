@@ -60,6 +60,8 @@ import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 
 public class HomeActivity extends BaseActivity implements DialogInterface, SocketBack,
@@ -108,6 +110,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private OrderDao orderDao;
     SocketTool socketTool;
     OrderInfo orderInfo;
+    OkHttpClient client;
+    Request request;
 
     @Override
     protected int setLayout() {
@@ -246,8 +250,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     public void onFailure(int statusCode, String error_msg) {
 
                     }
-
                 });
+        request = new Request.Builder()
+                .url(Constant.SOCKET)
+                .build();
+        client = new OkHttpClient();
 
     }
 
@@ -438,8 +445,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                 engine.getWxIV().setImageBitmap(QrUtil.createQRCodeWithLogo(HomeActivity.this, response.getData().getWxPayQrcode(), BitmapFactory.decodeResource(getResources(), R.drawable.weixin_normal)));//
                             }
                             pickUpCode = response.getData().getPickUpCode();
-                            socketTool = new SocketTool(HomeActivity.this, String.format(Constant.PMENT, response.getData().getOrderId(), SpUtil.getString(Constant.TOKEN)));
+                            client.newWebSocket(request, new SocketTool(HomeActivity.this, String.format(Constant.PMENT, response.getData().getOrderId(), SpUtil.getString(Constant.TOKEN))));
+                            client.dispatcher().executorService().shutdown();
                             saveOrder(response.getData(), 2);
+                            saveOrder2();
                             productions.clear();
                             list.clear();
                             orderInfo = null;
@@ -465,7 +474,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         productions.clear();
                         list.clear();
                         selectedAdapter.setNewData(null);
-                        saveOrder(response.getData(),1);
+                        saveOrder(response.getData(), 1);
+                        saveOrder2();
                         orderInfo = null;
                     }
 
@@ -486,7 +496,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private void saveOrder(OrderBack p, int type) {
         //新插入
         OrderSave orderSave = new OrderSave();
-        orderSave.setProName(p.getOrderId());
+        orderSave.setOrderNo(p.getOrderId());
         orderSave.setPrice(p.getTotalPrice());
         if (type == 1) {
             orderSave.setEarn1(p.getTotalPrice());
@@ -495,6 +505,20 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
         orderSave.setTime(orderInfo.getCreateTime());
         orderDao.save(orderSave);
+    }
+
+    private void saveOrder2() {
+        for (Products.ProductsBean p: productions) {
+            OrderSave orderSave = new OrderSave();
+            orderSave.setProName(p.getProName());
+            orderSave.setNumber(p.getNumber());
+            orderSave.setSell(p.getPrice());
+            if (orderDao.getSingleOrder(p.getProName()) == null) {
+                orderDao.save(orderSave);
+            } else {
+                orderDao.updateOrder(orderSave);
+            }
+        }
     }
 
 
@@ -563,4 +587,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         socketTool = new SocketTool(HomeActivity.this, String.format(Constant.PMENT, orderInfo.getOrderID(), SpUtil.getString(Constant.TOKEN)));
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }

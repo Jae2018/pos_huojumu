@@ -52,6 +52,7 @@ public interface Constant {
 
     /* 是否绑定设备 */
     String HAS_BAND = "has_banded";
+    String EQP_NO = "eqp_no";//机器码
 
     /* works' info */
     String WORKER_NAME = "worker_name";

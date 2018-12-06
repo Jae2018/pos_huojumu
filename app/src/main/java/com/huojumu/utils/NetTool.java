@@ -27,7 +27,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
  * Description :
  *
  * @author Jie
- * @date 2018/10/27.
+ * date 2018/10/27.
  * email 494669467@qq.com
  */
 public class NetTool {
@@ -46,27 +46,27 @@ public class NetTool {
         return okHttp;
     }
 
-    public static void getCode(String uuid, GsonResponseHandler<BaseBean<String>> handler) {
+    public static void getCode(String machineCode, GsonResponseHandler<BaseBean<String>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "system/checkcode.action")
-                .addParam("machineCode", uuid)
+                .addParam("machineCode", machineCode)
                 .enqueue(handler);
     }
 
-    public static void login(String username, String password, String code, String uuid, GsonResponseHandler<BaseBean<String>> handler) {
+    public static void login(String username, String password, String code, String machineCode, GsonResponseHandler<BaseBean<String>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "system/logon.action")
                 .addParam("userCode", username)
                 .addParam("password", password)
                 .addParam("checkCode", code)
-                .addParam("machineCode", uuid)
+                .addParam("machineCode", machineCode)
                 .enqueue(handler);
     }
 
-    public static void getMachineInfo(String uuid, GsonResponseHandler<BaseBean<StoreInfo>> handler) {
+    public static void getMachineInfo(String machineCode, GsonResponseHandler<BaseBean<StoreInfo>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "system/machineinfo.action")
-                .addParam("machineCode", uuid)
+                .addParam("machineCode", machineCode)
                 .enqueue(handler);
     }
 

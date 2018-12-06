@@ -398,7 +398,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 intent.putExtra(Constant.TYPE, 2);
                 break;
         }
-
         startActivity(intent);
     }
 
@@ -440,7 +439,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             }
                             pickUpCode = response.getData().getPickUpCode();
                             socketTool = new SocketTool(HomeActivity.this, String.format(Constant.PMENT, response.getData().getOrderId(), SpUtil.getString(Constant.TOKEN)));
-                            saveOrder(response.getData());
+                            saveOrder(response.getData(), 2);
                             productions.clear();
                             list.clear();
                             orderInfo = null;
@@ -466,7 +465,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         productions.clear();
                         list.clear();
                         selectedAdapter.setNewData(null);
-                        saveOrder(response.getData());
+                        saveOrder(response.getData(),1);
                         orderInfo = null;
                     }
 
@@ -484,11 +483,16 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
     }
 
-    private void saveOrder(OrderBack p) {
+    private void saveOrder(OrderBack p, int type) {
         //新插入
         OrderSave orderSave = new OrderSave();
         orderSave.setProName(p.getOrderId());
         orderSave.setPrice(p.getTotalPrice());
+        if (type == 1) {
+            orderSave.setEarn1(p.getTotalPrice());
+        } else {
+            orderSave.setEarn2(p.getTotalPrice());
+        }
         orderSave.setTime(orderInfo.getCreateTime());
         orderDao.save(orderSave);
     }

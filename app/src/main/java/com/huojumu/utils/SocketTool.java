@@ -59,6 +59,7 @@ public class SocketTool extends WebSocketListener {
         TaskBean taskBean = gson.fromJson(text, TaskBean.class);
         if (taskBean.getTask().equals("machinebind")) {
             SpUtil.save(Constant.HAS_BAND, true);
+            SpUtil.save(Constant.EQP_NO, taskBean.getData().getEqpNo());
             NetTool.getMachineInfo(taskBean.getData().getEqpNo(), new GsonResponseHandler<BaseBean<StoreInfo>>() {
                 @Override
                 public void onSuccess(int statusCode, BaseBean<StoreInfo> response) {

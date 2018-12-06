@@ -42,11 +42,15 @@ public class DailyTakeOverActivity extends BaseActivity {
     TextView sellTv;//销售额
     @BindView(R.id.tv_work_daily_commission)
     TextView commissionTv;//提成
+    @BindView(R.id.tv_daily_earn1)
+    TextView earn1;
+    @BindView(R.id.tv_daily_earn2)
+    TextView earn2;
 
     private WorkDailyAdapter dailyAdapter;
     private List<OrderSave> orderSaveList;
     private int type;
-    private double totalSell;
+    private double totalSell,totalEarn1, totalEarn2;
 
     @Override
     protected int setLayout() {
@@ -72,7 +76,11 @@ public class DailyTakeOverActivity extends BaseActivity {
 
         for (OrderSave orderSave : orderSaveList) {
             totalSell += orderSave.getPrice();
+            totalEarn1 += orderSave.getEarn1();
+            totalEarn2 += orderSave.getEarn2();
         }
+        earn1.setText(String.valueOf(totalEarn1));
+        earn2.setText(String.valueOf(totalEarn2));
         sellTv.setText(String.valueOf(totalSell));
         commissionTv.setText(String.valueOf(totalSell / 10));
     }
@@ -87,7 +95,9 @@ public class DailyTakeOverActivity extends BaseActivity {
     void Ok() {
         //上传报表
         //清空表数据、清空缓存，调到登录页面
-        MyApplication.getDb().getOrderDao().deleteAll();
+        if (type == 2) {//交班清空数据库内容
+            MyApplication.getDb().getOrderDao().deleteAll();
+        }
         startActivity(new Intent(DailyTakeOverActivity.this, LoginActivity.class));
         finish();
     }

@@ -64,7 +64,7 @@ public class LoginActivity extends BaseActivity {
 
     private void getCode() {
         //获取验证码
-        NetTool.getCode(SpUtil.getString(Constant.UUID), new GsonResponseHandler<BaseBean<String>>() {
+        NetTool.getCode(SpUtil.getString(Constant.EQP_NO), new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
                 byte[] bytes = Base64.decode(response.getData().getBytes(), Base64.DEFAULT);
@@ -92,7 +92,7 @@ public class LoginActivity extends BaseActivity {
             Toast.makeText(this, "请输入验证码！", Toast.LENGTH_LONG).show();
             return;
         }
-        NetTool.login(name, pwd, code, SpUtil.getString(Constant.UUID), new GsonResponseHandler<BaseBean<String>>() {
+        NetTool.login(name, pwd, code, SpUtil.getString(Constant.EQP_NO), new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
                 SpUtil.save(Constant.MY_TOKEN, "Bearer " + response.getData());

@@ -60,11 +60,12 @@ public class CustomerEngine {
     }
 
     public void refresh(List<Products.ProductsBean> list) {
-        mCustomerDisplay.refresh(list);
+        if (mCustomerDisplay != null)
+            mCustomerDisplay.refresh(list);
     }
 
     public void setPrice(double total, double cut) {
-        mCustomerDisplay.setPrice(total, cut);
+        if (mCustomerDisplay != null)mCustomerDisplay.setPrice(total, cut);
     }
 
     public ImageView getAliIV() {

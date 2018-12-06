@@ -13,6 +13,6 @@ public abstract class DataBase extends RoomDatabase {
 
     public abstract OrderDao getOrderDao();
 
-//    public abstract TempDao getTempDao();
+    public abstract DetailDao getDetailDao();
 
 }

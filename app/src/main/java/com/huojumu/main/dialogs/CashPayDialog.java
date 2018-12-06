@@ -3,6 +3,7 @@ package com.huojumu.main.dialogs;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.huojumu.R;
@@ -21,7 +22,7 @@ public class CashPayDialog extends BaseDialog {
     @BindView(R.id.tv_cash_pay_earn1)
     TextView earn1;//应收金额
     @BindView(R.id.tv_cash_pay_earn2)
-    TextView earn2;//实收金额
+    EditText earn2;//实收金额
     @BindView(R.id.dialog_cash_pay_change)
     TextView change;
 

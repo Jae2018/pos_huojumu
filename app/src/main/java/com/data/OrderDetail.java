@@ -20,6 +20,30 @@ public class OrderDetail {
     private String proName;//商品名
     @ColumnInfo(name = "sell")
     private double sell;//单价
+    @ColumnInfo(name = "number")
+    private int number;
 
+    public int getNumber() {
+        return number;
+    }
 
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
+    public String getProName() {
+        return proName;
+    }
+
+    public void setProName(String proName) {
+        this.proName = proName;
+    }
+
+    public double getSell() {
+        return sell;
+    }
+
+    public void setSell(double sell) {
+        this.sell = sell;
+    }
 }

@@ -6,12 +6,13 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.data.OrderDetail;
 import com.data.OrderSave;
 import com.huojumu.MyApplication;
 import com.huojumu.R;
 import com.huojumu.adapter.WorkDailyAdapter;
+import com.huojumu.adapter.WorkDailyDetailAdapter;
 import com.huojumu.base.BaseActivity;
-import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.main.activity.login.LoginActivity;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.SpUtil;
@@ -48,7 +49,7 @@ public class DailyTakeOverActivity extends BaseActivity {
     TextView earn2;
 
     private WorkDailyAdapter dailyAdapter;
-    private List<OrderSave> orderSaveList;
+    private WorkDailyDetailAdapter detailAdapter;
     private int type;
     private double totalSell,totalEarn1, totalEarn2;
 
@@ -65,14 +66,18 @@ public class DailyTakeOverActivity extends BaseActivity {
         LinearLayoutManager manager = new LinearLayoutManager(this);
         dailyRecycler.setLayoutManager(manager);
         dailyAdapter = new WorkDailyAdapter(null);
+        detailAdapter = new WorkDailyDetailAdapter(null);
         dailyRecycler.setAdapter(dailyAdapter);
+
     }
 
     @Override
     protected void initData() {
         type = getIntent().getIntExtra(Constant.TYPE, 1);
-        orderSaveList = MyApplication.getDb().getOrderDao().getOrderSaveList();
+        List<OrderSave> orderSaveList = MyApplication.getDb().getOrderDao().getOrderSaveList();
+        List<OrderDetail> detailList = MyApplication.getDb().getDetailDao().getOrderSaveList();
         dailyAdapter.setNewData(orderSaveList);
+        detailAdapter.setNewData(detailList);
 
         for (OrderSave orderSave : orderSaveList) {
             totalSell += orderSave.getPrice();
@@ -87,17 +92,16 @@ public class DailyTakeOverActivity extends BaseActivity {
 
     @OnClick(R.id.btn_work_daily_type1)
     void onType1Show() {
-        dailyAdapter.setType(1);
+        dailyRecycler.setAdapter(dailyAdapter);
     }
 
     @OnClick(R.id.btn_work_daily_type2)
     void onType2Show() {
-        dailyAdapter.setType(2);
+        dailyRecycler.setAdapter(detailAdapter);
     }
 
     @OnClick(R.id.btn_work_daily_cancel)
     void Cancel() {
-//        startActivity(new Intent(DailyTakeOverActivity.this, HomeActivity.class));
         finish();
     }
 
@@ -112,10 +116,10 @@ public class DailyTakeOverActivity extends BaseActivity {
         finish();
     }
 
-    @OnClick(R.id.iv_back)
-    void back() {
+//    @OnClick(R.id.iv_back)
+//    void back() {
 //        startActivity(new Intent(DailyTakeOverActivity.this, HomeActivity.class));
-        finish();
-    }
+//        finish();
+//    }
 
 }

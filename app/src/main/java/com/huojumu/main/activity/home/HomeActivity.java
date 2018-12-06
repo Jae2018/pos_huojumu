@@ -19,7 +19,9 @@ import android.widget.Toast;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemSwipeListener;
+import com.data.DetailDao;
 import com.data.OrderDao;
+import com.data.OrderDetail;
 import com.data.OrderSave;
 import com.huojumu.MyApplication;
 import com.huojumu.R;
@@ -108,6 +110,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     //数据库引用
     private OrderDao orderDao;
+    private DetailDao detailDao;
     SocketTool socketTool;
     OrderInfo orderInfo;
     OkHttpClient client;
@@ -121,6 +124,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     protected void initView() {
         orderDao = MyApplication.getDb().getOrderDao();
+        detailDao = MyApplication.getDb().getDetailDao();
         //左侧点单列表
         selectedAdapter = new HomeSelectedAdapter(productions);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -466,6 +470,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 //弹钱箱，打印小票
                 cashPayDialog.cancel();
                 cashPayDialog = null;
+
                 NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
@@ -509,14 +514,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     private void saveOrder2() {
         for (Products.ProductsBean p: productions) {
-            OrderSave orderSave = new OrderSave();
-            orderSave.setProName(p.getProName());
-            orderSave.setNumber(p.getNumber());
-            orderSave.setSell(p.getPrice());
-            if (orderDao.getSingleOrder(p.getProName()) == null) {
-                orderDao.save(orderSave);
+            OrderDetail detail = new OrderDetail();
+            detail.setProName(p.getProName());
+            detail.setNumber(p.getNumber());
+            detail.setSell(p.getPrice());
+            if (detailDao.getSingleOrder(p.getProName()) == null) {
+                detailDao.save(detail);
             } else {
-                orderDao.updateOrder(orderSave);
+                detailDao.updateOrder(detail);
             }
         }
     }
@@ -541,6 +546,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * 打印订单小票、本地生成 "订单号" 与 "取货码"
      */
     private void PrintOrder() {
+        PrinterUtil.OpenMoneyBox();
         PrinterUtil.printString(productions, totalPrice, totalCount, pickUpCode, orderInfo.getOrderID(), orderInfo.getCreateTime());
         total_number.setText("");
         total_price.setText("");

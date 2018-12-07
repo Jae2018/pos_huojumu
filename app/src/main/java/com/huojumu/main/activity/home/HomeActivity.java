@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.media.MediaPlayer;
+import android.os.Handler;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -119,6 +120,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     Request request;
     private ItemTouchHelper mItemTouchHelper;
     private ItemDragAndSwipeCallback mItemDragAndSwipeCallback;
+    private Handler handler = new Handler();
 
     @Override
     protected int setLayout() {
@@ -209,6 +211,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 //点菜逻辑
+                if ("1".equals(tempProduces.get(position).getIsSaled())) {
+                    ToastUtils.showLong("该商品已售罄");
+                    return;
+                }
                 addonDialog = new SingleProAddonDialog(HomeActivity.this, HomeActivity.this, scalesBeans, tastesBeans, tempProduces.get(position), false);
                 addonDialog.show();
             }
@@ -279,8 +285,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     public void sendMsg(String s) {
         if ("0".equals(s)) {
             //付款完成
-            PrintOrder();
-            productions.clear();
+            PrintOrder(2);
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    productions.clear();
+                }
+            }, 2000);
             selectedAdapter.setNewData(productions);
         }
     }
@@ -316,7 +327,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
 
         orderInfo = new OrderInfo();
-        orderInfo.setOrderID(UUID.randomUUID().toString().replace("-", ""));
+        orderInfo.setOrderID("0000" + System.currentTimeMillis());
         orderInfo.setShopID(SpUtil.getInt(Constant.STORE_ID));
         orderInfo.setCreateTime(PrinterUtil.getDate());
         orderInfo.setEnterpriseID(SpUtil.getInt(Constant.ENT_ID));
@@ -483,7 +494,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     @Override
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
                         pickUpCode = response.getData().getPickUpCode();
-                        PrintOrder();
+                        PrintOrder(2);
                         productions.clear();
                         list.clear();
                         selectedAdapter.setNewData(null);
@@ -553,9 +564,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     /**
      * 打印订单小票、本地生成 "订单号" 与 "取货码"
      */
-    private void PrintOrder() {
+    private void PrintOrder(int type) {
         PrinterUtil.OpenMoneyBox();
-        PrinterUtil.printString(productions, totalPrice, totalCount, pickUpCode, orderInfo.getOrderID(), orderInfo.getCreateTime());
+        if (type == 1) {
+            PrinterUtil.printString58(productions, totalPrice, totalCount, pickUpCode, orderInfo.getOrderID(), orderInfo.getCreateTime());
+        } else {
+            PrinterUtil.printString80(productions, totalPrice, totalCount, pickUpCode, orderInfo.getOrderID(), orderInfo.getCreateTime());
+        }
         total_number.setText("");
         total_price.setText("");
         cut_number.setText("");

@@ -25,4 +25,15 @@
         android:layout_below="@id/iv_product_url"
         android:gravity="center" />
 
+    <TextView
+        android:id="@+id/tv_for_sell_out"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom|center_horizontal"
+        android:visibility="gone"
+        android:textSize="@dimen/f_24"
+        android:text="已售罄"
+        android:textColor="@android:color/white"
+        android:background="#bb222222"/>
+
 </RelativeLayout>

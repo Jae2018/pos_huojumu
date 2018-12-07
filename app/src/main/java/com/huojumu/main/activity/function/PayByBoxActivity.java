@@ -33,7 +33,7 @@ public class PayByBoxActivity extends BaseActivity {
         WebSettings settings = webView.getSettings();
         settings.setUseWideViewPort(true);
         settings.setJavaScriptEnabled(true);
-        webView.loadUrl("");
+        webView.loadUrl("https://e.meituan.com/");
     }
 
     @Override
@@ -43,7 +43,6 @@ public class PayByBoxActivity extends BaseActivity {
 
     @OnClick(R.id.iv_back)
     void back() {
-        startActivity(new Intent(PayByBoxActivity.this, HomeActivity.class));
         finish();
     }
 

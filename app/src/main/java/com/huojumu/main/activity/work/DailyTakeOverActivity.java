@@ -111,6 +111,7 @@ public class DailyTakeOverActivity extends BaseActivity {
         //清空表数据、清空缓存，调到登录页面
         if (type == 2) {//交班清空数据库内容
             MyApplication.getDb().getOrderDao().deleteAll();
+            MyApplication.getDb().getDetailDao().deleteAll();
             startActivity(new Intent(DailyTakeOverActivity.this, LoginActivity.class));
         }
         finish();

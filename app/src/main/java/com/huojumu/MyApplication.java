@@ -10,6 +10,8 @@ import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
 import com.squareup.leakcanary.LeakCanary;
 
+import java.util.UUID;
+
 /**
  * @author : Jie
  * Date: 2018/5/25
@@ -33,6 +35,7 @@ public class MyApplication extends Application {
 //        initLeakCanary();
         initDataBase();
         SpUtil.Instance(this);
+        SpUtil.save(Constant.UUID, UUID.randomUUID().toString());
         PrinterUtil.connectPrinter(getApplicationContext());
 
     }

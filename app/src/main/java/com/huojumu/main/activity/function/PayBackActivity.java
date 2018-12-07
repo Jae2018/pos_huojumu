@@ -7,8 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.blankj.utilcode.util.ToastUtils;
+import com.data.DetailDao;
+import com.data.OrderDao;
+import com.data.OrderDetail;
+import com.huojumu.MyApplication;
 import com.huojumu.R;
 import com.huojumu.adapter.OrderBackContentAdapter;
 import com.huojumu.base.BaseActivity;
@@ -19,6 +23,8 @@ import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -45,6 +51,9 @@ public class PayBackActivity extends BaseActivity {
 
     private OrderBackContentAdapter adapter;
     private String orderId;
+    private OrderDao dao;
+    private DetailDao detailDao;
+    private List<OrderBackInfo.OrderdetailBean.ProsBean> list;
 
     @Override
     protected int setLayout() {
@@ -61,7 +70,8 @@ public class PayBackActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-
+        dao = MyApplication.getDb().getOrderDao();
+        detailDao = MyApplication.getDb().getDetailDao();
     }
 
     void getOrderInfo() {
@@ -69,11 +79,12 @@ public class PayBackActivity extends BaseActivity {
         NetTool.getOrderInfo(orderId, new GsonResponseHandler<BaseBean<OrderBackInfo>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrderBackInfo> response) {
+                list = response.getData().getOrderdetail().getPros();
                 nameTv.setText(response.getData().getMember().getNickname());
                 dateTv.setText(response.getData().getMember().getJoinTime());
                 orderIdTv.setText(response.getData().getOrderdetail().getOrderid());
                 orderDateTv.setText(response.getData().getOrderdetail().getCreateTime());
-                adapter.setNewData(response.getData().getOrderdetail().getPros());
+                adapter.setNewData(list);
             }
 
             @Override
@@ -84,19 +95,29 @@ public class PayBackActivity extends BaseActivity {
 
     }
 
-    private void payBack(String orderId) {
-        NetTool.getPayBack(SpUtil.getInt(Constant.STORE_ID), orderId, "POS退单", new GsonResponseHandler<BaseBean<String>>() {
+    private void payBack(final String orderId) {
+        NetTool.getPayBack(1, orderId, new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
-                Toast toast = Toast.makeText(PayBackActivity.this, "退单成功！", Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
+                if (response.getData().isEmpty()) {
+                    ToastUtils.showLong(response.getMsg());
+                } else {
+                    ToastUtils.setGravity(Gravity.CENTER, 0, 0);
+                    ToastUtils.showLong("退单成功！");
+                    dao.deleteSingle(orderId);
+                    for (int i = 0; i < list.size(); i++) {
+                        OrderDetail detail = detailDao.getSingleOrder(list.get(i).getProName());
+                        int n = detail.getNumber();
+                        detail.setNumber(n - list.get(i).getProCount());
+                        detailDao.updateOrder(detail);
                     }
-                }, 2000);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            finish();
+                        }
+                    }, 2000);
+                }
             }
 
             @Override

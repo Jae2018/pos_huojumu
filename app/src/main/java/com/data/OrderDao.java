@@ -21,8 +21,11 @@ public interface OrderDao {
     @Query("delete from order_table")
     void deleteAll();
 
-    @Query("select * from order_table where :proName ")
-    OrderSave getSingleOrder(String proName);
+    @Query("delete from order_table where orderNo=:orderNo")
+    void deleteSingle(String orderNo);
+
+    @Query("select * from order_table where orderNo=:orderNo ")
+    OrderSave getSingleOrder(String orderNo);
 
     @Update
     void updateOrder(OrderSave orderSave);

@@ -137,33 +137,35 @@ public class NetTool {
     }
 
     //退单
-    public static void getPayBack(int shopId, String orderId, String cancelRadio, GsonResponseHandler<BaseBean<String>> handler) {
+    public static void getPayBack(int shopId, String orderId, GsonResponseHandler<BaseBean<String>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "pay/refund.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
-                .addParam("shopId", shopId + "")
+                .addParam("shopId", shopId+"")
                 .addParam("orderId", orderId + "")
-                .addParam("cancelRadio", cancelRadio)
+                .addParam("cancelRadio", "pos退单")
+                .addParam("payType","cash")
+                .addParam("cancelTadio","pos退单")
                 .enqueue(handler);
     }
 
     public static void update(String uuid, GsonResponseHandler<BaseBean<UpdateBean>> handler) {
-        okHttp.post()
-                .url(Constant.BASE_URL + "pay/refund.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
-                .addParam("uuid", uuid)
-                .enqueue(handler);
+//        okHttp.post()
+//                .url(Constant.BASE_URL + "pay/refund.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+//                .addParam("uuid", uuid)
+//                .enqueue(handler);
     }
 
     public static void getVipList(int enterpriseID, int pinpaiID, GsonResponseHandler<BaseBean<List<Vips>>> handler) {
-        okHttp.post()
-                .url(Constant.BASE_URL + "pay/refund.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
-                .addParam("enterpriseID", enterpriseID + "")
-                .addParam("pinpaiID", pinpaiID + "")
-                .enqueue(handler);
+//        okHttp.post()
+//                .url(Constant.BASE_URL + "pay/refund.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+//                .addParam("enterpriseID", enterpriseID + "")
+//                .addParam("pinpaiID", pinpaiID + "")
+//                .enqueue(handler);
     }
 
     public static void getOrderInfo(String orderid, GsonResponseHandler<BaseBean<OrderBackInfo>> handler) {///system/orderdetail.action
         okHttp.post()
-                .url(Constant.BASE_URL + "pay/refund.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .url(Constant.BASE_URL + "system/orderdetail.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("orderid", orderid + "")
                 .enqueue(handler);
     }

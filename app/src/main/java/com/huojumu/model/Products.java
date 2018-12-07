@@ -62,6 +62,11 @@ public class Products {
          * tasteName : kouwei1
          * groupId : 6
          * multiple : 0.2
+         * tastes	口味集合
+         * tasteId	口味id
+         * tasteName	口味名称
+         * groupId	口味组id
+         * multiple	口味倍数
          */
 
         private int tasteId;
@@ -114,12 +119,13 @@ public class Products {
     public static class ScalesBean {
 
         /**
-         * scaleId : 1
-         * scaName : 冷饮小杯
-         * unitName : ml
-         * unitId : 20
-         * type : 1
-         * capacity : 500.0
+         * sacles	规格集合
+         * scaleId	规格id
+         * scaName	规格名称
+         * unitId	单位id
+         * unitName	单位名称
+         * type	类型:1-冷饮;2-热饮;
+         * capacity	容量
          */
 
         private int scaleId;
@@ -190,28 +196,27 @@ public class Products {
     public static class ProductsBean {
 
         /**
-         * scaleId : 1
-         * mats : []
-         * proType : 1
-         * imgs : [{"path":"https://www.goodb2b.cn/bootstrap_file/9eae1aaa34901582a7beb91388c1d6bf.jpg","sourceType":"1"}]
-         * tastes : [{"tasteGroupId":1}]
-         * origionPrice : 10.0
-         * makes : []
-         * remark : 红西柚优格多多
-         * isDiscount : 0
-         * proNo : CP-CN11-0001-0007
-         * isMoneyOff : 0
-         * saleCnt : 0
-         * compId : 1
-         * price : 0.01
-         * proId : 7
-         * isBargain : 1
-         * isSaled : 0
-         * isPresented : 0
-         * typeId : 47
-         * startTime : 2018-08-08 00:00:00
-         * proName : 红西柚益菌多多
-         * endTime : 2018-11-22 00:00:00
+         * products	    产品集合 包含套餐
+         * scaleId	    规格id
+         * mats	        加料集合
+         * proType	    产品类型
+         * imgs	        产品图片集合
+         * tastes	    产品口味集合
+         * origionPrice	原价
+         * makes	    做法集合
+         * proNo	    产品编号
+         * compId	    所属企业id
+         * price	    产品价格
+         * typeId	    所属小类id
+         * startTime	上架时间
+         * proName	    产品名称
+         * endTime	    下架时间
+         * isSaled	    是否销售:0-可销售;1-不可销售;
+         * isBargain	是否特价:0-否;1-是;
+         * isDiscount	是否打折:0-否;1-是;
+         * isMoneyOff	是否满减:0-否;1-是;
+         * isPresented	是否赠送:0-否;1-是;
+         * saleCnt	    销量
          */
 
         private int scaleId;
@@ -452,14 +457,15 @@ public class Products {
         public static class Mats {
 
             /**
-             * proMatId : 40
-             * dosage : 11
-             * ingredientDosage : 5
-             * ingredientPrice : 3
-             * addIndex : 1
-             * matNo : YL-0003
-             * orgId : 3
-             * matName : 纯牛奶
+             * mats	            加料集合
+             * proMatId	        加料集合
+             * dosage	        用量
+             * ingredientDosage	加料用量
+             * ingredientPrice	加料金额
+             * addIndex	        加料顺序
+             * matNo	        加料编号
+             * orgId	        加料id
+             * matName	        加料名称
              */
 
             private int proMatId;
@@ -548,10 +554,8 @@ public class Products {
         public static class Makes {
 
             /**
-             * practiceName : 加冰
-             * groupId : 1
-             * practiceId : 1
-             * multiple : 1
+             * makes	    做法集合
+             * makeGroupId	产品做法组Id
              */
 
             private String practiceName;
@@ -594,8 +598,9 @@ public class Products {
 
         public static class ImgsBean {
             /**
-             * path : https://www.goodb2b.cn/bootstrap_file/9eae1aaa34901582a7beb91388c1d6bf.jpg
-             * sourceType : 1
+             * imgs	        产品图片集合
+             * path	        图片下载地址
+             * sourceType	图片类型
              */
 
             private String path;
@@ -620,7 +625,8 @@ public class Products {
 
         public static class TastesBean {
             /**
-             * tasteGroupId : 1
+             * tastes	        产品口味集合
+             * tasteGroupId	    产品口味组Id
              */
             private int tasteId = 0;
             private String tasteName;

@@ -85,7 +85,7 @@ public class DifferentDisplay extends Presentation {
 
     public void setPrice(double total, double cut) {
         priceTV.setText(String.valueOf(total));
-        cutTV.setText(String.format("优惠：%s元", String.valueOf(cut)));
+        cutTV.setText(String.format("优惠：%.2s元", String.valueOf(cut)));
     }
 
     public ImageView getAliIV() {

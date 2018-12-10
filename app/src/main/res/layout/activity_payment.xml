@@ -73,8 +73,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/d_56"
                 android:background="@drawable/btn_selector"
-                android:textColor="@color/addon_text_selector"
-                android:text="现金" />
+                android:text="现金"
+                android:textColor="@color/addon_text_selector" />
 
             <View
                 android:layout_width="0dp"
@@ -86,8 +86,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/d_56"
                 android:background="@drawable/btn_selector"
-                android:textColor="@color/addon_text_selector"
-                android:text="二维码" />
+                android:text="二维码"
+                android:textColor="@color/addon_text_selector" />
 
             <View
                 android:layout_width="0dp"
@@ -97,21 +97,21 @@
             <Button
                 android:id="@+id/btn_pay_gun"
                 android:layout_width="wrap_content"
-                android:background="@drawable/btn_selector"
-                android:textColor="@color/addon_text_selector"
                 android:layout_height="@dimen/d_56"
-                android:text="枪扫" />
+                android:background="@drawable/btn_selector"
+                android:text="枪扫"
+                android:textColor="@color/addon_text_selector" />
 
             <!--<View-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_weight="1" />-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1" />-->
 
             <!--<Button-->
-                <!--android:id="@+id/btn_pay_vip"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="@dimen/d_56"-->
-                <!--android:text="会员" />-->
+            <!--android:id="@+id/btn_pay_vip"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="@dimen/d_56"-->
+            <!--android:text="会员" />-->
         </LinearLayout>
 
 
@@ -172,13 +172,13 @@
                 android:id="@+id/et_key_bord"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@android:color/transparent"
                 android:gravity="end|bottom"
                 android:hint="¥ 0.0"
-                android:textSize="@dimen/f_30"
+                android:inputType="number"
                 android:paddingLeft="@dimen/d_4"
                 android:paddingRight="@dimen/d_4"
-                android:background="@android:color/transparent"
-                android:inputType="number" />
+                android:textSize="@dimen/f_30" />
         </LinearLayout>
 
         <android.inputmethodservice.KeyboardView
@@ -199,18 +199,18 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true">
 
             <Button
                 android:id="@+id/btn_cancel"
                 android:layout_width="@dimen/d_120"
                 android:layout_height="@dimen/d_56"
-                android:text="取消"
+                android:layout_marginBottom="@dimen/d_32"
                 android:background="@android:color/holo_red_light"
+                android:text="取消"
                 android:textColor="@android:color/white"
-                android:textSize="@dimen/f_20"
-                android:layout_marginBottom="@dimen/d_32"/>
+                android:textSize="@dimen/f_20" />
 
             <View
                 android:layout_width="@dimen/d_48"
@@ -220,11 +220,11 @@
                 android:id="@+id/btn_commit"
                 android:layout_width="@dimen/d_120"
                 android:layout_height="@dimen/d_56"
-                android:textSize="@dimen/f_20"
+                android:layout_marginBottom="@dimen/d_32"
                 android:background="@color/colorPrimary"
-                android:textColor="@android:color/white"
                 android:text="确定"
-                android:layout_marginBottom="@dimen/d_32"/>
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/f_20" />
         </LinearLayout>
 
     </RelativeLayout>

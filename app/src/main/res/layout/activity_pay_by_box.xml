@@ -14,8 +14,8 @@
             android:id="@+id/iv_back"
             android:layout_width="@dimen/d_48"
             android:layout_height="@dimen/d_32"
-            android:src="@drawable/ic_back"
-            android:contentDescription="@string/des"/>
+            android:contentDescription="@string/des"
+            android:src="@drawable/ic_back" />
 
         <TextView
             android:layout_width="0dp"

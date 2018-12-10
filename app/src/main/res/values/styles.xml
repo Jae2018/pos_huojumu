@@ -6,7 +6,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:listDivider"></item>
     </style>
 
     <style name="textView48">
@@ -33,7 +32,6 @@
         <item name="android:layout_marginTop">@dimen/d_8</item>
         <item name="android:layout_marginBottom">@dimen/d_8</item>
         <item name="android:layout_marginEnd">@dimen/d_16</item>
-        <item name="android:background">@drawable/shape_home_btn</item>
         <item name="android:textSize">@dimen/f_16</item>
         <item name="android:textColor">@color/btn_text</item>
     </style>

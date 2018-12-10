@@ -59,4 +59,6 @@ public interface Constant {
     String WORKER_TEL = "worker_tel";
     String TYPE = "type";
 
+    /* 小票宽度 */
+    String PRINT_WIDTH = "w58or80";
 }

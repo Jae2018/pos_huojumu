@@ -41,9 +41,12 @@
             android:textSize="@dimen/f_22" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/d_32"
+            android:layout_height="@dimen/d_48"
+            android:background="@color/colorPrimary"
+            android:gravity="center"
             android:text="元"
+            android:textColor="@android:color/white"
             android:textSize="@dimen/f_16" />
 
     </LinearLayout>
@@ -68,19 +71,19 @@
             android:id="@+id/tv_cash_pay_earn2"
             android:layout_width="@dimen/d_84"
             android:layout_height="@dimen/d_48"
-            android:background="@color/colorPrimary"
             android:gravity="center_vertical|end"
             android:paddingLeft="@dimen/d_8"
             android:paddingRight="@dimen/d_8"
             android:inputType="numberDecimal"
             android:textColor="@android:color/white"
+            android:focusableInTouchMode="true"
             android:textSize="@dimen/f_18" />
 
         <TextView
             android:layout_width="@dimen/d_32"
             android:layout_height="@dimen/d_48"
             android:background="@color/colorPrimary"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:text="元"
             android:textColor="@android:color/white"
             android:textSize="@dimen/f_16" />

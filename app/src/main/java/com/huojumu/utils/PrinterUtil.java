@@ -120,7 +120,7 @@ public class PrinterUtil {
      * @param leftText  左侧文字
      * @param rightText 右侧文字
      */
-    public static String printTwoData58(String leftText, String rightText) {
+    private static String printTwoData58(String leftText, String rightText) {
         StringBuilder sb = new StringBuilder();
         int leftTextLength = getBytesLength(leftText);
         int rightTextLength = getBytesLength(rightText);
@@ -142,7 +142,7 @@ public class PrinterUtil {
      * @param leftText  左侧文字
      * @param rightText 右侧文字
      */
-    public static String printTwoData80(String leftText, String rightText) {
+    private static String printTwoData80(String leftText, String rightText) {
         StringBuilder sb = new StringBuilder();
         int leftTextLength = getBytesLength(leftText);
         int rightTextLength = getBytesLength(rightText);
@@ -165,7 +165,7 @@ public class PrinterUtil {
      * @param middleText 中间文字
      * @param rightText  右侧文字
      */
-    public static String printThreeData58(String leftText, String middleText, String rightText) {
+    private static String printThreeData58(String leftText, String middleText, String rightText) {
         StringBuilder sb = new StringBuilder();
         // 左边最多显示 LEFT_TEXT_MAX_LENGTH 个汉字 + 两个点
         if (leftText.length() > LEFT_TEXT_MAX_LENGTH_58) {
@@ -196,7 +196,7 @@ public class PrinterUtil {
         return sb.toString();
     }
 
-    public static String printThreeData80(String leftText, String middleText, String rightText) {
+    private static String printThreeData80(String leftText, String middleText, String rightText) {
         StringBuilder sb = new StringBuilder();
         // 左边最多显示 LEFT_TEXT_MAX_LENGTH 个汉字 + 两个点
         if (leftText.length() > LEFT_TEXT_MAX_LENGTH_80) {
@@ -227,7 +227,7 @@ public class PrinterUtil {
         return sb.toString();
     }
 
-    //十六进制开钱箱
+    //开钱箱
     public static void OpenMoneyBox() {
         byte[] bytes = {0x1B, 0x70, 0x0, 0x3C, (byte) 0xFF};
         try {
@@ -288,97 +288,74 @@ public class PrinterUtil {
         return simpleDateFormat.format(date);
     }
 
-    public static void print(String s) {
+    /**
+     * 打印文本58mm样式// 32 字节
+     */
+    public static void printString58(final List<Products.ProductsBean> pList, final double totalPrice, final int totalNumber, final String orderNo, final String orderId, final String time) {
         try {
+            set(DOUBLE_HEIGHT_WIDTH);
+            String s = "小玎小珰\n";
             mPrinter.printString(s, "GBK");
+            set(NORMAL);
+            s = SpUtil.getString(Constant.STORE_NAME) + "\n";
+            mPrinter.printString(s, "GBK");
+            mPrinter.setAlignMode(0);
+            StringBuilder sb = new StringBuilder();
+            sb.append("门店编号：").append(SpUtil.getString(Constant.STORE_ID)).append("\n")
+                    .append("门店地址：").append(SpUtil.getString(Constant.STORE_ADDRESS)).append("\n")
+                    .append("服务专线：").append(SpUtil.getString(Constant.STORE_TEL)).append("\n")
+                    .append("订单编号：").append(orderId).append("\n")
+                    .append("付款时间：").append(time).append("\n")
+                    .append("打印时间：").append(simpleDateFormat.format(date)).append("\n\n");
+            sb.append(printThreeData58("名称", "数量", "单价")).append("\n");
+            for (Products.ProductsBean p : pList) {
+                sb.append(printThreeData58(p.getProName(), String.valueOf(p.getNumber()), String.valueOf(p.getPrice()))).append("\n");
+            }
+            sb.append(printThreeData58("合计：", String.valueOf(totalNumber), String.valueOf(totalPrice))).append("\n");
+            mPrinter.printString(sb.toString(), "GBK");
+            s = "取货码，请妥善保管\n";
+            mPrinter.setAlignMode(1);
+            mPrinter.printString(s, "GBK");
+            mPrinter.printAndFeedLine(1);
+            printQRCode(orderNo);
             cutPaper();
-        } catch (UnsupportedEncodingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * 打印文本58mm样式// 32 字节
-     */
-    public static void printString58(final List<Products.ProductsBean> pList, final double totalPrice, final int totalNumber, final String orderNo,final String orderId, final String time) {
-                try {
-                    mPrinter.setCharSize(2, 2);
-                    mPrinter.setAlignMode(1);
-                    StringBuilder sb = new StringBuilder();
-                    String s = "小玎小珰\n";
-                    mPrinter.printString(s, "GBK");
-                    mPrinter.setAlignMode(0);
-                    s = SpUtil.getString(Constant.STORE_NAME) + "\n";
-                    mPrinter.setCharSize(0, 0);
-                    mPrinter.printString(s, "GBK");
-                    mPrinter.printAndFeedLine(1);
-                    mPrinter.printAndBackToStd();
-                    s = "";
-                    s += "门店编号：" + SpUtil.getString(Constant.STORE_ID) + "\n"
-                            + "门店地址：" + SpUtil.getString(Constant.STORE_ADDRESS) + "\n"
-                            + "服务专线：" + SpUtil.getString(Constant.STORE_TEL) + "\n"
-                            + "订单编号：" + orderId + "\n"
-                            + "付款时间：" + time + "\n"
-                            + "打印时间：" + simpleDateFormat.format(date) + "\n";
-                    mPrinter.setCharSize(0, 0);
-                    mPrinter.printString(s, "GBK");
-                    mPrinter.printAndFeedLine(1);
-                    sb.append("名称        数量   单价   金额\n ").append("----------------------------------\n");
-                    for (Products.ProductsBean p : pList) {
-                        sb.append(p.getProName())
-                                .append("   ").append(p.getNumber())
-                                .append("   ").append(p.getPrice())
-                                .append("   ").append(p.getPrice() * p.getNumber()).append("\n");
-                    }
-                    sb.append("共计：").append("        ").append(totalNumber).append("           ").append(totalPrice).append("\n");
-                    mPrinter.printAndFeedLine(1);
-                    mPrinter.printString(sb.toString(), "GBK");
-                    s = "取货码，请妥善保管";
-                    mPrinter.setAlignMode(1);
-                    mPrinter.printString(s, "GBK");
-                    mPrinter.printAndFeedLine(1);
-                    printQRCode(orderNo);
-                    cutPaper();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+     * 设置命令
+     * */
+    private static void set(byte[] bytes){
+        mPrinter.writeIO(bytes,0,bytes.length,100);
     }
 
     /**
      * 打印文本80mm小票样式 48 字节
      */
-    public static void printString80(final List<Products.ProductsBean> pList, final double totalPrice, final int totalNumber, final String orderNo,final String orderId, final String time) {
+    public static void printString80(final List<Products.ProductsBean> pList, final double totalPrice, final int totalNumber, final String orderNo, final String orderId, final String time) {
         try {
-            mPrinter.setInterCharSet(2);
-            mPrinter.setAlignMode(1);
-            StringBuilder sb = new StringBuilder();
+            set(DOUBLE_HEIGHT_WIDTH);
             String s = "小玎小珰\n";
             mPrinter.printString(s, "GBK");
-            mPrinter.setAlignMode(0);
+            set(NORMAL);
             s = SpUtil.getString(Constant.STORE_NAME) + "\n";
-            mPrinter.setCharSize(0, 0);
             mPrinter.printString(s, "GBK");
-            mPrinter.printAndFeedLine(1);
-            mPrinter.printAndBackToStd();
-            s = "";
-            s += "门店编号：" + SpUtil.getString(Constant.STORE_ID) + "\n"
-                    + "门店地址：" + SpUtil.getString(Constant.STORE_ADDRESS) + "\n"
-                    + "服务专线：" + SpUtil.getString(Constant.STORE_TEL) + "\n"
-                    + "订单编号：" + orderId + "\n"
-                    + "付款时间：" + time + "\n"
-                    + "打印时间：" + simpleDateFormat.format(date) + "\n";
-            mPrinter.setCharSize(0, 0);
-            mPrinter.printString(s, "GBK");
-            mPrinter.printAndFeedLine(1);
-            sb.append("名称              数量   单价   金额\n ").append("--------------------------------------------\n");
+            mPrinter.setAlignMode(0);
+            StringBuilder sb = new StringBuilder();
+            sb.append("门店编号：").append(SpUtil.getString(Constant.STORE_ID)).append("\n")
+                    .append("门店地址：").append(SpUtil.getString(Constant.STORE_ADDRESS)).append("\n")
+                    .append("服务专线：").append(SpUtil.getString(Constant.STORE_TEL)).append("\n")
+                    .append("订单编号：").append(orderId).append("\n")
+                    .append("付款时间：").append(time).append("\n")
+                    .append("打印时间：").append(simpleDateFormat.format(date)).append("\n\n");
+            sb.append(printThreeData80("名称", "数量", "单价")).append("\n");
+            sb.append("------------------------------------------------").append("\n");
             for (Products.ProductsBean p : pList) {
-                sb.append(p.getProName())
-                        .append("         ").append(p.getNumber())
-                        .append("   ").append(p.getPrice())
-                        .append("         ").append(p.getPrice() * p.getNumber()).append("\n");
+                sb.append(printThreeData80(p.getProName(), String.valueOf(totalNumber), String.valueOf(totalPrice))).append("\n");
             }
-            sb.append("共计：").append("        ").append(totalNumber).append("           ").append(totalPrice).append("\n");
-            mPrinter.printAndFeedLine(1);
+            sb.append(printThreeData80("合计：", String.valueOf(totalNumber), String.valueOf(totalPrice))).append("\n\n");
             mPrinter.printString(sb.toString(), "GBK");
             s = "取货码，请妥善保管";
             mPrinter.setAlignMode(1);

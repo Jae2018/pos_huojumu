@@ -7,5 +7,4 @@
             <gradient android:angle="270" android:endColor="@color/btn_den" android:startColor="@color/btn_start" />
         </shape>
     </item>
-
 </selector>

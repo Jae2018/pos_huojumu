@@ -24,26 +24,25 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/d_16">
 
-            <TextView
+            <Button
                 android:id="@+id/button1"
                 android:layout_width="@dimen/d_101"
                 android:layout_height="@dimen/d_48"
-                android:background="@drawable/shape_home_btn"
                 android:gravity="center"
-                android:textSize="@dimen/f_16"
                 android:text="@string/hold_on"
-                android:textColor="@color/btn_text" />
+                android:textColor="@color/btn_text"
+                android:textSize="@dimen/f_16" />
 
             <ImageView
                 android:id="@+id/iv_has_gua_dan"
                 android:layout_width="@dimen/d_16"
                 android:layout_height="@dimen/d_16"
-                android:contentDescription="@string/des"
-                android:layout_marginEnd="@dimen/d_8"
-                android:visibility="invisible"
-                android:layout_marginTop="@dimen/d_8"
                 android:layout_alignParentEnd="true"
-                android:src="@drawable/shape_circle_red"/>
+                android:layout_marginTop="@dimen/d_8"
+                android:layout_marginEnd="@dimen/d_8"
+                android:contentDescription="@string/des"
+                android:src="@drawable/shape_circle_red"
+                android:visibility="invisible" />
         </RelativeLayout>
 
         <Button
@@ -51,7 +50,6 @@
             android:layout_width="@dimen/d_101"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/d_16"
-            android:background="@drawable/shape_home_btn"
             android:text="@string/clear"
             android:textColor="@android:color/holo_red_light" />
 
@@ -107,21 +105,21 @@
         android:id="@+id/recyclerView"
         android:layout_width="@dimen/d_250"
         android:layout_height="match_parent"
-        android:layout_below="@id/linearLayout"
         android:layout_above="@+id/relativeLayout"
+        android:layout_below="@id/linearLayout"
         android:background="@android:color/white" />
 
     <LinearLayout
         android:id="@+id/home_left_linear2"
         android:layout_width="@dimen/d_250"
         android:layout_height="@dimen/d_70"
+        android:layout_below="@id/recyclerView"
         android:background="@android:color/white"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:layout_below="@id/recyclerView"
-        android:visibility="gone"
         android:paddingLeft="@dimen/d_16"
-        android:paddingRight="@dimen/d_16">
+        android:paddingRight="@dimen/d_16"
+        android:visibility="gone">
 
         <Button
             android:id="@+id/order_des"
@@ -151,10 +149,10 @@
         android:id="@+id/relativeLayout"
         android:layout_width="@dimen/d_250"
         android:layout_height="@dimen/d_80"
+        android:layout_alignParentBottom="true"
         android:background="@color/home_left_bottom"
         android:paddingStart="@dimen/d_16"
-        android:paddingEnd="@dimen/d_16"
-        android:layout_alignParentBottom="true">
+        android:paddingEnd="@dimen/d_16">
 
         <TextView
             android:id="@+id/total_number"
@@ -187,9 +185,9 @@
         android:id="@+id/linear1"
         android:layout_width="match_parent"
         android:layout_height="@dimen/d_100"
+        android:layout_below="@+id/linearLayout"
         android:layout_marginStart="@dimen/d_260"
-        android:background="@android:color/white"
-        android:layout_below="@+id/linearLayout">
+        android:background="@android:color/white">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView2"
@@ -201,26 +199,26 @@
         android:id="@+id/view1"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_10"
+        android:layout_below="@+id/linear1"
         android:layout_marginStart="@dimen/d_260"
-        android:background="@color/default_bg"
-        android:layout_below="@+id/linear1" />
+        android:background="@color/default_bg" />
 
     <View
         android:layout_width="@dimen/dp_10"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/d_80"
-        android:layout_toEndOf="@+id/recyclerView"
         android:layout_marginBottom="@dimen/d_80"
+        android:layout_toEndOf="@+id/recyclerView"
         android:background="@color/default_bg" />
 
     <FrameLayout
         android:id="@+id/linear2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/d_260"
-        android:background="@android:color/white"
         android:layout_above="@id/linear3"
-        android:layout_below="@+id/view1">
+        android:layout_below="@+id/view1"
+        android:layout_marginStart="@dimen/d_260"
+        android:background="@android:color/white">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView3"
@@ -233,11 +231,11 @@
         android:id="@+id/linear3"
         android:layout_width="match_parent"
         android:layout_height="@dimen/d_80"
+        android:layout_alignParentBottom="true"
         android:layout_marginStart="@dimen/d_250"
         android:background="@color/default_bg"
         android:orientation="horizontal"
-        android:padding="@dimen/d_8"
-        android:layout_alignParentBottom="true">
+        android:padding="@dimen/d_8">
 
         <Button
             android:id="@+id/btn_home_quick_pay"
@@ -249,7 +247,6 @@
             android:id="@+id/btn_home_check_out"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:enabled="false"
             android:text="@string/checkout" />
 
         <Button

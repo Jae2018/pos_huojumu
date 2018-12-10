@@ -33,6 +33,7 @@ import com.huojumu.adapter.HomeSelectedAdapter;
 import com.huojumu.adapter.HomeTypeAdapter;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.dialog.SingleProAddonDialog;
+import com.huojumu.main.activity.function.PayByBoxActivity;
 import com.huojumu.main.activity.function.PaymentActivity;
 import com.huojumu.main.activity.work.DailyTakeOverActivity;
 import com.huojumu.main.dialogs.CashPayDialog;
@@ -61,7 +62,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -285,7 +285,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     public void sendMsg(String s) {
         if ("0".equals(s)) {
             //付款完成
-            PrintOrder(2);
+            PrintOrder(SpUtil.getBoolean(Constant.PRINT_WIDTH));
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -317,7 +317,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
         total_number.setText(String.format("数量：%s 杯", totalCount));
         total_price.setText(String.format("总价：%s 元", totalPrice));
-        cut_number.setText(String.format("优惠：%s 元", totalCut));
+        cut_number.setText(String.format("优惠：%.2s 元", totalCut));
         this.totalPrice = totalPrice;
         this.totalCount = totalCount;
         //副屏刷新
@@ -386,10 +386,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             ToastUtils.showLong("还未点餐！");
             return;
         }
-        if (quickPayDialog == null) {
-            quickPayDialog = new QuickPayDialog(this, this);
-        }
-        quickPayDialog.show();
+        Intent i = new Intent(HomeActivity.this, PayByBoxActivity.class);
+        startActivity(i);
     }
 
     /**
@@ -437,12 +435,20 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     @OnClick(R.id.btn_home_check_out)
     void goCheckOut() {
-        Intent i = new Intent(HomeActivity.this, PaymentActivity.class);
-        if (orderInfo != null) {
-            i.putExtra("orderJson", PrinterUtil.toJson(orderInfo));
+        if (productions.isEmpty()) {
+            ToastUtils.showLong("还未点餐！");
+            return;
         }
-        i.putExtra("orderTotal", totalPrice);
-        startActivity(i);
+//        Intent i = new Intent(HomeActivity.this, PaymentActivity.class);
+//        if (orderInfo != null) {//
+//            i.putExtra("orderJson", PrinterUtil.toJson(orderInfo));
+//        }
+//        i.putExtra("orderTotal", totalPrice);
+//        startActivity(i);
+        if (quickPayDialog == null) {
+            quickPayDialog = new QuickPayDialog(this, this);
+        }
+        quickPayDialog.show();
     }
 
     /**
@@ -494,7 +500,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     @Override
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
                         pickUpCode = response.getData().getPickUpCode();
-                        PrintOrder(2);
+                        PrintOrder(SpUtil.getBoolean(Constant.PRINT_WIDTH));
                         productions.clear();
                         list.clear();
                         selectedAdapter.setNewData(null);
@@ -564,16 +570,16 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     /**
      * 打印订单小票、本地生成 "订单号" 与 "取货码"
      */
-    private void PrintOrder(int type) {
+    private void PrintOrder(boolean type) {
         PrinterUtil.OpenMoneyBox();
-        if (type == 1) {
+        if (type) {
             PrinterUtil.printString58(productions, totalPrice, totalCount, pickUpCode, orderInfo.getOrderID(), orderInfo.getCreateTime());
         } else {
             PrinterUtil.printString80(productions, totalPrice, totalCount, pickUpCode, orderInfo.getOrderID(), orderInfo.getCreateTime());
         }
-        total_number.setText("");
-        total_price.setText("");
-        cut_number.setText("");
+        total_number.setText("数量：");
+        total_price.setText("总价：");
+        cut_number.setText("优惠：");
     }
 
 

@@ -28,8 +28,7 @@
             android:id="@+id/iv_work_daily_avatar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/des"
-            android:src="@drawable/ic_avatar_default" />
+            android:contentDescription="@string/des" />
 
         <TextView
             android:id="@+id/tv_work_daily_name"
@@ -51,14 +50,14 @@
             android:id="@+id/btn_work_daily_type1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="按订单"
-            android:layout_marginEnd="@dimen/d_16"/>
+            android:layout_marginEnd="@dimen/d_16"
+            android:text="按订单" />
 
         <Button
             android:id="@+id/btn_work_daily_type2"
-            android:text="按明细"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="按明细" />
     </LinearLayout>
 
     <View
@@ -91,9 +90,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 android:text="实    收："
-                android:textSize="@dimen/f_26"
-                android:gravity="center_vertical" />
+                android:textSize="@dimen/f_26" />
 
             <TextView
                 android:id="@+id/tv_daily_earn1"
@@ -104,8 +103,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical"
                 android:layout_marginStart="@dimen/d_16"
+                android:gravity="center_vertical"
                 android:text="虚收："
                 android:textSize="@dimen/f_26" />
 

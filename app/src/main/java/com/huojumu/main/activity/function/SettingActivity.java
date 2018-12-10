@@ -9,6 +9,8 @@ import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.main.activity.login.LoginActivity;
+import com.huojumu.utils.Constant;
+import com.huojumu.utils.SpUtil;
 
 import java.io.File;
 
@@ -39,8 +41,12 @@ public class SettingActivity extends BaseActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 //控制开关字体颜色
                 if (b) {
+                    //58mm
+                    SpUtil.save(Constant.PRINT_WIDTH, true);
                     aSwitch.setSwitchTextAppearance(SettingActivity.this, R.style.s_true);
                 } else {
+                    //80mm
+                    SpUtil.save(Constant.PRINT_WIDTH, false);
                     aSwitch.setSwitchTextAppearance(SettingActivity.this, R.style.s_false);
                 }
             }

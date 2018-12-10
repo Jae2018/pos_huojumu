@@ -98,7 +98,6 @@
         android:layout_width="@dimen/d_350"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/d_10"
-        android:background="@drawable/shape_addon_background"
         android:gravity="top"
         android:hint="@string/des"
         android:inputType="text"

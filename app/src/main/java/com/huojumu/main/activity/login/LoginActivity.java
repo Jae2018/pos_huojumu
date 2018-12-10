@@ -20,7 +20,6 @@ import com.huojumu.model.BaseBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
-import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
@@ -83,36 +82,35 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.login_btn)
     void Login() {
-//        String name = accountED.getText().toString();
-//        String pwd = pwdED.getText().toString();
-//        String code = edCode.getText().toString();
-//        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(pwd)) {
-//            Toast.makeText(this, "用户名或密码错误", Toast.LENGTH_LONG).show();
-//            return;
-//        }
-//        if (code.isEmpty()) {
-//            Toast.makeText(this, "请输入验证码！", Toast.LENGTH_LONG).show();
-//            return;
-//        }
-//        NetTool.login(name, pwd, code, SpUtil.getString(Constant.UUID), new GsonResponseHandler<BaseBean<String>>() {
-//            @Override
-//            public void onSuccess(int statusCode, BaseBean<String> response) {
-//                if (response.getData().isEmpty()) {
-//                    ToastUtils.showLong(response.getMsg());
-//                    getCode();
-//                } else {
-//                    SpUtil.save(Constant.MY_TOKEN, "Bearer " + response.getData());
-//                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-//                    finish();
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(int statusCode, String error_msg) {
-//
-//            }
-//        });
-        PrinterUtil.print("哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈");
+        String name = accountED.getText().toString();
+        String pwd = pwdED.getText().toString();
+        String code = edCode.getText().toString();
+        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(pwd)) {
+            Toast.makeText(this, "用户名或密码错误", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (code.isEmpty()) {
+            Toast.makeText(this, "请输入验证码！", Toast.LENGTH_LONG).show();
+            return;
+        }
+        NetTool.login(name, pwd, code, SpUtil.getString(Constant.UUID), new GsonResponseHandler<BaseBean<String>>() {
+            @Override
+            public void onSuccess(int statusCode, BaseBean<String> response) {
+                if (response.getData().isEmpty()) {
+                    ToastUtils.showLong(response.getMsg());
+                    getCode();
+                } else {
+                    SpUtil.save(Constant.MY_TOKEN, "Bearer " + response.getData());
+                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, String error_msg) {
+
+            }
+        });
     }
 
     @OnClick(R.id.image_code)

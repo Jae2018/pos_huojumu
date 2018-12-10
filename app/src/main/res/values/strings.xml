@@ -32,4 +32,6 @@
     <string name="takeout" translatable="false">外卖</string>
     <string name="handover" translatable="false">交班</string>
     <string name="daily" translatable="false">日结</string>
+    <string name="cash" translatable="false">现金</string>
+    <string name="xiaobaohe" translatable="false">小白盒</string>
 </resources>

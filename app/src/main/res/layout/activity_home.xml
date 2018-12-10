@@ -241,13 +241,13 @@
             android:id="@+id/btn_home_quick_pay"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="@string/home_quick_invoice" />
+            android:text="@string/xiaobaohe" />
 
         <Button
             android:id="@+id/btn_home_check_out"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="@string/checkout" />
+            android:text="@string/cash" />
 
         <Button
             android:id="@+id/btn_home_take_out"

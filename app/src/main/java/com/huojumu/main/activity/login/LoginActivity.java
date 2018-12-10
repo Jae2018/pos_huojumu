@@ -53,6 +53,12 @@ public class LoginActivity extends BaseActivity {
                     Login();
                     return true;
                 }
+//                else if (event.getAction() == KeyEvent.ACTION_UP) {
+//                    //扫描到的数据
+//                    String s = v.getText().toString().trim();
+//                    //拿到数据后做其他操作
+//                    return true;
+//                }
                 return false;
             }
         });

@@ -478,6 +478,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             client.dispatcher().executorService().shutdown();
                             saveOrder(response.getData(), 2);
                             saveOrder2();
+                            selectedAdapter.setNewData(null);
                             productions.clear();
                             list.clear();
                             orderInfo = null;
@@ -501,11 +502,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
                         pickUpCode = response.getData().getPickUpCode();
                         PrintOrder(SpUtil.getBoolean(Constant.PRINT_WIDTH));
-                        productions.clear();
-                        list.clear();
-                        selectedAdapter.setNewData(null);
                         saveOrder(response.getData(), 1);
                         saveOrder2();
+                        selectedAdapter.setNewData(null);
+                        productions.clear();
+                        list.clear();
                         orderInfo = null;
                     }
 

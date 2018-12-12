@@ -3,6 +3,7 @@ package com.huojumu.main.activity.work;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -51,7 +52,7 @@ public class DailyTakeOverActivity extends BaseActivity {
     private WorkDailyAdapter dailyAdapter;
     private WorkDailyDetailAdapter detailAdapter;
     private int type;
-    private double totalSell,totalEarn1, totalEarn2;
+    private double totalSell, totalEarn1, totalEarn2;
 
     @Override
     protected int setLayout() {
@@ -78,6 +79,8 @@ public class DailyTakeOverActivity extends BaseActivity {
         List<OrderDetail> detailList = MyApplication.getDb().getDetailDao().getOrderSaveList();
         dailyAdapter.setNewData(orderSaveList);
         detailAdapter.setNewData(detailList);
+        Log.e("work", "orderSaveList:" + orderSaveList.size());
+        Log.e("work", "detailList:" + detailList.size());
 
         for (OrderSave orderSave : orderSaveList) {
             totalSell += orderSave.getPrice();

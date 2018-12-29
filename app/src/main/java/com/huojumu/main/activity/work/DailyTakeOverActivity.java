@@ -21,6 +21,7 @@ import com.huojumu.utils.SpUtil;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -79,18 +80,20 @@ public class DailyTakeOverActivity extends BaseActivity {
         List<OrderDetail> detailList = MyApplication.getDb().getDetailDao().getOrderSaveList();
         dailyAdapter.setNewData(orderSaveList);
         detailAdapter.setNewData(detailList);
-        Log.e("work", "orderSaveList:" + orderSaveList.size());
-        Log.e("work", "detailList:" + detailList.size());
+
+        for (OrderDetail detail : detailList) {
+            Log.e("work", detail.getProName() + ":" + detail.getNumber());
+        }
 
         for (OrderSave orderSave : orderSaveList) {
             totalSell += orderSave.getPrice();
             totalEarn1 += orderSave.getEarn1();
             totalEarn2 += orderSave.getEarn2();
         }
-        earn1.setText(String.valueOf(totalEarn1));
-        earn2.setText(String.valueOf(totalEarn2));
-        sellTv.setText(String.valueOf(totalSell));
-        commissionTv.setText(String.valueOf(totalSell / 10));
+        earn1.setText(String.format(Locale.CHINA,"%.2f",totalEarn1));
+        earn2.setText(String.format(Locale.CHINA,"%.2f",totalEarn2));
+        sellTv.setText(String.format(Locale.CHINA,"%.2f",totalSell));
+        commissionTv.setText(String.format(Locale.CHINA,"%.2f",totalSell / 10));
     }
 
     @OnClick(R.id.btn_work_daily_type1)

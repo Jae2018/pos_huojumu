@@ -8,14 +8,13 @@
         android:id="@+id/linearLayout6"
         android:layout_width="match_parent"
         android:background="@color/colorPrimary"
-        android:paddingLeft="@dimen/d_16"
-        android:paddingRight="@dimen/d_16"
-        android:layout_height="@dimen/d_48">
+        android:layout_height="@dimen/d_56">
 
         <ImageView
             android:id="@+id/iv_back"
-            android:layout_width="@dimen/d_32"
-            android:layout_height="@dimen/d_48"
+            android:layout_width="@dimen/d_80"
+            android:layout_height="match_parent"
+            android:padding="@dimen/d_8"
             android:contentDescription="@string/des"
             android:src="@drawable/ic_back" />
 
@@ -30,7 +29,7 @@
             android:layout_height="@dimen/d_48" />
 
         <View
-            android:layout_width="@dimen/d_48"
+            android:layout_width="@dimen/d_80"
             android:layout_height="@dimen/d_48" />
 
     </LinearLayout>

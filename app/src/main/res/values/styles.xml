@@ -27,13 +27,15 @@
     </style>
 
     <style name="HomeButtonStyle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">@dimen/d_101</item>
+        <item name="android:layout_height">@dimen/d_48</item>
         <item name="android:layout_marginTop">@dimen/d_8</item>
         <item name="android:layout_marginBottom">@dimen/d_8</item>
         <item name="android:layout_marginEnd">@dimen/d_16</item>
         <item name="android:textSize">@dimen/f_16</item>
         <item name="android:textColor">@color/btn_text</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@color/btn_den</item>
     </style>
 
     <!-- 自定义diaolog   windowBackground 放一张透明背景，去dialog黑边 -->

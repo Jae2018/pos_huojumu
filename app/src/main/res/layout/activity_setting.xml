@@ -6,13 +6,14 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d_48"
+        android:layout_height="@dimen/d_56"
         android:background="@color/colorPrimary">
 
         <ImageView
             android:id="@+id/iv_back"
-            android:layout_width="@dimen/d_48"
-            android:layout_height="@dimen/d_32"
+            android:layout_width="@dimen/d_80"
+            android:layout_height="match_parent"
+            android:padding="@dimen/d_8"
             android:layout_gravity="center_vertical"
             android:contentDescription="@string/des"
             android:src="@drawable/ic_back" />
@@ -27,7 +28,7 @@
             android:textSize="@dimen/f_20" />
 
         <View
-            android:layout_width="@dimen/d_48"
+            android:layout_width="@dimen/d_80"
             android:layout_height="@dimen/d_48" />
 
     </LinearLayout>

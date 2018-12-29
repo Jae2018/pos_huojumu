@@ -62,7 +62,7 @@
         <!--app:layout_constraintTop_toTopOf="parent" />-->
 
     <LinearLayout
-        android:layout_width="@dimen/d_300"
+        android:layout_width="@dimen/d_380"
         android:layout_height="@dimen/d_300"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
@@ -115,7 +115,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/d_56"
+            android:layout_height="@dimen/d_64"
             android:orientation="horizontal">
 
             <TextView
@@ -130,6 +130,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
+                android:maxLines="1"
                 android:hint="验证码" />
 
             <ImageView
@@ -137,7 +138,7 @@
                 android:contentDescription="@string/des"
                 android:background="@color/btn_den"
                 android:scaleType="fitXY"
-                android:layout_width="@dimen/d_96"
+                android:layout_width="@dimen/d_120"
                 android:layout_height="match_parent" />
         </LinearLayout>
 

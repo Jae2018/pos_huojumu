@@ -7,16 +7,15 @@
     <LinearLayout
         android:id="@+id/linearLayout5"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d_64"
-        android:background="@color/colorPrimary"
-        android:paddingLeft="@dimen/d_16"
-        android:paddingRight="@dimen/d_16">
+        android:layout_height="@dimen/d_56"
+        android:background="@color/colorPrimary" >
 
         <ImageView
             android:id="@+id/iv_work_daily_back"
-            android:layout_width="@dimen/d_48"
-            android:layout_height="@dimen/d_48"
+            android:layout_width="@dimen/d_80"
+            android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
+            android:padding="@dimen/d_8"
             android:contentDescription="@string/des"
             android:src="@drawable/ic_back" />
 
@@ -32,7 +31,7 @@
             android:textSize="@dimen/f_30" />
 
         <View
-            android:layout_width="@dimen/d_64"
+            android:layout_width="@dimen/d_80"
             android:layout_height="match_parent" />
     </LinearLayout>
 

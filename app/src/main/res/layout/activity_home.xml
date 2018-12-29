@@ -24,13 +24,14 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/d_16">
 
-            <Button
+            <TextView
                 android:id="@+id/button1"
                 android:layout_width="@dimen/d_101"
                 android:layout_height="@dimen/d_48"
                 android:gravity="center"
                 android:text="@string/hold_on"
                 android:textColor="@color/btn_text"
+                android:background="@color/btn_den"
                 android:textSize="@dimen/f_16" />
 
             <ImageView
@@ -39,21 +40,23 @@
                 android:layout_height="@dimen/d_16"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="@dimen/d_8"
+                android:visibility="invisible"
                 android:layout_marginEnd="@dimen/d_8"
                 android:contentDescription="@string/des"
-                android:src="@drawable/shape_circle_red"
-                android:visibility="invisible" />
+                android:src="@drawable/shape_circle_red" />
         </RelativeLayout>
 
-        <Button
+        <TextView
+            android:background="@color/btn_den"
             android:id="@+id/button2"
             android:layout_width="@dimen/d_101"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/d_48"
             android:layout_marginEnd="@dimen/d_16"
+            android:gravity="center"
             android:text="@string/clear"
             android:textColor="@android:color/holo_red_light" />
 
-        <Button
+        <TextView
             android:id="@+id/button3"
             style="@style/HomeButtonStyle"
             android:layout_marginStart="@dimen/d_16"

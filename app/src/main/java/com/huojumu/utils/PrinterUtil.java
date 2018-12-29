@@ -288,15 +288,23 @@ public class PrinterUtil {
         return simpleDateFormat.format(date);
     }
 
+    public static String getOrderNo() {
+        simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA);
+        simpleDateFormat.format(date);
+        return simpleDateFormat.format(date);
+    }
+
     /**
      * 打印文本58mm样式// 32 字节
      */
     public static void printString58(final List<Products.ProductsBean> pList, final double totalPrice, final int totalNumber, final String orderNo, final String orderId, final String time) {
         try {
-            set(DOUBLE_HEIGHT_WIDTH);
+//            set(DOUBLE_HEIGHT_WIDTH);
+            mPrinter.setCharSize(2, 2);
             String s = "小玎小珰\n";
             mPrinter.printString(s, "GBK");
-            set(NORMAL);
+//            set(NORMAL);
+            mPrinter.setCharSize(0, 0);
             s = SpUtil.getString(Constant.STORE_NAME) + "\n";
             mPrinter.printString(s, "GBK");
             mPrinter.setAlignMode(0);
@@ -336,10 +344,12 @@ public class PrinterUtil {
      */
     public static void printString80(final List<Products.ProductsBean> pList, final double totalPrice, final int totalNumber, final String orderNo, final String orderId, final String time) {
         try {
-            set(DOUBLE_HEIGHT_WIDTH);
+//            set(DOUBLE_HEIGHT_WIDTH);
+            mPrinter.setCharSize(2, 2);
             String s = "小玎小珰\n";
             mPrinter.printString(s, "GBK");
-            set(NORMAL);
+//            set(NORMAL);
+            mPrinter.setCharSize(0, 0);
             s = SpUtil.getString(Constant.STORE_NAME) + "\n";
             mPrinter.printString(s, "GBK");
             mPrinter.setAlignMode(0);

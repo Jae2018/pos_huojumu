@@ -42,6 +42,7 @@ public class PayByBoxActivity extends BaseActivity {
         WebSettings settings = webView.getSettings();
         settings.setUseWideViewPort(true);
         settings.setJavaScriptEnabled(true);
+        settings.setAppCacheEnabled(true);
         webView.loadUrl(loadUrl);
     }
 

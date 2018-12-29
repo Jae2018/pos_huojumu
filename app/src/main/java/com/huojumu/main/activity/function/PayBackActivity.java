@@ -109,7 +109,7 @@ public class PayBackActivity extends BaseActivity {
                         OrderDetail detail = detailDao.getSingleOrder(list.get(i).getProName());
                         int n = detail.getNumber();
                         detail.setNumber(n - list.get(i).getProCount());
-                        detailDao.updateOrder(detail);
+                        detailDao.updateOrder(detail.getProName(), detail.getNumber());
                     }
                     new Handler().postDelayed(new Runnable() {
                         @Override

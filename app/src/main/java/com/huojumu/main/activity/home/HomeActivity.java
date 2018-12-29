@@ -11,6 +11,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -34,7 +35,6 @@ import com.huojumu.adapter.HomeTypeAdapter;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.dialog.SingleProAddonDialog;
 import com.huojumu.main.activity.function.PayByBoxActivity;
-import com.huojumu.main.activity.function.PaymentActivity;
 import com.huojumu.main.activity.work.DailyTakeOverActivity;
 import com.huojumu.main.dialogs.CashPayDialog;
 import com.huojumu.main.dialogs.CertainDialog;
@@ -327,7 +327,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
 
         orderInfo = new OrderInfo();
-        orderInfo.setOrderID("0000" + System.currentTimeMillis());
+        orderInfo.setOrderID("0000" + PrinterUtil.getOrderNo());
+        Log.e("home", "0000" + PrinterUtil.getOrderNo());
         orderInfo.setShopID(SpUtil.getInt(Constant.STORE_ID));
         orderInfo.setCreateTime(PrinterUtil.getDate());
         orderInfo.setEnterpriseID(SpUtil.getInt(Constant.ENT_ID));
@@ -544,10 +545,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             detail.setProName(p.getProName());
             detail.setNumber(p.getNumber());
             detail.setSell(p.getPrice());
-            if (detailDao.getSingleOrder(p.getProName()) == null) {
+            OrderDetail detail2 = detailDao.getSingleOrder(p.getProName());
+            if (detail2 == null) {
                 detailDao.save(detail);
             } else {
-                detailDao.updateOrder(detail);
+                detail.setNumber(detail2.getNumber() + p.getNumber());
+                detailDao.updateOrder(detail.getProName(), detail.getNumber());
             }
         }
     }

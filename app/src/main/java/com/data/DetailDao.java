@@ -24,8 +24,8 @@ public interface DetailDao {
     @Query("select * from order_temp where proName=:proName ")
     OrderDetail getSingleOrder(String proName);
 
-    @Update
-    void updateOrder(OrderDetail orderDetail);
+    @Query("update order_temp set proName=:proName where number=:number")
+    void updateOrder(String proName,int number);
 
     @Insert
     void save(OrderDetail orderDetail);

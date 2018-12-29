@@ -140,11 +140,11 @@ public class NetTool {
     public static void getPayBack(int shopId, String orderId, GsonResponseHandler<BaseBean<String>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "pay/refund.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
-                .addParam("shopId", shopId+"")
+                .addParam("shopId", shopId + "")
                 .addParam("orderId", orderId + "")
                 .addParam("cancelRadio", "pos退单")
-                .addParam("payType","cash")
-                .addParam("cancelTadio","pos退单")
+                .addParam("payType", "cash")
+                .addParam("cancelTadio", "pos退单")
                 .enqueue(handler);
     }
 
@@ -166,7 +166,14 @@ public class NetTool {
     public static void getOrderInfo(String orderid, GsonResponseHandler<BaseBean<OrderBackInfo>> handler) {///system/orderdetail.action
         okHttp.post()
                 .url(Constant.BASE_URL + "system/orderdetail.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
-                .addParam("orderid", orderid + "")
+                .addParam("orderid", orderid)
+                .enqueue(handler);
+    }
+
+    public static void getOrderList(String type, GsonResponseHandler<BaseBean<OrderBackInfo>> handler) {///system/orderdetail.action
+        okHttp.post()
+                .url(Constant.BASE_URL + "system/orderon.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .addParam("type", type)
                 .enqueue(handler);
     }
 }

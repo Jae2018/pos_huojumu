@@ -161,7 +161,7 @@
             android:drawableTop="@drawable/ic_fjs_function"
             android:drawablePadding="@dimen/d_8"
             android:gravity="center"
-            android:text="库存查询" />
+            android:text="原料统计" />
 
         <TextView
             android:id="@+id/iv_more_fuc12"

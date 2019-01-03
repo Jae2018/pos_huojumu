@@ -19,9 +19,7 @@ import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.OrderBackInfo;
-import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
-import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
 import java.util.List;

@@ -3,6 +3,7 @@ package com.huojumu.main.activity.function;
 import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.huojumu.R;
 import com.huojumu.adapter.VipListAdapter;
@@ -45,6 +46,14 @@ public class VipActivity extends BaseActivity {
         GridLayoutManager manager = new GridLayoutManager(this, 3);
         recyclerView.setLayoutManager(manager);
         recyclerView.addItemDecoration(new MyDividerDecoration(this, MyDividerDecoration.VERTICAL));
+        for (int i = 0; i < 10; i++) {
+            Vips v = new Vips();
+            v.setGrade(String.valueOf(i * 10));
+            v.setId(i + "");
+            v.setName("測試");
+            v.setSex(i % 2 == 0 ? "男" : "女");
+            vips.add(v);
+        }
         adapter = new VipListAdapter(vips);
         recyclerView.setAdapter(adapter);
     }
@@ -54,7 +63,10 @@ public class VipActivity extends BaseActivity {
         NetTool.getVipList(SpUtil.getInt(Constant.ENT_ID), SpUtil.getInt(Constant.PINPAI_ID), new GsonResponseHandler<BaseBean<List<Vips>>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<List<Vips>> response) {
-                adapter.setNewData(response.getData());
+                Log.e("da", response.getData().size()+"");
+                if (!response.getData().isEmpty()) {
+                    adapter.setNewData(response.getData());
+                }
             }
 
             @Override

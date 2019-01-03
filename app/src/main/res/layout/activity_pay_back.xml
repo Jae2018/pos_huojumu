@@ -40,6 +40,8 @@
                 android:layout_height="@dimen/d_56"
                 android:layout_weight="1"
                 android:layout_marginStart="@dimen/d_1"
+                android:focusableInTouchMode="true"
+                android:focusable="true"
                 android:layout_marginEnd="@dimen/d_1"
                 android:inputType="text" />
 

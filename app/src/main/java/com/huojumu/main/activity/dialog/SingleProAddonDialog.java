@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,8 +31,6 @@ import butterknife.OnClick;
  */
 public class SingleProAddonDialog extends BaseDialog {
 
-    private String TAG = SingleProAddonDialog.class.getSimpleName();
-
     @BindView(R.id.recycler_home_addon_scale)
     Button scaleBtn;//杯型
     @BindView(R.id.recycler_home_addon_taste)
@@ -53,7 +50,6 @@ public class SingleProAddonDialog extends BaseDialog {
 
     private SingleProCallback callback;//dialog回调
 
-    private int tasteNumber = 1;
 
     private boolean isChange;
 
@@ -180,7 +176,6 @@ public class SingleProAddonDialog extends BaseDialog {
         }
 
         number = 1;
-        tasteNumber = 1;
         cancel();
     }
 

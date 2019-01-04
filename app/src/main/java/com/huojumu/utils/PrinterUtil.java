@@ -259,7 +259,6 @@ public class PrinterUtil {
     public static void connectPrinter(Context context) {
         mPrinter = new PrinterAPI();
         io = new USBAPI(context);
-        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         date = new Date(System.currentTimeMillis());
         if (PrinterAPI.SUCCESS == mPrinter.connect(io)) {
             ToastUtils.showLong("已连接打印机");
@@ -279,6 +278,7 @@ public class PrinterUtil {
     }
 
     public static String getDate() {
+        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         return simpleDateFormat.format(date);
     }
 

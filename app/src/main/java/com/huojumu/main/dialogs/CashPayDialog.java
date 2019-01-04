@@ -2,10 +2,13 @@ package com.huojumu.main.dialogs;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.huojumu.R;
 import com.huojumu.base.BaseDialog;
 
@@ -45,6 +48,23 @@ public class CashPayDialog extends BaseDialog {
     @Override
     public void initView() {
         earn1.setText(String.valueOf(cost));
+        earn2.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                cash = Integer.valueOf(s.toString());
+                change.setText(String.valueOf(cash - cost));
+            }
+        });
     }
 
     @OnClick({R.id.dialog_cash_pay_ten, R.id.dialog_cash_pay_twenty, R.id.dialog_cash_pay_fifty, R.id.dialog_cash_pay_hundred})
@@ -74,6 +94,11 @@ public class CashPayDialog extends BaseDialog {
 
     @OnClick(R.id.cash_dialog_ok)
     void OnOk() {
+        if (cash == 0) {
+            ToastUtils.showLong("还未输入收款金额");
+            earn2.setFocusable(true);
+            return;
+        }
         anInterface.OnDialogOkClick(cash - cost, "CashPayDialog");
     }
 

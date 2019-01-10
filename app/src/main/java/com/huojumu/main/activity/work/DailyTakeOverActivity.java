@@ -86,6 +86,7 @@ public class DailyTakeOverActivity extends BaseActivity {
         }
 
         for (OrderSave orderSave : orderSaveList) {
+            Log.e("price", orderSave.getPrice()+"" );
             totalSell += orderSave.getPrice();
             totalEarn1 += orderSave.getEarn1();
             totalEarn2 += orderSave.getEarn2();
@@ -93,6 +94,7 @@ public class DailyTakeOverActivity extends BaseActivity {
         earn1.setText(String.format(Locale.CHINA,"%.2f",totalEarn1));
         earn2.setText(String.format(Locale.CHINA,"%.2f",totalEarn2));
         sellTv.setText(String.format(Locale.CHINA,"%.2f",totalSell));
+        Log.e("daily", totalSell+"" );
         commissionTv.setText(String.format(Locale.CHINA,"%.2f",totalSell / 10));
     }
 

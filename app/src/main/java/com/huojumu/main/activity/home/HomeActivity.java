@@ -327,8 +327,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
 
         orderInfo = new OrderInfo();
-        orderInfo.setOrderID("0000" + PrinterUtil.getOrderNo());
-        Log.e("home", "0000" + PrinterUtil.getOrderNo());
+        orderInfo.setOrderID(PrinterUtil.getOrderNo());
         orderInfo.setShopID(SpUtil.getInt(Constant.STORE_ID));
         orderInfo.setCreateTime(PrinterUtil.getDate());
         orderInfo.setEnterpriseID(SpUtil.getInt(Constant.ENT_ID));

@@ -166,15 +166,17 @@
             android:background="@drawable/ic_sub"
             android:contentDescription="@string/des" />
 
-        <TextView
+        <EditText
             android:id="@+id/tv_home_addon_number"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/d_64"
             android:layout_height="@dimen/d_40"
-            android:background="@android:color/white"
             android:gravity="center"
             android:maxLength="4"
             android:minWidth="@dimen/dp_40"
             android:paddingTop="@dimen/d_4"
+            android:focusable="true"
+            android:inputType="number"
+            android:focusableInTouchMode="true"
             android:paddingBottom="@dimen/d_4"
             android:textSize="@dimen/f_20"
             android:text="1"

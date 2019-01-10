@@ -14,7 +14,6 @@ import com.szsicod.print.escpos.PrinterAPI;
 import com.szsicod.print.io.USBAPI;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -289,9 +288,8 @@ public class PrinterUtil {
     }
 
     public static String getOrderNo() {
-        simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA);
-        simpleDateFormat.format(date);
-        return simpleDateFormat.format(date);
+        simpleDateFormat = new SimpleDateFormat("yyMMddHHmm", Locale.CHINA);
+        return simpleDateFormat.format(new Date());
     }
 
     /**
@@ -301,7 +299,7 @@ public class PrinterUtil {
         try {
 //            set(DOUBLE_HEIGHT_WIDTH);
             mPrinter.setCharSize(2, 2);
-            String s = "小玎小珰\n";
+            String s = SpUtil.getString(Constant.PINPAI_ID) + "\n";
             mPrinter.printString(s, "GBK");
 //            set(NORMAL);
             mPrinter.setCharSize(0, 0);
@@ -334,9 +332,9 @@ public class PrinterUtil {
 
     /**
      * 设置命令
-     * */
-    private static void set(byte[] bytes){
-        mPrinter.writeIO(bytes,0,bytes.length,100);
+     */
+    private static void set(byte[] bytes) {
+        mPrinter.writeIO(bytes, 0, bytes.length, 100);
     }
 
     /**
@@ -344,16 +342,17 @@ public class PrinterUtil {
      */
     public static void printString80(final List<Products.ProductsBean> pList, final double totalPrice, final int totalNumber, final String orderNo, final String orderId, final String time) {
         try {
-//            set(DOUBLE_HEIGHT_WIDTH);
+            set(DOUBLE_HEIGHT_WIDTH);
             mPrinter.setCharSize(2, 2);
-            String s = "小玎小珰\n";
+            String s = SpUtil.getString(Constant.PINPAI_ID) + "\n";
             mPrinter.printString(s, "GBK");
-//            set(NORMAL);
+            set(NORMAL);
             mPrinter.setCharSize(0, 0);
             s = SpUtil.getString(Constant.STORE_NAME) + "\n";
             mPrinter.printString(s, "GBK");
             mPrinter.setAlignMode(0);
             StringBuilder sb = new StringBuilder();
+            StringBuilder addon = new StringBuilder();
             sb.append("门店编号：").append(SpUtil.getString(Constant.STORE_ID)).append("\n")
                     .append("门店地址：").append(SpUtil.getString(Constant.STORE_ADDRESS)).append("\n")
                     .append("服务专线：").append(SpUtil.getString(Constant.STORE_TEL)).append("\n")
@@ -362,17 +361,21 @@ public class PrinterUtil {
                     .append("打印时间：").append(simpleDateFormat.format(date)).append("\n\n");
             sb.append(printThreeData80("名称", "数量", "单价")).append("\n");
             sb.append("------------------------------------------------").append("\n");
+            addon.append("备注：");
             for (Products.ProductsBean p : pList) {
                 sb.append(printThreeData80(p.getProName(), String.valueOf(totalNumber), String.valueOf(totalPrice))).append("\n");
+                addon.append(p.getAddon()).append("\n");
             }
             sb.append(printThreeData80("合计：", String.valueOf(totalNumber), String.valueOf(totalPrice))).append("\n\n");
             mPrinter.printString(sb.toString(), "GBK");
+            mPrinter.printString(addon.toString(), "GBK");
             s = "取货码，请妥善保管";
             mPrinter.setAlignMode(1);
             mPrinter.printString(s, "GBK");
             mPrinter.printAndFeedLine(1);
             printQRCode(orderNo);
             cutPaper();
+            Log.e(TAG, "printString80: ");
         } catch (Exception e) {
             e.printStackTrace();
         }

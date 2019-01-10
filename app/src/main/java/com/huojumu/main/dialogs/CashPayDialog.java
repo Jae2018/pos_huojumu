@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.huojumu.R;
 import com.huojumu.base.BaseDialog;
 
@@ -94,11 +93,11 @@ public class CashPayDialog extends BaseDialog {
 
     @OnClick(R.id.cash_dialog_ok)
     void OnOk() {
-        if (cash == 0) {
-            ToastUtils.showLong("还未输入收款金额");
-            earn2.setFocusable(true);
-            return;
-        }
+//        if (cash == 0) {
+//            ToastUtils.showLong("还未输入收款金额");
+//            earn2.setFocusable(true);
+//            return;
+//        }
         anInterface.OnDialogOkClick(cash - cost, "CashPayDialog");
     }
 

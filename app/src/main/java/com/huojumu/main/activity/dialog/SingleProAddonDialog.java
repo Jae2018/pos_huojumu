@@ -38,7 +38,7 @@ public class SingleProAddonDialog extends BaseDialog {
     //    @BindView(R.id.recycler_home_addon_mats)
 //    RecyclerView matsRecycler;//配料
     @BindView(R.id.tv_home_addon_number)
-    TextView numTV;//数量
+    EditText numTV;//数量
     @BindView(R.id.et_addon)
     EditText addOnET;//备注
 

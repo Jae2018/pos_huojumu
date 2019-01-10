@@ -12,9 +12,6 @@ import com.huojumu.model.StoreInfo;
 import com.huojumu.model.TaskBean;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
@@ -32,20 +29,20 @@ public class SocketTool extends WebSocketListener {
         this.sendStr = sendStr;
     }
 
-    public void run() {
-        Request request = new Request.Builder()
-                .url(Constant.SOCKET)
-                .build();
-        OkHttpClient client = new OkHttpClient();
-        client.newWebSocket(request, this);
-        client.dispatcher().executorService().shutdown();
-    }
+//    public void run() {
+//        Request request = new Request.Builder()
+//                .url(Constant.SOCKET)
+//                .build();
+//        OkHttpClient client = new OkHttpClient();
+//        client.newWebSocket(request, this);
+//        client.dispatcher().executorService().shutdown();
+//    }
 
 
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
         super.onOpen(webSocket, response);
-        Log.e(TAG, sendStr);
+        Log.e(TAG, "sendStr:  "+sendStr);
         if (!sendStr.isEmpty()) {
             webSocket.send(sendStr);
         }

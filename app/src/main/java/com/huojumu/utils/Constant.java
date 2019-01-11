@@ -25,6 +25,8 @@ public interface Constant {
     String STORE_TEL = "storeTel";
     String PINPAI_ID = "ppId";
     String ENT_ID = "entId";
+    String ENT_NAME = "entName";
+    String ENT_DIS = "entDis";
 
     /* network params */
     int REQUEST_CODE_PICK_IMAGE = 1;

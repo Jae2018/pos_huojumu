@@ -17,13 +17,13 @@ public class OrderSave {
     @PrimaryKey(autoGenerate = true)
     public int id;
     @ColumnInfo(name = "price")
-    private double price;//金额
+    private float price;//金额
     @ColumnInfo(name = "time")
     private String time;//时间
     @ColumnInfo(name = "earn1")
-    private double earn1;//实收
+    private float earn1;//实收
     @ColumnInfo(name = "earn2")
-    private double earn2;//虚收
+    private float earn2;//虚收
     @ColumnInfo(name = "orderNo")
     private String orderNo;//订单编号
 
@@ -35,11 +35,11 @@ public class OrderSave {
         this.orderNo = orderNo;
     }
 
-    public double getPrice() {
+    public float getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 
@@ -51,19 +51,19 @@ public class OrderSave {
         this.time = time;
     }
 
-    public double getEarn1() {
+    public float getEarn1() {
         return earn1;
     }
 
-    public void setEarn1(double earn1) {
+    public void setEarn1(float earn1) {
         this.earn1 = earn1;
     }
 
-    public double getEarn2() {
+    public float getEarn2() {
         return earn2;
     }
 
-    public void setEarn2(double earn2) {
+    public void setEarn2(float earn2) {
         this.earn2 = earn2;
     }
 }

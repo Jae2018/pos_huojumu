@@ -255,7 +255,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //商品
         NetTool.getStoreProduces(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.ENT_ID),
                 SpUtil.getInt(Constant.PINPAI_ID), new GsonResponseHandler<BaseBean<Products>>() {
-                    //        NetTool.getStoreProduces(1, 1, 1, new GsonResponseHandler<BaseBean<Products>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<Products> response) {
                         tempProduces = response.getData().getProducts();
@@ -331,8 +330,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         orderInfo.setShopID(SpUtil.getInt(Constant.STORE_ID));
         orderInfo.setCreateTime(PrinterUtil.getDate());
         orderInfo.setEnterpriseID(SpUtil.getInt(Constant.ENT_ID));
+        orderInfo.setPayType("900");
         orderInfo.setPinpaiID(SpUtil.getInt(Constant.PINPAI_ID));
         orderInfo.setQuanIds(new ArrayList<Integer>());
+        orderInfo.setDiscountsType(SpUtil.getString(Constant.ENT_DIS));
         List<OrderInfo.DataBean> dataBeans = new ArrayList<>();
         list.add(tastesBean);
         dataBean.setTastes(list);
@@ -496,7 +497,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 //弹钱箱，打印小票
                 cashPayDialog.cancel();
                 cashPayDialog = null;
-
+                Log.e("OnDialogOkClick: ",PrinterUtil.toJson(orderInfo) );
                 NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
@@ -528,11 +529,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //新插入
         OrderSave orderSave = new OrderSave();
         orderSave.setOrderNo(p.getOrderId());
-        orderSave.setPrice(p.getTotalPrice());
+        orderSave.setPrice(Float.parseFloat(p.getTotalPrice()));
+        Log.e("saveOrder: ", p.getTotalPrice() + "");
         if (type == 1) {
-            orderSave.setEarn1(p.getTotalPrice());
+            orderSave.setEarn1(Float.parseFloat(p.getTotalPrice()));
         } else {
-            orderSave.setEarn2(p.getTotalPrice());
+            orderSave.setEarn2(Float.parseFloat(p.getTotalPrice()));
         }
         orderSave.setTime(orderInfo.getCreateTime());
         orderDao.save(orderSave);
@@ -543,7 +545,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             OrderDetail detail = new OrderDetail();
             detail.setProName(p.getProName());
             detail.setNumber(p.getNumber());
-            detail.setSell(p.getPrice());
+            detail.setSell((float)p.getPrice());
             OrderDetail detail2 = detailDao.getSingleOrder(p.getProName());
             if (detail2 == null) {
                 detailDao.save(detail);

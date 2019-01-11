@@ -19,7 +19,7 @@ public class OrderDetail {
     @ColumnInfo(name = "proName")
     private String proName;//商品名
     @ColumnInfo(name = "sell")
-    private double sell;//单价
+    private float sell;//单价
     @ColumnInfo(name = "number")
     private int number;
 
@@ -39,11 +39,11 @@ public class OrderDetail {
         this.proName = proName;
     }
 
-    public double getSell() {
+    public float getSell() {
         return sell;
     }
 
-    public void setSell(double sell) {
+    public void setSell(float sell) {
         this.sell = sell;
     }
 }

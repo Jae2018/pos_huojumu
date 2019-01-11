@@ -344,7 +344,7 @@ public class PrinterUtil {
         try {
             set(DOUBLE_HEIGHT_WIDTH);
             mPrinter.setCharSize(2, 2);
-            String s = SpUtil.getString(Constant.PINPAI_ID) + "\n";
+            String s = SpUtil.getString(Constant.ENT_NAME) + "\n";
             mPrinter.printString(s, "GBK");
             set(NORMAL);
             mPrinter.setCharSize(0, 0);
@@ -353,7 +353,7 @@ public class PrinterUtil {
             mPrinter.setAlignMode(0);
             StringBuilder sb = new StringBuilder();
             StringBuilder addon = new StringBuilder();
-            sb.append("门店编号：").append(SpUtil.getString(Constant.STORE_ID)).append("\n")
+            sb.append("门店编号：").append(SpUtil.getInt(Constant.STORE_ID)).append("\n")
                     .append("门店地址：").append(SpUtil.getString(Constant.STORE_ADDRESS)).append("\n")
                     .append("服务专线：").append(SpUtil.getString(Constant.STORE_TEL)).append("\n")
                     .append("订单编号：").append(orderId).append("\n")

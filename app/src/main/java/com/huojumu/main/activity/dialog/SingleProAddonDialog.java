@@ -151,6 +151,7 @@ public class SingleProAddonDialog extends BaseDialog {
 
     @OnClick(R.id.btn_home_addon_ok)
     void Ok() {
+        number = Integer.parseInt(numTV.getText().toString());
         productsBean.setNumber(number);//数量
         productsBean.setAddon(addOnET.getText().toString());//备注
         OrderInfo.DataBean dataBean = new OrderInfo.DataBean();

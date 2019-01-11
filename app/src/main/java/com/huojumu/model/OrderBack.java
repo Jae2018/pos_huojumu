@@ -7,30 +7,33 @@ package com.huojumu.model;
  */
 public class OrderBack {
 
+
     /**
-     * orderId : xxxxx
-     * orderNo : xxxxx
-     * pickUpCode : testtest
-     * totalPrice : 10.4
-     * chinaUnionQrcode : https://qr.95516.com/00010001/62112876966626632636026794415061
-     * wxPayQrcode : wxpay://xxxxxxxxxx
-     * aliPayQrcode : https://xxxxxxxxx
+     * pickUpCode : 68160535
+     * orderNo : DDMDCN11000100010001201901100018
+     * orderId : 1901101008
+     * totalPrice : 0.00
+     * wxPayQrcode : null
+     * aliPayQrcode : null
+     * chinaUnionQrcode :
+     * origionTotalPrice : 54.00
      */
 
-    private String orderId;
-    private String orderNo;
     private String pickUpCode;
-    private double totalPrice;
-    private String chinaUnionQrcode;
+    private String orderNo;
+    private String orderId;
+    private String totalPrice;
     private String wxPayQrcode;
     private String aliPayQrcode;
+    private String chinaUnionQrcode;
+    private String origionTotalPrice;
 
-    public String getOrderId() {
-        return orderId;
+    public String getPickUpCode() {
+        return pickUpCode;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    public void setPickUpCode(String pickUpCode) {
+        this.pickUpCode = pickUpCode;
     }
 
     public String getOrderNo() {
@@ -41,28 +44,20 @@ public class OrderBack {
         this.orderNo = orderNo;
     }
 
-    public String getPickUpCode() {
-        return pickUpCode;
+    public String getOrderId() {
+        return orderId;
     }
 
-    public void setPickUpCode(String pickUpCode) {
-        this.pickUpCode = pickUpCode;
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 
-    public double getTotalPrice() {
+    public String getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(double totalPrice) {
+    public void setTotalPrice(String totalPrice) {
         this.totalPrice = totalPrice;
-    }
-
-    public String getChinaUnionQrcode() {
-        return chinaUnionQrcode;
-    }
-
-    public void setChinaUnionQrcode(String chinaUnionQrcode) {
-        this.chinaUnionQrcode = chinaUnionQrcode;
     }
 
     public String getWxPayQrcode() {
@@ -79,5 +74,21 @@ public class OrderBack {
 
     public void setAliPayQrcode(String aliPayQrcode) {
         this.aliPayQrcode = aliPayQrcode;
+    }
+
+    public String getChinaUnionQrcode() {
+        return chinaUnionQrcode;
+    }
+
+    public void setChinaUnionQrcode(String chinaUnionQrcode) {
+        this.chinaUnionQrcode = chinaUnionQrcode;
+    }
+
+    public String getOrigionTotalPrice() {
+        return origionTotalPrice;
+    }
+
+    public void setOrigionTotalPrice(String origionTotalPrice) {
+        this.origionTotalPrice = origionTotalPrice;
     }
 }

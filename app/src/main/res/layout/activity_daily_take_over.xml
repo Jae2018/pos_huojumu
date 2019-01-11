@@ -137,18 +137,18 @@
                 android:textColor="@android:color/holo_red_light"
                 android:textSize="@dimen/f_30" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/d_16"
-                android:text="提成："
-                android:textSize="@dimen/f_26" />
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginStart="@dimen/d_16"-->
+                <!--android:text="提成："-->
+                <!--android:textSize="@dimen/f_26" />-->
 
-            <TextView
-                android:id="@+id/tv_work_daily_commission"
-                android:layout_width="@dimen/d_280"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/f_30" />
+            <!--<TextView-->
+                <!--android:id="@+id/tv_work_daily_commission"-->
+                <!--android:layout_width="@dimen/d_280"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:textSize="@dimen/f_30" />-->
 
             <View
                 android:layout_width="0dp"

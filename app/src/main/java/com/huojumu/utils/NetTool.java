@@ -5,6 +5,8 @@ import com.huojumu.model.InventoryList;
 import com.huojumu.model.Material;
 import com.huojumu.model.OrderBack;
 import com.huojumu.model.OrderBackInfo;
+import com.huojumu.model.OrderDetail;
+import com.huojumu.model.OrderNoList;
 import com.huojumu.model.OrdersList;
 import com.huojumu.model.Products;
 import com.huojumu.model.SmallType;
@@ -170,10 +172,24 @@ public class NetTool {
                 .enqueue(handler);
     }
 
-    public static void getOrderList(String type, GsonResponseHandler<BaseBean<OrderBackInfo>> handler) {///system/orderdetail.action
+    public static void getOrderNoList(GsonResponseHandler<BaseBean<OrderNoList>> handler) {///system/orderdetail.action
         okHttp.post()
                 .url(Constant.BASE_URL + "system/orderon.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
-                .addParam("type", type)
+                .addParam("type", "7")
+                .addParam("ordSource", "3")
+                .addParam("ordDate", PrinterUtil.getTime())
                 .enqueue(handler);
     }
+
+    public static void getOrderInfoList(int shopID, String enterpriseID, String pinpaiID, GsonResponseHandler<BaseBean<List<OrderDetail>>> handler) {
+        okHttp.post()
+                .url(Constant.BASE_URL + "system/getcuplist.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .addParam("shopID", "" + shopID)
+                .addParam("enterpriseID", enterpriseID)
+                .addParam("pinpaiID", pinpaiID)
+                .addParam("status", "7")
+                .enqueue(handler);
+    }
+
+
 }

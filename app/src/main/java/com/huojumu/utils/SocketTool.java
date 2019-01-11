@@ -74,6 +74,10 @@ public class SocketTool extends WebSocketListener {
                                 response.getData().getEnterPrise().getId() : 1);
                         SpUtil.save(Constant.ENT_ID, response.getData().getParentEnterPrise() == null ?
                                 response.getData().getParentEnterPrise().getId() : 1);
+                        SpUtil.save(Constant.ENT_NAME, response.getData().getEnterPrise() == null ?
+                                response.getData().getParentEnterPrise().getEntName() : "测试品牌");
+                        SpUtil.save(Constant.ENT_DIS, response.getData().getEnterPrise() == null ?
+                                response.getData().getParentEnterPrise().getDiscountsType() : "1");
                     }
 
                     activity.startActivity(new Intent(activity, LoginActivity.class));

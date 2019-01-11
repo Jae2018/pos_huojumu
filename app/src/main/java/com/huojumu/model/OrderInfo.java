@@ -17,7 +17,7 @@ public class OrderInfo {
      * enterpriseID : 34
      * pinpaiID : 33
      * quanIds : [32,45,22]
-     * orderType : 2
+     * orderType : 1
      * startTime : 2018-11-13 16:00:00
      * endTime : 2018-11-13 16:30:00
      * data : [{"proId":2,"num":3,"proType":"1","tastes":[{"tasteId":1},{"tasteId":2}],"makes":[{"practiceId":1},{"practiceId":2}],"mats":[{"proMatId":1},{"proMatId":2}]},{"proId":4,"num":2,"proType":"2","taocan":[{"combID":1,"proId":2,"tastes":[{"tasteId":1},{"tasteId":2}],"makes":[{"practiceId":1},{"practiceId":2}],"mats":[{"proMatId":1},{"proMatId":2}]}]}]
@@ -32,8 +32,26 @@ public class OrderInfo {
     private String orderType = "1";
     private String startTime;
     private String endTime;
+    private String payType;
     private List<Integer> quanIds;
     private List<DataBean> data;
+    private String discountsType;
+
+    public String getDiscountsType() {
+        return discountsType;
+    }
+
+    public void setDiscountsType(String discountsType) {
+        this.discountsType = discountsType;
+    }
+
+    public String getPayType() {
+        return payType;
+    }
+
+    public void setPayType(String payType) {
+        this.payType = payType;
+    }
 
     public String getOrderID() {
         return orderID;

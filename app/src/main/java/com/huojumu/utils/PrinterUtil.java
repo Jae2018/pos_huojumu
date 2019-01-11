@@ -288,7 +288,7 @@ public class PrinterUtil {
     }
 
     public static String getOrderNo() {
-        simpleDateFormat = new SimpleDateFormat("yyMMddHHmm", Locale.CHINA);
+        simpleDateFormat = new SimpleDateFormat("yyMMddHHmmss", Locale.CHINA);
         return simpleDateFormat.format(new Date());
     }
 

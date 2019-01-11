@@ -39,6 +39,7 @@ public interface Constant {
 
     /* database params */
     String ORDER_TEMP = "order_temp";
+    String ORDER_NO = "order_no";
     String ORDER_INFO = "order_table";
     String SP_NAME = "POS_SP";
 

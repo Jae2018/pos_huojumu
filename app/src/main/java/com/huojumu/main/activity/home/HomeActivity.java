@@ -11,7 +11,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -23,10 +22,8 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemSwipeListener;
-import com.data.DetailDao;
-import com.data.OrderDao;
-import com.data.OrderDetail;
-import com.data.OrderSave;
+import com.data.NoDao;
+import com.data.OrderInfoNo;
 import com.huojumu.MyApplication;
 import com.huojumu.R;
 import com.huojumu.adapter.HomeProductAdapter;
@@ -48,6 +45,7 @@ import com.huojumu.model.OrderInfo;
 import com.huojumu.model.Products;
 import com.huojumu.model.SmallType;
 import com.huojumu.utils.Constant;
+import com.huojumu.utils.LogUtil;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
 import com.huojumu.utils.PrinterUtil;
@@ -62,6 +60,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -112,15 +111,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private CertainDialog certainDialog;//关机
 
     //数据库引用
-    private OrderDao orderDao;
-    private DetailDao detailDao;
-//    SocketTool socketTool;
+    private NoDao noDao;
+    //    SocketTool socketTool
     OrderInfo orderInfo;
     OkHttpClient client;
     Request request;
     private ItemTouchHelper mItemTouchHelper;
     private ItemDragAndSwipeCallback mItemDragAndSwipeCallback;
     private Handler handler = new Handler();
+    private boolean ok = false;
 
     @Override
     protected int setLayout() {
@@ -129,8 +128,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     @Override
     protected void initView() {
-        orderDao = MyApplication.getDb().getOrderDao();
-        detailDao = MyApplication.getDb().getDetailDao();
+        noDao = MyApplication.getDb().getNoDao();
         //左侧点单列表
         selectedAdapter = new HomeSelectedAdapter(productions);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -220,6 +218,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
         });
 
+        rBottom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!ok) {
+                    getProList();
+                }
+            }
+        });
     }
 
     @Override
@@ -252,6 +258,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     }
                 });
 
+        getProList();
+        request = new Request.Builder()
+                .url(Constant.SOCKET)
+                .build();
+        client = new OkHttpClient();
+
+    }
+
+    private void getProList() {
         //商品
         NetTool.getStoreProduces(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.ENT_ID),
                 SpUtil.getInt(Constant.PINPAI_ID), new GsonResponseHandler<BaseBean<Products>>() {
@@ -261,18 +276,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         scalesBeans = response.getData().getScales();
                         tastesBeans = response.getData().getTastes();
                         productAdapter.setNewData(response.getData().getProducts());
+                        ok = true;
                     }
 
                     @Override
                     public void onFailure(int statusCode, String error_msg) {
-
+                        ToastUtils.showLong("网络出错，点击刷新");
+                        ok = false;
                     }
                 });
-        request = new Request.Builder()
-                .url(Constant.SOCKET)
-                .build();
-        client = new OkHttpClient();
-
     }
 
     @Override
@@ -326,7 +338,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
 
         orderInfo = new OrderInfo();
-        orderInfo.setOrderID(PrinterUtil.getOrderNo());
+
         orderInfo.setShopID(SpUtil.getInt(Constant.STORE_ID));
         orderInfo.setCreateTime(PrinterUtil.getDate());
         orderInfo.setEnterpriseID(SpUtil.getInt(Constant.ENT_ID));
@@ -457,6 +469,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     @Override
     public void OnDialogOkClick(final double value, String name) {
+
         switch (name) {
             case "QuickPayDialog":
                 quickPayDialog.dismiss();
@@ -466,6 +479,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     }
                     cashPayDialog.show();
                 } else {
+                    orderInfo.setOrderID(PrinterUtil.getOrderNo() + new Random().nextInt(1) * 1000);
                     //线上支付
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                         @Override
@@ -477,7 +491,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             pickUpCode = response.getData().getPickUpCode();
                             client.newWebSocket(request, new SocketTool(HomeActivity.this, String.format(Constant.PMENT, response.getData().getOrderId(), SpUtil.getString(Constant.TOKEN))));
                             client.dispatcher().executorService().shutdown();
-                            saveOrder(response.getData(), 2);
                             saveOrder2();
                             selectedAdapter.setNewData(null);
                             productions.clear();
@@ -495,15 +508,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             //现金支付回调
             case "CashPayDialog":
                 //弹钱箱，打印小票
+                orderInfo.setOrderID(PrinterUtil.getOrderNo() + new Random().nextInt(1) * 1000);
+                LogUtil.Loge(HomeActivity.class,orderInfo.getOrderID());
                 cashPayDialog.cancel();
                 cashPayDialog = null;
-                Log.e("OnDialogOkClick: ",PrinterUtil.toJson(orderInfo) );
                 NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
                         pickUpCode = response.getData().getPickUpCode();
                         PrintOrder(SpUtil.getBoolean(Constant.PRINT_WIDTH));
-                        saveOrder(response.getData(), 1);
                         saveOrder2();
                         selectedAdapter.setNewData(null);
                         productions.clear();
@@ -525,33 +538,17 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
     }
 
-    private void saveOrder(OrderBack p, int type) {
-        //新插入
-        OrderSave orderSave = new OrderSave();
-        orderSave.setOrderNo(p.getOrderId());
-        orderSave.setPrice(Float.parseFloat(p.getTotalPrice()));
-        Log.e("saveOrder: ", p.getTotalPrice() + "");
-        if (type == 1) {
-            orderSave.setEarn1(Float.parseFloat(p.getTotalPrice()));
-        } else {
-            orderSave.setEarn2(Float.parseFloat(p.getTotalPrice()));
-        }
-        orderSave.setTime(orderInfo.getCreateTime());
-        orderDao.save(orderSave);
-    }
-
     private void saveOrder2() {
-        for (Products.ProductsBean p: productions) {
-            OrderDetail detail = new OrderDetail();
-            detail.setProName(p.getProName());
-            detail.setNumber(p.getNumber());
-            detail.setSell((float)p.getPrice());
-            OrderDetail detail2 = detailDao.getSingleOrder(p.getProName());
-            if (detail2 == null) {
-                detailDao.save(detail);
+        for (Products.ProductsBean p : productions) {
+            OrderInfoNo infoNo = new OrderInfoNo();
+            infoNo.setProMateID(p.getProId());
+            infoNo.setNumber(p.getNumber());
+            infoNo.setSell(p.getPrice());
+            infoNo.setProMateName(p.getProName());
+            if (noDao.getSingleOrder(p.getProId()) == null) {
+                noDao.save(infoNo);
             } else {
-                detail.setNumber(detail2.getNumber() + p.getNumber());
-                detailDao.updateOrder(detail.getProName(), detail.getNumber());
+                noDao.updateOrder(p.getProId(), noDao.getSingleOrder(p.getProId()).getNumber() + p.getNumber());
             }
         }
     }

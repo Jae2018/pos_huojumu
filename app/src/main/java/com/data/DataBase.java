@@ -8,11 +8,13 @@ import android.arch.persistence.room.RoomDatabase;
  * Date: 2018/10/22
  * Description:
  */
-@Database(entities = {OrderSave.class, OrderDetail.class}, version = 1, exportSchema = false)
+@Database(entities = {OrderSave.class, OrderDetail.class, OrderInfoNo.class}, version = 1, exportSchema = false)
 public abstract class DataBase extends RoomDatabase {
 
     public abstract OrderDao getOrderDao();
 
     public abstract DetailDao getDetailDao();
+
+    public abstract NoDao getNoDao();
 
 }

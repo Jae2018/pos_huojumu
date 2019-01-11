@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.data.OrderInfoNo;
 import com.huojumu.MyApplication;
 import com.huojumu.R;
 import com.huojumu.adapter.WorkDailyAdapter;
@@ -47,7 +48,7 @@ public class DailyTakeOverActivity extends BaseActivity {
     RecyclerView dailyRecycler;
     @BindView(R.id.tv_work_daily_sell)
     TextView sellTv;//销售额
-//    @BindView(R.id.tv_work_daily_commission)
+    //    @BindView(R.id.tv_work_daily_commission)
 //    TextView commissionTv;//提成
     @BindView(R.id.tv_daily_earn1)
     TextView earn1;
@@ -59,6 +60,7 @@ public class DailyTakeOverActivity extends BaseActivity {
     private int type;
     private double totalSell, totalEarn1, totalEarn2;
     private List<OrderNoList.RowsBean> orderSaveList;
+    private List<OrderInfoNo> infoNos;
 
     @Override
     protected int setLayout() {
@@ -69,19 +71,19 @@ public class DailyTakeOverActivity extends BaseActivity {
     protected void initView() {
         nameTv.setText(SpUtil.getString(Constant.WORKER_NAME));
         dateTv.setText(DateFormat.getDateInstance().format(new Date()));
+        infoNos = MyApplication.getDb().getNoDao().getOrderSaveList();
 
         LinearLayoutManager manager = new LinearLayoutManager(this);
         dailyRecycler.setLayoutManager(manager);
-        dailyAdapter = new WorkDailyAdapter(null);
-        detailAdapter = new WorkDailyDetailAdapter(null);
-        dailyRecycler.setAdapter(dailyAdapter);
 
+        dailyAdapter = new WorkDailyAdapter(null);
+        detailAdapter = new WorkDailyDetailAdapter(infoNos);
+        dailyRecycler.setAdapter(dailyAdapter);
     }
 
     @Override
     protected void initData() {
         type = getIntent().getIntExtra(Constant.TYPE, 1);
-        dailyAdapter.setNewData(orderSaveList);
 
         NetTool.getOrderNoList(new GsonResponseHandler<BaseBean<OrderNoList>>() {
             @Override
@@ -89,7 +91,6 @@ public class DailyTakeOverActivity extends BaseActivity {
                 orderSaveList = response.getData().getRows();
                 dailyAdapter.setNewData(orderSaveList);
                 for (OrderNoList.RowsBean orderSave : orderSaveList) {
-                    Log.e("price", orderSave.getTotalPrice()+"" );
                     totalSell += orderSave.getTotalPrice();
                     if ("900".equals(orderSave.getPayType())) {
                         totalEarn1 += orderSave.getTotalPrice();
@@ -97,9 +98,9 @@ public class DailyTakeOverActivity extends BaseActivity {
                         totalEarn2 += orderSave.getTotalPrice();
                     }
                 }
-                earn1.setText(String.format(Locale.CHINA,"%.2f",totalEarn1));
-                earn2.setText(String.format(Locale.CHINA,"%.2f",totalEarn2));
-                sellTv.setText(String.format(Locale.CHINA,"%.2f",totalSell));
+                earn1.setText(String.format(Locale.CHINA, "%.2f", totalEarn1));
+                earn2.setText(String.format(Locale.CHINA, "%.2f", totalEarn2));
+                sellTv.setText(String.format(Locale.CHINA, "%.2f", totalSell));
             }
 
             @Override
@@ -107,18 +108,18 @@ public class DailyTakeOverActivity extends BaseActivity {
 
             }
         });
-
-        NetTool.getOrderInfoList(SpUtil.getInt(Constant.STORE_ID), SpUtil.getString(Constant.ENT_ID), SpUtil.getString(Constant.PINPAI_ID), new GsonResponseHandler<BaseBean<List<OrderDetail>>>() {
-            @Override
-            public void onSuccess(int statusCode, BaseBean<List<OrderDetail>> response) {
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, String error_msg) {
-
-            }
-        });
+//
+//        NetTool.getOrderInfoList(SpUtil.getInt(Constant.STORE_ID), SpUtil.getString(Constant.ENT_ID), SpUtil.getString(Constant.PINPAI_ID), new GsonResponseHandler<BaseBean<List<OrderDetail>>>() {
+//            @Override
+//            public void onSuccess(int statusCode, BaseBean<List<OrderDetail>> response) {
+//
+//            }
+//
+//            @Override
+//            public void onFailure(int statusCode, String error_msg) {
+//
+//            }
+//        });
     }
 
     @OnClick(R.id.btn_work_daily_type1)

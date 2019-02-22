@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.huojumu.R;
 import com.huojumu.base.BaseDialog;
 
@@ -81,6 +82,10 @@ public class CashPayDialog extends BaseDialog {
             case R.id.dialog_cash_pay_hundred:
                 cash = 100;
                 break;
+        }
+        if (cash < cost) {
+            ToastUtils.showLong("所选金额不对");
+            return;
         }
         earn2.setText(String.valueOf(cash));
         change.setText(String.valueOf(cash - cost));

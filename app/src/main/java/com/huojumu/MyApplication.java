@@ -5,10 +5,10 @@ import android.arch.persistence.room.Room;
 
 import com.data.DataBase;
 import com.huojumu.utils.Constant;
-import com.huojumu.utils.CustomerEngine;
+//import com.huojumu.utils.CustomerEngine;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
-import com.squareup.leakcanary.LeakCanary;
+//import com.squareup.leakcanary.LeakCanary;
 
 import java.util.UUID;
 
@@ -53,12 +53,12 @@ public class MyApplication extends Application {
 
     private void initLeakCanary() {
         // 内存泄露检查工具
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
-        }
-        LeakCanary.install(this);
+//        if (LeakCanary.isInAnalyzerProcess(this)) {
+//            // This process is dedicated to LeakCanary for heap analysis.
+//            // You should not init your app in this process.
+//            return;
+//        }
+//        LeakCanary.install(this);
     }
 
 

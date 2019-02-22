@@ -2,23 +2,33 @@ package com.huojumu.main.activity.dialog;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.huojumu.R;
-import com.huojumu.adapter.HomeAddonTasteAdapter;
 import com.huojumu.base.BaseDialog;
 import com.huojumu.main.dialogs.SingleProCallback;
+import com.huojumu.model.BaseBean;
+import com.huojumu.model.MakesBean;
+import com.huojumu.model.MatsBean;
 import com.huojumu.model.OrderInfo;
 import com.huojumu.model.Products;
+import com.huojumu.model.Specification;
+import com.huojumu.model.TastesBean;
+import com.huojumu.utils.Constant;
+import com.huojumu.utils.NetTool;
+import com.huojumu.utils.SpUtil;
+import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
+import com.zhy.view.flowlayout.FlowLayout;
+import com.zhy.view.flowlayout.TagAdapter;
+import com.zhy.view.flowlayout.TagFlowLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -31,39 +41,51 @@ import butterknife.OnClick;
  */
 public class SingleProAddonDialog extends BaseDialog {
 
-    @BindView(R.id.recycler_home_addon_scale)
-    Button scaleBtn;//杯型
-    @BindView(R.id.recycler_home_addon_taste)
-    RecyclerView tasteRecycler;//口味
-    //    @BindView(R.id.recycler_home_addon_mats)
-//    RecyclerView matsRecycler;//配料
+    @BindView(R.id.id_flowlayout1)
+    TagFlowLayout flowLayout1;
+    @BindView(R.id.id_flowlayout2)
+    TagFlowLayout flowLayout2;
+    @BindView(R.id.id_flowlayout3)
+    TagFlowLayout flowLayout3;
+    @BindView(R.id.textView3)
+    TextView t3;
+    @BindView(R.id.textView5)
+    TextView t4;
+    @BindView(R.id.textView16)
+    TextView t5;
+
     @BindView(R.id.tv_home_addon_number)
     EditText numTV;//数量
     @BindView(R.id.et_addon)
     EditText addOnET;//备注
 
-    private int scaleId = -1;//规格ID
+    private int proId;//商品ID
     private int number = 1;//数量
-    private List<Products.TastesBean> tastesBeanList = new ArrayList<>();//口味
-    private List<Products.ScalesBean> scalesBeans;//规格
+
     private Products.ProductsBean productsBean;//单品
 
+    private List<TastesBean> tastesBeans;//口味
+    private List<MatsBean> matsBeans;//加料
+    private List<MakesBean> makesBeans;//做法
+
     private SingleProCallback callback;//dialog回调
-
-
+    private int position;
     private boolean isChange;
 
+    TastesBean tastesBean;
+    MatsBean matsBean;
+    MakesBean makesBean;
+
     public SingleProAddonDialog(@NonNull Context context, SingleProCallback callback,
-                                List<Products.ScalesBean> scalesBeans,
-                                List<Products.TastesBean> tastesBeanList,
                                 Products.ProductsBean productsBean,
-                                boolean isChange) {
+                                int proId,
+                                boolean isChange, int pos) {
         super(context);
-        this.scalesBeans = scalesBeans;
-        this.tastesBeanList.addAll(tastesBeanList);
         this.productsBean = productsBean;
         this.callback = callback;
+        this.proId = proId;
         this.isChange = isChange;
+        this.position = pos;
     }
 
     @Override
@@ -73,75 +95,95 @@ public class SingleProAddonDialog extends BaseDialog {
 
     @Override
     public void initView() {
-        //杯子规格
-        String name = "冷饮小杯";
-        if (scalesBeans != null)
-            for (Products.ScalesBean scalesBean : scalesBeans) {
-                if (scalesBean.getScaleId() == productsBean.getScaleId()) {
-                    name = scalesBean.getScaName();
-                    scaleId = scalesBean.getScaleId();
+
+        final LayoutInflater mInflater = LayoutInflater.from(getContext());
+        NetTool.getSpecification(SpUtil.getInt(Constant.PINPAI_ID), proId, new GsonResponseHandler<BaseBean<Specification>>() {
+            @Override
+            public void onSuccess(int statusCode, BaseBean<Specification> response) {
+                tastesBeans = response.getData().getTastes();
+                matsBeans = response.getData().getMats();
+                makesBeans = response.getData().getMakes();
+                if (!makesBeans.isEmpty()) {
+                    flowLayout1.setAdapter(new TagAdapter<MakesBean>(makesBeans) {
+                        @Override
+                        public View getView(FlowLayout parent, int position, MakesBean o) {
+                            TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
+                                    flowLayout1, false);
+                            tv.setText(o.getPracticeName());
+                            return tv;
+                        }
+                    });
+                    t3.setVisibility(View.VISIBLE);
+                    flowLayout1.setVisibility(View.VISIBLE);
                 }
+
+                if (!tastesBeans.isEmpty()) {
+                    flowLayout2.setAdapter(new TagAdapter<TastesBean>(tastesBeans) {
+                        @Override
+                        public View getView(FlowLayout parent, int position, TastesBean o) {
+                            TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
+                                    flowLayout1, false);
+                            tv.setText(o.getTasteName());
+                            return tv;
+                        }
+                    });
+                    t4.setVisibility(View.VISIBLE);
+                    flowLayout2.setVisibility(View.VISIBLE);
+                }
+
+                if (!matsBeans.isEmpty()) {
+                    flowLayout3.setAdapter(new TagAdapter<MatsBean>(matsBeans) {
+                        @Override
+                        public View getView(FlowLayout parent, int position, MatsBean o) {
+                            TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
+                                    flowLayout1, false);
+                            tv.setText(o.getMatName());
+                            return tv;
+                        }
+                    });
+                    t5.setVisibility(View.VISIBLE);
+                    flowLayout3.setVisibility(View.VISIBLE);
+                }
+
             }
-        scaleBtn.setText(name);
-        scaleBtn.setBackgroundColor(getContext().getResources().getColor(R.color.colorPrimary));
+
+            @Override
+            public void onFailure(int statusCode, String error_msg) {
+
+            }
+        });
 
         if (isChange) {
             number = productsBean.getNumber();
             numTV.setText(String.valueOf(number));
             addOnET.setText(productsBean.getAddon());
-        } else {
-            if (!productsBean.getTastes().isEmpty())
-                for (int i = 0; i < tastesBeanList.size(); i++) {
-                    if (tastesBeanList.get(i).getGroupId() != productsBean.getTastes().get(0).getTasteGroupId()) {
-                        tastesBeanList.remove(i);
-                    }
-                }
         }
 
-        //口味，可选
-        tastesBeanList.get(0).setSelected(true);
-        tasteRecycler.setLayoutManager(new GridLayoutManager(getContext(), 3));
-        final HomeAddonTasteAdapter addonTasteAdapter = new HomeAddonTasteAdapter(tastesBeanList);
-        tasteRecycler.setAdapter(addonTasteAdapter);
-        addonTasteAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+
+        flowLayout1.setOnSelectListener(new TagFlowLayout.OnSelectListener() {
             @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                for (int i = 0; i < tastesBeanList.size(); i++) {
-                    tastesBeanList.get(i).setSelected(i == position);
-                }
-                addonTasteAdapter.notifyDataSetChanged();
+            public void onSelected(Set<Integer> selectPosSet) {
+                makesBeans.get(selectPosSet.iterator().next()).setSelected(true);
+                makesBean = makesBeans.get(selectPosSet.iterator().next());
             }
         });
 
-        //配料
-//        matsRecycler.setLayoutManager(new GridLayoutManager(getContext(), 6));
-//        HomeAddonMatsAdapter matsAdapter = new HomeAddonMatsAdapter(productsBean.getMats());
-//        matsRecycler.setAdapter(matsAdapter);
-//        matsAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-//
-//            }
-//        });
-    }
+        flowLayout2.setOnSelectListener(new TagFlowLayout.OnSelectListener() {
+            @Override
+            public void onSelected(Set<Integer> selectPosSet) {
+                tastesBeans.get(selectPosSet.iterator().next()).setSelected(true);
+                tastesBean = tastesBeans.get(selectPosSet.iterator().next());
+            }
+        });
 
+        flowLayout3.setOnSelectListener(new TagFlowLayout.OnSelectListener() {
+            @Override
+            public void onSelected(Set<Integer> selectPosSet) {
+                matsBeans.get(selectPosSet.iterator().next()).setSelected(true);
+                matsBean = matsBeans.get(selectPosSet.iterator().next());
+            }
+        });
 
-    @OnClick(R.id.btn_home_addon_sub)
-    void Sub() {
-        number--;
-        if (number < 1) {
-            number = 1;
-        }
-        numTV.setText(String.valueOf(number));
-    }
-
-    @OnClick(R.id.btn_home_addon_plus)
-    void Plus() {
-        number++;
-        if (number > 99) {
-            number = 99;
-        }
-        numTV.setText(String.valueOf(number));
     }
 
     @OnClick(R.id.btn_home_addon_cancel)
@@ -152,29 +194,25 @@ public class SingleProAddonDialog extends BaseDialog {
     @OnClick(R.id.btn_home_addon_ok)
     void Ok() {
         number = Integer.parseInt(numTV.getText().toString());
-        productsBean.setNumber(number);//数量
         productsBean.setAddon(addOnET.getText().toString());//备注
+        productsBean.setTasteStr(tastesBean.getTasteName());
         OrderInfo.DataBean dataBean = new OrderInfo.DataBean();
-        dataBean.setTaocan(new ArrayList<OrderInfo.DataBean.TaocanBean>());
         dataBean.setProType(productsBean.getProType());
         dataBean.setProId(productsBean.getProId());
-        dataBean.setNum(number);
-        dataBean.setMakes(new ArrayList<OrderInfo.DataBean.MakesBean>());
-        dataBean.setMats(new ArrayList<OrderInfo.DataBean.MatsBean>());
 
-        StringBuilder sb = new StringBuilder();
-        OrderInfo.DataBean.TastesBean tastesBean = new OrderInfo.DataBean.TastesBean();
-        for (Products.TastesBean t : tastesBeanList) {
-            if (t.isSelected()) {
-                sb.append(t.getTasteName()).append(" ");
-                tastesBean.setTasteId(t.getTasteId());
-            }
-        }
-        productsBean.setTasteStr(sb.toString());
-        callback.onSingleCallBack(scaleId, number, productsBean, tastesBean, dataBean);
-        for (Products.TastesBean t : tastesBeanList) {
-            t.setSelected(false);
-        }
+        makesBeans.clear();
+        makesBeans.add(makesBean);
+        matsBeans.clear();
+        matsBeans.add(matsBean);
+        tastesBeans.clear();
+        tastesBeans.add(tastesBean);
+
+        dataBean.setMakes(makesBeans);
+        dataBean.setMats(matsBeans);
+        dataBean.setTastes(tastesBeans);
+
+        proId = productsBean.getProId();
+        callback.onSingleCallBack(proId, number, productsBean, dataBean, position);
 
         number = 1;
         cancel();

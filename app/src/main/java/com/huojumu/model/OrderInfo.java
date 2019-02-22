@@ -9,6 +9,7 @@ import java.util.List;
  */
 public class OrderInfo {
 
+
     /**
      * orderID : 12121212122
      * createTime : 2017-01-01 00:00:00
@@ -17,41 +18,29 @@ public class OrderInfo {
      * enterpriseID : 34
      * pinpaiID : 33
      * quanIds : [32,45,22]
-     * orderType : 1
+     * orderType : 2
      * startTime : 2018-11-13 16:00:00
      * endTime : 2018-11-13 16:30:00
-     * data : [{"proId":2,"num":3,"proType":"1","tastes":[{"tasteId":1},{"tasteId":2}],"makes":[{"practiceId":1},{"practiceId":2}],"mats":[{"proMatId":1},{"proMatId":2}]},{"proId":4,"num":2,"proType":"2","taocan":[{"combID":1,"proId":2,"tastes":[{"tasteId":1},{"tasteId":2}],"makes":[{"practiceId":1},{"practiceId":2}],"mats":[{"proMatId":1},{"proMatId":2}]}]}]
+     * payType : 900
+     * discountsType : 2
+     * discountsActivity : 6
+     * data : [{"proId":2,"num":3,"proType":"1","tastes":[{"tasteId":1},{"tasteId":2}],"makes":[{"practiceId":1},{"practiceId":2}],"mats":[{"proMatId":1},{"proMatId":2}]}]
      */
 
     private String orderID;
     private String createTime;
     private int shopID;
-    private String ordSource = "3";
+    private String ordSource;
     private int enterpriseID;
     private int pinpaiID;
-    private String orderType = "1";
+    private String orderType;
     private String startTime;
     private String endTime;
     private String payType;
+    private String discountsType;
+    private String discountsActivity;
     private List<Integer> quanIds;
     private List<DataBean> data;
-    private String discountsType;
-
-    public String getDiscountsType() {
-        return discountsType;
-    }
-
-    public void setDiscountsType(String discountsType) {
-        this.discountsType = discountsType;
-    }
-
-    public String getPayType() {
-        return payType;
-    }
-
-    public void setPayType(String payType) {
-        this.payType = payType;
-    }
 
     public String getOrderID() {
         return orderID;
@@ -125,6 +114,30 @@ public class OrderInfo {
         this.endTime = endTime;
     }
 
+    public String getPayType() {
+        return payType;
+    }
+
+    public void setPayType(String payType) {
+        this.payType = payType;
+    }
+
+    public String getDiscountsType() {
+        return discountsType;
+    }
+
+    public void setDiscountsType(String discountsType) {
+        this.discountsType = discountsType;
+    }
+
+    public String getDiscountsActivity() {
+        return discountsActivity;
+    }
+
+    public void setDiscountsActivity(String discountsActivity) {
+        this.discountsActivity = discountsActivity;
+    }
+
     public List<Integer> getQuanIds() {
         return quanIds;
     }
@@ -149,7 +162,6 @@ public class OrderInfo {
          * tastes : [{"tasteId":1},{"tasteId":2}]
          * makes : [{"practiceId":1},{"practiceId":2}]
          * mats : [{"proMatId":1},{"proMatId":2}]
-         * taocan : [{"combID":1,"proId":2,"tastes":[{"tasteId":1},{"tasteId":2}],"makes":[{"practiceId":1},{"practiceId":2}],"mats":[{"proMatId":1},{"proMatId":2}]}]
          */
 
         private int proId;
@@ -158,7 +170,6 @@ public class OrderInfo {
         private List<TastesBean> tastes;
         private List<MakesBean> makes;
         private List<MatsBean> mats;
-        private List<TaocanBean> taocan;
 
         public int getProId() {
             return proId;
@@ -208,164 +219,5 @@ public class OrderInfo {
             this.mats = mats;
         }
 
-        public List<TaocanBean> getTaocan() {
-            return taocan;
-        }
-
-        public void setTaocan(List<TaocanBean> taocan) {
-            this.taocan = taocan;
-        }
-
-        public static class TastesBean {
-            /**
-             * tasteId : 1
-             */
-
-            private int tasteId;
-
-            public int getTasteId() {
-                return tasteId;
-            }
-
-            public void setTasteId(int tasteId) {
-                this.tasteId = tasteId;
-            }
-        }
-
-        public static class MakesBean {
-            /**
-             * practiceId : 1
-             */
-
-            private int practiceId;
-
-            public int getPracticeId() {
-                return practiceId;
-            }
-
-            public void setPracticeId(int practiceId) {
-                this.practiceId = practiceId;
-            }
-        }
-
-        public static class MatsBean {
-            /**
-             * proMatId : 1
-             */
-
-            private int proMatId;
-
-            public int getProMatId() {
-                return proMatId;
-            }
-
-            public void setProMatId(int proMatId) {
-                this.proMatId = proMatId;
-            }
-        }
-
-        public static class TaocanBean {
-            /**
-             * combID : 1
-             * proId : 2
-             * tastes : [{"tasteId":1},{"tasteId":2}]
-             * makes : [{"practiceId":1},{"practiceId":2}]
-             * mats : [{"proMatId":1},{"proMatId":2}]
-             */
-
-            private int combID;
-            private int proId;
-            private List<TastesBeanX> tastes;
-            private List<MakesBeanX> makes;
-            private List<MatsBeanX> mats;
-
-            public int getCombID() {
-                return combID;
-            }
-
-            public void setCombID(int combID) {
-                this.combID = combID;
-            }
-
-            public int getProId() {
-                return proId;
-            }
-
-            public void setProId(int proId) {
-                this.proId = proId;
-            }
-
-            public List<TastesBeanX> getTastes() {
-                return tastes;
-            }
-
-            public void setTastes(List<TastesBeanX> tastes) {
-                this.tastes = tastes;
-            }
-
-            public List<MakesBeanX> getMakes() {
-                return makes;
-            }
-
-            public void setMakes(List<MakesBeanX> makes) {
-                this.makes = makes;
-            }
-
-            public List<MatsBeanX> getMats() {
-                return mats;
-            }
-
-            public void setMats(List<MatsBeanX> mats) {
-                this.mats = mats;
-            }
-
-            public static class TastesBeanX {
-                /**
-                 * tasteId : 1
-                 */
-
-                private int tasteId;
-
-                public int getTasteId() {
-                    return tasteId;
-                }
-
-                public void setTasteId(int tasteId) {
-                    this.tasteId = tasteId;
-                }
-            }
-
-            public static class MakesBeanX {
-                /**
-                 * practiceId : 1
-                 */
-
-                private int practiceId;
-
-                public int getPracticeId() {
-                    return practiceId;
-                }
-
-                public void setPracticeId(int practiceId) {
-                    this.practiceId = practiceId;
-                }
-            }
-
-            public static class MatsBeanX {
-                /**
-                 * proMatId : 1
-                 */
-
-                private int proMatId;
-
-                public int getProMatId() {
-                    return proMatId;
-                }
-
-                public void setProMatId(int proMatId) {
-                    this.proMatId = proMatId;
-                }
-            }
-        }
     }
 }

@@ -35,7 +35,6 @@
             android:drawableTop="@drawable/zhifubaozhifu"
             android:gravity="center_horizontal"
             android:drawablePadding="@dimen/d_8"
-            android:enabled="false"
             android:text="支付宝"
             android:textSize="@dimen/f_18" />
 
@@ -47,7 +46,6 @@
             android:drawablePadding="@dimen/d_8"
             android:drawableTop="@drawable/weizhifu"
             android:gravity="center_horizontal"
-            android:enabled="false"
             android:text="微信"
             android:textSize="@dimen/f_18" />
 

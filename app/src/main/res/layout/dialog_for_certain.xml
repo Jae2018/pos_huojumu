@@ -8,6 +8,7 @@
         android:id="@+id/tv_title_certain_dialog"
         android:layout_width="match_parent"
         android:layout_height="@dimen/d_48"
+        android:textColor="@android:color/white"
         android:background="@drawable/shape_dialog_top_blue_corner_bg"
         android:gravity="center"
         android:textSize="@dimen/f_20" />

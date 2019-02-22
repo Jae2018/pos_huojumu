@@ -2,6 +2,7 @@ package com.huojumu.main.activity.function;
 
 import android.content.Intent;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -52,6 +53,8 @@ public class PayBackActivity extends BaseActivity {
     private OrderDao dao;
     private DetailDao detailDao;
     private List<OrderBackInfo.OrderdetailBean.ProsBean> list;
+    //用来标记是否正在向上滑动
+    private boolean isSlidingUpward = false;
 
     @Override
     protected int setLayout() {
@@ -60,16 +63,46 @@ public class PayBackActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        LinearLayoutManager manager = new LinearLayoutManager(this);
+        final LinearLayoutManager manager = new LinearLayoutManager(this);
         contentRecycler.setLayoutManager(manager);
         adapter = new OrderBackContentAdapter(null);
         contentRecycler.setAdapter(adapter);
+
+        contentRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+//                LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                // 当不滑动时
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    //获取最后一个完全显示的itemPosition
+                    int lastItemPosition = manager.findLastCompletelyVisibleItemPosition();
+                    int itemCount = manager.getItemCount();
+
+                    // 判断是否滑动到了最后一个item，并且是向上滑动
+                    if (lastItemPosition == (itemCount - 1) && isSlidingUpward) {
+                        //加载更多
+                        getOrderList();
+                    }
+                }
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                // 大于0表示正在向上滑动，小于等于0表示停止或向下滑动
+                isSlidingUpward = dy > 0;
+            }
+        });
     }
 
     @Override
     protected void initData() {
         dao = MyApplication.getDb().getOrderDao();
         detailDao = MyApplication.getDb().getDetailDao();
+    }
+
+    private void getOrderList() {
+
     }
 
     void getOrderInfo() {

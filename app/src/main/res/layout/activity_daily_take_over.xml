@@ -4,176 +4,150 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_work_daily_takeover"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d_48"
+        android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
-        android:gravity="center_vertical"
-        android:paddingLeft="@dimen/d_16"
-        android:paddingRight="@dimen/d_16"
-        android:text="交班日结明细"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/f_18" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/d_96"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
         android:paddingLeft="@dimen/d_16"
         android:paddingRight="@dimen/d_16">
 
-        <ImageView
-            android:id="@+id/iv_work_daily_avatar"
+        <TextView
+            android:id="@+id/tv_work_daily_takeover"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/des" />
-
-        <TextView
-            android:id="@+id/tv_work_daily_name"
-            android:layout_width="@dimen/d_120"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/d_16"
-            android:textSize="@dimen/f_24"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tv_work_daily_date"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/d_16"
-            android:layout_weight="1"
-            android:textSize="@dimen/f_24" />
+            android:layout_centerVertical="true"
+            android:text="交班、日结"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/f_18" />
 
         <Button
             android:id="@+id/btn_work_daily_type1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/d_16"
+            android:layout_toStartOf="@+id/btn_work_daily_type2"
             android:text="按订单" />
 
         <Button
             android:id="@+id/btn_work_daily_type2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="@dimen/d_16"
             android:text="按明细" />
-    </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/d_1"
-        android:background="@color/btn_den" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_work_daily"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/d_1"
-        android:background="@color/btn_den" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d_120"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/d_56"
-            android:paddingLeft="@dimen/d_16"
-            android:paddingRight="@dimen/d_16">
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="@dimen/d_16">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="实    收："
-                android:textSize="@dimen/f_26" />
+                android:id="@+id/tv_work_daily_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/f_16" />
+
+            <TextView
+                android:id="@+id/tv_work_daily_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_16"
+                android:textSize="@dimen/f_16" />
 
             <TextView
                 android:id="@+id/tv_daily_earn1"
-                android:layout_width="@dimen/d_120"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/d_16"
-                android:gravity="center_vertical"
-                android:text="虚收："
-                android:textSize="@dimen/f_26" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_100"
+                android:textSize="@dimen/f_20" />
 
             <TextView
                 android:id="@+id/tv_daily_earn2"
-                android:layout_width="@dimen/d_120"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical" />
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/d_64"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="@dimen/d_16"
-            android:paddingRight="@dimen/d_16">
-
-            <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="营业额："
-                android:textSize="@dimen/f_26" />
+                android:layout_marginTop="@dimen/d_16"
+                android:textSize="@dimen/f_20" />
 
             <TextView
                 android:id="@+id/tv_work_daily_sell"
-                android:layout_width="@dimen/d_120"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/holo_red_light"
-                android:textSize="@dimen/f_30" />
+                android:layout_marginTop="@dimen/d_16"
+                android:textSize="@dimen/f_20" />
 
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginStart="@dimen/d_16"-->
-                <!--android:text="提成："-->
-                <!--android:textSize="@dimen/f_26" />-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/tv_work_daily_commission"-->
-                <!--android:layout_width="@dimen/d_280"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:textSize="@dimen/f_30" />-->
-
-            <View
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/tv_work_daily_commission"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_marginTop="@dimen/d_16"
+                android:textSize="@dimen/f_20" />
 
-            <Button
-                android:id="@+id/btn_work_daily_cancel"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/d_16"
-                android:background="@drawable/bg_dialog_cancel_btn"
-                android:text="取消"
-                android:textColor="@android:color/white" />
+                android:layout_marginTop="@dimen/d_16"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btn_work_daily_ok"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/d_32"
-                android:layout_marginEnd="@dimen/d_16"
-                android:background="@drawable/bg_dialog_ok_btn"
-                android:text="确认"
-                android:textColor="@android:color/white" />
+                <Button
+                    android:id="@+id/btn_work_daily_ok"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_dialog_ok_btn"
+                    android:text="确认"
+                    android:textColor="@android:color/white" />
+
+                <View
+                    android:layout_width="@dimen/d_16"
+                    android:layout_height="@dimen/d_16" />
+
+                <Button
+                    android:id="@+id/btn_work_daily_cancel"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_dialog_cancel_btn"
+                    android:text="取消"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
         </LinearLayout>
+
+        <View
+            android:layout_width="@dimen/d_1"
+            android:layout_height="match_parent"
+            android:background="@color/btn_den" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3">
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipe"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_work_daily"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/d_16"
+                    android:overScrollMode="never" />
+
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+        </RelativeLayout>
+
     </LinearLayout>
+
 
 </LinearLayout>

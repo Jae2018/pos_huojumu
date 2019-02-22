@@ -1,5 +1,7 @@
 package com.huojumu.model;
 
+import android.util.Log;
+
 import java.util.List;
 
 /**
@@ -275,7 +277,8 @@ public class Products {
         }
 
         public void setNumber(int number) {
-            this.number = number;
+                this.number = number;
+            Log.e("bean", "setNumber: "+number );
         }
 
         public int getScaleId() {

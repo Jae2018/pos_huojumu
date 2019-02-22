@@ -9,7 +9,7 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d_80"
+        android:layout_height="@dimen/d_64"
         android:background="@color/colorPrimary"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -28,10 +28,10 @@
                 android:id="@+id/button1"
                 android:layout_width="@dimen/d_101"
                 android:layout_height="@dimen/d_48"
+                android:background="@color/btn_den"
                 android:gravity="center"
                 android:text="@string/hold_on"
                 android:textColor="@color/btn_text"
-                android:background="@color/btn_den"
                 android:textSize="@dimen/f_16" />
 
             <ImageView
@@ -40,27 +40,21 @@
                 android:layout_height="@dimen/d_16"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="@dimen/d_8"
-                android:visibility="invisible"
                 android:layout_marginEnd="@dimen/d_8"
                 android:contentDescription="@string/des"
-                android:src="@drawable/shape_circle_red" />
+                android:src="@drawable/shape_circle_red"
+                android:visibility="invisible" />
         </RelativeLayout>
 
         <TextView
-            android:background="@color/btn_den"
             android:id="@+id/button2"
             android:layout_width="@dimen/d_101"
             android:layout_height="@dimen/d_48"
             android:layout_marginEnd="@dimen/d_16"
+            android:background="@color/btn_den"
             android:gravity="center"
             android:text="@string/clear"
             android:textColor="@android:color/holo_red_light" />
-
-        <TextView
-            android:id="@+id/button3"
-            style="@style/HomeButtonStyle"
-            android:layout_marginStart="@dimen/d_16"
-            android:text="@string/set_meal" />
 
         <Button
             android:id="@+id/button4"
@@ -110,7 +104,8 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/relativeLayout"
         android:layout_below="@id/linearLayout"
-        android:background="@android:color/white" />
+        android:background="@android:color/white"
+        android:overScrollMode="never" />
 
     <LinearLayout
         android:id="@+id/home_left_linear2"
@@ -151,7 +146,7 @@
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="@dimen/d_250"
-        android:layout_height="@dimen/d_80"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/home_left_bottom"
         android:paddingStart="@dimen/d_16"
@@ -160,14 +155,14 @@
         <TextView
             android:id="@+id/total_number"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/dp_40"
+            android:layout_height="@dimen/d_32"
             android:gravity="center_vertical"
             android:text="@string/number" />
 
         <TextView
             android:id="@+id/cut_number"
             android:layout_width="@dimen/d_100"
-            android:layout_height="@dimen/dp_40"
+            android:layout_height="@dimen/d_32"
             android:layout_below="@id/total_number"
             android:layout_marginEnd="@dimen/d_18"
             android:gravity="center_vertical"
@@ -176,7 +171,7 @@
         <TextView
             android:id="@+id/total_price"
             android:layout_width="@dimen/d_100"
-            android:layout_height="@dimen/dp_40"
+            android:layout_height="@dimen/d_32"
             android:layout_below="@id/total_number"
             android:layout_toEndOf="@id/cut_number"
             android:gravity="center_vertical"
@@ -187,7 +182,7 @@
     <LinearLayout
         android:id="@+id/linear1"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d_100"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/linearLayout"
         android:layout_marginStart="@dimen/d_260"
         android:background="@android:color/white">
@@ -195,7 +190,8 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView2"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/d_100" />
+            android:layout_height="wrap_content"
+            android:overScrollMode="never" />
     </LinearLayout>
 
     <View
@@ -209,8 +205,8 @@
     <View
         android:layout_width="@dimen/dp_10"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/d_80"
-        android:layout_marginBottom="@dimen/d_80"
+        android:layout_marginTop="@dimen/d_64"
+        android:layout_marginBottom="@dimen/d_64"
         android:layout_toEndOf="@+id/recyclerView"
         android:background="@color/default_bg" />
 
@@ -226,14 +222,15 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView3"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:overScrollMode="never" />
 
     </FrameLayout>
 
     <LinearLayout
         android:id="@+id/linear3"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d_80"
+        android:layout_height="@dimen/d_64"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="@dimen/d_250"
         android:background="@color/default_bg"
@@ -244,13 +241,13 @@
             android:id="@+id/btn_home_quick_pay"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="@string/xiaobaohe" />
+            android:text="@string/home_quick_invoice" />
 
-        <Button
-            android:id="@+id/btn_home_check_out"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/cash" />
+        <!--<Button-->
+        <!--android:id="@+id/btn_home_check_out"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:text="@string/cash" />-->
 
         <Button
             android:id="@+id/btn_home_take_out"
@@ -270,11 +267,11 @@
             android:layout_height="match_parent"
             android:text="@string/handover" />
 
-        <Button
-            android:id="@+id/btn_home_daily"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/daily" />
+        <!--<Button-->
+            <!--android:id="@+id/btn_home_daily"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:text="@string/daily" />-->
 
     </LinearLayout>
 

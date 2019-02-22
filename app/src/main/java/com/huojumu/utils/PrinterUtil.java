@@ -287,6 +287,12 @@ public class PrinterUtil {
         return simpleDateFormat.format(date);
     }
 
+    public static String getCNDate(){
+        simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
+        simpleDateFormat.format(date);
+        return simpleDateFormat.format(date);
+    }
+
     public static String getOrderNo() {
         simpleDateFormat = new SimpleDateFormat("yyMMddHHmmss", Locale.CHINA);
         return simpleDateFormat.format(new Date());
@@ -342,7 +348,7 @@ public class PrinterUtil {
      */
     public static void printString80(final List<Products.ProductsBean> pList, final double totalPrice, final int totalNumber, final String orderNo, final String orderId, final String time) {
         try {
-            set(DOUBLE_HEIGHT_WIDTH);
+//            set(DOUBLE_HEIGHT_WIDTH);
             mPrinter.setCharSize(2, 2);
             String s = SpUtil.getString(Constant.ENT_NAME) + "\n";
             mPrinter.printString(s, "GBK");
@@ -363,7 +369,7 @@ public class PrinterUtil {
             sb.append("------------------------------------------------").append("\n");
             addon.append("备注：");
             for (Products.ProductsBean p : pList) {
-                sb.append(printThreeData80(p.getProName(), String.valueOf(totalNumber), String.valueOf(totalPrice))).append("\n");
+                sb.append(printThreeData58(p.getProName(), String.valueOf(p.getNumber()), String.valueOf(p.getPrice()))).append("\n");
                 addon.append(p.getAddon()).append("\n");
             }
             sb.append(printThreeData80("合计：", String.valueOf(totalNumber), String.valueOf(totalPrice))).append("\n\n");

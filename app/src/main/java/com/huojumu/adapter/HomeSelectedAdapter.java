@@ -26,7 +26,6 @@ public class HomeSelectedAdapter extends BaseItemDraggableAdapter<Products.Produ
                 .setText(R.id.tv_home_selected_addon, "备注：" + item.getAddon())
                 .setText(R.id.tv_home_selected_number, item.getNumber() + "份")
                 .setText(R.id.tv_home_selected_taste, "口味：" + item.getTasteStr())
-                .setText(R.id.tv_home_selected_cost, item.getNumber() + "*" + item.getPrice() + "元");
-
+                .setText(R.id.tv_home_selected_cost, item.getNumber() + "*" + String.format("¥ %s", (item.getIsBargain() != null) && (item.getIsBargain().equals("1")) ? item.getPrice() : item.getOrigionPrice()) + "元");
     }
 }

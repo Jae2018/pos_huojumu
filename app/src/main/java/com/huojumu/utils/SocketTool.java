@@ -42,7 +42,7 @@ public class SocketTool extends WebSocketListener {
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
         super.onOpen(webSocket, response);
-        Log.e(TAG, "sendStr:  "+sendStr);
+//        Log.e(TAG, "sendStr:  " + sendStr);
         if (!sendStr.isEmpty()) {
             webSocket.send(sendStr);
         }
@@ -51,7 +51,7 @@ public class SocketTool extends WebSocketListener {
     @Override
     public void onMessage(final WebSocket webSocket, String text) {
         super.onMessage(webSocket, text);
-        Log.d(TAG, "onMessage:   " + text);
+//        Log.d(TAG, "onMessage:   " + text);
 
         TaskBean taskBean = gson.fromJson(text, TaskBean.class);
         if (taskBean.getTask().equals("machinebind")) {
@@ -60,25 +60,22 @@ public class SocketTool extends WebSocketListener {
             NetTool.getMachineInfo(taskBean.getData().getEqpNo(), new GsonResponseHandler<BaseBean<StoreInfo>>() {
                 @Override
                 public void onSuccess(int statusCode, BaseBean<StoreInfo> response) {
-                    Log.e("Login", "onSuccess: " + response.getData());
+//                    Log.e("band", "onSuccess: " + response.getData().getShop().getId() + "__"
+//                            + response.getData().getShop().getShopName() + "__"
+//                            + response.getData().getShop().getAddr() + "__"
+//                            + response.getData().getEnterPrise().getId() + "__"
+//                            + response.getData().getParentEnterPrise().getId());
                     if (response.getData() != null) {
-                        SpUtil.save(Constant.STORE_ID, response.getData().getShop() == null ?
-                                response.getData().getShop().getId() : 1);
-                        SpUtil.save(Constant.STORE_NAME, response.getData().getShop() == null ?
-                                "本地测试店铺" : response.getData().getShop().getShopName());
-                        SpUtil.save(Constant.STORE_ADDRESS, response.getData().getShop() == null ?
-                                "本地测试店铺地址" : response.getData().getShop().getAddr());
-                        SpUtil.save(Constant.STORE_TEL, response.getData().getShop() == null ?
-                                "本地测试店铺电话" : response.getData().getShop().getMobile());
-                        SpUtil.save(Constant.PINPAI_ID, response.getData().getEnterPrise() == null ?
-                                response.getData().getEnterPrise().getId() : 1);
-                        SpUtil.save(Constant.ENT_ID, response.getData().getParentEnterPrise() == null ?
-                                response.getData().getParentEnterPrise().getId() : 1);
-                        SpUtil.save(Constant.ENT_NAME, response.getData().getEnterPrise() == null ?
-                                response.getData().getParentEnterPrise().getEntName() : "测试品牌");
-                        SpUtil.save(Constant.ENT_DIS, response.getData().getEnterPrise() == null ?
-                                response.getData().getParentEnterPrise().getDiscountsType() : "1");
+                        SpUtil.save(Constant.STORE_ID, response.getData().getShop().getId());
+                        SpUtil.save(Constant.STORE_NAME, response.getData().getShop().getShopName());
+                        SpUtil.save(Constant.STORE_ADDRESS, response.getData().getShop().getAddr());
+                        SpUtil.save(Constant.STORE_TEL, response.getData().getShop().getMobile());
+                        SpUtil.save(Constant.ENT_ID, response.getData().getEnterPrise().getId());
+                        SpUtil.save(Constant.PINPAI_ID, response.getData().getParentEnterPrise().getId());
+                        SpUtil.save(Constant.ENT_NAME, response.getData().getParentEnterPrise().getEntName());
+                        SpUtil.save(Constant.ENT_DIS, response.getData().getParentEnterPrise().getDiscountsType());
                     }
+//                    Log.e(TAG, "onSuccess: " + SpUtil.getInt(Constant.STORE_ID) + "___" + SpUtil.getInt(Constant.PINPAI_ID) + "___" + SpUtil.getInt(Constant.ENT_ID) + "___"+SpUtil.getBoolean(Constant.HAS_BAND));
 
                     activity.startActivity(new Intent(activity, LoginActivity.class));
                     activity.finish();

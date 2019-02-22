@@ -48,7 +48,7 @@ public class LoginActivity extends BaseActivity {
         edCode.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEND || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)){
+                if (actionId == EditorInfo.IME_ACTION_SEND || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                     //do something;
                     Login();
                     return true;
@@ -71,7 +71,7 @@ public class LoginActivity extends BaseActivity {
 
     private void getCode() {
         //获取验证码
-        NetTool.getCode(SpUtil.getString(Constant.UUID), new GsonResponseHandler<BaseBean<String>>() {
+        NetTool.getCode(SpUtil.getString(Constant.EQP_NO), new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
                 byte[] bytes = Base64.decode(response.getData().getBytes(), Base64.DEFAULT);
@@ -88,7 +88,7 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.login_btn)
     void Login() {
-        String name = accountED.getText().toString();
+        final String name = accountED.getText().toString();
         String pwd = pwdED.getText().toString();
         String code = edCode.getText().toString();
         if (TextUtils.isEmpty(name) || TextUtils.isEmpty(pwd)) {
@@ -99,7 +99,7 @@ public class LoginActivity extends BaseActivity {
             Toast.makeText(this, "请输入验证码！", Toast.LENGTH_LONG).show();
             return;
         }
-        NetTool.login(name, pwd, code, SpUtil.getString(Constant.UUID), new GsonResponseHandler<BaseBean<String>>() {
+        NetTool.login(name, pwd, code, SpUtil.getString(Constant.EQP_NO), new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
                 if (response.getData().isEmpty()) {
@@ -107,6 +107,7 @@ public class LoginActivity extends BaseActivity {
                     getCode();
                 } else {
                     SpUtil.save(Constant.MY_TOKEN, "Bearer " + response.getData());
+                    SpUtil.save(Constant.WORKER_NAME, name);
                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     finish();
                 }

@@ -1,6 +1,7 @@
 package com.huojumu.utils;
 
 import com.huojumu.model.BaseBean;
+import com.huojumu.model.DailyInfo;
 import com.huojumu.model.InventoryList;
 import com.huojumu.model.Material;
 import com.huojumu.model.OrderBack;
@@ -10,6 +11,7 @@ import com.huojumu.model.OrderNoList;
 import com.huojumu.model.OrdersList;
 import com.huojumu.model.Products;
 import com.huojumu.model.SmallType;
+import com.huojumu.model.Specification;
 import com.huojumu.model.StoreInfo;
 import com.huojumu.model.UpdateBean;
 import com.huojumu.model.Vips;
@@ -104,6 +106,7 @@ public class NetTool {
                 .enqueue(handler);
     }
 
+    //订单支付状态查询
     public static void postOrder(String orderNo, String payType, String authNo, GsonResponseHandler<BaseBean<OrderBack>> handler) {
         okHttp.post().url(Constant.BASE_URL + "pay/barcodepay.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("orderNo", orderNo)
@@ -112,6 +115,7 @@ public class NetTool {
                 .enqueue(handler);
     }
 
+    //修改密码
     public static void changePWD(String old, String newPwd, GsonResponseHandler<BaseBean<String>> handler) {
         okHttp.post().url(Constant.BASE_URL + "system/editPwd.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("pwd", old)
@@ -119,6 +123,7 @@ public class NetTool {
                 .enqueue(handler);
     }
 
+    //盘点原料
     public static void getMaterial(int shopId, int enterpriseID, int pinpaiID, GsonResponseHandler<BaseBean<Material>> handler) {
         okHttp.post().url(Constant.BASE_URL + "store/wareall.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("id", shopId + "")
@@ -150,6 +155,17 @@ public class NetTool {
                 .enqueue(handler);
     }
 
+    //推介
+    public static void getPackageList(int shopId, int enterpriseID, int pinpaiID, String idNode, GsonResponseHandler<BaseBean<String>> handler) {
+//        okHttp.post().url(Constant.BASE_URL + "product/offspring.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+//                .addParam("shopID",shopId+"")
+//                .addParam("enterpriseID",enterpriseID+"")
+//                .addParam("pinpaiID",pinpaiID+"")
+//                .addParam("idNode",idNode+"")
+//                .enqueue(handler);
+    }
+
+    //更新
     public static void update(String uuid, GsonResponseHandler<BaseBean<UpdateBean>> handler) {
 //        okHttp.post()
 //                .url(Constant.BASE_URL + "pay/refund.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
@@ -157,6 +173,7 @@ public class NetTool {
 //                .enqueue(handler);
     }
 
+    //会员列表
     public static void getVipList(int enterpriseID, int pinpaiID, GsonResponseHandler<BaseBean<List<Vips>>> handler) {
 //        okHttp.post()
 //                .url(Constant.BASE_URL + "pay/refund.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
@@ -165,6 +182,40 @@ public class NetTool {
 //                .enqueue(handler);
     }
 
+    //会员详情
+    public static void getVipDetail() {
+
+
+    }
+
+    //日結、交班
+    public static void takeOver(long timestamp, GsonResponseHandler<BaseBean<String>> handler) {
+        okHttp.post().url(Constant.BASE_URL + "duty/shift.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .addParam("token", SpUtil.getString(Constant.MY_TOKEN).split(" ")[1])
+                .addParam("timestamp", timestamp + "")
+                .enqueue(handler);
+    }
+
+    //日結、交班工作信息
+    public static void getDailyInfo(int storeId, int pinpaiId, int no, GsonResponseHandler<BaseBean<DailyInfo>> handler) {
+        okHttp.post()
+                .url(Constant.BASE_URL + "duty/shiftInfo.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .addParam("token", SpUtil.getString(Constant.MY_TOKEN).split(" ")[1])
+                .addParam("storeId", "" + storeId)
+                .addParam("pinpaiId", "" + pinpaiId)
+                .addParam("pageNum", no + "")
+                .addParam("pageSize", 10 + "")
+                .enqueue(handler);
+    }
+
+    public static void getSpecification(int pinpaiID, int proId, GsonResponseHandler<BaseBean<Specification>> handler) {
+        okHttp.post().url(Constant.BASE_URL + "product/tasteChoose.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .addParam("pinpaiID", pinpaiID + "")
+                .addParam("proId", proId + "")
+                .enqueue(handler);
+    }
+
+    //订单详情
     public static void getOrderInfo(String orderid, GsonResponseHandler<BaseBean<OrderBackInfo>> handler) {///system/orderdetail.action
         okHttp.post()
                 .url(Constant.BASE_URL + "system/orderdetail.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
@@ -172,6 +223,7 @@ public class NetTool {
                 .enqueue(handler);
     }
 
+    //订单列表
     public static void getOrderNoList(GsonResponseHandler<BaseBean<OrderNoList>> handler) {///system/orderdetail.action
         okHttp.post()
                 .url(Constant.BASE_URL + "system/orderon.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))

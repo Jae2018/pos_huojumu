@@ -6,12 +6,10 @@ package com.huojumu.model;
  * Description:
  */
 public class StoreInfo {
-
-
     /**
      * shop : {"sysId":1,"latitude":null,"longtitude":null,"standardId":1,"shopName":"展会门店1","remark":null,"cityId":6,"parentEntId":2,"countryId":8,"eMail":"1@1.com","sysStatus":null,"updateBy":1,"id":1,"addr":"北京市朝阳区XXX街56号","mobile":"18555555558","telephone":"010-55545422","updateTime":"2018-10-17 14:39:53","provinceId":36,"linkman":"直营门店管理员","isPayment":null,"createBy":2,"areaId":11,"createTime":"2018-08-07 13:17:21","memberType":"3","shopNo":"MD-CN11-0001-0001-0001","status":"0","storeCode":null}
      * enterPrise : {"licenseNo":"8945489415151","entName":"直营企业01","wechatAppid":null,"msgId":null,"remark":null,"cityId":6,"discountsType":null,"parentEntId":1,"countryId":8,"openingBank":"华夏银行","eMail":"3@3.com","entNo":"ZY-CN11-0001-0001","entType":"2","accountname":"莉莉","serviceTel":"010-55548879","updateBy":null,"legalPerson":"莉莉","registerAddr":"北京市朝阳区XXX街56号&lt:&gt;","id":2,"addr":"北京市朝阳区XXX街56号","legalPersonIdNo":"155555558461284252","accountType":"1","mobile":"13111111111","businessScope":"奶茶、咖啡、西点","telephone":"02228174849","updateTime":null,"establishmentTime":"2018-08-01 00:00:00","provinceId":36,"linkman":"莉莉","zipcode":"300001","isPayment":null,"createBy":1,"areaId":11,"organizationCode":"4158641894981","appid":"","validTime":"2020-05-09 00:00:00","msgCount":null,"memberType":"2","shortName":"直营企业01","cerateTime":"2018-08-07 13:09:30","registerName":"直营企业01","account":"45564456415649648","merchantNo":"","status":"0"}
-     * equipment : {"eqpNo":"EQP-03-0059","eqpType":"3","latitude":null,"longtitude":null,"scale":null,"remark":null,"repairCycle":null,"updateTime":"2019-01-10 18:26:10","terminalId":null,"accessToken":null,"terminalTime":null,"createBy":null,"uniqueCode":"b77d162c-c0a4-46d8-ac97-3c92c7e97258","updateBy":null,"createTime":"2019-01-10 18:26:10","eqpName":null,"onlineTime":null,"attention":null,"serviceLife":null,"location":null,"id":60,"shopId":1,"status":"0"}
+     * equipment : {"eqpNo":"EQP-03-0071","eqpType":"3","latitude":null,"longtitude":null,"scale":null,"remark":null,"repairCycle":null,"updateTime":"2019-02-19 14:28:01","terminalId":null,"accessToken":null,"terminalTime":null,"createBy":null,"uniqueCode":"52b35b47-ca31-4f4f-8a68-5313a849d6f3","updateBy":null,"createTime":"2019-02-19 14:28:01","eqpName":null,"onlineTime":null,"attention":null,"serviceLife":null,"location":null,"id":72,"shopId":1,"status":"0"}
      * parentEnterPrise : {"licenseNo":"8945489415151","entName":"测试品牌","wechatAppid":"","msgId":null,"remark":null,"threshold":0,"cityId":6,"discountsType":"1","parentEntId":null,"countryId":8,"openingBank":"华夏银行","eMail":"22@qq.com","entNo":"PP-CN11-0001","entType":"1","accountname":"李月","serviceTel":"010-66666666","updateBy":1,"legalPerson":"李月","registerAddr":"北京市朝阳区XXX街56号","id":1,"addr":"北京市朝阳区XXX街56号","legalPersonIdNo":"142557898949879","accountType":"1","logoPath":"https://www.goodb2b.cn/bootstrap_file/bbd0ad715d528697d90c9252156afdb8.png","mobile":"18555555558","businessScope":"奶茶、咖啡、西点","telephone":"010-55545422","updateTime":"2019-01-03 13:05:59","establishmentTime":"2018-08-07 00:00:00","provinceId":36,"linkman":"李月","zipcode":"300000","isPayment":null,"createBy":1,"areaId":11,"organizationCode":"4158641894981","appid":"wxe719f890bf88321a","validTime":"2020-07-15 00:00:00","msgCount":null,"memberType":"1","shortName":"测试品牌","cerateTime":"2018-08-07 11:41:53","registerName":"小玎小珰","account":"45564456415649648","merchantNo":"830400270000006","status":"0"}
      */
 
@@ -776,27 +774,27 @@ public class StoreInfo {
 
     public static class EquipmentBean {
         /**
-         * eqpNo : EQP-03-0059
+         * eqpNo : EQP-03-0071
          * eqpType : 3
          * latitude : null
          * longtitude : null
          * scale : null
          * remark : null
          * repairCycle : null
-         * updateTime : 2019-01-10 18:26:10
+         * updateTime : 2019-02-19 14:28:01
          * terminalId : null
          * accessToken : null
          * terminalTime : null
          * createBy : null
-         * uniqueCode : b77d162c-c0a4-46d8-ac97-3c92c7e97258
+         * uniqueCode : 52b35b47-ca31-4f4f-8a68-5313a849d6f3
          * updateBy : null
-         * createTime : 2019-01-10 18:26:10
+         * createTime : 2019-02-19 14:28:01
          * eqpName : null
          * onlineTime : null
          * attention : null
          * serviceLife : null
          * location : null
-         * id : 60
+         * id : 72
          * shopId : 1
          * status : 0
          */
@@ -1475,4 +1473,5 @@ public class StoreInfo {
             this.status = status;
         }
     }
+
 }

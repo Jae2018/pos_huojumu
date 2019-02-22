@@ -12,19 +12,19 @@ public class TastesBean {
     private String tasteName;
     private int groupId;
     private double multiple;
-    private boolean isSelected;
+//    private boolean isSelected;
 
     public TastesBean(int tasteId) {
         this.tasteId = tasteId;
     }
-
-    public boolean isSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(boolean selected) {
-        isSelected = selected;
-    }
+//
+//    public boolean isSelected() {
+//        return isSelected;
+//    }
+//
+//    public void setSelected(boolean selected) {
+//        isSelected = selected;
+//    }
     public int getTasteId() {
         return tasteId;
     }

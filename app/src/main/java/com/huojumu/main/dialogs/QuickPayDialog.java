@@ -70,7 +70,7 @@ public class QuickPayDialog extends BaseDialog {
 
     @OnClick(R.id.quick_dialog_ok)
     void OnOk() {
-        anInterface.OnDialogOkClick(type, "QuickPayDialog");
+        anInterface.OnDialogOkClick(type, 0,0,0,"QuickPayDialog");
         cancel();
     }
 

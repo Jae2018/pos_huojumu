@@ -102,37 +102,23 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@android:color/white"
             android:layout_marginTop="@dimen/d_97">
 
-            <SurfaceView
-                android:id="@+id/sv_differ_video"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone" />
+            <!--<SurfaceView-->
+                <!--android:id="@+id/sv_differ_video"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:visibility="gone" />-->
 
             <ImageView
-                android:id="@+id/iv_pay_ali"
-                android:layout_width="@dimen/d_120"
-                android:layout_height="@dimen/d_120"
-                android:layout_marginStart="@dimen/d_96"
-                android:layout_marginTop="@dimen/d_96"
+                android:id="@+id/iv_pay_image"
+                android:layout_width="@dimen/d_200"
+                android:layout_height="@dimen/d_200"
+                android:layout_centerInParent="true"
                 android:contentDescription="@string/des" />
 
-            <ImageView
-                android:id="@+id/iv_pay_wx"
-                android:layout_width="@dimen/d_120"
-                android:layout_height="@dimen/d_120"
-                android:layout_marginStart="@dimen/d_380"
-                android:layout_marginTop="@dimen/d_96"
-                android:contentDescription="@string/des" />
 
-            <!--<ImageView-->
-            <!--android:id="@+id/iv_pay_bank"-->
-            <!--android:layout_width="@dimen/d_200"-->
-            <!--android:layout_height="@dimen/d_200"-->
-            <!--android:layout_marginTop="@dimen/d_320"-->
-            <!--android:layout_marginStart="@dimen/d_280"-->
-            <!--android:contentDescription="@string/des"/>-->
         </RelativeLayout>
 
     </RelativeLayout>

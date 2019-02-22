@@ -163,19 +163,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     }
 
     @Override
-    public void OnDialogOkClick(double value, String name) {
+    public void OnDialogOkClick(int type, double earn, double cost, double charge, String name) {
         //交班确认回调
         TakeOver();
-    }
-
-    @Override
-    public void OnTasteClick(int type, int id, int number, String name) {
-
-    }
-
-    @Override
-    public void OnDialogCancelClick(int value) {
-        certainDialog.cancel();
     }
 
     private void TakeOver(){
@@ -193,7 +183,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
             @Override
             public void onFailure(int statusCode, String error_msg) {
-
+                ToastUtils.showLong("网络出错啦！");
             }
         });
     }

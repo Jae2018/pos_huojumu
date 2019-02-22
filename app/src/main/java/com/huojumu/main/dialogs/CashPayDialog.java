@@ -98,12 +98,7 @@ public class CashPayDialog extends BaseDialog {
 
     @OnClick(R.id.cash_dialog_ok)
     void OnOk() {
-//        if (cash == 0) {
-//            ToastUtils.showLong("还未输入收款金额");
-//            earn2.setFocusable(true);
-//            return;
-//        }
-        anInterface.OnDialogOkClick(cash - cost, "CashPayDialog");
+        anInterface.OnDialogOkClick(0, cash, cost, cash - cost, "CashPayDialog");
     }
 
 }

@@ -33,7 +33,7 @@ public class DifferentDisplay extends Presentation {
     private List<Products.ProductsBean> list;
     private HomeSelectedAdapter selectedAdapter;
     //结账二维码
-    private ImageView aliIV,wxIV;//, bankIV;
+    private ImageView aliIV,wxIV;
 
     public DifferentDisplay(Context outerContext, Display display) {
         super(outerContext, display);
@@ -44,13 +44,12 @@ public class DifferentDisplay extends Presentation {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_for_differ_screen);
-        sv = findViewById(R.id.sv_differ_video);
+//        sv = findViewById(R.id.sv_differ_video);
         rv = findViewById(R.id.recycler_for_differ);
         priceTV = findViewById(R.id.tv_differ_money);
         cutTV = findViewById(R.id.tv_differ_cut);
-        aliIV = findViewById(R.id.iv_pay_ali);
-        wxIV = findViewById(R.id.iv_pay_wx);
-//        bankIV = findViewById(R.id.iv_pay_bank);
+        aliIV = findViewById(R.id.iv_pay_image);
+//        wxIV = findViewById(R.id.iv_pay_wx);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         rv.setLayoutManager(manager);
         selectedAdapter = new HomeSelectedAdapter(list);
@@ -83,6 +82,11 @@ public class DifferentDisplay extends Presentation {
         selectedAdapter.setNewData(list);
     }
 
+    public void clear(){
+        selectedAdapter.setNewData(null);
+        aliIV.setImageBitmap(null);
+    }
+
     public void setPrice(double total, double cut) {
         priceTV.setText(String.valueOf(total));
         cutTV.setText(String.format("优惠：%.2s元", String.valueOf(cut)));
@@ -93,7 +97,7 @@ public class DifferentDisplay extends Presentation {
     }
 
     public ImageView getWxIV() {
-        return wxIV;
+        return null;
     }
 
 }

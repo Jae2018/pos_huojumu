@@ -49,6 +49,10 @@ public class PrinterUtil {
     private static final int RIGHT_LENGTH_58 = 16;
     private static final int RIGHT_LENGTH_80 = 24;
     /**
+     * 四列时，第三列的中心线
+     */
+    private static final int THREE_LENGTH_80 = 36;
+    /**
      * 打印三列时，第一列汉字最多显示几个文字
      */
     private static final int LEFT_TEXT_MAX_LENGTH_58 = 5;
@@ -195,7 +199,7 @@ public class PrinterUtil {
         return sb.toString();
     }
 
-    private static String printThreeData80(String leftText, String middleText, String rightText) {
+    private static String printThreeData80(String leftText, String middleText, String three, String rightText) {
         StringBuilder sb = new StringBuilder();
         // 左边最多显示 LEFT_TEXT_MAX_LENGTH 个汉字 + 两个点
         if (leftText.length() > LEFT_TEXT_MAX_LENGTH_80) {
@@ -203,6 +207,7 @@ public class PrinterUtil {
         }
         int leftTextLength = getBytesLength(leftText);
         int middleTextLength = getBytesLength(middleText);
+        int threeTextLength = getBytesLength(three);
         int rightTextLength = getBytesLength(rightText);
 
         sb.append(leftText);
@@ -213,9 +218,15 @@ public class PrinterUtil {
             sb.append(" ");
         }
         sb.append(middleText);
+        //计算中间文字和第三文字的空格长度
+        int marginBetweenThreeAndFour = 12 - middleTextLength / 2 - threeTextLength / 2;
 
-        // 计算右侧文字和中间文字的空格长度
-        int marginBetweenMiddleAndRight = RIGHT_LENGTH_80 - middleTextLength / 2 - rightTextLength;
+        for (int i = 0; i < marginBetweenThreeAndFour; i++) {
+            sb.append(" ");
+        }
+
+        // 计算第四文字和第三文字的空格长度
+        int marginBetweenMiddleAndRight = 12 - threeTextLength / 2 - rightTextLength;
 
         for (int i = 0; i < marginBetweenMiddleAndRight; i++) {
             sb.append(" ");
@@ -223,6 +234,13 @@ public class PrinterUtil {
 
         // 打印的时候发现，最右边的文字总是偏右一个字符，所以需要删除一个空格
         sb.delete(sb.length() - 1, sb.length()).append(rightText);
+        return sb.toString();
+    }
+
+    private static String printFourData80() {
+        StringBuilder sb = new StringBuilder();
+
+
         return sb.toString();
     }
 
@@ -237,13 +255,6 @@ public class PrinterUtil {
     }
 
     public static String toJson(OrderInfo orderInfo) {
-        if (gson == null) {
-            gson = new Gson();
-        }
-        return gson.toJson(orderInfo);
-    }
-
-    public static String toJson(List<OrderSave> orderInfo) {
         if (gson == null) {
             gson = new Gson();
         }
@@ -287,7 +298,13 @@ public class PrinterUtil {
         return simpleDateFormat.format(date);
     }
 
-    public static String getCNDate(){
+    public static String getPrintDate() {
+        simpleDateFormat = new SimpleDateFormat("MM-dd HH:mm:ss", Locale.CHINA);
+        simpleDateFormat.format(date);
+        return simpleDateFormat.format(date);
+    }
+
+    public static String getCNDate() {
         simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
         simpleDateFormat.format(date);
         return simpleDateFormat.format(date);
@@ -346,42 +363,60 @@ public class PrinterUtil {
     /**
      * 打印文本80mm小票样式 48 字节
      */
-    public static void printString80(final List<Products.ProductsBean> pList, final double totalPrice, final int totalNumber, final String orderNo, final String orderId, final String time) {
+    public static void printString80(final List<Products.ProductsBean> pList, final String orderNo, final String name, final String totalMoney, final String earn, final String cost, final String charge) {
         try {
 //            set(DOUBLE_HEIGHT_WIDTH);
-            mPrinter.setCharSize(2, 2);
-            String s = SpUtil.getString(Constant.ENT_NAME) + "\n";
-            mPrinter.printString(s, "GBK");
-            set(NORMAL);
-            mPrinter.setCharSize(0, 0);
-            s = SpUtil.getString(Constant.STORE_NAME) + "\n";
-            mPrinter.printString(s, "GBK");
             mPrinter.setAlignMode(0);
-            StringBuilder sb = new StringBuilder();
-            StringBuilder addon = new StringBuilder();
-            sb.append("门店编号：").append(SpUtil.getInt(Constant.STORE_ID)).append("\n")
-                    .append("门店地址：").append(SpUtil.getString(Constant.STORE_ADDRESS)).append("\n")
-                    .append("服务专线：").append(SpUtil.getString(Constant.STORE_TEL)).append("\n")
-                    .append("订单编号：").append(orderId).append("\n")
-                    .append("付款时间：").append(time).append("\n")
-                    .append("打印时间：").append(simpleDateFormat.format(date)).append("\n\n");
-            sb.append(printThreeData80("名称", "数量", "单价")).append("\n");
-            sb.append("------------------------------------------------").append("\n");
-            addon.append("备注：");
-            for (Products.ProductsBean p : pList) {
-                sb.append(printThreeData58(p.getProName(), String.valueOf(p.getNumber()), String.valueOf(p.getPrice()))).append("\n");
-                addon.append(p.getAddon()).append("\n");
-            }
-            sb.append(printThreeData80("合计：", String.valueOf(totalNumber), String.valueOf(totalPrice))).append("\n\n");
-            mPrinter.printString(sb.toString(), "GBK");
-            mPrinter.printString(addon.toString(), "GBK");
-            s = "取货码，请妥善保管";
-            mPrinter.setAlignMode(1);
+            mPrinter.setCharSize(2, 2);
+            String s = orderNo.substring(orderNo.length() - 4, orderNo.length() - 1) + "\n";
             mPrinter.printString(s, "GBK");
-            mPrinter.printAndFeedLine(1);
-            printQRCode(orderNo);
+//            set(NORMAL);
+            mPrinter.setCharSize(0, 0);
+            //实线
+
+            //员工名 + 时间
+            s = "收银员：" + name + "\n" + "时间：" + PrinterUtil.getPrintDate() + "\n";
+            mPrinter.printString(s, "GBK");
+            //间隔大的虚线
+
+            //商品信息
+            StringBuilder sb = new StringBuilder();
+            sb.append(printThreeData80("商品名称", "数量", "单价", "金额")).append("\n");
+            sb.append("\n");
+
+            for (Products.ProductsBean p : pList) {
+                sb.append(printThreeData80(p.getProName(), String.valueOf(p.getNumber()), String.valueOf(p.getPrice()), String.valueOf(p.getNumber() * p.getPrice()))).append("\n");
+                sb.append(printThreeData80(p.getAddon(), "", "", ""));
+            }
+            mPrinter.printString(sb.toString(), "GBK");
+            //间隔小的虚线
+
+            //交易金额明细
+            s = "\n" + printTwoData80("消费金额", totalMoney)
+                    + "\n" + printTwoData80("应收金额", earn)
+                    + "\n" + printTwoData80("客户实付", cost)
+                    + "\n" + printTwoData80("找    零", charge);
+            mPrinter.printString(s, "GBK");
+
+            //虚实线
+
+            //店铺地址+店铺名
+            s = SpUtil.getString(Constant.STORE_ADDRESS) + "·" + SpUtil.getString(Constant.STORE_NAME);
+            mPrinter.printString(s, "GBK");
+
+            //logo图片9
+
+
+            //企业文化描述
+            s = "7港9欢迎您的到来。我们再次从香港出发，希望搜集到各地的特色食品，港印全国。能7(去)香港(港)的(9)九龙喝一杯正宗的港饮是我们对每一位顾客的愿景。几百年来，香港作为东方接触世界的窗口，找寻并创造了一款款独具特色又流传世界的高品饮品。我们在全国超过十年的专业服务与坚持，与97回归共享繁华，秉承独到的调制方法，期许再一次与亲爱的你能擦出下一个十年火花。";
+            mPrinter.printString(s, "GBK");
+            //品牌二维码
+
+
+            //投诉、加盟热线
+            s = "投诉、加盟热线：010-62655878";
+            mPrinter.printString(s, "GBK");
             cutPaper();
-            Log.e(TAG, "printString80: ");
         } catch (Exception e) {
             e.printStackTrace();
         }

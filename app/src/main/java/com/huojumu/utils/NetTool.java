@@ -1,5 +1,6 @@
 package com.huojumu.utils;
 
+import com.huojumu.model.ActiveBean;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.DailyInfo;
 import com.huojumu.model.InventoryList;
@@ -233,13 +234,13 @@ public class NetTool {
                 .enqueue(handler);
     }
 
-    public static void getOrderInfoList(int shopID, String enterpriseID, String pinpaiID, GsonResponseHandler<BaseBean<List<OrderDetail>>> handler) {
+    //活动信息
+    public static void getActiveInfo(int shopID, int enterpriseID, int pinpaiID, GsonResponseHandler<BaseBean<List<ActiveBean>>> handler) {
         okHttp.post()
-                .url(Constant.BASE_URL + "system/getcuplist.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .url(Constant.BASE_URL + "salespromotion/getpromotion.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("shopID", "" + shopID)
-                .addParam("enterpriseID", enterpriseID)
-                .addParam("pinpaiID", pinpaiID)
-                .addParam("status", "7")
+                .addParam("enterpriseID", "" + enterpriseID)
+                .addParam("pinpaiID", "" + pinpaiID)
                 .enqueue(handler);
     }
 

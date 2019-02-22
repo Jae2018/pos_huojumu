@@ -16,7 +16,7 @@
     <string name="clear" translatable="false">删除全部</string>
     <string name="set_meal" translatable="false">套餐</string>
     <string name="referral" translatable="false">推介</string>
-    <string name="big_class" translatable="false">全部大类</string>
+    <string name="big_class" translatable="false">全部分类</string>
     <string name="small_class" translatable="false">全部小类</string>
     <string name="function" translatable="false">功能</string>
     <string name="shutdown" translatable="false">关机</string>

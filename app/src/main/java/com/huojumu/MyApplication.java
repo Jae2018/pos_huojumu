@@ -5,12 +5,11 @@ import android.arch.persistence.room.Room;
 
 import com.data.DataBase;
 import com.huojumu.utils.Constant;
-//import com.huojumu.utils.CustomerEngine;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
-//import com.squareup.leakcanary.LeakCanary;
 
 import java.util.UUID;
+
 
 /**
  * @author : Jie
@@ -37,7 +36,7 @@ public class MyApplication extends Application {
         SpUtil.Instance(this);
         SpUtil.save(Constant.UUID, UUID.randomUUID().toString());
         PrinterUtil.connectPrinter(getApplicationContext());
-
+        //, String.format(Constant.BAND, uuid)
     }
 
     private void initDataBase() {

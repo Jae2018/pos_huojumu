@@ -12,19 +12,19 @@ public class MakesBean {
     private String groupId;
     private int practiceId;
     private int multiple;
-    private boolean isSelected;
+//    private boolean isSelected;
 
     public MakesBean(int practiceId) {
         this.practiceId = practiceId;
     }
 
-    public boolean isSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(boolean selected) {
-        isSelected = selected;
-    }
+//    public boolean isSelected() {
+//        return isSelected;
+//    }
+//
+//    public void setSelected(boolean selected) {
+//        isSelected = selected;
+//    }
 
     public String getPracticeName() {
         return practiceName;

@@ -46,14 +46,8 @@ public class ActiveActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        Request request = new Request.Builder()
-                .url(Constant.SOCKET)
-                .build();
-        OkHttpClient client = new OkHttpClient();
-        client.newWebSocket(request, new SocketTool(this, String.format(Constant.BAND, uuid)));
-        client.dispatcher().executorService().shutdown();
+        socketTool.sendMsg(String.format(Constant.BAND, uuid));
     }
-
 
     @OnClick(R.id.iv_shutdown)
     void shutdown() {

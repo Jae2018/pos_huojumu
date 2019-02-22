@@ -21,19 +21,19 @@ public class MatsBean {
     private String matNo;
     private int orgId;
     private String matName;
-    private boolean isSelected;
+//    private boolean isSelected;
 
     public MatsBean(int proMatId) {
         this.proMatId = proMatId;
     }
 
-    public boolean isSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(boolean selected) {
-        isSelected = selected;
-    }
+//    public boolean isSelected() {
+//        return isSelected;
+//    }
+//
+//    public void setSelected(boolean selected) {
+//        isSelected = selected;
+//    }
 
     public int getProMatId() {
         return proMatId;

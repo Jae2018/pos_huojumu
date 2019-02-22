@@ -64,7 +64,7 @@
         <Button
             android:id="@+id/button5"
             style="@style/HomeButtonStyle"
-            android:text="@string/big_class" />
+            android:text="刷新" />
 
         <LinearLayout
             android:id="@+id/linearLayout2"

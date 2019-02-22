@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.huojumu.R;
 import com.huojumu.base.BaseDialog;
 import com.huojumu.main.dialogs.SingleProCallback;
@@ -64,17 +65,17 @@ public class SingleProAddonDialog extends BaseDialog {
 
     private Products.ProductsBean productsBean;//单品
 
-    private List<TastesBean> tastesBeans;//口味
-    private List<MatsBean> matsBeans;//加料
-    private List<MakesBean> makesBeans;//做法
+    private List<TastesBean> tastesBeans = new ArrayList<>();//口味
+    private List<MatsBean> matsBeans = new ArrayList<>();//加料
+    private List<MakesBean> makesBeans = new ArrayList<>();//做法
 
     private SingleProCallback callback;//dialog回调
     private int position;
     private boolean isChange;
 
-    TastesBean tastesBean;
-    MatsBean matsBean;
-    MakesBean makesBean;
+    private TastesBean tastesBean;
+    private MatsBean matsBean;
+    private MakesBean makesBean;
 
     public SingleProAddonDialog(@NonNull Context context, SingleProCallback callback,
                                 Products.ProductsBean productsBean,
@@ -100,9 +101,9 @@ public class SingleProAddonDialog extends BaseDialog {
         NetTool.getSpecification(SpUtil.getInt(Constant.PINPAI_ID), proId, new GsonResponseHandler<BaseBean<Specification>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<Specification> response) {
-                tastesBeans = response.getData().getTastes();
-                matsBeans = response.getData().getMats();
-                makesBeans = response.getData().getMakes();
+                tastesBeans.addAll(response.getData().getTastes());
+                matsBeans.addAll(response.getData().getMats());
+                makesBeans.addAll(response.getData().getMakes());
                 if (!makesBeans.isEmpty()) {
                     flowLayout1.setAdapter(new TagAdapter<MakesBean>(makesBeans) {
                         @Override
@@ -125,6 +126,13 @@ public class SingleProAddonDialog extends BaseDialog {
                                     flowLayout1, false);
                             tv.setText(o.getTasteName());
                             return tv;
+                        }
+
+                        @Override
+                        public void onSelected(int position, View view) {
+                            if (position == 0) {
+                                view.setSelected(true);
+                            }
                         }
                     });
                     t4.setVisibility(View.VISIBLE);
@@ -163,7 +171,7 @@ public class SingleProAddonDialog extends BaseDialog {
         flowLayout1.setOnSelectListener(new TagFlowLayout.OnSelectListener() {
             @Override
             public void onSelected(Set<Integer> selectPosSet) {
-                makesBeans.get(selectPosSet.iterator().next()).setSelected(true);
+//                makesBeans.get(selectPosSet.iterator().next()).setSelected(true);
                 makesBean = makesBeans.get(selectPosSet.iterator().next());
             }
         });
@@ -171,7 +179,7 @@ public class SingleProAddonDialog extends BaseDialog {
         flowLayout2.setOnSelectListener(new TagFlowLayout.OnSelectListener() {
             @Override
             public void onSelected(Set<Integer> selectPosSet) {
-                tastesBeans.get(selectPosSet.iterator().next()).setSelected(true);
+//                tastesBeans.get(selectPosSet.iterator().next()).setSelected(true);
                 tastesBean = tastesBeans.get(selectPosSet.iterator().next());
             }
         });
@@ -179,7 +187,7 @@ public class SingleProAddonDialog extends BaseDialog {
         flowLayout3.setOnSelectListener(new TagFlowLayout.OnSelectListener() {
             @Override
             public void onSelected(Set<Integer> selectPosSet) {
-                matsBeans.get(selectPosSet.iterator().next()).setSelected(true);
+//                matsBeans.get(selectPosSet.iterator().next()).setSelected(true);
                 matsBean = matsBeans.get(selectPosSet.iterator().next());
             }
         });
@@ -195,17 +203,22 @@ public class SingleProAddonDialog extends BaseDialog {
     void Ok() {
         number = Integer.parseInt(numTV.getText().toString());
         productsBean.setAddon(addOnET.getText().toString());//备注
-        productsBean.setTasteStr(tastesBean.getTasteName());
+        productsBean.setTasteStr(tastesBean!= null ? tastesBean.getTasteName() : "");
         OrderInfo.DataBean dataBean = new OrderInfo.DataBean();
         dataBean.setProType(productsBean.getProType());
         dataBean.setProId(productsBean.getProId());
 
-        makesBeans.clear();
-        makesBeans.add(makesBean);
-        matsBeans.clear();
-        matsBeans.add(matsBean);
-        tastesBeans.clear();
-        tastesBeans.add(tastesBean);
+        if (makesBean != null) {
+            makesBeans.add(makesBean);
+        }
+
+        if (matsBean != null) {
+            matsBeans.add(matsBean);
+        }
+
+        if (tastesBean != null) {
+            tastesBeans.add(tastesBean);
+        }
 
         dataBean.setMakes(makesBeans);
         dataBean.setMats(matsBeans);
@@ -213,7 +226,7 @@ public class SingleProAddonDialog extends BaseDialog {
 
         proId = productsBean.getProId();
         callback.onSingleCallBack(proId, number, productsBean, dataBean, position);
-
+        Log.e("number", "Ok: " + number);
         number = 1;
         cancel();
     }

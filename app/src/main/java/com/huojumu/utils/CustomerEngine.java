@@ -35,10 +35,6 @@ public class CustomerEngine {
         return instance;
     }
 
-    public static void colose() {
-        instance = null;
-    }
-
     private CustomerEngine(Context context) {
         DisplayManager displayManager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
         if (displayManager != null) {
@@ -50,18 +46,16 @@ public class CustomerEngine {
                 mCustomerDisplay.show();
             }
         }
-//        DisplayManager  mDisplayManager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
-//        Display[] displays = mDisplayManager.getDisplays();
-//        if (null == mCustomerDisplay && displays.length > 1) {
-//            mCustomerDisplay =  new DifferentDisplay(context, displays[1]);
-//            mCustomerDisplay.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-//            mCustomerDisplay.show();
-//        }
     }
 
     public void refresh(List<Products.ProductsBean> list) {
         if (mCustomerDisplay != null)
             mCustomerDisplay.refresh(list);
+    }
+
+    public void clear(){
+        if (mCustomerDisplay != null)
+            mCustomerDisplay.clear();
     }
 
     public void setPrice(double total, double cut) {
@@ -73,6 +67,6 @@ public class CustomerEngine {
     }
 
     public ImageView getWxIV() {
-        return mCustomerDisplay.getWxIV();
+        return mCustomerDisplay.getAliIV();
     }
 }

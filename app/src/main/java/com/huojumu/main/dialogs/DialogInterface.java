@@ -6,9 +6,6 @@ package com.huojumu.main.dialogs;
  * Description: dialog interface
  */
 public interface DialogInterface {
-    void OnDialogOkClick(double value, String name);
+    void OnDialogOkClick(int type, double earn, double cost, double charge, String name);
 
-    void OnTasteClick(int type, int id, int number, String name);
-
-    void OnDialogCancelClick(int value);
 }

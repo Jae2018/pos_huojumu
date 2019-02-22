@@ -8,10 +8,16 @@ import com.google.gson.Gson;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.login.LoginActivity;
 import com.huojumu.model.BaseBean;
+import com.huojumu.model.EventHandler;
+import com.huojumu.model.OrderBack;
 import com.huojumu.model.StoreInfo;
 import com.huojumu.model.TaskBean;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
+import org.greenrobot.eventbus.EventBus;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
@@ -20,38 +26,63 @@ import okio.ByteString;
 public class SocketTool extends WebSocketListener {
 
     private String TAG = SocketTool.class.getSimpleName();
-    private String sendStr;
     private Gson gson = new Gson();
     private BaseActivity activity;
+    private WebSocket webSocket;
+    private static SocketTool INSTANCE;
 
-    public SocketTool(BaseActivity activity, String sendStr) {
-        this.activity = activity;
-        this.sendStr = sendStr;
+    public static SocketTool getInstance(BaseActivity activity) {
+        Request request = new Request.Builder()
+                .url(Constant.SOCKET)
+                .build();
+        OkHttpClient client = new OkHttpClient();
+        INSTANCE = new SocketTool(activity);
+        client.newWebSocket(request, INSTANCE);
+        return INSTANCE;
     }
 
-//    public void run() {
-//        Request request = new Request.Builder()
-//                .url(Constant.SOCKET)
-//                .build();
-//        OkHttpClient client = new OkHttpClient();
-//        client.newWebSocket(request, this);
-//        client.dispatcher().executorService().shutdown();
-//    }
+    private SocketTool(BaseActivity activity) {
+        this.activity = activity;
+    }
 
+    public void sendMsg(String s) {
+        if (webSocket != null) {
+            Log.e(TAG, "sendMsg: " + s);
+            webSocket.send(s);
+        }
+    }
+
+    public void sendHeart() {
+        if (webSocket != null) {
+            new Thread() {
+                public void run() {
+                    while (true) {
+                        Log.e(TAG, "sendHeart: ");
+                        webSocket.send("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
+                        try {
+                            Thread.sleep(60 * 1000);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.e(TAG, "run: error");
+                        }
+                    }
+                }
+            }.start();
+        }
+    }
 
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
         super.onOpen(webSocket, response);
-//        Log.e(TAG, "sendStr:  " + sendStr);
-        if (!sendStr.isEmpty()) {
-            webSocket.send(sendStr);
-        }
+        this.webSocket = webSocket;
+//        if (!sendStr.isEmpty()) {
+//            webSocket.send(sendStr);
+//        }
     }
 
     @Override
     public void onMessage(final WebSocket webSocket, String text) {
         super.onMessage(webSocket, text);
-//        Log.d(TAG, "onMessage:   " + text);
 
         TaskBean taskBean = gson.fromJson(text, TaskBean.class);
         if (taskBean.getTask().equals("machinebind")) {
@@ -60,11 +91,6 @@ public class SocketTool extends WebSocketListener {
             NetTool.getMachineInfo(taskBean.getData().getEqpNo(), new GsonResponseHandler<BaseBean<StoreInfo>>() {
                 @Override
                 public void onSuccess(int statusCode, BaseBean<StoreInfo> response) {
-//                    Log.e("band", "onSuccess: " + response.getData().getShop().getId() + "__"
-//                            + response.getData().getShop().getShopName() + "__"
-//                            + response.getData().getShop().getAddr() + "__"
-//                            + response.getData().getEnterPrise().getId() + "__"
-//                            + response.getData().getParentEnterPrise().getId());
                     if (response.getData() != null) {
                         SpUtil.save(Constant.STORE_ID, response.getData().getShop().getId());
                         SpUtil.save(Constant.STORE_NAME, response.getData().getShop().getShopName());
@@ -75,8 +101,6 @@ public class SocketTool extends WebSocketListener {
                         SpUtil.save(Constant.ENT_NAME, response.getData().getParentEnterPrise().getEntName());
                         SpUtil.save(Constant.ENT_DIS, response.getData().getParentEnterPrise().getDiscountsType());
                     }
-//                    Log.e(TAG, "onSuccess: " + SpUtil.getInt(Constant.STORE_ID) + "___" + SpUtil.getInt(Constant.PINPAI_ID) + "___" + SpUtil.getInt(Constant.ENT_ID) + "___"+SpUtil.getBoolean(Constant.HAS_BAND));
-
                     activity.startActivity(new Intent(activity, LoginActivity.class));
                     activity.finish();
                 }
@@ -87,7 +111,9 @@ public class SocketTool extends WebSocketListener {
                 }
             });
         } else if (taskBean.getTask().equals("pay")) {
-            activity.sendMsg(taskBean.getCode());
+            Log.e(TAG, "onMessage: ");
+            //支付完成回调
+            EventBus.getDefault().post(new EventHandler(Constant.PAY));
         }
 
     }

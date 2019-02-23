@@ -7,7 +7,6 @@ import com.huojumu.model.InventoryList;
 import com.huojumu.model.Material;
 import com.huojumu.model.OrderBack;
 import com.huojumu.model.OrderBackInfo;
-import com.huojumu.model.OrderDetail;
 import com.huojumu.model.OrderNoList;
 import com.huojumu.model.OrdersList;
 import com.huojumu.model.Products;
@@ -51,20 +50,21 @@ public class NetTool {
         return okHttp;
     }
 
-    public static void getCode(String machineCode, GsonResponseHandler<BaseBean<String>> handler) {
+    public static void getLoginQRCode(String machineCode, GsonResponseHandler<BaseBean<String>> handler) {
         okHttp.post()
-                .url(Constant.BASE_URL + "system/checkcode.action")
+                .url(Constant.BASE_URL + "duty/createQRCode.action")
                 .addParam("machineCode", machineCode)
                 .enqueue(handler);
     }
 
-    public static void login(String username, String password, String code, String machineCode, GsonResponseHandler<BaseBean<String>> handler) {
+    public static void checkLogin(String checkCode, String machineCode, String timestamp, GsonResponseHandler<BaseBean<String>> handler) {
         okHttp.post()
-                .url(Constant.BASE_URL + "system/logon.action")
-                .addParam("userCode", username)
-                .addParam("password", password)
-                .addParam("checkCode", code)
+                .url(Constant.BASE_URL + "duty/loginAndOnDuty.action")
+                .addParam("appToken", SpUtil.getString(Constant.MY_TOKEN).split(" ")[1])
+                .addParam("checkCode", checkCode)
                 .addParam("machineCode", machineCode)
+                .addParam("source","pos")
+                .addParam("timestamp",timestamp)
                 .enqueue(handler);
     }
 

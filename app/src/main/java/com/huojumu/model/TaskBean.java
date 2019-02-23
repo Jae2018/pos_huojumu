@@ -60,6 +60,24 @@ public class TaskBean {
         private String eqpNo;
         private String machineCode;
         private int shopID;
+        private String userName;
+        private String  token;
+
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        public void setToken(String token) {
+            this.token = token;
+        }
 
         public String getEqpNo() {
             return eqpNo;

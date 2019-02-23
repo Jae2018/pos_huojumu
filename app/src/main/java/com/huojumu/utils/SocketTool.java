@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.huojumu.base.BaseActivity;
+import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.main.activity.login.LoginActivity;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.EventHandler;
@@ -83,7 +84,7 @@ public class SocketTool extends WebSocketListener {
     @Override
     public void onMessage(final WebSocket webSocket, String text) {
         super.onMessage(webSocket, text);
-
+        Log.e(TAG, "onMessage: " + text);
         TaskBean taskBean = gson.fromJson(text, TaskBean.class);
         if (taskBean.getTask().equals("machinebind")) {
             SpUtil.save(Constant.HAS_BAND, true);
@@ -114,6 +115,11 @@ public class SocketTool extends WebSocketListener {
             Log.e(TAG, "onMessage: ");
             //支付完成回调
             EventBus.getDefault().post(new EventHandler(Constant.PAY));
+        } else if (taskBean.getTask().equals("start")) {
+//            EventBus.getDefault().post(new EventHandler(Constant.LOGIN));
+            SpUtil.save(Constant.WORKER_NAME, taskBean.getData().getUserName());
+            SpUtil.save(Constant.TOKEN, taskBean.getData().getToken());
+            activity.startActivity(new Intent(activity, HomeActivity.class));
         }
 
     }

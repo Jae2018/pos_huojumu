@@ -118,7 +118,8 @@ public class SocketTool extends WebSocketListener {
         } else if (taskBean.getTask().equals("start")) {
 //            EventBus.getDefault().post(new EventHandler(Constant.LOGIN));
             SpUtil.save(Constant.WORKER_NAME, taskBean.getData().getUserName());
-            SpUtil.save(Constant.TOKEN, taskBean.getData().getToken());
+            Log.e(TAG, "token: "+taskBean.getData().getToken());
+            SpUtil.save(Constant.MY_TOKEN, "Bearer "+taskBean.getData().getToken());
             activity.startActivity(new Intent(activity, HomeActivity.class));
         }
 

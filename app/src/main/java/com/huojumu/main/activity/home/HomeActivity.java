@@ -213,12 +213,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         ld = new LoadingDialog(this);
         ld.setLoadingText("支付中")
                 .setSuccessText("支付成功")//显示加载成功时的文字
-                .setFailedText("支付失败")
+                .setFailedText("支付失败");
 //                .setInterceptBack(intercept_back_event)
 //                .setLoadSpeed(speed)
 //                .setRepeatCount(repeatTime)
 //                .setDrawColor(color)
-                .show();
+//                .show();
     }
 
     @OnClick(R.id.button5)
@@ -539,6 +539,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             }
 
                             socketTool.sendMsg("{\"task\": \"pay\",\"data\":{\"orderCode\":\"" + response.getData().getOrderNo() + "\",\"payTime\":\"" + orderInfo.getCreateTime() + "\",\"state\": \"1\",\"leftCupCnt\":1}}");
+                            ld.show();
                         }
 
                         @Override

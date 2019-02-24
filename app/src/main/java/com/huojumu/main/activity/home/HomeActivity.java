@@ -589,7 +589,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             PrinterUtil.OpenMoneyBox();
             isCash = false;
         }
-        PrinterUtil.printString80(productions, orderBack.getOrderNo(), SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(), "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "");
+        PrinterUtil.printString80(this,productions, orderBack.getOrderNo(), SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(), "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "");
 
         total_number.setText("数量：");
         total_price.setText("总价：");

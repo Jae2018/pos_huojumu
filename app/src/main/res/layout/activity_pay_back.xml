@@ -25,14 +25,14 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/d_32"
             android:layout_marginTop="@dimen/d_100"
-            android:text="请输入订单编号："
+            android:text="请输入订单号："
             android:textSize="@dimen/f_26" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="@dimen/d_18">
+            android:padding="@dimen/d_16"
+            android:orientation="horizontal">
 
             <EditText
                 android:id="@+id/et_order_id"
@@ -41,6 +41,7 @@
                 android:layout_weight="1"
                 android:layout_marginStart="@dimen/d_1"
                 android:focusableInTouchMode="true"
+                android:hint="请输入订单流水号"
                 android:focusable="true"
                 android:layout_marginEnd="@dimen/d_1"
                 android:inputType="text" />

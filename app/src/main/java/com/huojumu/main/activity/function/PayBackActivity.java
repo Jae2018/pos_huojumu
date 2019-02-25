@@ -10,17 +10,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
-import com.data.DetailDao;
-import com.data.OrderDao;
 import com.data.OrderDetail;
-import com.huojumu.MyApplication;
 import com.huojumu.R;
 import com.huojumu.adapter.OrderBackContentAdapter;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.OrderBackInfo;
+import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
+import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
 import java.util.List;
@@ -50,8 +49,6 @@ public class PayBackActivity extends BaseActivity {
 
     private OrderBackContentAdapter adapter;
     private String orderId;
-    private OrderDao dao;
-    private DetailDao detailDao;
     private List<OrderBackInfo.OrderdetailBean.ProsBean> list;
     //用来标记是否正在向上滑动
     private boolean isSlidingUpward = false;
@@ -71,7 +68,6 @@ public class PayBackActivity extends BaseActivity {
         contentRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-//                LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 // 当不滑动时
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     //获取最后一个完全显示的itemPosition
@@ -97,6 +93,7 @@ public class PayBackActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+
 //        dao = MyApplication.getDb().getOrderDao();
 //        detailDao = MyApplication.getDb().getDetailDao();
     }
@@ -127,7 +124,7 @@ public class PayBackActivity extends BaseActivity {
     }
 
     private void payBack(final String orderId) {
-        NetTool.getPayBack(1, orderId, new GsonResponseHandler<BaseBean<String>>() {
+        NetTool.getPayBack(SpUtil.getInt(Constant.STORE_ID), orderId, new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
                 if (response.getData().isEmpty()) {
@@ -135,19 +132,12 @@ public class PayBackActivity extends BaseActivity {
                 } else {
                     ToastUtils.setGravity(Gravity.CENTER, 0, 0);
                     ToastUtils.showLong("退单成功！");
-                    dao.deleteSingle(orderId);
-                    for (int i = 0; i < list.size(); i++) {
-                        OrderDetail detail = detailDao.getSingleOrder(list.get(i).getProName());
-                        int n = detail.getNumber();
-                        detail.setNumber(n - list.get(i).getProCount());
-                        detailDao.updateOrder(detail.getProName(), detail.getNumber());
-                    }
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             finish();
                         }
-                    }, 2000);
+                    }, 1000);
                 }
             }
 

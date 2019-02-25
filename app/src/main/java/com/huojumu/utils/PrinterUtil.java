@@ -2,12 +2,18 @@ package com.huojumu.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
 import android.util.Log;
 import android.widget.ImageView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.data.OrderSave;
 import com.google.gson.Gson;
+import com.huojumu.R;
 import com.huojumu.model.OrderInfo;
 import com.huojumu.model.Products;
 import com.szsicod.print.escpos.PrinterAPI;
@@ -363,22 +369,23 @@ public class PrinterUtil {
     /**
      * 打印文本80mm小票样式 48 字节
      */
-    public static void printString80(final List<Products.ProductsBean> pList, final String orderNo, final String name, final String totalMoney, final String earn, final String cost, final String charge) {
+    public static void printString80(Context c,final List<Products.ProductsBean> pList, final String orderNo, final String name, final String totalMoney, final String earn, final String cost, final String charge) {
         try {
 //            set(DOUBLE_HEIGHT_WIDTH);
             mPrinter.setAlignMode(0);
             mPrinter.setCharSize(2, 2);
-            String s = orderNo.substring(orderNo.length() - 4, orderNo.length() - 1) + "\n";
+            String s = orderNo.substring(orderNo.length() - 12, orderNo.length() - 1) + "\n";
             mPrinter.printString(s, "GBK");
 //            set(NORMAL);
             mPrinter.setCharSize(0, 0);
             //实线
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line1)));
 
             //员工名 + 时间
             s = "收银员：" + name + "\n" + "时间：" + PrinterUtil.getPrintDate() + "\n";
             mPrinter.printString(s, "GBK");
             //间隔大的虚线
-
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line2)));
             //商品信息
             StringBuilder sb = new StringBuilder();
             sb.append(printThreeData80("商品名称", "数量", "单价", "金额")).append("\n");
@@ -390,7 +397,7 @@ public class PrinterUtil {
             }
             mPrinter.printString(sb.toString(), "GBK");
             //间隔小的虚线
-
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line3)));
             //交易金额明细
             s = "\n" + printTwoData80("消费金额", totalMoney)
                     + "\n" + printTwoData80("应收金额", earn)
@@ -399,19 +406,19 @@ public class PrinterUtil {
             mPrinter.printString(s, "GBK");
 
             //虚实线
-
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line4)));
             //店铺地址+店铺名
             s = SpUtil.getString(Constant.STORE_ADDRESS) + "·" + SpUtil.getString(Constant.STORE_NAME);
             mPrinter.printString(s, "GBK");
 
             //logo图片9
-
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.logo)));
 
             //企业文化描述
             s = "7港9欢迎您的到来。我们再次从香港出发，希望搜集到各地的特色食品，港印全国。能7(去)香港(港)的(9)九龙喝一杯正宗的港饮是我们对每一位顾客的愿景。几百年来，香港作为东方接触世界的窗口，找寻并创造了一款款独具特色又流传世界的高品饮品。我们在全国超过十年的专业服务与坚持，与97回归共享繁华，秉承独到的调制方法，期许再一次与亲爱的你能擦出下一个十年火花。";
             mPrinter.printString(s, "GBK");
             //品牌二维码
-
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.qr_code)));
 
             //投诉、加盟热线
             s = "投诉、加盟热线：010-62655878";
@@ -487,6 +494,26 @@ public class PrinterUtil {
 
     public static void getStatus() {
         mPrinter.getStatus();
+    }
+
+    private static Bitmap drawable2Bitmap(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        } else if (drawable instanceof NinePatchDrawable) {
+            Bitmap bitmap = Bitmap
+                    .createBitmap(
+                            drawable.getIntrinsicWidth(),
+                            drawable.getIntrinsicHeight(),
+                            drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
+                                    : Bitmap.Config.RGB_565);
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight());
+            drawable.draw(canvas);
+            return bitmap;
+        } else {
+            return null;
+        }
     }
 
 }

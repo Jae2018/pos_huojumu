@@ -52,6 +52,7 @@ import com.huojumu.utils.QrUtil;
 import com.huojumu.utils.SocketBack;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 
 import org.greenrobot.eventbus.EventBus;
@@ -108,6 +109,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private Handler handler = new Handler();
     //是否修改
     private boolean ok = false;
+    private LoadingDialog ld;
 
     @Override
     protected int setLayout() {
@@ -192,7 +194,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         });
 
         //商品列表
-        productAdapter = new HomeProductAdapter(tempProduces);
+        productAdapter = new HomeProductAdapter(null);
         GridLayoutManager grid2 = new GridLayoutManager(this, 5);
         rBottom.setLayoutManager(grid2);
         rBottom.setAdapter(productAdapter);
@@ -209,6 +211,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
         });
 
+        ld = new LoadingDialog(this);
+        ld.setLoadingText("支付中")
+                .setSuccessText("支付成功")//显示加载成功时的文字
+                .setFailedText("支付失败");
+//                .setInterceptBack(intercept_back_event)
+//                .setLoadSpeed(speed)
+//                .setRepeatCount(repeatTime)
+//                .setDrawColor(color)
+//                .show();
     }
 
     @OnClick(R.id.button5)
@@ -500,7 +511,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     String TAG = "home";
     private OrderBack orderBack;
-    private double change ;
+    private double change;
 
     /**
      * 结账 dialog 按钮回调
@@ -516,6 +527,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     }
                     cashPayDialog.show();
                 } else {
+                    orderInfo.setPayType(type == 2 ? "020" : "010");
                     Log.e(TAG, "OnDialogOkClick: " + PrinterUtil.toJson(orderInfo));
                     //线上支付
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
@@ -528,6 +540,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             }
 
                             MyApplication.getSocketTool().sendMsg("{\"task\": \"pay\",\"data\":{\"orderCode\":\"" + response.getData().getOrderNo() + "\",\"payTime\":\"" + orderInfo.getCreateTime() + "\",\"state\": \"1\",\"leftCupCnt\":1}}");
+                            ld.show();
                         }
 
                         @Override
@@ -546,9 +559,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
-                        orderBack = response.getData();
-                        change = charge;
-                        MyApplication.getSocketTool().sendMsg("{\"task\": \"pay\",\"data\":{\"orderCode\":\"" + response.getData().getOrderNo() + "\",\"payTime\":\"" + orderInfo.getCreateTime() + "\",\"state\": \"1\",\"leftCupCnt\":1}}");
+//                        orderBack = response.getData();
+//                        change = charge;
+//                        MyApplication.getSocketTool().sendMsg("{\"task\": \"pay\",\"data\":{\"orderCode\":\"" + response.getData().getOrderNo() + "\",\"payTime\":\"" + orderInfo.getCreateTime() + "\",\"state\": \"1\",\"leftCupCnt\":1}}");
+                        PrintOrder(response.getData(), charge);
+                        selectedAdapter.setNewData(null);
+                        productions.clear();
+                        dataBeans.clear();
+                        orderInfo = null;
                     }
 
                     @Override
@@ -576,7 +594,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             PrinterUtil.OpenMoneyBox();
             isCash = false;
         }
-        PrinterUtil.printString80(productions, orderBack.getOrderNo(), SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(), "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "");
+        PrinterUtil.printString80(this,productions, orderBack.getOrderNo(), SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(), "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "");
 
         total_number.setText("数量：");
         total_price.setText("总价：");
@@ -615,12 +633,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //socket支付回调
         Log.e(TAG, "GetPayBack: ");
         if (eventHandler.getType() == 1) {//用户支付完成
+            ld.loadSuccess();
             PrintOrder(orderBack, change);
             selectedAdapter.setNewData(null);
             productions.clear();
             dataBeans.clear();
             orderInfo = null;
-//            PrintOrder(response.getData(), totalPrice - Double.parseDouble(response.getData().getTotalPrice()));
+//            PrintOrder(response.getData(), totalPrice - Double.parseDouble(orderBack.getTotalPrice()));
+        } else {
+            ld.loadFailed();
         }
     }
 
@@ -629,4 +650,5 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
+
 }

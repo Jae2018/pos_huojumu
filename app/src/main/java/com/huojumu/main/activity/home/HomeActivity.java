@@ -322,11 +322,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         int totalCount = 0;
         for (Products.ProductsBean p : productions) {
             totalCount += p.getNumber();
-            if (p.getIsBargain()!=null&&p.getIsBargain().equals("1")) {
+            if (p.getIsBargain() != null & p.getIsBargain().equals("1")) {
                 totalPrice += p.getPrice() * p.getNumber();
                 totalCut += (p.getOrigionPrice() - p.getPrice()) * p.getNumber();
             } else {
-                if (p.getIsPresented()!=null&&p.getIsPresented().equals("1")) {
+                if (p.getIsPresented() != null && p.getIsPresented().equals("1")) {
                     totalPrice += p.getOrigionPrice() * (p.getNumber() > 1 ? p.getNumber() - 1 : 1);
                     totalCut += p.getOrigionPrice() * (p.getNumber() > 1 ? 1 : 0);
                 } else {
@@ -592,7 +592,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             PrinterUtil.OpenMoneyBox();
             isCash = false;
         }
-        PrinterUtil.printString80(this,productions, orderBack.getOrderNo(), SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(), "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "");
+        PrinterUtil.printString80(this, productions, orderBack.getOrderNo(), SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(), "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "");
 
         total_number.setText("数量：");
         total_price.setText("总价：");

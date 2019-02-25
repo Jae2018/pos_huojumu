@@ -97,8 +97,8 @@ public class PayBackActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        dao = MyApplication.getDb().getOrderDao();
-        detailDao = MyApplication.getDb().getDetailDao();
+//        dao = MyApplication.getDb().getOrderDao();
+//        detailDao = MyApplication.getDb().getDetailDao();
     }
 
     private void getOrderList() {

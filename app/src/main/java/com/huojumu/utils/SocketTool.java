@@ -1,5 +1,6 @@
 package com.huojumu.utils;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -30,19 +31,21 @@ public class SocketTool extends WebSocketListener {
     private BaseActivity activity;
     private WebSocket webSocket;
     private static SocketTool INSTANCE;
+    private Context context;
 
-    public static SocketTool getInstance(BaseActivity activity) {
+    public static SocketTool getInstance(Context context) {
         Request request = new Request.Builder()
                 .url(Constant.SOCKET)
                 .build();
         OkHttpClient client = new OkHttpClient();
-        INSTANCE = new SocketTool(activity);
+        INSTANCE = new SocketTool(context);
         client.newWebSocket(request, INSTANCE);
+        Log.e("SocketTool", "getInstance: ");
         return INSTANCE;
     }
 
-    private SocketTool(BaseActivity activity) {
-        this.activity = activity;
+    private SocketTool(Context context) {
+        this.context = context;
     }
 
     public void sendMsg(String s) {
@@ -101,8 +104,10 @@ public class SocketTool extends WebSocketListener {
                         SpUtil.save(Constant.ENT_NAME, response.getData().getParentEnterPrise().getEntName());
                         SpUtil.save(Constant.ENT_DIS, response.getData().getParentEnterPrise().getDiscountsType());
                     }
-                    activity.startActivity(new Intent(activity, LoginActivity.class));
-                    activity.finish();
+//                    context.startActivity(new Intent(context, LoginActivity.class));
+                    EventBus.getDefault().post(new EventHandler(Constant.LOGIN));
+//                    activity.startActivity(new Intent(activity, LoginActivity.class));
+//                    activity.finish();
                 }
 
                 @Override

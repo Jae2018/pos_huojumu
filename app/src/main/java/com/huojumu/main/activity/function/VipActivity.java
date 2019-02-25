@@ -12,6 +12,7 @@ import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.Vips;
 import com.huojumu.utils.Constant;
+import com.huojumu.utils.DensityUtil;
 import com.huojumu.utils.MyDividerDecoration;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.SpUtil;
@@ -45,7 +46,8 @@ public class VipActivity extends BaseActivity {
     protected void initView() {
         GridLayoutManager manager = new GridLayoutManager(this, 3);
         recyclerView.setLayoutManager(manager);
-        recyclerView.addItemDecoration(new MyDividerDecoration(this, MyDividerDecoration.VERTICAL));
+        MyDividerDecoration dividerDecoration = new MyDividerDecoration(this, DensityUtil.dp2px(this, 10), true);
+        recyclerView.addItemDecoration(dividerDecoration);
         for (int i = 0; i < 10; i++) {
             Vips v = new Vips();
             v.setGrade(String.valueOf(i * 10));

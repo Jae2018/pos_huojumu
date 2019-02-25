@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- view's dp -->
+    <dimen name="px_1">1px</dimen>
     <dimen name="d_1">1dp</dimen>
     <dimen name="d_2">2dp</dimen>
     <dimen name="d_4">4dp</dimen>

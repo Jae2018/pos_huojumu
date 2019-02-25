@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:padding="@dimen/d_8">
+    android:layout_width="@dimen/d_100"
+    android:layout_height="@dimen/d_120"
+    android:background="@drawable/pro_border"
+    android:padding="@dimen/d_1"
+    android:layout_margin="@dimen/d_10" >
 
     <ImageView
         android:id="@+id/iv_product_url"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/des"
-        android:minHeight="@dimen/d_100" />
+        android:layout_width="@dimen/d_100"
+        android:layout_height="@dimen/d_100"
+        android:contentDescription="@string/des" />
 
     <TextView
         android:id="@+id/tv_product_cut"
@@ -18,10 +19,16 @@
         android:gravity="center"
         android:layout_alignBottom="@id/iv_product_url"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/px_1"
+        android:background="@color/btn_den"
+        android:layout_below="@id/tv_product_cut"/>
+
     <TextView
         android:id="@+id/tv_product_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/f_20"
         android:layout_below="@id/iv_product_url"
         android:gravity="center" />
 

@@ -45,6 +45,8 @@ import com.huojumu.model.OrderInfo;
 import com.huojumu.model.Products;
 import com.huojumu.model.SmallType;
 import com.huojumu.utils.Constant;
+import com.huojumu.utils.DensityUtil;
+import com.huojumu.utils.MyDividerDecoration;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
 import com.huojumu.utils.PrinterUtil;
@@ -215,11 +217,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         ld.setLoadingText("支付中")
                 .setSuccessText("支付成功")//显示加载成功时的文字
                 .setFailedText("支付失败");
-//                .setInterceptBack(intercept_back_event)
-//                .setLoadSpeed(speed)
-//                .setRepeatCount(repeatTime)
-//                .setDrawColor(color)
-//                .show();
+
     }
 
     @OnClick(R.id.button5)

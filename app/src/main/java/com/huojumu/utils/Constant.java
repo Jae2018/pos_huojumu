@@ -48,6 +48,7 @@ public interface Constant {
     int DEFAULT_INT = 1;
     int PAY = 1;
     int LOGIN = 2;
+    int HOME = 3;
 
     /* pay method */
     String PAY_BY_ALI = "PayByAli";

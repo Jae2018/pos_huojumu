@@ -24,40 +24,15 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-//        initLeakCanary();
-//        initDataBase();
         SpUtil.Instance(this);
         SpUtil.save(Constant.UUID, UUID.randomUUID().toString());
         PrinterUtil.connectPrinter(getApplicationContext());
         socketTool = SocketTool.getInstance(this);
-        //, String.format(Constant.BAND, uuid)
     }
-
-//    private void initDataBase() {
-//        db = Room.databaseBuilder(getApplicationContext(), DataBase.class, "pos_db")
-////                .addMigrations(MIGRATION_1_2)
-//                .allowMainThreadQueries()
-//                .build();
-//    }
-
-//    public static DataBase getDb() {
-//        return db;
-//    }
 
 
     public static SocketTool getSocketTool() {
         return socketTool;
     }
-
-    private void initLeakCanary() {
-        // 内存泄露检查工具
-//        if (LeakCanary.isInAnalyzerProcess(this)) {
-//            // This process is dedicated to LeakCanary for heap analysis.
-//            // You should not init your app in this process.
-//            return;
-//        }
-//        LeakCanary.install(this);
-    }
-
 
 }

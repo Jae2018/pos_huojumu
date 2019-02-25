@@ -79,9 +79,6 @@ public class SocketTool extends WebSocketListener {
     public void onOpen(WebSocket webSocket, Response response) {
         super.onOpen(webSocket, response);
         this.webSocket = webSocket;
-//        if (!sendStr.isEmpty()) {
-//            webSocket.send(sendStr);
-//        }
     }
 
     @Override
@@ -125,7 +122,7 @@ public class SocketTool extends WebSocketListener {
             SpUtil.save(Constant.WORKER_NAME, taskBean.getData().getUserName());
             Log.e(TAG, "token: "+taskBean.getData().getToken());
             SpUtil.save(Constant.MY_TOKEN, "Bearer "+taskBean.getData().getToken());
-            activity.startActivity(new Intent(activity, HomeActivity.class));
+            EventBus.getDefault().post(new EventHandler(Constant.HOME));
         }
 
     }

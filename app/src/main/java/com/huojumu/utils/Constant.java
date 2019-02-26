@@ -67,4 +67,10 @@ public interface Constant {
 
     /* 小票宽度 */
     String PRINT_WIDTH = "w58or80";
+
+    /* socket 字段*/
+    String BIND = "machinebind";
+    String PAYCODE = "pay";
+    String START = "start";
+
 }

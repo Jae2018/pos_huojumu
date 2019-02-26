@@ -15,6 +15,7 @@ import com.data.OrderSave;
 import com.google.gson.Gson;
 import com.huojumu.R;
 import com.huojumu.model.OrderInfo;
+import com.huojumu.model.Production;
 import com.huojumu.model.Products;
 import com.szsicod.print.escpos.PrinterAPI;
 import com.szsicod.print.io.USBAPI;
@@ -260,7 +261,7 @@ public class PrinterUtil {
         }
     }
 
-    public static String toJson(OrderInfo orderInfo) {
+    public static String toJson(Object orderInfo) {
         if (gson == null) {
             gson = new Gson();
         }
@@ -324,7 +325,7 @@ public class PrinterUtil {
     /**
      * 打印文本58mm样式// 32 字节
      */
-    public static void printString58(final List<Products.ProductsBean> pList, final double totalPrice, final int totalNumber, final String orderNo, final String orderId, final String time) {
+    public static void printString58(final List<Production> pList, final double totalPrice, final int totalNumber, final String orderNo, final String orderId, final String time) {
         try {
 //            set(DOUBLE_HEIGHT_WIDTH);
             mPrinter.setCharSize(2, 2);
@@ -343,7 +344,7 @@ public class PrinterUtil {
                     .append("付款时间：").append(time).append("\n")
                     .append("打印时间：").append(simpleDateFormat.format(date)).append("\n\n");
             sb.append(printThreeData58("名称", "数量", "单价")).append("\n");
-            for (Products.ProductsBean p : pList) {
+            for (Production p : pList) {
                 sb.append(printThreeData58(p.getProName(), String.valueOf(p.getNumber()), String.valueOf(p.getPrice()))).append("\n");
             }
             sb.append(printThreeData58("合计：", String.valueOf(totalNumber), String.valueOf(totalPrice))).append("\n");
@@ -369,12 +370,15 @@ public class PrinterUtil {
     /**
      * 打印文本80mm小票样式 48 字节
      */
-    public static void printString80(Context c,final List<Products.ProductsBean> pList, final String orderNo, final String name, final String totalMoney, final String earn, final String cost, final String charge) {
+    public static void printString80(Context c, final List<Production> pList, final String orderNo, final String name, final String totalMoney, final String earn, final String cost, final String charge) {
         try {
 //            set(DOUBLE_HEIGHT_WIDTH);
+            //居左
             mPrinter.setAlignMode(0);
+            //字体变大
             mPrinter.setCharSize(2, 2);
-            String s = orderNo.substring(orderNo.length() - 12, orderNo.length() - 1) + "\n";
+            //订单流水号
+            String s = orderNo.substring(orderNo.length() - 4, orderNo.length() - 1) + "\n";
             mPrinter.printString(s, "GBK");
 //            set(NORMAL);
             mPrinter.setCharSize(0, 0);
@@ -391,7 +395,7 @@ public class PrinterUtil {
             sb.append(printThreeData80("商品名称", "数量", "单价", "金额")).append("\n");
             sb.append("\n");
 
-            for (Products.ProductsBean p : pList) {
+            for (Production p : pList) {
                 sb.append(printThreeData80(p.getProName(), String.valueOf(p.getNumber()), String.valueOf(p.getPrice()), String.valueOf(p.getNumber() * p.getPrice()))).append("\n");
                 sb.append(printThreeData80(p.getAddon(), "", "", ""));
             }
@@ -407,21 +411,23 @@ public class PrinterUtil {
 
             //虚实线
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line4)));
-            //店铺地址+店铺名
-            s = SpUtil.getString(Constant.STORE_ADDRESS) + "·" + SpUtil.getString(Constant.STORE_NAME);
+            //店铺名
+            s = SpUtil.getString(Constant.STORE_NAME);
             mPrinter.printString(s, "GBK");
 
             //logo图片9
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.logo)));
 
             //企业文化描述
-            s = "7港9欢迎您的到来。我们再次从香港出发，希望搜集到各地的特色食品，港印全国。能7(去)香港(港)的(9)九龙喝一杯正宗的港饮是我们对每一位顾客的愿景。几百年来，香港作为东方接触世界的窗口，找寻并创造了一款款独具特色又流传世界的高品饮品。我们在全国超过十年的专业服务与坚持，与97回归共享繁华，秉承独到的调制方法，期许再一次与亲爱的你能擦出下一个十年火花。";
+            s = "7港9欢迎您的到来。我们再次从香港出发，希望搜集到各地的特色食品，港印全国。能7(去)香港(港)的(9)九龙喝一杯正宗的港饮是我们对每一位顾客的愿景。几百年来，香港作为东方接触世界的窗口，找寻并创造了一款款独具特色又流传世界的高品饮品。我们在全国超过十年的专业服务与坚持，与97回归共享繁华，秉承独到的调制方法，期许再一次与亲爱的你能擦出下一个十年火花。\n";
             mPrinter.printString(s, "GBK");
+            //居中
+            mPrinter.setAlignMode(1);
             //品牌二维码
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.qr_code)));
 
             //投诉、加盟热线
-            s = "投诉、加盟热线：010-62655878";
+            s = "\n投诉、加盟热线：010-62655878";
             mPrinter.printString(s, "GBK");
             cutPaper();
         } catch (Exception e) {

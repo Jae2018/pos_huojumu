@@ -99,6 +99,7 @@ public class LoginActivity extends BaseActivity {
         Log.e("Login", "Home: ");
         if (eventHandler.getType() == 3) {
             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+            finish();
         }
     }
 

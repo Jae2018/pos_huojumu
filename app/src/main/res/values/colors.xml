@@ -13,7 +13,5 @@
     <color name="btn_text">#333333</color>
     <color name="main_view_back">#d7d5d5</color>
     <color name="wx_green">#50b528</color>
-    <color name="display_start">#a0daf0</color>
-    <color name="display_end">#3795c7</color>
     <color name="key_dowm">#9fe1ff</color>
 </resources>

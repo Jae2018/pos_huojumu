@@ -12,7 +12,6 @@ public class MakesBean {
     private String groupId;
     private int practiceId;
     private int multiple;
-//    private boolean isSelected;
 
     public MakesBean(int practiceId) {
         this.practiceId = practiceId;

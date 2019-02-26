@@ -5,9 +5,9 @@ import java.util.List;
 /**
  * @author : Jie
  * Date: 2018/11/29
- * Description: qq：494669467，wx：s494669467
+ * Description:
  */
-public class OrderBackInfo {
+public class OrderDetails {
     /**
      * member : {"joinTime":"2018-07-12 13:37:10","nickname":"李莉","totalConsumption":0,"memberId":89}
      * orderdetail : {"pros":[{"price":100,"proId":127,"proCount":5,"proName":"珍珠奶茶","cups":[{"cupId":28,"proId":127,"proName":"珍珠奶茶"},{"cupId":29,"proId":127,"proName":"珍珠奶茶"},{"cupId":30,"proId":127,"proName":"珍珠奶茶"},{"cupId":31,"proId":127,"proName":"珍珠奶茶"},{"cupId":32,"proId":127,"proName":"珍珠奶茶"}],"orderDeailId":14}],"ordNo":"DDMDCN12000100010001201807170004","orderid":"ededf08181ce4ea2b02a8a700ea152cb","totalPrice":100,"createTime":"2018-07-17 14:20:52","ordSource":"2"}
@@ -94,6 +94,15 @@ public class OrderBackInfo {
         private String createTime;
         private String ordSource;
         private List<ProsBean> pros;
+        private String payType;
+
+        public String getPayType() {
+            return payType;
+        }
+
+        public void setPayType(String payType) {
+            this.payType = payType;
+        }
 
         public String getOrdNo() {
             return ordNo;

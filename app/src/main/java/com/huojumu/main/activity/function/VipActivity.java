@@ -62,20 +62,7 @@ public class VipActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        NetTool.getVipList(SpUtil.getInt(Constant.ENT_ID), SpUtil.getInt(Constant.PINPAI_ID), new GsonResponseHandler<BaseBean<List<Vips>>>() {
-            @Override
-            public void onSuccess(int statusCode, BaseBean<List<Vips>> response) {
-                Log.e("da", response.getData().size()+"");
-                if (!response.getData().isEmpty()) {
-                    adapter.setNewData(response.getData());
-                }
-            }
 
-            @Override
-            public void onFailure(int statusCode, String error_msg) {
-
-            }
-        });
     }
 
     @OnClick(R.id.iv_back)

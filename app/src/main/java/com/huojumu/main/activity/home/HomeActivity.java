@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.media.MediaPlayer;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
@@ -108,11 +109,16 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private CertainDialog certainDialog;//关机
 
     //订单数据
-    OrderInfo orderInfo;
+    private OrderInfo orderInfo;
     private Handler handler = new Handler();
     //是否修改
     private boolean ok = false;
     private LoadingDialog ld;
+    //流水号
+    private int NO = 1;
+
+    //是否是现金支付
+    boolean isCash = false;
 
     @Override
     protected int setLayout() {
@@ -359,12 +365,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         total_number.setText(String.format("数量：%s 份", totalCount));
         total_price.setText(String.format("总价：%s 元", totalPrice));
         cut_number.setText(String.format("优惠：%s 元", totalCut));
-        this.totalPrice = totalPrice;
         //副屏刷新
         if (engine != null) {
             engine.refresh(productions);
             engine.setPrice(totalPrice, totalCut);
         }
+        this.totalPrice = totalPrice;
+        Log.e(TAG, "checkPriceForDisplay: " + totalPrice);
     }
 
     List<OrderInfo.DataBean> dataBeans = new ArrayList<>();
@@ -408,7 +415,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         checkPriceForDisplay();
 
         orderInfo = new OrderInfo();
-        orderInfo.setOrderID(PrinterUtil.getOrderNo());
+        orderInfo.setOrderID(PrinterUtil.getOrderID() + (NO < 10 ? "000" + NO : NO < 100 ? "00" + NO : NO < 1000 ? "0" + NO : NO + ""));
         orderInfo.setShopID(SpUtil.getInt(Constant.STORE_ID));
         orderInfo.setCreateTime(PrinterUtil.getDate());
         orderInfo.setEnterpriseID(SpUtil.getInt(Constant.ENT_ID));
@@ -433,7 +440,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             return;
         }
         if (hasHoldOn) {
-            Toast.makeText(this, "已有挂单！", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "已显示挂单！", Toast.LENGTH_LONG).show();
             productions.addAll(gTemp);
             gTemp.clear();
             selectedAdapter.setNewData(productions);//显示挂单数据
@@ -453,11 +460,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     @OnClick(R.id.button2)
     void DeleteAll() {
-        //清空当前选择list
-        productions.clear();
-        //刷新列表
-        selectedAdapter.setNewData(productions);
-        engine.clear();
+        clear();
     }
 
     /**
@@ -562,6 +565,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
                             MyApplication.getSocketTool().sendMsg("{\"task\": \"pay\",\"data\":{\"orderCode\":\"" + response.getData().getOrderNo() + "\",\"payTime\":\"" + orderInfo.getCreateTime() + "\",\"state\": \"1\",\"leftCupCnt\":1}}");
                             ld.show();
+                            NO++;
+                            payOutTime();
                         }
 
                         @Override
@@ -586,6 +591,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         productions.clear();
                         dataBeans.clear();
                         orderInfo = null;
+                        NO++;
                     }
 
                     @Override
@@ -602,8 +608,24 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
     }
 
-    //是否是现金支付
-    boolean isCash = false;
+    /**
+     * 支付超时
+     */
+    private void payOutTime() {
+        CountDownTimer timer = new CountDownTimer(60 * 1000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                ld.loadFailed();
+                clear();
+            }
+        };
+        timer.start();
+    }
 
     /**
      * 打印订单小票
@@ -615,11 +637,27 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
         PrinterUtil.printString80(this, productions, orderBack.getOrderNo(), SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(), "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "");
 
+    }
+
+    /**
+     * 重置所有数据
+     */
+    private void clear() {
+        //清空当前选择list
+        productions.clear();
+        //副频置空
+        engine.clear();
+        //订单置空
+        dataBeans.clear();
+        //左下角计算置空
         total_number.setText("数量：");
         total_price.setText("总价：");
         cut_number.setText("优惠：");
+        //订单置空
+        orderInfo = null;
+        //左侧置空
+        selectedAdapter.setNewData(null);
     }
-
 
     @Override
     public void onPrepared(MediaPlayer mp) {
@@ -654,14 +692,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         if (eventHandler.getType() == 1) {//用户支付完成
             ld.loadSuccess();
             PrintOrder(orderBack, change);
-            selectedAdapter.setNewData(null);
-            productions.clear();
-            dataBeans.clear();
-            orderInfo = null;
-//            PrintOrder(response.getData(), totalPrice - Double.parseDouble(orderBack.getTotalPrice()));
         } else {
             ld.loadFailed();
         }
+        clear();
     }
 
     @Override

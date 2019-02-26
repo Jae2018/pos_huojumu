@@ -52,6 +52,7 @@ public class CashPayDialog extends BaseDialog {
 
     @Override
     public void initView() {
+        cash = 0;
         earn1.setText(String.valueOf(cost));
         earn2.addTextChangedListener(new TextWatcher() {
             @Override

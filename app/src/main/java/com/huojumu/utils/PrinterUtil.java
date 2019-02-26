@@ -11,12 +11,9 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.blankj.utilcode.util.ToastUtils;
-import com.data.OrderSave;
 import com.google.gson.Gson;
 import com.huojumu.R;
-import com.huojumu.model.OrderInfo;
 import com.huojumu.model.Production;
-import com.huojumu.model.Products;
 import com.szsicod.print.escpos.PrinterAPI;
 import com.szsicod.print.io.USBAPI;
 
@@ -251,14 +248,20 @@ public class PrinterUtil {
         return sb.toString();
     }
 
+    private static Thread thread;
     //开钱箱
     public static void OpenMoneyBox() {
-        byte[] bytes = {0x1B, 0x70, 0x0, 0x3C, (byte) 0xFF};
-        try {
-            mPrinter.writeIO(bytes, 0, bytes.length - 1, 1000);
-        } catch (Exception e) {
-            Log.d(TAG, "OpenMoneyBox: error");
+        if (thread == null) {
+            thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    byte[] bytes = {0x1B, 0x70, 0x0, 0x3C, (byte) 0xFF};
+                    mPrinter.writeIO(bytes, 0, bytes.length - 1, 1000);
+                    thread.interrupt();
+                }
+            });
         }
+        thread.start();
     }
 
     public static String toJson(Object orderInfo) {
@@ -317,8 +320,8 @@ public class PrinterUtil {
         return simpleDateFormat.format(date);
     }
 
-    public static String getOrderNo() {
-        simpleDateFormat = new SimpleDateFormat("yyMMddHHmmss", Locale.CHINA);
+    public static String getOrderID() {
+        simpleDateFormat = new SimpleDateFormat("yyMMdd", Locale.CHINA);
         return simpleDateFormat.format(new Date());
     }
 

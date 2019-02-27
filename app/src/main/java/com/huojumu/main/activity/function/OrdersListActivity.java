@@ -5,17 +5,17 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.huojumu.R;
 import com.huojumu.adapter.OrderListAdapter;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.OrdersList;
-import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
-import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -27,7 +27,11 @@ public class OrdersListActivity extends BaseActivity {
     @BindView(R.id.recycler_orders)
     RecyclerView recyclerView;
 
+    //
+    private List<OrdersList.RowsBean> rowsBeanList = new ArrayList<>();
     private OrderListAdapter adapter;
+    //
+    private int pageNum = 1, totalPAge;
 
     @Override
     protected int setLayout() {
@@ -40,14 +44,40 @@ public class OrdersListActivity extends BaseActivity {
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         adapter = new OrderListAdapter(null);
         recyclerView.setAdapter(adapter);
+        adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
+            @Override
+            public void onLoadMoreRequested() {
+                if (pageNum >= totalPAge) {
+                    adapter.loadMoreEnd();
+                } else {
+                    getList();
+                }
+            }
+        }, recyclerView);
+        adapter.setUpFetchListener(new BaseQuickAdapter.UpFetchListener() {
+            @Override
+            public void onUpFetch() {
+                adapter.setUpFetchEnable(true);
+                pageNum = 1;
+                getList();
+            }
+        });
     }
 
     @Override
     protected void initData() {
-        NetTool.getStoreOrders(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.ENT_ID), SpUtil.getInt(Constant.PINPAI_ID), new GsonResponseHandler<BaseBean<List<OrdersList>>>() {
+        getList();
+    }
+
+    private void getList() {
+        NetTool.getStoreOrderList(pageNum, new GsonResponseHandler<BaseBean<OrdersList>>() {
             @Override
-            public void onSuccess(int statusCode, BaseBean<List<OrdersList>> response) {
-                adapter.setNewData(response.getData());
+            public void onSuccess(int statusCode, BaseBean<OrdersList> response) {
+                rowsBeanList.addAll(response.getData().getRows());
+                adapter.setNewData(rowsBeanList);
+                totalPAge = response.getData().getTotal();
+                pageNum++;
+                adapter.setUpFetching(false);
             }
 
             @Override

@@ -61,8 +61,8 @@ public class NetTool {
                 .addParam("appToken", SpUtil.getString(Constant.MY_TOKEN).split(" ")[1])
                 .addParam("checkCode", checkCode)
                 .addParam("machineCode", machineCode)
-                .addParam("source","pos")
-                .addParam("timestamp",timestamp)
+                .addParam("source", "pos")
+                .addParam("timestamp", timestamp)
                 .enqueue(handler);
     }
 
@@ -132,13 +132,14 @@ public class NetTool {
     }
 
     //订单列表
-    public static void getStoreOrders(int shopID, int enterpriseID, int pinpaiID, GsonResponseHandler<BaseBean<List<OrdersList>>> handler) {
+    public static void getStoreOrderList(int pageNum, GsonResponseHandler<BaseBean<OrdersList>> handler) {
         okHttp.post()
-                .url(Constant.BASE_URL + "order/getcuplist.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
-                .addParam("shopID", shopID + "")
-                .addParam("enterpriseID", enterpriseID + "")
-                .addParam("pinpaiID", pinpaiID + "")
-                .addParam("status", "1")
+                .url(Constant.BASE_URL + "system/orderon.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .addParam("type", "7")
+                .addParam("ordSource", "3")
+                .addParam("ordDate", PrinterUtil.getTime())
+                .addParam("pageNum", pageNum + "")
+                .addParam("pageSize", "10")
                 .enqueue(handler);
     }
 
@@ -209,7 +210,6 @@ public class NetTool {
                 .addParam("proId", proId + "")
                 .enqueue(handler);
     }
-
 
 
     //活动信息

@@ -14,16 +14,16 @@ import java.util.List;
  * Date: 2018/11/30
  * Description: qq：494669467，wx：s494669467
  */
-public class OrderListAdapter extends BaseQuickAdapter<OrdersList, BaseViewHolder> {
+public class OrderListAdapter extends BaseQuickAdapter<OrdersList.RowsBean, BaseViewHolder> {
 
-    public OrderListAdapter(@Nullable List<OrdersList> data) {
+    public OrderListAdapter(@Nullable List<OrdersList.RowsBean> data) {
         super(R.layout.item_for_orders_list, data);
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, OrdersList item) {
-        helper.setText(R.id.tv_order_list_no, "编号：" + item.getOrderNo())
+    protected void convert(BaseViewHolder helper, OrdersList.RowsBean item) {
+        helper.setText(R.id.tv_order_list_no, "编号：" + item.getOrdId())
                 .setText(R.id.tv_order_list_status, "状态：" + item.getStatus())
-                .setText(R.id.tv_order_list_name, "商品：" + item.getProName());
+                .setText(R.id.tv_order_list_name, "商品：" + item.getTotalPrice());
     }
 }

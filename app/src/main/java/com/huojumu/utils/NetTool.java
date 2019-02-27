@@ -146,7 +146,7 @@ public class NetTool {
     public static void getEnableBackOrderList(int shopID, String orderNo, GsonResponseHandler<BaseBean<OrderEnableBackBean>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "pay/findOrderByNo.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
-                .addParam("shopID", shopID + "")
+                .addParam("shopId", shopID + "")
                 .addParam("orderNo", orderNo)
                 .enqueue(handler);
     }

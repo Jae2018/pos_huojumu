@@ -106,14 +106,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private SingleProAddonDialog addonDialog;//单品设置弹窗
     private SingleProAddonDialog addonDialog2;//单品修改弹窗
     private MoreFunctionDialog functionDialog;//功能弹窗
-    private CertainDialog certainDialog;//关机
+    private CertainDialog certainDialog;//关机确认弹窗
 
     //订单数据
     private OrderInfo orderInfo;
     private Handler handler = new Handler();
     //是否修改
     private boolean ok = false;
-    private LoadingDialog ld;
     //流水号
     private int NO = 1;
 

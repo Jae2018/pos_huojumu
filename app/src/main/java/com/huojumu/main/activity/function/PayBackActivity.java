@@ -1,12 +1,14 @@
 package com.huojumu.main.activity.function;
 
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.huojumu.R;
 import com.huojumu.adapter.OrderBackContentAdapter;
@@ -43,11 +45,17 @@ public class PayBackActivity extends BaseActivity {
     TextView dateTv;
     @BindView(R.id.tv_order_back_pay_type)
     TextView payTypeTv;
+    @BindView(R.id.recycler_back_detail)
+    RecyclerView detailRecycler;
+    @BindView(R.id.swipe)
+    SwipeRefreshLayout refreshLayout;
 
     //可退单集合
     private OrderEnableBackAdapter backAdapter;
     //明细集合
-    private OrderBackContentAdapter adapter;
+    private OrderBackContentAdapter contentAdapter;
+    //
+    private String id;
 
     @Override
     protected int setLayout() {
@@ -57,12 +65,22 @@ public class PayBackActivity extends BaseActivity {
     @Override
     protected void initView() {
         backRecycler.setLayoutManager(new LinearLayoutManager(this));
+        detailRecycler.setLayoutManager(new LinearLayoutManager(this));
         backAdapter = new OrderEnableBackAdapter(null);
+        contentAdapter = new OrderBackContentAdapter(null);
         backRecycler.setAdapter(backAdapter);
+        detailRecycler.setAdapter(contentAdapter);
         backAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                getOrderDetail(backAdapter.getData().get(position).getId());
+                id = backAdapter.getData().get(position).getId();
+                getOrderDetail(id);
+            }
+        });
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getOrderDetail(id);
             }
         });
     }
@@ -77,7 +95,11 @@ public class PayBackActivity extends BaseActivity {
         NetTool.getEnableBackOrderList(SpUtil.getInt(Constant.STORE_ID), editText.getText().toString(), new GsonResponseHandler<BaseBean<OrderEnableBackBean>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrderEnableBackBean> response) {
-                backAdapter.setNewData(response.getData().getOrders());
+                if (response.getData() == null) {
+                    ToastUtils.showLong("无对应订单数据！");
+                } else {
+                    backAdapter.setNewData(response.getData().getOrders());
+                }
             }
 
             @Override
@@ -87,17 +109,21 @@ public class PayBackActivity extends BaseActivity {
         });
     }
 
-    private void getOrderDetail(String orderId){
+    private void getOrderDetail(String orderId) {
         NetTool.getOrderInfo(orderId, new GsonResponseHandler<BaseBean<OrderDetails>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrderDetails> response) {
                 if (response.getData().getMember() != null) {
-                    buyer.setText(String.format("下单客户：%s",response.getData().getMember().getNickname()));
+                    buyer.setText(String.format("下单客户：%s", response.getData().getMember().getNickname()));
                 }
                 if (response.getData().getOrderdetail() != null) {
-                    priceTv.setText(String.format("%s元",response.getData().getOrderdetail().getTotalPrice()));
-                    dateTv.setText(response.getData().getOrderdetail().getCreateTime());
-                    payTypeTv.setText(response.getData().getOrderdetail().getPayType().equals("010")?"":"");
+                    contentAdapter.setNewData(response.getData().getOrderdetail().getPros());
+                    priceTv.setText(String.format("订单金额：%s元", response.getData().getOrderdetail().getTotalPrice()));
+                    dateTv.setText(String.format("订单日期：%s", response.getData().getOrderdetail().getCreateTime()));
+                    payTypeTv.setText(response.getData().getOrderdetail().getPayType().equals("010") ? "微信支付" : "支付宝支付");
+                }
+                if (refreshLayout.isRefreshing()) {
+                    refreshLayout.setRefreshing(false);
                 }
             }
 
@@ -118,7 +144,6 @@ public class PayBackActivity extends BaseActivity {
         startActivity(new Intent(PayBackActivity.this, HomeActivity.class));
         finish();
     }
-
 
 
 }

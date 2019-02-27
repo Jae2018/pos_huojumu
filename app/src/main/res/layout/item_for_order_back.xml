@@ -2,6 +2,7 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tv_order_item_content"
     android:layout_width="match_parent"
-    android:textSize="@dimen/f_24"
+    android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:layout_height="@dimen/d_48" />
+    android:layout_margin="@dimen/d_8"
+    android:textSize="@dimen/f_16" />

@@ -1,198 +1,195 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:zhy="http://schemas.android.com/tools"
-    android:layout_width="@dimen/d_600"
-    android:layout_height="wrap_content"
-    android:background="@android:color/white">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/d_48"
+    android:background="@android:color/white"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/d_16"
-        android:layout_marginTop="@dimen/d_16"
-        android:text="规格"
-        android:textSize="@dimen/f_16"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.zhy.view.flowlayout.TagFlowLayout
-        android:id="@+id/id_flowlayout1"
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3"
-        zhy:max_select="1"/>
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/d_16"
-        android:gravity="center_vertical"
-        android:text="口味"
-        android:textSize="@dimen/f_16"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/id_flowlayout1" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/d_10"
+                android:layout_marginTop="@dimen/d_16"
+                android:text="规格："
+                android:textSize="@dimen/f_16"
+                android:textStyle="bold" />
 
-    <com.zhy.view.flowlayout.TagFlowLayout
-        android:id="@+id/id_flowlayout2"
+            <com.zhy.view.flowlayout.TagFlowLayout
+                android:id="@+id/id_flowlayout1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/d_10"
+                android:layout_marginEnd="@dimen/d_10" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/d_10"
+                android:layout_marginTop="@dimen/d_10"
+                android:gravity="center_vertical"
+                android:text="口味："
+                android:textSize="@dimen/f_16"
+                android:textStyle="bold" />
+
+            <com.zhy.view.flowlayout.TagFlowLayout
+                android:id="@+id/id_flowlayout2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/d_10"
+                android:layout_marginEnd="@dimen/d_10" />
+
+            <TextView
+                android:id="@+id/textView16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/d_10"
+                android:layout_marginTop="@dimen/d_10"
+                android:gravity="center_vertical"
+                android:text="加料："
+                android:textSize="@dimen/f_16"
+                android:textStyle="bold" />
+
+            <com.zhy.view.flowlayout.TagFlowLayout
+                android:id="@+id/id_flowlayout3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/d_10"
+                android:layout_marginEnd="@dimen/d_10" />
+
+            <TextView
+                android:id="@+id/textView17"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/d_10"
+                android:layout_marginTop="@dimen/d_10"
+                android:gravity="center_vertical"
+                android:text="做法："
+                android:textSize="@dimen/f_16"
+                android:textStyle="bold" />
+
+            <com.zhy.view.flowlayout.TagFlowLayout
+                android:id="@+id/id_flowlayout4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/d_10"
+                android:layout_marginEnd="@dimen/d_10" />
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5"
-        zhy:max_select="1"/>
+        android:layout_height="@dimen/d_56"
+        android:baselineAligned="false">
 
-    <TextView
-        android:id="@+id/textView16"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/d_16"
-        android:layout_marginTop="@dimen/d_10"
-        android:gravity="center_vertical"
-        android:text="加料"
-        android:textSize="@dimen/f_16"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/id_flowlayout2" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2">
 
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/d_10"
+                android:gravity="center_vertical"
+                android:text="备注："
+                android:textSize="@dimen/f_16"
+                android:textStyle="bold" />
 
-    <com.zhy.view.flowlayout.TagFlowLayout
-        android:id="@+id/id_flowlayout3"
+            <EditText
+                android:id="@+id/et_addon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/input_border"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:hint="@string/des"
+                android:inputType="textMultiLine"
+                android:maxLength="100"
+                android:padding="@dimen/d_4" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="8dp"
+                android:gravity="center_vertical"
+                android:text="数量："
+                android:textSize="@dimen/f_16"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/tv_home_addon_number"
+                android:layout_width="@dimen/d_80"
+                android:layout_height="@dimen/d_48"
+                android:background="@drawable/input_border"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="3"
+                android:padding="@dimen/d_8"
+                android:text="1"
+                android:textSize="@dimen/f_20"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView16"
-        zhy:max_select="1"/>
+        android:layout_height="@dimen/d_50"
+        android:layout_marginTop="@dimen/d_16">
 
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/d_16"
-        android:layout_marginTop="@dimen/d_10"
-        android:text="备注"
-        android:textSize="@dimen/f_16"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/id_flowlayout3" />
+        <Button
+            android:id="@+id/btn_home_addon_cancel"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/d_48"
+            android:layout_weight="1"
+            android:background="@drawable/bg_dialog_cancel_btn"
+            android:text="取消"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/f_18" />
 
-    <EditText
-        android:id="@+id/et_addon"
-        android:layout_width="@dimen/d_350"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/d_10"
-        android:gravity="top"
-        android:hint="@string/des"
-        android:inputType="text"
-        android:lineSpacingExtra="@dimen/d_4"
-        android:maxLength="30"
-        android:minHeight="@dimen/d_48"
-        android:padding="@dimen/d_8"
-        android:textSize="@dimen/f_13"
-        app:layout_constraintStart_toStartOf="@+id/textView6"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
-    <Button
-        android:id="@+id/btn_home_addon_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/d_16"
-        android:layout_marginEnd="@dimen/d_48"
-        android:layout_marginBottom="@dimen/d_16"
-        android:background="@drawable/bg_dialog_cancel_btn"
-        android:text="取消"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/f_18"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btn_home_addon_ok"
-        app:layout_constraintTop_toBottomOf="@+id/et_addon" />
-
-    <Button
-        android:id="@+id/btn_home_addon_ok"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/d_16"
-        android:layout_marginEnd="@dimen/d_16"
-        android:layout_marginBottom="@dimen/d_16"
-        android:background="@drawable/bg_dialog_ok_btn"
-        android:text="确定"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/f_18"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_addon" />
-
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="@dimen/d_10"
-        android:layout_marginEnd="8dp"
-        android:text="数量"
-        android:textSize="@dimen/f_16"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.16"
-        app:layout_constraintStart_toEndOf="@+id/et_addon"
-        app:layout_constraintTop_toBottomOf="@+id/id_flowlayout3" />
-
-    <!--<LinearLayout-->
-        <!--android:id="@+id/linearLayout3"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginTop="@dimen/d_10"-->
-        <!--app:layout_constraintStart_toStartOf="@+id/textView7"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/textView7">-->
-
-        <!--<ImageButton-->
-        <!--android:id="@+id/btn_home_addon_sub"-->
-        <!--android:layout_width="@dimen/d_40"-->
-        <!--android:layout_height="@dimen/d_40"-->
-        <!--android:background="@drawable/ic_sub"-->
-        <!--android:contentDescription="@string/des" />-->
-
-    <EditText
-        android:id="@+id/tv_home_addon_number"
-        android:layout_width="@dimen/d_80"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/d_8"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:gravity="center"
-        android:inputType="number"
-        android:maxLength="4"
-        android:text="1"
-        android:textSize="@dimen/f_20"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btn_home_addon_cancel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/et_addon"
-        app:layout_constraintTop_toBottomOf="@+id/textView7" />
-
-        <!--<ImageButton-->
-        <!--android:id="@+id/btn_home_addon_plus"-->
-        <!--android:layout_width="@dimen/d_40"-->
-        <!--android:layout_height="@dimen/d_40"-->
-        <!--android:background="@drawable/ic_add"-->
-        <!--android:contentDescription="@string/des" />-->
-
-    <!--</LinearLayout>-->
-
-</android.support.constraint.ConstraintLayout>
+        <Button
+            android:id="@+id/btn_home_addon_ok"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/d_48"
+            android:layout_weight="1"
+            android:background="@drawable/bg_dialog_ok_btn"
+            android:text="确定"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/f_18" />
+    </LinearLayout>
+</LinearLayout>

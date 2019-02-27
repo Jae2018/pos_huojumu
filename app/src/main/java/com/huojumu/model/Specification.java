@@ -10,6 +10,15 @@ public class Specification {
     private List<MatsBean> mats;
     private List<TastesBean> tastes;
     private List<MakesBean> makes;
+    private List<ScaleBean> scales;
+
+    public List<ScaleBean> getScales() {
+        return scales;
+    }
+
+    public void setScales(List<ScaleBean> scales) {
+        this.scales = scales;
+    }
 
     public List<MatsBean> getMats() {
         return mats;

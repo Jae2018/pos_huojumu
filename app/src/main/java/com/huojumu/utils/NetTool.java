@@ -6,15 +6,13 @@ import com.huojumu.model.DailyInfo;
 import com.huojumu.model.InventoryList;
 import com.huojumu.model.Material;
 import com.huojumu.model.OrderBack;
-import com.huojumu.model.OrderBackInfo;
-import com.huojumu.model.OrderNoList;
+import com.huojumu.model.OrderDetails;
+import com.huojumu.model.OrderEnableBackBean;
 import com.huojumu.model.OrdersList;
 import com.huojumu.model.Products;
 import com.huojumu.model.SmallType;
 import com.huojumu.model.Specification;
 import com.huojumu.model.StoreInfo;
-import com.huojumu.model.UpdateBean;
-import com.huojumu.model.Vips;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
@@ -144,6 +142,24 @@ public class NetTool {
                 .enqueue(handler);
     }
 
+    //可退单列表
+    public static void getEnableBackOrderList(int shopID, String orderNo, GsonResponseHandler<BaseBean<OrderEnableBackBean>> handler) {
+        okHttp.post()
+                .url(Constant.BASE_URL + "pay/findOrderByNo.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .addParam("shopID", shopID + "")
+                .addParam("orderNo", orderNo)
+                .enqueue(handler);
+    }
+
+
+    //订单详情
+    public static void getOrderInfo(String orderid, GsonResponseHandler<BaseBean<OrderDetails>> handler) {
+        okHttp.post()
+                .url(Constant.BASE_URL + "system/orderdetail.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .addParam("orderid", orderid)
+                .enqueue(handler);
+    }
+
     //退单
     public static void getPayBack(int shopId, String orderId, GsonResponseHandler<BaseBean<String>> handler) {
         okHttp.post()
@@ -166,28 +182,6 @@ public class NetTool {
 //                .enqueue(handler);
     }
 
-    //更新
-    public static void update(String uuid, GsonResponseHandler<BaseBean<UpdateBean>> handler) {
-//        okHttp.post()
-//                .url(Constant.BASE_URL + "pay/refund.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
-//                .addParam("uuid", uuid)
-//                .enqueue(handler);
-    }
-
-    //会员列表
-    public static void getVipList(int enterpriseID, int pinpaiID, GsonResponseHandler<BaseBean<List<Vips>>> handler) {
-//        okHttp.post()
-//                .url(Constant.BASE_URL + "pay/refund.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
-//                .addParam("enterpriseID", enterpriseID + "")
-//                .addParam("pinpaiID", pinpaiID + "")
-//                .enqueue(handler);
-    }
-
-    //会员详情
-    public static void getVipDetail() {
-
-
-    }
 
     //日結、交班
     public static void takeOver(long timestamp, GsonResponseHandler<BaseBean<String>> handler) {
@@ -216,23 +210,7 @@ public class NetTool {
                 .enqueue(handler);
     }
 
-    //订单详情
-    public static void getOrderInfo(String orderid, GsonResponseHandler<BaseBean<OrderBackInfo>> handler) {///system/orderdetail.action
-        okHttp.post()
-                .url(Constant.BASE_URL + "system/orderdetail.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
-                .addParam("orderid", orderid)
-                .enqueue(handler);
-    }
 
-    //订单列表
-    public static void getOrderNoList(GsonResponseHandler<BaseBean<OrderNoList>> handler) {///system/orderdetail.action
-        okHttp.post()
-                .url(Constant.BASE_URL + "system/orderon.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
-                .addParam("type", "7")
-                .addParam("ordSource", "3")
-                .addParam("ordDate", PrinterUtil.getTime())
-                .enqueue(handler);
-    }
 
     //活动信息
     public static void getActiveInfo(int shopID, int enterpriseID, int pinpaiID, GsonResponseHandler<BaseBean<List<ActiveBean>>> handler) {

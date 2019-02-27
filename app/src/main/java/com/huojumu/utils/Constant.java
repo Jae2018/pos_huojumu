@@ -47,7 +47,8 @@ public interface Constant {
     String DEFAULT_STR = "";
     int DEFAULT_INT = 1;
     int PAY = 1;
-    int LOGIN=2;
+    int LOGIN = 2;
+    int HOME = 3;
 
     /* pay method */
     String PAY_BY_ALI = "PayByAli";
@@ -66,4 +67,10 @@ public interface Constant {
 
     /* 小票宽度 */
     String PRINT_WIDTH = "w58or80";
+
+    /* socket 字段*/
+    String BIND = "machinebind";
+    String PAYCODE = "pay";
+    String START = "start";
+
 }

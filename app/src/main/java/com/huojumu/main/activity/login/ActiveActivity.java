@@ -1,15 +1,23 @@
 package com.huojumu.main.activity.login;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.ImageView;
 
+import com.huojumu.MyApplication;
 import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
+import com.huojumu.model.EventHandler;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.PowerUtil;
 import com.huojumu.utils.QrUtil;
 import com.huojumu.utils.SocketTool;
 import com.huojumu.utils.SpUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.UUID;
 
@@ -33,6 +41,7 @@ public class ActiveActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         //生成设备编码二维码
         if (SpUtil.getString(Constant.UUID).isEmpty()) {
             uuid = UUID.randomUUID().toString();
@@ -46,7 +55,7 @@ public class ActiveActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        socketTool.sendMsg(String.format(Constant.BAND, uuid));
+        MyApplication.getSocketTool().sendMsg(String.format(Constant.BAND, uuid));
     }
 
     @OnClick(R.id.iv_shutdown)
@@ -54,4 +63,17 @@ public class ActiveActivity extends BaseActivity {
         PowerUtil.shutdown();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLogin(EventHandler eventHandler){
+        Log.e("active", "Bind: ");
+        if (eventHandler.getType() == 2) {
+            startActivity(new Intent(ActiveActivity.this, LoginActivity.class));
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 }

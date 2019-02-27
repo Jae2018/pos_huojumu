@@ -6,12 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
-    <style name="textView48">
-        <item name="android:layout_width">@dimen/d_200</item>
-        <item name="android:layout_height">@dimen/d_48</item>
-        <item name="android:gravity">center</item>
+        <item name="android:listDivider">@drawable/divider_bg</item>
     </style>
 
     <style name="FullscreenTheme" parent="AppTheme">

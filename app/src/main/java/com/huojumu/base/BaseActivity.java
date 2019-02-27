@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
+import com.huojumu.MyApplication;
 import com.huojumu.utils.CustomerEngine;
-import com.huojumu.utils.SocketTool;
 
 import butterknife.ButterKnife;
 
@@ -17,7 +17,7 @@ import butterknife.ButterKnife;
 public abstract class BaseActivity extends AppCompatActivity {
 
     protected CustomerEngine engine;
-    protected SocketTool socketTool;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -26,10 +26,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         engine = CustomerEngine.getInstance(getApplicationContext());
-        socketTool = SocketTool.getInstance(this);
         initView();
         initData();
-        socketTool.sendHeart();
+        MyApplication.getSocketTool().sendHeart();
     }
 
     // 设置布局

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.media.MediaPlayer;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
@@ -23,6 +24,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemSwipeListener;
+import com.huojumu.MyApplication;
 import com.huojumu.R;
 import com.huojumu.adapter.HomeProductAdapter;
 import com.huojumu.adapter.HomeSelectedAdapter;
@@ -39,8 +41,10 @@ import com.huojumu.main.dialogs.SingleProCallback;
 import com.huojumu.model.ActiveBean;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.EventHandler;
+import com.huojumu.model.MatsBean;
 import com.huojumu.model.OrderBack;
 import com.huojumu.model.OrderInfo;
+import com.huojumu.model.Production;
 import com.huojumu.model.Products;
 import com.huojumu.model.SmallType;
 import com.huojumu.utils.Constant;
@@ -88,12 +92,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private HomeTypeAdapter typeAdapter;//类别
     private HomeProductAdapter productAdapter;//商品
 
-    private List<Products.ProductsBean> tempProduces;//商品列表
-    private SparseArray<List<Products.ProductsBean>> map = new SparseArray<>();//分类切换
-    private ArrayList<Products.ProductsBean> productions = new ArrayList<>();//选择的奶茶
+    private List<Production> tempProduces;//商品列表
+    private List<ActiveBean> activeBeanList;//活动列表
+    private SparseArray<List<Production>> map = new SparseArray<>();//分类切换
+    private ArrayList<Production> productions = new ArrayList<>();//选择的奶茶
     private double totalPrice = 0;//订单总价
 
-    private List<Products.ProductsBean> gTemp = new ArrayList<>();//挂单
+    private List<Production> gTemp = new ArrayList<>();//挂单
     private boolean hasHoldOn = false;//是否已有挂单
 
     private QuickPayDialog quickPayDialog;//快捷支付弹窗
@@ -104,11 +109,16 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private CertainDialog certainDialog;//关机
 
     //订单数据
-    OrderInfo orderInfo;
+    private OrderInfo orderInfo;
     private Handler handler = new Handler();
     //是否修改
     private boolean ok = false;
     private LoadingDialog ld;
+    //流水号
+    private int NO = 1;
+
+    //是否是现金支付
+    boolean isCash = false;
 
     @Override
     protected int setLayout() {
@@ -123,7 +133,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         selectedAdapter = new HomeSelectedAdapter(productions);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         left.setLayoutManager(linearLayoutManager);
-        left.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        DividerItemDecoration d = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        d.setDrawable(getResources().getDrawable(R.drawable.divider_n));
+        left.addItemDecoration(d);
         selectedAdapter.enableSwipeItem();
         ItemDragAndSwipeCallback mItemDragAndSwipeCallback = new ItemDragAndSwipeCallback(selectedAdapter);
         ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(mItemDragAndSwipeCallback);
@@ -173,8 +185,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 if (position != 0) {
                     if (map.get(position) == null) {
-                        List<Products.ProductsBean> temp = new ArrayList<>();
-                        for (Products.ProductsBean p : tempProduces) {
+                        List<Production> temp = new ArrayList<>();
+                        for (Production p : tempProduces) {
                             if (typeAdapter.getData().get(position).getTypeNo().equals(p.getProType())) {
                                 temp.add(p);
                             }
@@ -214,11 +226,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         ld.setLoadingText("支付中")
                 .setSuccessText("支付成功")//显示加载成功时的文字
                 .setFailedText("支付失败");
-//                .setInterceptBack(intercept_back_event)
-//                .setLoadSpeed(speed)
-//                .setRepeatCount(repeatTime)
-//                .setDrawColor(color)
-//                .show();
+
     }
 
     @OnClick(R.id.button5)
@@ -289,7 +297,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         NetTool.getActiveInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.ENT_ID), SpUtil.getInt(Constant.PINPAI_ID), new GsonResponseHandler<BaseBean<List<ActiveBean>>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<List<ActiveBean>> response) {
-
+                activeBeanList = response.getData();
             }
 
             @Override
@@ -321,42 +329,59 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private void checkPriceForDisplay() {
         double totalPrice = 0.0, totalCut = 0.0;
         int totalCount = 0;
-        for (Products.ProductsBean p : productions) {
+        for (Production p : productions) {
             totalCount += p.getNumber();
-            if (p.getIsBargain().equals("1")) {
-                totalPrice += p.getPrice() * p.getNumber();
-                totalCut += (p.getOrigionPrice() - p.getPrice()) * p.getNumber();
+            if (activeBeanList == null || activeBeanList.isEmpty()) {
+                double c = 0;
+                if (!p.getMats().isEmpty()) {
+                    for (MatsBean m : p.getMats()) {
+                        c += m.getIngredientPrice();
+                    }
+                }
+                totalPrice += p.getOrigionPrice() * p.getNumber() + c;
+                totalCut += 0;
             } else {
-                if (p.getIsPresented().equals("1")) {
-                    totalPrice += p.getOrigionPrice() * (p.getNumber() > 1 ? p.getNumber() - 1 : 1);
+                if (p.getIsBargain() != null && p.getIsBargain().equals("1")) {
+                    double c = 0;
+                    if (!p.getMats().isEmpty()) {
+                        for (MatsBean m : p.getMats()) {
+                            c += m.getIngredientPrice();
+                        }
+                    }
+                    totalPrice += p.getPrice() * p.getNumber() + c;
+                    totalCut += (p.getOrigionPrice() - p.getPrice()) * p.getNumber();
+                } else if (p.getIsPresented() != null && p.getIsPresented().equals("1")) {
+                    double c = 0;
+                    if (!p.getMats().isEmpty()) {
+                        for (MatsBean m : p.getMats()) {
+                            c += m.getIngredientPrice();
+                        }
+                    }
+                    totalPrice += p.getOrigionPrice() * (p.getNumber() > 1 ? p.getNumber() - 1 : 1) + c;
                     totalCut += p.getOrigionPrice() * (p.getNumber() > 1 ? 1 : 0);
-                } else {
-                    totalPrice += p.getOrigionPrice() * p.getNumber();
-                    totalCut += 0.0;
                 }
             }
-
-
         }
         total_number.setText(String.format("数量：%s 份", totalCount));
-        total_price.setText(String.format("总价：%.2s 元", totalPrice));
-        cut_number.setText(String.format("优惠：%.2s 元", totalCut));
-        this.totalPrice = totalPrice;
+        total_price.setText(String.format("总价：%s 元", totalPrice));
+        cut_number.setText(String.format("优惠：%s 元", totalCut));
         //副屏刷新
         if (engine != null) {
             engine.refresh(productions);
             engine.setPrice(totalPrice, totalCut);
         }
+        this.totalPrice = totalPrice;
+        Log.e(TAG, "checkPriceForDisplay: " + totalPrice);
     }
+
+    List<OrderInfo.DataBean> dataBeans = new ArrayList<>();
+    int n = 0;
 
     /**
      * 单品详情dialog配置回调
      */
-    List<OrderInfo.DataBean> dataBeans = new ArrayList<>();
-    int n = 0;
-
     @Override
-    public void onSingleCallBack(int proId, int number, Products.ProductsBean productsBean, OrderInfo.DataBean dataBean, int position) {
+    public void onSingleCallBack(int proId, int number, Production productsBean, OrderInfo.DataBean dataBean, int position) {
         //加入已选清单中
         if (ok) {
             productions.get(position).setNumber(number);
@@ -371,11 +396,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         n = productions.get(i).getNumber() + number;
                         productions.get(i).setNumber(n);
                         dataBean.setNum(n);
+                        productsBean.setNumber(n);
                         break;
                     }
                 }
             if (!isAdd) {
                 dataBean.setNum(number);
+                productsBean.setNumber(number);
                 productions.add(productsBean);
             }
         }
@@ -388,7 +415,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         checkPriceForDisplay();
 
         orderInfo = new OrderInfo();
-        orderInfo.setOrderID(PrinterUtil.getOrderNo());
+        orderInfo.setOrderID(PrinterUtil.getOrderID() + (NO < 10 ? "000" + NO : NO < 100 ? "00" + NO : NO < 1000 ? "0" + NO : NO + ""));
         orderInfo.setShopID(SpUtil.getInt(Constant.STORE_ID));
         orderInfo.setCreateTime(PrinterUtil.getDate());
         orderInfo.setEnterpriseID(SpUtil.getInt(Constant.ENT_ID));
@@ -413,7 +440,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             return;
         }
         if (hasHoldOn) {
-            Toast.makeText(this, "已有挂已单！", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "已显示挂单！", Toast.LENGTH_LONG).show();
             productions.addAll(gTemp);
             gTemp.clear();
             selectedAdapter.setNewData(productions);//显示挂单数据
@@ -433,11 +460,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     @OnClick(R.id.button2)
     void DeleteAll() {
-        //清空当前选择list
-        productions.clear();
-        //刷新列表
-        selectedAdapter.setNewData(productions);
-        engine.clear();
+        clear();
     }
 
     /**
@@ -517,6 +540,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     @Override
     public void OnDialogOkClick(final int type, final double earn, final double cost, final double charge, String name) {
+        change = charge;
         switch (name) {
             case "QuickPayDialog":
                 quickPayDialog.dismiss();
@@ -532,14 +556,17 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                         @Override
                         public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
+                            orderBack = response.getData();
                             if (type == 2) {
                                 engine.getAliIV().setImageBitmap(QrUtil.createQRCodeWithLogo(HomeActivity.this, response.getData().getAliPayQrcode(), BitmapFactory.decodeResource(getResources(), R.drawable.zhifubao_normal)));
                             } else if (type == 3) {
                                 engine.getWxIV().setImageBitmap(QrUtil.createQRCodeWithLogo(HomeActivity.this, response.getData().getWxPayQrcode(), BitmapFactory.decodeResource(getResources(), R.drawable.weixin_normal)));
                             }
 
-                            socketTool.sendMsg("{\"task\": \"pay\",\"data\":{\"orderCode\":\"" + response.getData().getOrderNo() + "\",\"payTime\":\"" + orderInfo.getCreateTime() + "\",\"state\": \"1\",\"leftCupCnt\":1}}");
+                            MyApplication.getSocketTool().sendMsg("{\"task\": \"pay\",\"data\":{\"orderCode\":\"" + response.getData().getOrderNo() + "\",\"payTime\":\"" + orderInfo.getCreateTime() + "\",\"state\": \"1\",\"leftCupCnt\":1}}");
                             ld.show();
+                            NO++;
+                            payOutTime();
                         }
 
                         @Override
@@ -558,11 +585,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
+                        orderBack = response.getData();
                         PrintOrder(response.getData(), charge);
                         selectedAdapter.setNewData(null);
                         productions.clear();
                         dataBeans.clear();
                         orderInfo = null;
+                        NO++;
                     }
 
                     @Override
@@ -579,8 +608,24 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
     }
 
-    //是否是现金支付
-    boolean isCash = false;
+    /**
+     * 支付超时
+     */
+    private void payOutTime() {
+        CountDownTimer timer = new CountDownTimer(60 * 1000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                ld.loadFailed();
+                clear();
+            }
+        };
+        timer.start();
+    }
 
     /**
      * 打印订单小票
@@ -590,13 +635,29 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             PrinterUtil.OpenMoneyBox();
             isCash = false;
         }
-        PrinterUtil.printString80(this,productions, orderBack.getOrderNo(), SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(), "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "");
+        PrinterUtil.printString80(this, productions, orderBack.getOrderNo(), SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(), "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "");
 
+    }
+
+    /**
+     * 重置所有数据
+     */
+    private void clear() {
+        //清空当前选择list
+        productions.clear();
+        //副频置空
+        engine.clear();
+        //订单置空
+        dataBeans.clear();
+        //左下角计算置空
         total_number.setText("数量：");
         total_price.setText("总价：");
         cut_number.setText("优惠：");
+        //订单置空
+        orderInfo = null;
+        //左侧置空
+        selectedAdapter.setNewData(null);
     }
-
 
     @Override
     public void onPrepared(MediaPlayer mp) {
@@ -631,14 +692,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         if (eventHandler.getType() == 1) {//用户支付完成
             ld.loadSuccess();
             PrintOrder(orderBack, change);
-            selectedAdapter.setNewData(null);
-            productions.clear();
-            dataBeans.clear();
-            orderInfo = null;
-//            PrintOrder(response.getData(), totalPrice - Double.parseDouble(orderBack.getTotalPrice()));
         } else {
             ld.loadFailed();
         }
+        clear();
     }
 
     @Override

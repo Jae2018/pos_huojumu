@@ -1,7 +1,7 @@
 package com.huojumu.main.dialogs;
 
 import com.huojumu.model.OrderInfo;
-import com.huojumu.model.Products;
+import com.huojumu.model.Production;
 
 
 /**
@@ -11,6 +11,6 @@ import com.huojumu.model.Products;
  */
 public interface SingleProCallback {
 
-    void onSingleCallBack(int scaleId, int number, Products.ProductsBean productsBean, OrderInfo.DataBean dataBean, int position);
+    void onSingleCallBack(int scaleId, int number, Production productsBean, OrderInfo.DataBean dataBean, int position);
 
 }

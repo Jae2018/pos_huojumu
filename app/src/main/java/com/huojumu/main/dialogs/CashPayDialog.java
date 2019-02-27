@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -27,7 +28,11 @@ public class CashPayDialog extends BaseDialog {
     @BindView(R.id.tv_cash_pay_earn2)
     EditText earn2;//实收金额
     @BindView(R.id.dialog_cash_pay_change)
-    TextView change;
+    TextView change;//找零
+    @BindView(R.id.text_error)
+    TextView errorTv;
+    @BindView(R.id.cash_dialog_ok)
+    Button okBtn;
 
     private DialogInterface anInterface;
 
@@ -47,6 +52,7 @@ public class CashPayDialog extends BaseDialog {
 
     @Override
     public void initView() {
+        cash = 0;
         earn1.setText(String.valueOf(cost));
         earn2.addTextChangedListener(new TextWatcher() {
             @Override
@@ -62,7 +68,14 @@ public class CashPayDialog extends BaseDialog {
             @Override
             public void afterTextChanged(Editable s) {
                 cash = Integer.valueOf(s.toString());
-                change.setText(String.valueOf(cash - cost));
+                if (cash < cost) {
+                    okBtn.setEnabled(false);
+                    errorTv.setVisibility(View.VISIBLE);
+                } else {
+                    change.setText(String.valueOf(cash - cost));
+                    okBtn.setEnabled(true);
+                    errorTv.setVisibility(View.GONE);
+                }
             }
         });
     }

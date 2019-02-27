@@ -21,7 +21,6 @@ public class MatsBean {
     private String matNo;
     private int orgId;
     private String matName;
-//    private boolean isSelected;
 
     public MatsBean(int proMatId) {
         this.proMatId = proMatId;

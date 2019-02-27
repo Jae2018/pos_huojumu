@@ -7,7 +7,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.huojumu.main.activity.dialog.DifferentDisplay;
-import com.huojumu.model.Products;
+import com.huojumu.model.Production;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class CustomerEngine {
         }
     }
 
-    public void refresh(List<Products.ProductsBean> list) {
+    public void refresh(List<Production> list) {
         if (mCustomerDisplay != null)
             mCustomerDisplay.refresh(list);
     }

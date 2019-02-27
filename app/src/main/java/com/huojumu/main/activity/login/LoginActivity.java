@@ -1,20 +1,28 @@
 package com.huojumu.main.activity.login;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
+import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.model.BaseBean;
+import com.huojumu.model.EventHandler;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
 import com.huojumu.utils.QrUtil;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -36,7 +44,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -86,4 +94,18 @@ public class LoginActivity extends BaseActivity {
         PowerUtil.shutdown();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLogin(EventHandler eventHandler){
+        Log.e("Login", "Home: ");
+        if (eventHandler.getType() == 3) {
+            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+            finish();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 }

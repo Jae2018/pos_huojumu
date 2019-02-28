@@ -6,6 +6,7 @@ import com.huojumu.utils.Constant;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SocketTool;
 import com.huojumu.utils.SpUtil;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.UUID;
 
@@ -23,7 +24,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        CrashReport.initCrashReport(getApplicationContext(), "551785ca95", true);
         SpUtil.Instance(this);
         SpUtil.save(Constant.UUID, UUID.randomUUID().toString());
         PrinterUtil.connectPrinter(getApplicationContext());

@@ -64,6 +64,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -106,14 +107,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private SingleProAddonDialog addonDialog;//单品设置弹窗
     private SingleProAddonDialog addonDialog2;//单品修改弹窗
     private MoreFunctionDialog functionDialog;//功能弹窗
-    private CertainDialog certainDialog;//关机
+    private CertainDialog certainDialog;//关机确认弹窗
 
     //订单数据
     private OrderInfo orderInfo;
     private Handler handler = new Handler();
     //是否修改
     private boolean ok = false;
-    private LoadingDialog ld;
     //流水号
     private int NO = 1;
 
@@ -415,7 +415,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         checkPriceForDisplay();
 
         orderInfo = new OrderInfo();
-        orderInfo.setOrderID(PrinterUtil.getOrderID() + (NO < 10 ? "000" + NO : NO < 100 ? "00" + NO : NO < 1000 ? "0" + NO : NO + ""));
+
         orderInfo.setShopID(SpUtil.getInt(Constant.STORE_ID));
         orderInfo.setCreateTime(PrinterUtil.getDate());
         orderInfo.setEnterpriseID(SpUtil.getInt(Constant.ENT_ID));
@@ -550,6 +550,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     }
                     cashPayDialog.show();
                 } else {
+//                    orderInfo.setOrderID(PrinterUtil.getOrderID() + (NO < 10 ? "000" + NO : NO < 100 ? "00" + NO : NO < 1000 ? "0" + NO : NO + ""));
+                    orderInfo.setOrderID(PrinterUtil.getOrderID() +  new Random().nextInt(1000));
+
                     orderInfo.setPayType(type == 2 ? "020" : "010");
                     Log.e(TAG, "OnDialogOkClick: " + PrinterUtil.toJson(orderInfo));
                     //线上支付
@@ -571,7 +574,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
                         @Override
                         public void onFailure(int statusCode, String error_msg) {
-
+                            ToastUtils.showLong("网络连接错误！");
                         }
                     });
                 }
@@ -579,6 +582,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             //现金支付回调
             case "CashPayDialog":
                 //弹钱箱，打印小票
+                orderInfo.setOrderID(PrinterUtil.getOrderID() +  new Random().nextInt(1000));
+//                orderInfo.setOrderID(PrinterUtil.getOrderID() + (NO < 10 ? "000" + NO : NO < 100 ? "00" + NO : NO < 1000 ? "0" + NO : NO + ""));
                 isCash = true;
                 orderInfo.setPayType("900");
                 cashPayDialog.cancel();
@@ -587,16 +592,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
                         orderBack = response.getData();
                         PrintOrder(response.getData(), charge);
-                        selectedAdapter.setNewData(null);
-                        productions.clear();
-                        dataBeans.clear();
-                        orderInfo = null;
+                        clear();
                         NO++;
                     }
 
                     @Override
                     public void onFailure(int statusCode, String error_msg) {
-
+                        ToastUtils.showLong("网络连接错误！");
                     }
                 });
                 break;

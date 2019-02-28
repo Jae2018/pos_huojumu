@@ -1,4 +1,4 @@
-package com.huojumu.main.activity.work;
+package com.huojumu.main.activity.function;
 
 import android.content.Intent;
 import android.support.v7.widget.DividerItemDecoration;
@@ -18,6 +18,7 @@ import com.huojumu.utils.NetTool;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -33,8 +34,10 @@ public class InventoryActivity extends BaseActivity {
 
     @BindView(R.id.recycler_inventory)
     RecyclerView recyclerView;
-    private List<InventoryList.RowsBean> rowsBeanList;
+    private List<InventoryList.RowsBean> rowsBeanList = new ArrayList<>();
     private WorkInventoryAdapter adapter;
+    //
+    private int pageNum = 1, totalPAge;
 
     @Override
     protected int setLayout() {
@@ -48,32 +51,49 @@ public class InventoryActivity extends BaseActivity {
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         adapter = new WorkInventoryAdapter(rowsBeanList);
         recyclerView.setAdapter(adapter);
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
+            public void onLoadMoreRequested() {
+                if (pageNum >= totalPAge) {
+                    adapter.loadMoreEnd();
+                } else {
+                    getList();
+                }
             }
-
+        }, recyclerView);
+        adapter.setUpFetchListener(new BaseQuickAdapter.UpFetchListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
+            public void onUpFetch() {
+                adapter.setUpFetchEnable(true);
+                rowsBeanList.clear();
+                pageNum = 1;
+                getList();
             }
         });
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-//                startActivity(new Intent(InventoryActivity.this, InventoryDetailActivity.class));
+                Intent i = new Intent(InventoryActivity.this, InventoryDetailActivity.class);
+                i.putExtra("checkId", rowsBeanList.get(position).getCheckId());
+//                startActivity(i);
             }
         });
     }
 
     @Override
     protected void initData() {
-        NetTool.getInventoryList(SpUtil.getInt(Constant.STORE_ID), 10, new GsonResponseHandler<BaseBean<InventoryList>>() {
+        getList();
+    }
+
+    private void getList() {
+        NetTool.getInventoryList(SpUtil.getInt(Constant.STORE_ID), pageNum, new GsonResponseHandler<BaseBean<InventoryList>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<InventoryList> response) {
-                rowsBeanList = response.getData().getRows();
+                rowsBeanList.addAll(response.getData().getRows()) ;
                 adapter.setNewData(rowsBeanList);
+                totalPAge = response.getData().getTotal();
+                pageNum++;
+                adapter.setUpFetchEnable(false);
             }
 
             @Override

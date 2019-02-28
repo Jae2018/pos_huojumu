@@ -20,7 +20,9 @@ import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-
+/**
+ * 库存
+ * */
 public class MaterialActivity extends BaseActivity {
 
     @BindView(R.id.title)

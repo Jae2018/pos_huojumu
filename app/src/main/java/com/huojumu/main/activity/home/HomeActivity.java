@@ -338,8 +338,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         c += m.getIngredientPrice();
                     }
                 }
-                totalPrice += p.getOrigionPrice() * p.getNumber() + c;
-                totalCut += 0;
+                totalPrice += p.getOrigionPrice() * p.getNumber() + c * p.getNumber();
+                totalCut = 0;
+                Log.e(TAG, "checkPriceForDisplay: normal");
             } else {
                 if (p.getIsBargain() != null && p.getIsBargain().equals("1")) {
                     double c = 0;
@@ -348,8 +349,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             c += m.getIngredientPrice();
                         }
                     }
-                    totalPrice += p.getPrice() * p.getNumber() + c;
+                    totalPrice += p.getPrice() * p.getNumber() + c * p.getNumber();
                     totalCut += (p.getOrigionPrice() - p.getPrice()) * p.getNumber();
+                    Log.e(TAG, "checkPriceForDisplay: IsBargain");
                 } else if (p.getIsPresented() != null && p.getIsPresented().equals("1")) {
                     double c = 0;
                     if (!p.getMats().isEmpty()) {
@@ -357,8 +359,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             c += m.getIngredientPrice();
                         }
                     }
-                    totalPrice += p.getOrigionPrice() * (p.getNumber() > 1 ? p.getNumber() - 1 : 1) + c;
+                    totalPrice += p.getOrigionPrice() * (p.getNumber() > 1 ? p.getNumber() - 1 : 1) + c * (p.getNumber() > 1 ? p.getNumber() - 1 : 1);
                     totalCut += p.getOrigionPrice() * (p.getNumber() > 1 ? 1 : 0);
+                    Log.e(TAG, "checkPriceForDisplay: IsPresented");
                 }
             }
         }

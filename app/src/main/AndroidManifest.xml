@@ -12,6 +12,9 @@
     <!-- 在 屏幕最顶部显示addview-->
     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:name="com.huojumu.MyApplication"
@@ -57,11 +60,11 @@
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
-            android:name="com.huojumu.main.activity.work.InventoryActivity"
+            android:name="com.huojumu.main.activity.function.InventoryActivity"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
-            android:name="com.huojumu.main.activity.work.InventoryDetailActivity"
+            android:name="com.huojumu.main.activity.function.InventoryDetailActivity"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity

@@ -58,6 +58,7 @@ public class OrdersListActivity extends BaseActivity {
             @Override
             public void onUpFetch() {
                 adapter.setUpFetchEnable(true);
+                rowsBeanList.clear();
                 pageNum = 1;
                 getList();
             }

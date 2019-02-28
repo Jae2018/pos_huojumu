@@ -1,17 +1,18 @@
-package com.huojumu.main.activity.work;
+package com.huojumu.main.activity.function;
 
+import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
 
 /**
  * @author : Jie
  * Date: 2018/10/22
- * Description:
+ * Description: 盘点详情
  */
 public class InventoryDetailActivity extends BaseActivity {
 
     @Override
     protected int setLayout() {
-        return 0;
+        return R.layout.activity_inventory_detail;
     }
 
     @Override

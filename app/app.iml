@@ -99,7 +99,6 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/data_binding_dependency_artifacts" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/data_binding_layout_info_type_merge" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dex" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/external_libs_dex" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/feature_data_binding_base_feature_info" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental-runtime-classes" />
@@ -213,5 +212,10 @@
     <orderEntry type="library" name="Gradle: com.android.support:support-media-compat:28.0.0@aar" level="project" />
     <orderEntry type="module" module-name="LoadingDialog" />
     <orderEntry type="library" name="Gradle: android-android-28" level="project" />
+    <orderEntry type="module" module-name="LoadingDialog" />
+    <orderEntry type="module" module-name="LoadingDialog" />
+    <orderEntry type="module" module-name="LoadingDialog" />
+    <orderEntry type="module" module-name="LoadingDialog" />
+    <orderEntry type="module" module-name="LoadingDialog" />
   </component>
 </module>

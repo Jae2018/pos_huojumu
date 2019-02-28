@@ -3,6 +3,7 @@ package com.huojumu.utils;
 import com.huojumu.model.ActiveBean;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.DailyInfo;
+import com.huojumu.model.InventoryDetail;
 import com.huojumu.model.InventoryList;
 import com.huojumu.model.Material;
 import com.huojumu.model.OrderBack;
@@ -91,11 +92,21 @@ public class NetTool {
                 .enqueue(handler);
     }
 
+    //盘点列表
     public static void getInventoryList(int shopId, int pageNum, GsonResponseHandler<BaseBean<InventoryList>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "store/queryCheckInventoryList.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("shopId", shopId + "")
-                .addParam("enterpriseID", pageNum + "")
+                .addParam("pageNum", pageNum + "")
+                .addParam("pageSize", "10")
+                .enqueue(handler);
+    }
+
+    //盘点明细
+    public static void getInventoryDetail(String checkId, GsonResponseHandler<BaseBean<List<InventoryDetail>>> handler) {
+        okHttp.post()
+                .url(Constant.BASE_URL + "store/queryCheckInventoryDetail.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .addParam("checkId", checkId)
                 .enqueue(handler);
     }
 

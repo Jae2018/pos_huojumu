@@ -40,8 +40,8 @@ public class OrderBackBean {
     private int updateBy;
     private String updateTime;
     private String remark;
-    private int orgionTotalPrice;
-    private int totalPrice;
+    private double orgionTotalPrice;
+    private double totalPrice;
     private String payType;
     private String pickUpCode;
     private String ordSource;
@@ -134,19 +134,19 @@ public class OrderBackBean {
         this.remark = remark;
     }
 
-    public int getOrgionTotalPrice() {
+    public double getOrgionTotalPrice() {
         return orgionTotalPrice;
     }
 
-    public void setOrgionTotalPrice(int orgionTotalPrice) {
+    public void setOrgionTotalPrice(double orgionTotalPrice) {
         this.orgionTotalPrice = orgionTotalPrice;
     }
 
-    public int getTotalPrice() {
+    public double getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(int totalPrice) {
+    public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }
 

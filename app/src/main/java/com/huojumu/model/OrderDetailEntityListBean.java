@@ -31,10 +31,10 @@ public class OrderDetailEntityListBean {
     private Object updateBy;
     private Object updateTime;
     private Object remark;
-    private int price;
-    private int originalPrice;
-    private int origionUnivalence;
-    private int univalence;
+    private double price;
+    private double originalPrice;
+    private double origionUnivalence;
+    private double univalence;
     private String proName;
     private String uuid;
     private String proType;
@@ -119,35 +119,35 @@ public class OrderDetailEntityListBean {
         this.remark = remark;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
-    public int getOriginalPrice() {
+    public double getOriginalPrice() {
         return originalPrice;
     }
 
-    public void setOriginalPrice(int originalPrice) {
+    public void setOriginalPrice(double originalPrice) {
         this.originalPrice = originalPrice;
     }
 
-    public int getOrigionUnivalence() {
+    public double getOrigionUnivalence() {
         return origionUnivalence;
     }
 
-    public void setOrigionUnivalence(int origionUnivalence) {
+    public void setOrigionUnivalence(double origionUnivalence) {
         this.origionUnivalence = origionUnivalence;
     }
 
-    public int getUnivalence() {
+    public double getUnivalence() {
         return univalence;
     }
 
-    public void setUnivalence(int univalence) {
+    public void setUnivalence(double univalence) {
         this.univalence = univalence;
     }
 

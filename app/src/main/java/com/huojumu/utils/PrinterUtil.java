@@ -8,6 +8,8 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -22,6 +24,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -288,6 +291,12 @@ public class PrinterUtil {
         }
     }
 
+    public static UsbDevice getUsbDeviceFromName(Context context, String usbName) {
+        UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        HashMap<String,UsbDevice> usbDeviceList = usbManager.getDeviceList();
+        return usbDeviceList.get(usbName);
+    }
+
     /**
      * 断开打印机
      */
@@ -305,6 +314,18 @@ public class PrinterUtil {
 
     public static String getTime() {
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+        simpleDateFormat.format(date);
+        return simpleDateFormat.format(date);
+    }
+
+    public static String getTabTime(){
+        simpleDateFormat = new SimpleDateFormat("MMdd", Locale.CHINA);
+        simpleDateFormat.format(date);
+        return simpleDateFormat.format(date);
+    }
+
+    public static String getTabHour(){
+        simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.CHINA);
         simpleDateFormat.format(date);
         return simpleDateFormat.format(date);
     }

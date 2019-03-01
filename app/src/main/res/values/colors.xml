@@ -7,7 +7,7 @@
     <color name="black_overlay">#66000000</color>
     <color name="home_left_bottom">#e8a82c</color>
     <color name="default_bg">#e3e3e3</color>
-
+    <color name="black90">#383431</color><!--黑色 -->
     <color name="btn_start">#fefefe</color>
     <color name="btn_den">#c1c1c1</color>
     <color name="btn_text">#333333</color>

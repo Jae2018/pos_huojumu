@@ -90,7 +90,7 @@ public class OrderDetails {
 
         private String ordNo;
         private String orderid;
-        private int totalPrice;
+        private double totalPrice;
         private String createTime;
         private String ordSource;
         private List<ProsBean> pros;
@@ -120,11 +120,11 @@ public class OrderDetails {
             this.orderid = orderid;
         }
 
-        public int getTotalPrice() {
+        public double getTotalPrice() {
             return totalPrice;
         }
 
-        public void setTotalPrice(int totalPrice) {
+        public void setTotalPrice(double totalPrice) {
             this.totalPrice = totalPrice;
         }
 
@@ -162,18 +162,18 @@ public class OrderDetails {
              * orderDeailId : 14
              */
 
-            private int price;
+            private double price;
             private int proId;
             private int proCount;
             private String proName;
             private int orderDeailId;
             private List<CupsBean> cups;
 
-            public int getPrice() {
+            public double getPrice() {
                 return price;
             }
 
-            public void setPrice(int price) {
+            public void setPrice(double price) {
                 this.price = price;
             }
 

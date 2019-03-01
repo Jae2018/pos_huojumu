@@ -1,6 +1,6 @@
 package com.huojumu.utils;
 
-import com.huojumu.model.ActiveBean;
+import com.huojumu.model.VipListBean;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.DailyInfo;
 import com.huojumu.model.InventoryDetail;
@@ -56,17 +56,7 @@ public class NetTool {
                 .enqueue(handler);
     }
 
-    public static void checkLogin(String checkCode, String machineCode, String timestamp, GsonResponseHandler<BaseBean<String>> handler) {
-        okHttp.post()
-                .url(Constant.BASE_URL + "duty/loginAndOnDuty.action")
-                .addParam("appToken", SpUtil.getString(Constant.MY_TOKEN).split(" ")[1])
-                .addParam("checkCode", checkCode)
-                .addParam("machineCode", machineCode)
-                .addParam("source", "pos")
-                .addParam("timestamp", timestamp)
-                .enqueue(handler);
-    }
-
+    //设备所属信息查询
     public static void getMachineInfo(String machineCode, GsonResponseHandler<BaseBean<StoreInfo>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "system/machineinfo.action")
@@ -74,6 +64,7 @@ public class NetTool {
                 .enqueue(handler);
     }
 
+    //分类查询
     public static void getSmallType(int shopID, int enterpriseID, int pinpaiID, GsonResponseHandler<BaseBean<List<SmallType>>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "product/shopstype.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
@@ -83,12 +74,14 @@ public class NetTool {
                 .enqueue(handler);
     }
 
-    public static void getStoreProduces(int shopID, int enterpriseID, int pinpaiID, GsonResponseHandler<BaseBean<Products>> handler) {
+    //商品列表查询
+    public static void getStoreProduces(int shopID, int enterpriseID, int pinpaiID, String isRecommend, GsonResponseHandler<BaseBean<Products>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "product/shopproduct.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("shopID", shopID + "")
                 .addParam("enterpriseID", enterpriseID + "")
                 .addParam("pinpaiID", pinpaiID + "")
+                .addParam("isRecommend", isRecommend)
                 .enqueue(handler);
     }
 
@@ -110,18 +103,10 @@ public class NetTool {
                 .enqueue(handler);
     }
 
+    //提交订单
     public static void postOrder(String json, GsonResponseHandler<BaseBean<OrderBack>> handler) {
         okHttp.post().url(Constant.BASE_URL + "order/submit.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("data", json)
-                .enqueue(handler);
-    }
-
-    //订单支付状态查询
-    public static void postOrder(String orderNo, String payType, String authNo, GsonResponseHandler<BaseBean<OrderBack>> handler) {
-        okHttp.post().url(Constant.BASE_URL + "pay/barcodepay.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
-                .addParam("orderNo", orderNo)
-                .addParam("payType", payType)
-                .addParam("authNo", authNo)
                 .enqueue(handler);
     }
 
@@ -173,27 +158,16 @@ public class NetTool {
     }
 
     //退单
-    public static void getPayBack(int shopId, String orderId, GsonResponseHandler<BaseBean<String>> handler) {
+    public static void getPayBack(int shopId, String orderId, String payType, GsonResponseHandler<BaseBean<String>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "pay/refund.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("shopId", shopId + "")
                 .addParam("orderId", orderId + "")
                 .addParam("cancelRadio", "pos退单")
-                .addParam("payType", "cash")
+                .addParam("payType", payType)
                 .addParam("cancelTadio", "pos退单")
                 .enqueue(handler);
     }
-
-    //推介
-    public static void getPackageList(int shopId, int enterpriseID, int pinpaiID, String idNode, GsonResponseHandler<BaseBean<String>> handler) {
-//        okHttp.post().url(Constant.BASE_URL + "product/offspring.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
-//                .addParam("shopID",shopId+"")
-//                .addParam("enterpriseID",enterpriseID+"")
-//                .addParam("pinpaiID",pinpaiID+"")
-//                .addParam("idNode",idNode+"")
-//                .enqueue(handler);
-    }
-
 
     //日結、交班
     public static void takeOver(long timestamp, GsonResponseHandler<BaseBean<String>> handler) {
@@ -215,6 +189,7 @@ public class NetTool {
                 .enqueue(handler);
     }
 
+    //查询单品规格信息
     public static void getSpecification(int pinpaiID, int proId, GsonResponseHandler<BaseBean<Specification>> handler) {
         okHttp.post().url(Constant.BASE_URL + "product/tasteChoose.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("pinpaiID", pinpaiID + "")
@@ -222,9 +197,8 @@ public class NetTool {
                 .enqueue(handler);
     }
 
-
-    //活动信息
-    public static void getActiveInfo(int shopID, int enterpriseID, int pinpaiID, GsonResponseHandler<BaseBean<List<ActiveBean>>> handler) {
+    //活动信息列表
+    public static void getActiveInfo(int shopID, int enterpriseID, int pinpaiID, GsonResponseHandler<BaseBean<List<VipListBean>>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "salespromotion/getpromotion.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("shopID", "" + shopID)
@@ -233,5 +207,14 @@ public class NetTool {
                 .enqueue(handler);
     }
 
+    //会员信息列表
+    public static void getVipList(int brandId, int pageNum, GsonResponseHandler<BaseBean<VipListBean>> handler) {
+        okHttp.post()
+                .url(Constant.BASE_URL + "member/memberPages.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .addParam("brandId", "" + brandId)
+                .addParam("pageNum", pageNum + "")
+                .addParam("pageSize", "10")
+                .enqueue(handler);
+    }
 
 }

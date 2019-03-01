@@ -21,7 +21,7 @@
                 android:layout_height="@dimen/d_48"
                 android:background="@color/colorPrimary"
                 android:contentDescription="@string/des"
-                android:padding="@dimen/d_4"
+                android:padding="@dimen/d_10"
                 android:src="@drawable/ic_back" />
 
             <TextView
@@ -151,15 +151,28 @@
             android:id="@+id/linear_btns"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="end"
+            style="?android:attr/buttonBarStyle"
             android:layout_alignParentBottom="true">
 
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_width="@dimen/d_100"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle"
+                android:textColor="@android:color/white"
+                android:text="取消"
+                android:background="@drawable/bg_dialog_cancel_btn"
+                android:onClick="cancelBack"/>
 
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_width="@dimen/d_100"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_marginStart="@dimen/d_64"
+                android:text="退单"
+                android:background="@drawable/bg_dialog_ok_btn"
+                android:textColor="@android:color/white"
+                android:onClick="commitBack"/>
         </LinearLayout>
 
     </RelativeLayout>

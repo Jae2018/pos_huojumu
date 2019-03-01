@@ -9,6 +9,7 @@
     <dimen name="d_10">10dp</dimen>
     <dimen name="d_16">16dp</dimen>
     <dimen name="d_18">18dp</dimen>
+    <dimen name="d_28">28dp</dimen>
     <dimen name="d_30">30dp</dimen>
     <dimen name="d_32">32dp</dimen>
     <dimen name="d_40">40dp</dimen>

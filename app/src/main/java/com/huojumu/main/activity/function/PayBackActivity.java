@@ -2,8 +2,10 @@ package com.huojumu.main.activity.function;
 
 import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -15,6 +17,8 @@ import com.huojumu.adapter.OrderBackContentAdapter;
 import com.huojumu.adapter.OrderEnableBackAdapter;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.home.HomeActivity;
+import com.huojumu.main.dialogs.CertainDialog;
+import com.huojumu.main.dialogs.DialogInterface;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.OrderDetails;
 import com.huojumu.model.OrderEnableBackBean;
@@ -31,7 +35,7 @@ import butterknife.OnClick;
  * Date: 2018/11/6
  * Description: 退款，反结算
  */
-public class PayBackActivity extends BaseActivity {
+public class PayBackActivity extends BaseActivity implements DialogInterface {
 
     @BindView(R.id.et_order_id)
     EditText editText;//ID
@@ -55,7 +59,9 @@ public class PayBackActivity extends BaseActivity {
     //明细集合
     private OrderBackContentAdapter contentAdapter;
     //
-    private String id;
+    private String id,payType;
+    //
+    private CertainDialog dialog;
 
     @Override
     protected int setLayout() {
@@ -68,12 +74,18 @@ public class PayBackActivity extends BaseActivity {
         detailRecycler.setLayoutManager(new LinearLayoutManager(this));
         backAdapter = new OrderEnableBackAdapter(null);
         contentAdapter = new OrderBackContentAdapter(null);
+        DividerItemDecoration decoration = new DividerItemDecoration(this,DividerItemDecoration.VERTICAL);
+        decoration.setDrawable(getResources().getDrawable(R.drawable.divider_v));
+        backRecycler.addItemDecoration(decoration);
         backRecycler.setAdapter(backAdapter);
         detailRecycler.setAdapter(contentAdapter);
-        backAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+
+        backAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Log.e("back", "onItemClick: " );
                 id = backAdapter.getData().get(position).getId();
+                payType = backAdapter.getData().get(position).getPayType();
                 getOrderDetail(id);
             }
         });
@@ -95,7 +107,8 @@ public class PayBackActivity extends BaseActivity {
         NetTool.getEnableBackOrderList(SpUtil.getInt(Constant.STORE_ID), editText.getText().toString(), new GsonResponseHandler<BaseBean<OrderEnableBackBean>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrderEnableBackBean> response) {
-                if (response.getData() == null) {
+                Log.e("back", "onSuccess: " + response.getCode());
+                if (response.getCode() != 0 || response.getData() == null) {
                     ToastUtils.showLong("无对应订单数据！");
                 } else {
                     backAdapter.setNewData(response.getData().getOrders());
@@ -120,7 +133,7 @@ public class PayBackActivity extends BaseActivity {
                     contentAdapter.setNewData(response.getData().getOrderdetail().getPros());
                     priceTv.setText(String.format("订单金额：%s元", response.getData().getOrderdetail().getTotalPrice()));
                     dateTv.setText(String.format("订单日期：%s", response.getData().getOrderdetail().getCreateTime()));
-                    payTypeTv.setText(response.getData().getOrderdetail().getPayType().equals("010") ? "微信支付" : "支付宝支付");
+                    payTypeTv.setText(String.format("支付方式：%s", response.getData().getOrderdetail().getPayType().equals("010") ? "微信支付" : "支付宝支付"));
                 }
                 if (refreshLayout.isRefreshing()) {
                     refreshLayout.setRefreshing(false);
@@ -145,5 +158,41 @@ public class PayBackActivity extends BaseActivity {
         finish();
     }
 
+
+    public void cancelBack(View view) {
+        finish();
+    }
+
+    public void commitBack(View view) {
+        if (dialog == null) {
+            dialog = new CertainDialog(this, this, "注意！", "确定要退单吗？");
+        }
+    }
+
+    @Override
+    public void OnDialogOkClick(int type, double earn, double cost, double charge, String name) {
+        NetTool.getPayBack(SpUtil.getInt(Constant.STORE_ID), id, payType, new GsonResponseHandler<BaseBean<String>>() {
+            @Override
+            public void onSuccess(int statusCode, BaseBean<String> response) {
+                ToastUtils.showLong(response.getMsg());
+                if (response.getCode() == 0) {
+                    clearRight();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, String error_msg) {
+
+            }
+        });
+    }
+
+    private void clearRight(){
+        buyer.setText("下单客户：");
+        contentAdapter.setNewData(null);
+        priceTv.setText("订单金额：");
+        dateTv.setText("订单日期：");
+        payTypeTv.setText("支付方式：");
+    }
 
 }

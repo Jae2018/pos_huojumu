@@ -38,7 +38,7 @@ import com.huojumu.main.dialogs.DialogInterface;
 import com.huojumu.main.dialogs.MoreFunctionDialog;
 import com.huojumu.main.dialogs.QuickPayDialog;
 import com.huojumu.main.dialogs.SingleProCallback;
-import com.huojumu.model.ActiveBean;
+import com.huojumu.model.VipListBean;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.EventHandler;
 import com.huojumu.model.MatsBean;
@@ -99,7 +99,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private HomeProductAdapter productAdapter;//商品
 
     private List<Production> tempProduces;//商品列表
-    private List<ActiveBean> activeBeanList;//活动列表
+    private List<VipListBean> activeBeanList;//活动列表
     private SparseArray<List<Production>> map = new SparseArray<>();//分类切换
     private ArrayList<Production> productions = new ArrayList<>();//选择的奶茶
     private double totalPrice = 0;//订单总价
@@ -301,9 +301,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     //活动列表
     private void getActiveInfo() {
-        NetTool.getActiveInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.ENT_ID), SpUtil.getInt(Constant.PINPAI_ID), new GsonResponseHandler<BaseBean<List<ActiveBean>>>() {
+        NetTool.getActiveInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.ENT_ID), SpUtil.getInt(Constant.PINPAI_ID), new GsonResponseHandler<BaseBean<List<VipListBean>>>() {
             @Override
-            public void onSuccess(int statusCode, BaseBean<List<ActiveBean>> response) {
+            public void onSuccess(int statusCode, BaseBean<List<VipListBean>> response) {
                 activeBeanList = response.getData();
             }
 

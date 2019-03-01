@@ -22,8 +22,9 @@ public class OrderListAdapter extends BaseQuickAdapter<OrdersList.RowsBean, Base
 
     @Override
     protected void convert(BaseViewHolder helper, OrdersList.RowsBean item) {
-        helper.setText(R.id.tv_order_list_no, "编号：" + item.getOrdId())
-                .setText(R.id.tv_order_list_status, "状态：" + item.getStatus())
-                .setText(R.id.tv_order_list_name, "商品：" + item.getTotalPrice());
+        helper.setText(R.id.tv_order_list_no, "订单号：" + item.getOrdNo().substring(item.getOrdNo().length() - 4))
+                .setText(R.id.tv_order_list_price, String.format("订单金额：%s 元", item.getTotalPrice()))
+                .setText(R.id.tv_order_list_status, "订单状态：" + (item.getStatus().equals("2") ? "未支付" : item.getStatus().equals("5") ? "已完成" : item.getStatus().equals("6") ? "已退单" : "等待中"))
+                .setText(R.id.tv_order_list_type, String.format("支付方式：%s", item.getPayType().equals("010")?"微信支付":item.getPayType().equals("020")?"支付宝支付":"现金支付"));
     }
 }

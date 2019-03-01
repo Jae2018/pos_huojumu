@@ -57,7 +57,7 @@ public class OrdersList {
         private String ordNo;
         private String payType;
         private String createTime;
-        private int totalPrice;
+        private double totalPrice;
         private String ordSource;
         private String ordId;
         private String status;
@@ -86,11 +86,11 @@ public class OrdersList {
             this.createTime = createTime;
         }
 
-        public int getTotalPrice() {
+        public double getTotalPrice() {
             return totalPrice;
         }
 
-        public void setTotalPrice(int totalPrice) {
+        public void setTotalPrice(double totalPrice) {
             this.totalPrice = totalPrice;
         }
 

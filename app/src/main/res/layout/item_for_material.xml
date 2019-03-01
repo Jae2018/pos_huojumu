@@ -4,6 +4,7 @@
     android:layout_height="@dimen/d_48"
     android:paddingStart="@dimen/d_16"
     android:paddingEnd="@dimen/d_16"
+    android:background="@drawable/input_border"
     android:orientation="horizontal">
 
     <TextView

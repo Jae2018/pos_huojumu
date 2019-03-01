@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.huojumu"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -76,4 +76,5 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation project(':LoadingDialog')
+    implementation files('libs/gprintersdkv1.jar')
 }

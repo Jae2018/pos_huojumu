@@ -7,6 +7,9 @@ import android.hardware.usb.UsbManager;
 
 import com.huojumu.main.activity.MainActivity;
 
+import static android.content.Intent.ACTION_BOOT_COMPLETED;
+import static android.hardware.usb.UsbManager.ACTION_USB_DEVICE_DETACHED;
+
 /**
  * @author : Jie
  * Date: 2018/6/1
@@ -16,14 +19,20 @@ public class PosReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-            Intent i = new Intent(context, MainActivity.class);
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(i);
-        } else if (UsbManager.ACTION_USB_ACCESSORY_ATTACHED.equals(intent.getAction())) {
-
-        } else if (UsbManager.ACTION_USB_ACCESSORY_DETACHED.equals(intent.getAction())) {
-
+        String action = intent.getAction();
+        switch (action) {
+//            case ACTION_USB_DEVICE_DETACHED:
+//                sendStateBroadcast(CONN_STATE_DISCONNECT);
+//                break;
+            case ACTION_BOOT_COMPLETED:
+                Intent i = new Intent(context, MainActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(i);
+                break;
+            default:
+                break;
         }
     }
+
+
 }

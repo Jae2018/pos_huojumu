@@ -20,4 +20,12 @@
     <string name="home_quick_invoice" translatable="false">快捷支付</string>
     <string name="takeout" translatable="false">外卖</string>
     <string name="handover" translatable="false">交班</string>
+
+    <string name="str_choice_printer_command">请选择正确的打印机指令</string>
+    <string name="str_printer_conn_normal">打印机连接正常</string>
+    <string name="str_printer_out_of_paper">打印机缺纸</string>
+    <string name="str_printer_open_cover">打印机开盖</string>
+    <string name="str_printer_error">打印机出错</string>
+    <string name="str_state">状态：</string>
+    <string name="str_printer_printmode_esc">打印模式:ESC</string>
 </resources>

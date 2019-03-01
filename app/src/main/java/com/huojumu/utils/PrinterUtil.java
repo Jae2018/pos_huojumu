@@ -252,20 +252,16 @@ public class PrinterUtil {
         return sb.toString();
     }
 
-    private static Thread thread;
+//    private static Thread thread;
     //开钱箱
     public static void OpenMoneyBox() {
-        if (thread == null) {
-            thread = new Thread(new Runnable() {
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
                     byte[] bytes = {0x1B, 0x70, 0x0, 0x3C, (byte) 0xFF};
                     mPrinter.writeIO(bytes, 0, bytes.length - 1, 1000);
-                    thread.interrupt();
                 }
-            });
-            thread.start();
-        }
+            }).start();
     }
 
     public static String toJson(Object orderInfo) {

@@ -154,7 +154,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
 
     @OnClick(R.id.iv_back)
     void back() {
-        startActivity(new Intent(PayBackActivity.this, HomeActivity.class));
+//        startActivity(new Intent(PayBackActivity.this, HomeActivity.class));
         finish();
     }
 

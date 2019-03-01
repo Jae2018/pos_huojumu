@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_48"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="@dimen/d_80"
+            android:layout_height="@dimen/d_48"
+            android:contentDescription="@string/des"
+            android:src="@drawable/ic_back"
+            android:padding="@dimen/d_10"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_48"
+            android:gravity="center"
+            android:text="订单详情"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/f_30" />
+
+        <View
+            android:layout_width="@dimen/d_80"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/d_48">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingStart="@dimen/d_8"
+            android:paddingEnd="@dimen/d_8"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_order_back_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="购买的商品：" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_back_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:overScrollMode="never" />
+
+            <TextView
+                android:id="@+id/tv_order_back_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/tv_order_back_pay_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/tv_order_back_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:id="@+id/linear_btns"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        style="?android:attr/buttonBarStyle">
+
+        <Button
+            android:layout_width="@dimen/d_100"
+            android:layout_height="wrap_content"
+            style="?android:attr/buttonBarButtonStyle"
+            android:textColor="@android:color/white"
+            android:text="取消"
+            android:background="@drawable/bg_dialog_cancel_btn"
+            android:onClick="cancelBack"/>
+
+        <Button
+            android:layout_width="@dimen/d_100"
+            android:layout_height="wrap_content"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_marginStart="@dimen/d_64"
+            android:text="退单"
+            android:background="@drawable/bg_dialog_ok_btn"
+            android:textColor="@android:color/white"
+            android:onClick="commitBack"/>
+    </LinearLayout>
+</LinearLayout>

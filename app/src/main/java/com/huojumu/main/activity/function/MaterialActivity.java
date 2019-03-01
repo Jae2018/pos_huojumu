@@ -78,7 +78,7 @@ public class MaterialActivity extends BaseActivity {
 
     @OnClick(R.id.back)
     void back() {
-        startActivity(new Intent(MaterialActivity.this, HomeActivity.class));
+//        startActivity(new Intent(MaterialActivity.this, HomeActivity.class));
         finish();
     }
 

@@ -43,7 +43,6 @@
         </activity>
         <activity
             android:name="com.huojumu.main.activity.login.LoginActivity"
-            android:launchMode="singleInstance"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|stateUnchanged" >
 
@@ -51,7 +50,7 @@
         <activity
             android:name="com.huojumu.main.activity.home.HomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme">
 
@@ -107,6 +106,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="landscape" />
         <activity android:name="com.huojumu.main.activity.function.PaymentActivity" />
+        <activity android:name=".main.activity.function.OrderDetailActivity" />
 
         <receiver android:name="com.huojumu.receiver.PosReceiver">
             <intent-filter>

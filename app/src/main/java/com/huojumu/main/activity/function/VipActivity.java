@@ -112,7 +112,7 @@ public class VipActivity extends BaseActivity {
 
     @OnClick(R.id.iv_back)
     void back() {
-        startActivity(new Intent(VipActivity.this, HomeActivity.class));
+//        startActivity(new Intent(VipActivity.this, HomeActivity.class));
         finish();
     }
 

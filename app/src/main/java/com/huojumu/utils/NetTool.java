@@ -75,7 +75,7 @@ public class NetTool {
     }
 
     //商品列表查询
-    public static void getStoreProduces(int shopID, int enterpriseID, int pinpaiID,String isRecommend, GsonResponseHandler<BaseBean<Products>> handler) {
+    public static void getStoreProduces(int shopID, int enterpriseID, int pinpaiID, String isRecommend, GsonResponseHandler<BaseBean<Products>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "product/shopproduct.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("shopID", shopID + "")
@@ -166,13 +166,13 @@ public class NetTool {
     }
 
     //退单
-    public static void getPayBack(int shopId, String orderId, GsonResponseHandler<BaseBean<String>> handler) {
+    public static void getPayBack(int shopId, String orderId, String payType, GsonResponseHandler<BaseBean<String>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "pay/refund.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("shopId", shopId + "")
                 .addParam("orderId", orderId + "")
                 .addParam("cancelRadio", "pos退单")
-                .addParam("payType", "cash")
+                .addParam("payType", payType)
                 .addParam("cancelTadio", "pos退单")
                 .enqueue(handler);
     }

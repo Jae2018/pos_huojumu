@@ -56,17 +56,7 @@ public class NetTool {
                 .enqueue(handler);
     }
 
-    public static void checkLogin(String checkCode, String machineCode, String timestamp, GsonResponseHandler<BaseBean<String>> handler) {
-        okHttp.post()
-                .url(Constant.BASE_URL + "duty/loginAndOnDuty.action")
-                .addParam("appToken", SpUtil.getString(Constant.MY_TOKEN).split(" ")[1])
-                .addParam("checkCode", checkCode)
-                .addParam("machineCode", machineCode)
-                .addParam("source", "pos")
-                .addParam("timestamp", timestamp)
-                .enqueue(handler);
-    }
-
+    //设备所属信息查询
     public static void getMachineInfo(String machineCode, GsonResponseHandler<BaseBean<StoreInfo>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "system/machineinfo.action")
@@ -74,6 +64,7 @@ public class NetTool {
                 .enqueue(handler);
     }
 
+    //分类查询
     public static void getSmallType(int shopID, int enterpriseID, int pinpaiID, GsonResponseHandler<BaseBean<List<SmallType>>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "product/shopstype.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
@@ -83,12 +74,14 @@ public class NetTool {
                 .enqueue(handler);
     }
 
-    public static void getStoreProduces(int shopID, int enterpriseID, int pinpaiID, GsonResponseHandler<BaseBean<Products>> handler) {
+    //商品列表查询
+    public static void getStoreProduces(int shopID, int enterpriseID, int pinpaiID,String isRecommend, GsonResponseHandler<BaseBean<Products>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "product/shopproduct.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("shopID", shopID + "")
                 .addParam("enterpriseID", enterpriseID + "")
                 .addParam("pinpaiID", pinpaiID + "")
+                .addParam("isRecommend", isRecommend)
                 .enqueue(handler);
     }
 

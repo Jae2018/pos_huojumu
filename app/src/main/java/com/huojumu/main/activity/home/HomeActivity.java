@@ -64,7 +64,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -73,21 +72,27 @@ import butterknife.OnClick;
 public class HomeActivity extends BaseActivity implements DialogInterface, SocketBack,
         SingleProCallback, MediaPlayer.OnPreparedListener, SurfaceHolder.Callback {
 
+    //下单列表
     @BindView(R.id.recyclerView)
     RecyclerView left;
+    //分类列表
     @BindView(R.id.recyclerView2)
     RecyclerView rTop;
+    //商品列表
     @BindView(R.id.recyclerView3)
     RecyclerView rBottom;
-    //textViews
+    //总数量
     @BindView(R.id.total_number)
     TextView total_number;
+    //优惠总额
     @BindView(R.id.cut_number)
     TextView cut_number;
+    //订单总额
     @BindView(R.id.total_price)
     TextView total_price;
+    //有无挂单
     @BindView(R.id.iv_has_gua_dan)
-    ImageView hasGua;//挂单
+    ImageView hasGua;
 
     private HomeSelectedAdapter selectedAdapter;//所选
     private HomeTypeAdapter typeAdapter;//类别
@@ -119,6 +124,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     //是否是现金支付
     boolean isCash = false;
+    //
+    private String isRecommend = "";
 
     @Override
     protected int setLayout() {
@@ -128,7 +135,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-
+        NO = SpUtil.getInt("orderNo");
         //左侧点单列表
         selectedAdapter = new HomeSelectedAdapter(productions);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -232,7 +239,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @OnClick(R.id.button5)
     void refresh() {
         getTypeList();
-        getProList();
+        getProList(isRecommend);
         getActiveInfo();
     }
 
@@ -251,7 +258,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     protected void initData() {
 
         getTypeList();
-        getProList();
+        getProList(isRecommend);
         getActiveInfo();
 
     }
@@ -276,8 +283,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     //商品列表
-    private void getProList() {
-        NetTool.getStoreProduces(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.ENT_ID), SpUtil.getInt(Constant.PINPAI_ID),
+    private void getProList(String isRecommend) {
+        NetTool.getStoreProduces(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.ENT_ID), SpUtil.getInt(Constant.PINPAI_ID), isRecommend,
                 new GsonResponseHandler<BaseBean<Products>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<Products> response) {
@@ -305,6 +312,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
             }
         });
+    }
+
+    @OnClick(R.id.button4)
+    void getRecommend() {
+        isRecommend = isRecommend.equals("") ? "1" : "";
+        getProList(isRecommend);
     }
 
     @Override
@@ -550,9 +563,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     }
                     cashPayDialog.show();
                 } else {
-//                    orderInfo.setOrderID(PrinterUtil.getOrderID() + (NO < 10 ? "000" + NO : NO < 100 ? "00" + NO : NO < 1000 ? "0" + NO : NO + ""));
-                    orderInfo.setOrderID(PrinterUtil.getOrderID() +  new Random().nextInt(1000));
-
+                    orderInfo.setOrderID(PrinterUtil.getOrderID() + (NO < 10 ? "000" + NO : NO < 100 ? "00" + NO : NO < 1000 ? "0" + NO : NO + ""));
+//                    orderInfo.setOrderID(PrinterUtil.getOrderID() +  new Random().nextInt(1000));
+                    SpUtil.save("orderNo", NO);
                     orderInfo.setPayType(type == 2 ? "020" : "010");
                     Log.e(TAG, "OnDialogOkClick: " + PrinterUtil.toJson(orderInfo));
                     //线上支付
@@ -582,8 +595,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             //现金支付回调
             case "CashPayDialog":
                 //弹钱箱，打印小票
-                orderInfo.setOrderID(PrinterUtil.getOrderID() +  new Random().nextInt(1000));
-//                orderInfo.setOrderID(PrinterUtil.getOrderID() + (NO < 10 ? "000" + NO : NO < 100 ? "00" + NO : NO < 1000 ? "0" + NO : NO + ""));
+//                orderInfo.setOrderID(PrinterUtil.getOrderID() +  new Random().nextInt(1000));
+                SpUtil.save("orderNo", NO);
+                orderInfo.setOrderID(PrinterUtil.getOrderID() + (NO < 10 ? "000" + NO : NO < 100 ? "00" + NO : NO < 1000 ? "0" + NO : NO + ""));
                 isCash = true;
                 orderInfo.setPayType("900");
                 cashPayDialog.cancel();

@@ -21,7 +21,7 @@
                 android:layout_height="@dimen/d_48"
                 android:background="@color/colorPrimary"
                 android:contentDescription="@string/des"
-                android:padding="@dimen/d_4"
+                android:padding="@dimen/d_10"
                 android:src="@drawable/ic_back" />
 
             <TextView

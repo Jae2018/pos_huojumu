@@ -391,7 +391,7 @@ public class PrinterUtil {
     /**
      * 打印文本80mm小票样式 48 字节
      */
-    public static void printString80(Context c, final List<Production> pList, final String orderNo, final String name, final String totalMoney, final String earn, final String cost, final String charge) {
+    public static void printString80(Context c, final List<Production> pList, final String orderNo, final String name, final String totalMoney, final String earn, final String cost, final String charge,final String cut) {
         try {
 //            set(DOUBLE_HEIGHT_WIDTH);
             //居左
@@ -428,6 +428,7 @@ public class PrinterUtil {
             s = "\n" + printTwoData80("消费金额", totalMoney)
                     + "\n" + printTwoData80("应收金额", earn)
                     + "\n" + printTwoData80("客户实付", cost)
+                    + "\n" + printTwoData80("优惠", cut)
                     + "\n" + printTwoData80("找    零", charge);
             mPrinter.printString(s, "GBK");
 

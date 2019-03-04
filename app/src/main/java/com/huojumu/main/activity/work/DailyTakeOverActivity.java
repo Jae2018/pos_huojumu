@@ -63,6 +63,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     private CertainDialog certainDialog;
     private long timestamp;
     private int types;
+    private int num = 0;
 
     @Override
     protected int setLayout() {
@@ -118,6 +119,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
         NetTool.getDailyInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.PINPAI_ID), page,1, new GsonResponseHandler<BaseBean<DailyInfo>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<DailyInfo> response) {
+                num = response.getData().getOrders().getTotal();
                 rowsBeans.addAll(response.getData().getOrders().getRows());
                 dailyAdapter.setNewData(rowsBeans);
                 earn1.setText(String.format(Locale.CHINA, "实收：%s", response.getData().getSaleData().getReal()));
@@ -140,16 +142,6 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
         });
 
     }
-
-//    @OnClick(R.id.btn_work_daily_type1)
-//    void onType1Show() {
-//        dailyRecycler.setAdapter(dailyAdapter);
-//    }
-//
-//    @OnClick(R.id.btn_work_daily_type2)
-//    void onType2Show() {
-//
-//    }
 
     @OnClick(R.id.btn_work_daily_cancel)
     void Cancel() {
@@ -174,7 +166,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
         } else {
             daily();
         }
-
+        PrinterUtil.printDaily(types, commissionTv.getText().toString(), earn2.getText().toString(), earn1.getText().toString(), num, SpUtil.getString(Constant.WORKER_NAME));
     }
 
     private void TakeOver(){

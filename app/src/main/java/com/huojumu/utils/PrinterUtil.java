@@ -252,16 +252,16 @@ public class PrinterUtil {
         return sb.toString();
     }
 
-//    private static Thread thread;
+    //    private static Thread thread;
     //开钱箱
     public static void OpenMoneyBox() {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    byte[] bytes = {0x1B, 0x70, 0x0, 0x3C, (byte) 0xFF};
-                    mPrinter.writeIO(bytes, 0, bytes.length - 1, 1000);
-                }
-            }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                byte[] bytes = {0x1B, 0x70, 0x0, 0x3C, (byte) 0xFF};
+                mPrinter.writeIO(bytes, 0, bytes.length - 1, 1000);
+            }
+        }).start();
     }
 
     public static String toJson(Object orderInfo) {
@@ -289,7 +289,7 @@ public class PrinterUtil {
 
     public static UsbDevice getUsbDeviceFromName(Context context, String usbName) {
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
-        HashMap<String,UsbDevice> usbDeviceList = usbManager.getDeviceList();
+        HashMap<String, UsbDevice> usbDeviceList = usbManager.getDeviceList();
         return usbDeviceList.get(usbName);
     }
 
@@ -314,13 +314,13 @@ public class PrinterUtil {
         return simpleDateFormat.format(date);
     }
 
-    public static String getTabTime(){
+    public static String getTabTime() {
         simpleDateFormat = new SimpleDateFormat("MMdd", Locale.CHINA);
         simpleDateFormat.format(date);
         return simpleDateFormat.format(date);
     }
 
-    public static String getTabHour(){
+    public static String getTabHour() {
         simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.CHINA);
         simpleDateFormat.format(date);
         return simpleDateFormat.format(date);
@@ -391,7 +391,7 @@ public class PrinterUtil {
     /**
      * 打印文本80mm小票样式 48 字节
      */
-    public static void printString80(Context c, final List<Production> pList, final String orderNo, final String name, final String totalMoney, final String earn, final String cost, final String charge,final String cut) {
+    public static void printString80(Context c, final List<Production> pList, final String orderNo, final String name, final String totalMoney, final String earn, final String cost, final String charge, final String cut) {
         try {
 //            set(DOUBLE_HEIGHT_WIDTH);
             //居左
@@ -433,7 +433,6 @@ public class PrinterUtil {
             mPrinter.printString(s, "GBK");
 
             //虚实线
-//            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line_solid)));
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line3)));
             //店铺名
             s = SpUtil.getString(Constant.STORE_NAME);
@@ -455,7 +454,41 @@ public class PrinterUtil {
             mPrinter.printString(s, "GBK");
             cutPaper();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.d(TAG, "printDaily: ");
+            ToastUtils.showLong("打印机连接出错");
+        }
+    }
+
+    public static void printDaily(int type, String total, String mobilePay, String cash, int orderNum, String workerName) {
+        try {
+            String t = type == 1 ? "交班" : "日结";
+            String s = t + "\n日期：\n";
+            mPrinter.setCharSize(1, 1);
+            mPrinter.printString(s, "GBK");
+
+            mPrinter.setCharSize(0, 0);
+            //居左
+            mPrinter.setAlignMode(0);
+            s = "本次" + t + "时间：" + getDate() + "\n" + "上次" + t + "时间" + SpUtil.getString("dailyTime") + "\n";
+            mPrinter.printString(s, "GBK");
+
+            mPrinter.setCharSize(1, 1);
+            s = "交款信息：\n";
+            mPrinter.printString(s, "GBK");
+
+            mPrinter.setCharSize(0, 0);
+            s = "总营收金额：" + total + "\n"
+                    + "总虚收金额：" + mobilePay + "\n"
+                    + "总实收金额：" + cash + "\n"
+                    + "总单数：" + orderNum + "\n"
+                    + t + "人员：" + workerName + "\n";
+            mPrinter.printString(s, "GBK");
+
+            //保存本次时间
+            SpUtil.save("dailyTime", getDate());
+        } catch (Exception e) {
+            Log.d(TAG, "printDaily: ");
+            ToastUtils.showLong("打印机连接出错");
         }
     }
 

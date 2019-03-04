@@ -1,5 +1,6 @@
 package com.huojumu.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -56,12 +57,12 @@ public class SocketTool extends WebSocketListener {
         }
     }
 
-    public void sendHeart() {
+    public void sendHeart(Activity activity) {
         if (webSocket != null) {
-            new Thread() {
-                public void run() {
+//            new Thread() {
+//                public void run() {
                     while (true) {
-                        Log.e(TAG, "sendHeart: ");
+                        Log.e(TAG, "sendHeart: " + activity.getLocalClassName());
                         webSocket.send("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
                         try {
                             Thread.sleep(60 * 1000);
@@ -70,8 +71,8 @@ public class SocketTool extends WebSocketListener {
                             Log.e(TAG, "run: error");
                         }
                     }
-                }
-            }.start();
+//                }
+//            }.start();
         }
     }
 

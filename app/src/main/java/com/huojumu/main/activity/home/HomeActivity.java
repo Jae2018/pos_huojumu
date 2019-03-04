@@ -132,7 +132,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //是否修改
     private boolean ok = false;
     //流水号
-    private int NO = 10;
+    private int NO = 100;
 
     //是否是现金支付
     boolean isCash = false;
@@ -591,6 +591,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     cashPayDialog.show();
                 } else {
                     orderInfo.setOrderID(PrinterUtil.getOrderID() + (NO < 10 ? "000" + NO : NO < 100 ? "00" + NO : NO < 1000 ? "0" + NO : NO + ""));
+
                     orderInfo.setPayType(type == 2 ? "020" : "010");
                     Log.e(TAG, "OnDialogOkClick: " + PrinterUtil.toJson(orderInfo));
                     //线上支付
@@ -623,6 +624,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 //弹钱箱，打印小票
                 orderInfo.setOrderID(PrinterUtil.getOrderID() + (NO < 10 ? "000" + NO : NO < 100 ? "00" + NO : NO < 1000 ? "0" + NO : NO + ""));
                 isCash = true;
+//                orderInfo.setOrderID(PrinterUtil.getOrderID() + "0031");
                 orderInfo.setPayType("900");
                 cashPayDialog.cancel();
                 Log.e(TAG, "OnDialogOkClick: " + PrinterUtil.toJson(orderInfo));
@@ -634,6 +636,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         clear();
                         NO++;
                         SpUtil.save("orderNo", NO);
+                        Log.e(TAG, "onSuccess: " + NO);
                     }
 
                     @Override
@@ -656,9 +659,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 //判断USB设备是否有权限
                 if (usbManager.hasPermission(usbDevice)) {
                     usbConn(usbDevice);
+                    Log.e(TAG, "usbConn: 1");
                 } else {//请求权限
                     PendingIntent mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
                     usbManager.requestPermission(usbDevice, mPermissionIntent);
+                    Log.e(TAG, "usbConn: 2");
                 }
                 break;
         }
@@ -696,12 +701,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
             public void run() {
+                Log.e(TAG, "run: ");
                 if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] == null ||
                         !DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getConnState()) {
-//                    mHandler.obtainMessage(CONN_PRINTER).sendToTarget();
+                    Log.e(TAG, "run: 1");
                     return;
                 }
                 if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getCurrentPrinterCommand() == PrinterCommand.TSC) {
+                    Log.e(TAG, "run: 2");
                     for (Production p : productions) {
                         sendLabel(p.getProName(), p.getTasteStr(), p.getPrice());
                     }

@@ -29,7 +29,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         engine = CustomerEngine.getInstance(getApplicationContext());
         initView();
         initData();
-        MyApplication.getSocketTool().sendHeart();
+        MyApplication.getSocketTool().sendHeart(this);
     }
 
     // 设置布局

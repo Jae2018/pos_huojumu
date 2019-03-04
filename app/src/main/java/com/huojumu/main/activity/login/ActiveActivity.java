@@ -65,9 +65,9 @@ public class ActiveActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLogin(EventHandler eventHandler){
-        Log.e("active", "Bind: ");
         if (eventHandler.getType() == 2) {
             startActivity(new Intent(ActiveActivity.this, LoginActivity.class));
+            finish();
         }
     }
 

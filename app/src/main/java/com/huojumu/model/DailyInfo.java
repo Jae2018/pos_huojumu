@@ -98,12 +98,12 @@ public class DailyInfo {
              */
 
             private String orderType;
-            private int orgionTotalPrice;
+            private double orgionTotalPrice;
             private String ordNo;
             private String orderTime;
             private String payType;
             private String orderId;
-            private int totalPrice;
+            private double totalPrice;
             private String refundReason;
             private String ordSource;
             private String state;
@@ -117,11 +117,11 @@ public class DailyInfo {
                 this.orderType = orderType;
             }
 
-            public int getOrgionTotalPrice() {
+            public double getOrgionTotalPrice() {
                 return orgionTotalPrice;
             }
 
-            public void setOrgionTotalPrice(int orgionTotalPrice) {
+            public void setOrgionTotalPrice(double orgionTotalPrice) {
                 this.orgionTotalPrice = orgionTotalPrice;
             }
 
@@ -157,11 +157,11 @@ public class DailyInfo {
                 this.orderId = orderId;
             }
 
-            public int getTotalPrice() {
+            public double getTotalPrice() {
                 return totalPrice;
             }
 
-            public void setTotalPrice(int totalPrice) {
+            public void setTotalPrice(double totalPrice) {
                 this.totalPrice = totalPrice;
             }
 

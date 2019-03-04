@@ -114,7 +114,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private List<VipListBean> activeBeanList;//活动列表
     private SparseArray<List<Production>> map = new SparseArray<>();//分类切换
     private ArrayList<Production> productions = new ArrayList<>();//选择的奶茶
-    private double totalPrice = 0,totalCut;//订单总价
+    private double totalPrice = 0, totalCut;//订单总价
 
     private List<Production> gTemp = new ArrayList<>();//挂单
     private boolean hasHoldOn = false;//是否已有挂单
@@ -132,12 +132,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //是否修改
     private boolean ok = false;
     //流水号
-    private int NO = 1;
+    private int NO = 10;
 
     //是否是现金支付
     boolean isCash = false;
     //
-    private String isRecommend = "";
+    private String isRecommend = "0";
 
     @Override
     protected int setLayout() {
@@ -147,7 +147,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-        NO = SpUtil.getInt("orderNo");
+        NO = SpUtil.getOrderId("orderNo");
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         //左侧点单列表
         selectedAdapter = new HomeSelectedAdapter(productions);
@@ -531,14 +531,24 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     /**
-     * 日结、交班
+     * 交班
      */
     @OnClick(R.id.btn_home_hand_over)
-    void Daily() {
+    void takeover() {
         Intent intent = new Intent(HomeActivity.this, DailyTakeOverActivity.class);
+        intent.putExtra("type", 1);
         startActivity(intent);
     }
 
+    /**
+     * 日结
+     */
+    @OnClick(R.id.btn_home_daily)
+    void Daily() {
+        Intent intent = new Intent(HomeActivity.this, DailyTakeOverActivity.class);
+        intent.putExtra("type", 2);
+        startActivity(intent);
+    }
 
 //    /**
 //     * 结账
@@ -603,7 +613,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
                         @Override
                         public void onFailure(int statusCode, String error_msg) {
-                            ToastUtils.showLong("网络连接错误！");
+                            ToastUtils.showLong(error_msg);
                         }
                     });
                 }
@@ -615,11 +625,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 isCash = true;
                 orderInfo.setPayType("900");
                 cashPayDialog.cancel();
+                Log.e(TAG, "OnDialogOkClick: " + PrinterUtil.toJson(orderInfo));
                 NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
                         orderBack = response.getData();
-                        PrintOrder(response.getData(), charge);
+                        PrintOrder(response.getData(), charge < 0 ? 0 : charge);
                         clear();
                         NO++;
                         SpUtil.save("orderNo", NO);
@@ -627,7 +638,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
                     @Override
                     public void onFailure(int statusCode, String error_msg) {
-                        ToastUtils.showLong("网络连接错误！");
+                        ToastUtils.showLong(error_msg);
                     }
                 });
                 break;
@@ -680,7 +691,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             PrinterUtil.OpenMoneyBox();
             isCash = false;
         }
-        PrinterUtil.printString80(this, productions, orderBack.getOrderNo(), SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(), "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "",totalCut+"");
+        PrinterUtil.printString80(this, productions, orderBack.getOrderNo(), SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(), "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "", totalCut + "");
 
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
@@ -776,7 +787,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     public void btnUsbConn(View view) {
         if (usbDeviceList == null) {
-            usbDeviceList = new UsbDeviceList(this,this);
+            usbDeviceList = new UsbDeviceList(this, this);
         }
         if (!usbDeviceList.isShowing()) {
             usbDeviceList.show();

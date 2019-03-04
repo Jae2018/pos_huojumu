@@ -46,6 +46,7 @@ public interface Constant {
     /* default string */
     String DEFAULT_STR = "";
     int DEFAULT_INT = 1;
+    int TEST_INT = 10;
     int PAY = 1;
     int LOGIN = 2;
     int HOME = 3;

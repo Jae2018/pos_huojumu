@@ -20,6 +20,7 @@
     <string name="home_quick_invoice" translatable="false">快捷支付</string>
     <string name="takeout" translatable="false">外卖</string>
     <string name="handover" translatable="false">交班</string>
+    <string name="daily" translatable="false">日结</string>
 
     <string name="str_choice_printer_command">请选择正确的打印机指令</string>
     <string name="str_printer_conn_normal">打印机连接正常</string>

@@ -67,7 +67,9 @@ public class CashPayDialog extends BaseDialog {
 
             @Override
             public void afterTextChanged(Editable s) {
-                cash = Integer.valueOf(s.toString());
+                if (s.length() > 0) {
+                    cash = Integer.valueOf(s.toString());
+                }
                 if (cash < cost) {
                     okBtn.setEnabled(false);
                     errorTv.setVisibility(View.VISIBLE);
@@ -106,12 +108,18 @@ public class CashPayDialog extends BaseDialog {
 
     @OnClick(R.id.cash_dialog_cancel)
     void OnCancel() {
+        clear();
         dismiss();
     }
 
     @OnClick(R.id.cash_dialog_ok)
     void OnOk() {
+        clear();
         anInterface.OnDialogOkClick(0, cash, cost, cash - cost, "CashPayDialog");
     }
 
+    private void clear(){
+        earn2.setText("");
+        change.setText("");
+    }
 }

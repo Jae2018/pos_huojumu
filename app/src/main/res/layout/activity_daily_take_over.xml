@@ -16,24 +16,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="交班、日结"
             android:textColor="@android:color/white"
             android:textSize="@dimen/f_18" />
 
-        <Button
-            android:id="@+id/btn_work_daily_type1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toStartOf="@+id/btn_work_daily_type2"
-            android:text="按订单" />
+        <!--<Button-->
+            <!--android:id="@+id/btn_work_daily_type1"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_toStartOf="@+id/btn_work_daily_type2"-->
+            <!--android:text="按订单" />-->
 
-        <Button
-            android:id="@+id/btn_work_daily_type2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="@dimen/d_16"
-            android:text="按明细" />
+        <!--<Button-->
+            <!--android:id="@+id/btn_work_daily_type2"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_marginStart="@dimen/d_16"-->
+            <!--android:text="按明细" />-->
 
     </RelativeLayout>
 

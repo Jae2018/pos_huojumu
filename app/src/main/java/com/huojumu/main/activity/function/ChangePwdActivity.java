@@ -41,7 +41,7 @@ public class ChangePwdActivity extends BaseActivity {
 
     @OnClick(R.id.btn_cancel)
     void onCancel() {
-        startActivity(new Intent(ChangePwdActivity.this, HomeActivity.class));
+//        startActivity(new Intent(ChangePwdActivity.this, HomeActivity.class));
         finish();
     }
 

@@ -4,12 +4,12 @@ import android.content.Intent;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.huojumu.R;
 import com.huojumu.adapter.OrderListAdapter;
 import com.huojumu.base.BaseActivity;
-import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.OrdersList;
 import com.huojumu.utils.NetTool;
@@ -31,7 +31,7 @@ public class OrdersListActivity extends BaseActivity {
 
     //
     private List<OrdersList.RowsBean> rowsBeanList = new ArrayList<>();
-    private OrderListAdapter adapter;
+    private OrderListAdapter listAdapter;
     //
     private int pageNum = 1, totalPAge;
 
@@ -44,27 +44,37 @@ public class OrdersListActivity extends BaseActivity {
     protected void initView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        adapter = new OrderListAdapter(null);
-        recyclerView.setAdapter(adapter);
-        adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
+        listAdapter = new OrderListAdapter(null);
+        recyclerView.setAdapter(listAdapter);
+        listAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
                 if (pageNum >= totalPAge) {
-                    adapter.loadMoreEnd();
+                    listAdapter.loadMoreEnd();
                 } else {
                     getList();
                 }
             }
         }, recyclerView);
-        adapter.setUpFetchListener(new BaseQuickAdapter.UpFetchListener() {
+        listAdapter.setUpFetchListener(new BaseQuickAdapter.UpFetchListener() {
             @Override
             public void onUpFetch() {
-                adapter.setUpFetchEnable(true);
+                listAdapter.setUpFetchEnable(true);
                 rowsBeanList.clear();
                 pageNum = 1;
                 getList();
             }
         });
+
+        listAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Intent i = new Intent(OrdersListActivity.this, OrderDetailActivity.class);
+                i.putExtra("detailId", listAdapter.getData().get(position).getOrdId());
+                startActivity(i);
+            }
+        });
+
     }
 
     @Override
@@ -77,10 +87,10 @@ public class OrdersListActivity extends BaseActivity {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrdersList> response) {
                 rowsBeanList.addAll(response.getData().getRows());
-                adapter.setNewData(rowsBeanList);
+                listAdapter.setNewData(rowsBeanList);
                 totalPAge = response.getData().getTotal();
                 pageNum++;
-                adapter.setUpFetching(false);
+                listAdapter.setUpFetching(false);
             }
 
             @Override
@@ -92,7 +102,6 @@ public class OrdersListActivity extends BaseActivity {
 
     @OnClick(R.id.iv_back)
     void back() {
-        startActivity(new Intent(OrdersListActivity.this, HomeActivity.class));
         finish();
     }
 

@@ -114,7 +114,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private List<VipListBean> activeBeanList;//活动列表
     private SparseArray<List<Production>> map = new SparseArray<>();//分类切换
     private ArrayList<Production> productions = new ArrayList<>();//选择的奶茶
-    private double totalPrice = 0;//订单总价
+    private double totalPrice = 0,totalCut;//订单总价
 
     private List<Production> gTemp = new ArrayList<>();//挂单
     private boolean hasHoldOn = false;//是否已有挂单
@@ -400,6 +400,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             engine.setPrice(totalPrice, totalCut);
         }
         this.totalPrice = totalPrice;
+        this.totalCut = totalCut;
         Log.e(TAG, "checkPriceForDisplay: " + totalPrice);
     }
 
@@ -679,7 +680,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             PrinterUtil.OpenMoneyBox();
             isCash = false;
         }
-        PrinterUtil.printString80(this, productions, orderBack.getOrderNo(), SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(), "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "");
+        PrinterUtil.printString80(this, productions, orderBack.getOrderNo(), SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(), "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "",totalCut+"");
 
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override

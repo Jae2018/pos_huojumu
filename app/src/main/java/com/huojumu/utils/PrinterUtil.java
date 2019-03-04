@@ -252,20 +252,16 @@ public class PrinterUtil {
         return sb.toString();
     }
 
-    private static Thread thread;
+//    private static Thread thread;
     //开钱箱
     public static void OpenMoneyBox() {
-        if (thread == null) {
-            thread = new Thread(new Runnable() {
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
                     byte[] bytes = {0x1B, 0x70, 0x0, 0x3C, (byte) 0xFF};
                     mPrinter.writeIO(bytes, 0, bytes.length - 1, 1000);
-                    thread.interrupt();
                 }
-            });
-            thread.start();
-        }
+            }).start();
     }
 
     public static String toJson(Object orderInfo) {
@@ -395,7 +391,7 @@ public class PrinterUtil {
     /**
      * 打印文本80mm小票样式 48 字节
      */
-    public static void printString80(Context c, final List<Production> pList, final String orderNo, final String name, final String totalMoney, final String earn, final String cost, final String charge) {
+    public static void printString80(Context c, final List<Production> pList, final String orderNo, final String name, final String totalMoney, final String earn, final String cost, final String charge,final String cut) {
         try {
 //            set(DOUBLE_HEIGHT_WIDTH);
             //居左
@@ -432,6 +428,7 @@ public class PrinterUtil {
             s = "\n" + printTwoData80("消费金额", totalMoney)
                     + "\n" + printTwoData80("应收金额", earn)
                     + "\n" + printTwoData80("客户实付", cost)
+                    + "\n" + printTwoData80("优惠", cut)
                     + "\n" + printTwoData80("找    零", charge);
             mPrinter.printString(s, "GBK");
 

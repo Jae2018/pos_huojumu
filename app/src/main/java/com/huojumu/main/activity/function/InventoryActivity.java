@@ -105,7 +105,7 @@ public class InventoryActivity extends BaseActivity {
 
     @OnClick(R.id.iv_work_daily_back)
     void back() {
-        startActivity(new Intent(InventoryActivity.this, HomeActivity.class));
+//        startActivity(new Intent(InventoryActivity.this, HomeActivity.class));
         finish();
     }
 

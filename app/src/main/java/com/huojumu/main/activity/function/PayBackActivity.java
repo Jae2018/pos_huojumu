@@ -101,6 +101,11 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
 
     }
 
+    @Override
+    public void OnUsbCallBack(String name) {
+
+    }
+
     private void getEnableBackOrderList() {
         NetTool.getEnableBackOrderList(SpUtil.getInt(Constant.STORE_ID), editText.getText().toString(), new GsonResponseHandler<BaseBean<OrderEnableBackBean>>() {
             @Override
@@ -130,7 +135,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
                     contentAdapter.setNewData(response.getData().getOrderdetail().getPros());
                     priceTv.setText(String.format("订单金额：%s元", response.getData().getOrderdetail().getTotalPrice()));
                     dateTv.setText(String.format("订单日期：%s", response.getData().getOrderdetail().getCreateTime()));
-                    payTypeTv.setText(String.format("支付方式：%s", response.getData().getOrderdetail().getPayType().equals("010") ? "微信支付" : "支付宝支付"));
+                    payTypeTv.setText(String.format("支付方式：%s", response.getData().getOrderdetail().getPayType().equals("900") ? "现金支付" : "移动支付"));
                 }
                 if (refreshLayout.isRefreshing()) {
                     refreshLayout.setRefreshing(false);

@@ -159,6 +159,11 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     }
 
     @Override
+    public void OnUsbCallBack(String name) {
+
+    }
+
+    @Override
     public void OnDialogOkClick(int type, double earn, double cost, double charge, String name) {
         if (types == 1) {
             //交班确认回调

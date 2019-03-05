@@ -95,8 +95,7 @@ public class UsbDeviceList extends BaseDialog {
             // Cancel discovery because it's costly and we're about to connect
             // Get the device MAC address, which is the last 17 chars in the View
             String info = ((TextView) v).getText().toString();
-            SpUtil.save("usbName", info);
-            anInterface.OnDialogOkClick(1, 0, 0, 0, "UsbDeviceList");
+            anInterface.OnUsbCallBack(info);
             cancel();
         }
     };

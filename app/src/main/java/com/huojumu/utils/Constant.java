@@ -74,4 +74,6 @@ public interface Constant {
     String PAYCODE = "pay";
     String START = "start";
 
+    String STATE = "state";
+    String DEVICE_ID = "id";
 }

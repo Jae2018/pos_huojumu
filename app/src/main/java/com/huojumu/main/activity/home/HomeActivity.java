@@ -11,7 +11,6 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -57,7 +56,6 @@ import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
-import com.huojumu.utils.PrinterCommand;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.QrUtil;
 import com.huojumu.utils.SocketBack;
@@ -128,7 +126,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     //订单数据
     private OrderInfo orderInfo;
-    private Handler handler = new Handler();
+//    private Handler handler = new Handler();
     //是否修改
     private boolean ok = false;
     //流水号
@@ -338,19 +336,19 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     }
 
-    @Override
-    public void sendMsg(String s) {
-        if ("0".equals(s)) {
-            //线上付款完成
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    productions.clear();
-                }
-            }, 2000);
-            selectedAdapter.setNewData(productions);
-        }
-    }
+//    @Override
+//    public void sendMsg(String s) {
+//        if ("0".equals(s)) {
+//            //线上付款完成
+//            handler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    productions.clear();
+//                }
+//            }, 2000);
+//            selectedAdapter.setNewData(productions);
+//        }
+//    }
 
     private void checkPriceForDisplay() {
         double totalPrice = 0.0, totalCut = 0.0;
@@ -591,9 +589,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     cashPayDialog.show();
                 } else {
                     orderInfo.setOrderID(PrinterUtil.getOrderID() + (NO < 10 ? "000" + NO : NO < 100 ? "00" + NO : NO < 1000 ? "0" + NO : NO + ""));
-
                     orderInfo.setPayType(type == 2 ? "020" : "010");
-                    Log.e(TAG, "OnDialogOkClick: " + PrinterUtil.toJson(orderInfo));
+                    orderId = (NO < 10 ? "000" + NO : NO < 100 ? "00" + NO : NO < 1000 ? "0" + NO : NO + "");
                     //线上支付
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                         @Override
@@ -627,7 +624,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 //                orderInfo.setOrderID(PrinterUtil.getOrderID() + "0031");
                 orderInfo.setPayType("900");
                 cashPayDialog.cancel();
-                Log.e(TAG, "OnDialogOkClick: " + PrinterUtil.toJson(orderInfo));
+                orderId = (NO < 10 ? "000" + NO : NO < 100 ? "00" + NO : NO < 1000 ? "0" + NO : NO + "");
                 NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
@@ -636,7 +633,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         clear();
                         NO++;
                         SpUtil.save("orderNo", NO);
-                        Log.e(TAG, "onSuccess: " + NO);
                     }
 
                     @Override
@@ -650,22 +646,21 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 certainDialog.cancel();
                 PowerUtil.shutdown();
                 break;
-            case "UsbDeviceList":
-                String usbName = SpUtil.getString("usbName");
-                closeport();
-                //获取USB设备名
-                //通过USB设备名找到USB设备
-                UsbDevice usbDevice = PrinterUtil.getUsbDeviceFromName(HomeActivity.this, usbName);
-                //判断USB设备是否有权限
-                if (usbManager.hasPermission(usbDevice)) {
-                    usbConn(usbDevice);
-                    Log.e(TAG, "usbConn: 1");
-                } else {//请求权限
-                    PendingIntent mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
-                    usbManager.requestPermission(usbDevice, mPermissionIntent);
-                    Log.e(TAG, "usbConn: 2");
-                }
-                break;
+        }
+    }
+    String orderId;
+    @Override
+    public void OnUsbCallBack(String name) {
+        closeport();
+        //获取USB设备名
+        //通过USB设备名找到USB设备
+        UsbDevice usbDevice = PrinterUtil.getUsbDeviceFromName(HomeActivity.this, name);
+        //判断USB设备是否有权限
+        if (usbManager.hasPermission(usbDevice)) {
+            usbConn(usbDevice);
+        } else {//请求权限
+            PendingIntent mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+            usbManager.requestPermission(usbDevice, mPermissionIntent);
         }
     }
 
@@ -691,30 +686,48 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     /**
      * 打印订单小票
      */
-    private void PrintOrder(OrderBack orderBack, double charge) {
-        if (isCash) {
-            PrinterUtil.OpenMoneyBox();
-            isCash = false;
-        }
-        PrinterUtil.printString80(this, productions, orderBack.getOrderNo(), SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(), "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "", totalCut + "");
-
+    private void PrintOrder(final OrderBack orderBack, final double charge) {
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
             public void run() {
-                Log.e(TAG, "run: ");
-                if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] == null ||
-                        !DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getConnState()) {
-                    Log.e(TAG, "run: 1");
-                    return;
+                if (isCash) {
+                    isCash = false;
+                    PrinterUtil.OpenMoneyBox();
                 }
-                if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getCurrentPrinterCommand() == PrinterCommand.TSC) {
-                    Log.e(TAG, "run: 2");
-                    for (Production p : productions) {
-                        sendLabel(p.getProName(), p.getTasteStr(), p.getPrice());
-                    }
-                }
+                PrinterUtil.printString80(HomeActivity.this, productions, orderBack.getOrderNo(), SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(), "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "", totalCut + "");
             }
         });
+
+        if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] == null ||
+                !DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getConnState()) {
+            ToastUtils.showLong("未连接标签打印机");
+            return;
+        }
+
+        int size = productions.size();
+        for (int i = 0; i < size; i++) {
+            final String name = productions.get(i).getProName();
+            final String taste = productions.get(i).getTasteStr();
+            final double price = productions.get(i).getPrice();
+
+            ThreadPool.getInstantiation().addTask(new Runnable() {
+                @Override
+                public void run() {
+//                    if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getCurrentPrinterCommand() == PrinterCommand.TSC) {
+//                    ThreadFactoryBuilder threadFactoryBuilder = new ThreadFactoryBuilder("MainActivity_sendContinuity_Timer");
+//                    ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(1, threadFactoryBuilder);
+//                    scheduledExecutorService.schedule(threadFactoryBuilder.newThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                    sendLabel("", "", 1);
+                    sendLabel(name, taste, price);
+//                        }
+//                    }), 500, TimeUnit.MILLISECONDS);
+//                    Log.e(TAG, "PrintOrder: inner ");
+//                    }
+                }
+            });
+        }
 
     }
 
@@ -836,24 +849,32 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         tsc.addCls();
         int x = (300 - pName.length() * 30) / 2;
         // 绘制简体中文
+        Log.e(TAG, "PrintOrder: print 1");
         tsc.addText(x, 13, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.STORE_NAME) + "\n");
+        Log.e(TAG, "PrintOrder: print 2");
         tsc.addText(0, 43, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 pName + "\n");
+        Log.e(TAG, "PrintOrder: print 3");
         tsc.addText(0, 78, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 pContent + "\n");
+        Log.e(TAG, "PrintOrder: print 4");
         tsc.addText(0, 110, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 "￥" + price);
+        Log.e(TAG, "PrintOrder: print 5");
         tsc.addText(0, 140, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.WORKER_NAME) + "\n");
+        Log.e(TAG, "PrintOrder: print 6");
         tsc.addText(0, 170, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
-                PrinterUtil.getTabTime() + " " + PrinterUtil.getTabHour() + "\n");
+                PrinterUtil.getTabTime() + orderId + "-" + PrinterUtil.getTabHour() + "\n");
+        Log.e(TAG, "PrintOrder: print 7");
         tsc.addText(0, 200, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.STORE_ADDRESS));
+        Log.e(TAG, "PrintOrder: print 8");
         // 绘制图片
         Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.logo9);
         tsc.addBitmap(200, 42, LabelCommand.BITMAP_MODE.OVERWRITE, 100, b);
-
+        Log.e(TAG, "PrintOrder: print 9");
         // 打印标签
         tsc.addPrint(1, 1);
         // 打印标签后 蜂鸣器响

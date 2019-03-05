@@ -30,10 +30,11 @@ public class SocketTool extends WebSocketListener {
 
     private String TAG = SocketTool.class.getSimpleName();
     private Gson gson = new Gson();
-    private BaseActivity activity;
+//    private BaseActivity activity;
     private WebSocket webSocket;
     private static SocketTool INSTANCE;
     private Context context;
+    private static Thread thread;
 
     public static SocketTool getInstance(Context context) {
         Request request = new Request.Builder()
@@ -57,12 +58,12 @@ public class SocketTool extends WebSocketListener {
         }
     }
 
-    public void sendHeart(Activity activity) {
+    public void sendHeart() {
         if (webSocket != null) {
-//            new Thread() {
-//                public void run() {
+            thread = new Thread() {
+                public void run() {
                     while (true) {
-                        Log.e(TAG, "sendHeart: " + activity.getLocalClassName());
+//                        Log.e(TAG, "sendHeart: " + activity.getLocalClassName());
                         webSocket.send("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
                         try {
                             Thread.sleep(60 * 1000);
@@ -71,8 +72,9 @@ public class SocketTool extends WebSocketListener {
                             Log.e(TAG, "run: error");
                         }
                     }
-//                }
-//            }.start();
+                }
+            };
+            thread.start();
         }
     }
 

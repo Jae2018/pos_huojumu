@@ -29,7 +29,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         engine = CustomerEngine.getInstance(getApplicationContext());
         initView();
         initData();
-        MyApplication.getSocketTool().sendHeart(this);
+        MyApplication.getSocketTool().sendHeart();
     }
 
     // 设置布局
@@ -46,7 +46,4 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-    public void sendMsg(String s) {
-
-    }
 }

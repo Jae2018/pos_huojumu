@@ -1,18 +1,12 @@
 package com.huojumu.utils;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.huojumu.base.BaseActivity;
-import com.huojumu.main.activity.home.HomeActivity;
-import com.huojumu.main.activity.login.LoginActivity;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.EventHandler;
-import com.huojumu.model.OrderBack;
 import com.huojumu.model.StoreInfo;
 import com.huojumu.model.TaskBean;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
@@ -43,7 +37,6 @@ public class SocketTool extends WebSocketListener {
         OkHttpClient client = new OkHttpClient();
         INSTANCE = new SocketTool(context);
         client.newWebSocket(request, INSTANCE);
-        Log.e("SocketTool", "getInstance: ");
         return INSTANCE;
     }
 
@@ -53,7 +46,6 @@ public class SocketTool extends WebSocketListener {
 
     public void sendMsg(String s) {
         if (webSocket != null) {
-            Log.e(TAG, "sendMsg: " + s);
             webSocket.send(s);
         }
     }
@@ -66,7 +58,7 @@ public class SocketTool extends WebSocketListener {
 //                        Log.e(TAG, "sendHeart: " + activity.getLocalClassName());
                         webSocket.send("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
                         try {
-                            Thread.sleep(60 * 1000);
+                            Thread.sleep(600 * 1000);
                         } catch (Exception e) {
                             e.printStackTrace();
                             Log.e(TAG, "run: error");
@@ -118,7 +110,7 @@ public class SocketTool extends WebSocketListener {
                 break;
             case Constant.PAYCODE:
                 //支付完成回调
-                EventBus.getDefault().post(new EventHandler(Constant.PAY));
+                EventBus.getDefault().post(taskBean);
                 break;
             case Constant.START:
                 //扫码登录回调

@@ -43,9 +43,9 @@ import com.huojumu.main.dialogs.MoreFunctionDialog;
 import com.huojumu.main.dialogs.QuickPayDialog;
 import com.huojumu.main.dialogs.SingleProCallback;
 import com.huojumu.main.dialogs.UsbDeviceList;
+import com.huojumu.model.TaskBean;
 import com.huojumu.model.VipListBean;
 import com.huojumu.model.BaseBean;
-import com.huojumu.model.EventHandler;
 import com.huojumu.model.MatsBean;
 import com.huojumu.model.OrderBack;
 import com.huojumu.model.OrderInfo;
@@ -144,6 +144,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     @Override
     protected void initView() {
+        MyApplication.getSocketTool().sendHeart();
         EventBus.getDefault().register(this);
         NO = SpUtil.getOrderId("orderNo");
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
@@ -602,7 +603,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                 engine.getWxIV().setImageBitmap(QrUtil.createQRCodeWithLogo(HomeActivity.this, response.getData().getWxPayQrcode(), BitmapFactory.decodeResource(getResources(), R.drawable.weixin_normal)));
                             }
 
-                            MyApplication.getSocketTool().sendMsg("{\"task\": \"pay\",\"data\":{\"orderCode\":\"" + response.getData().getOrderNo() + "\",\"payTime\":\"" + orderInfo.getCreateTime() + "\",\"state\": \"1\",\"leftCupCnt\":1}}");
+//                            MyApplication.getSocketTool().sendMsg("{\"task\": \"pay\",\"data\":{\"orderCode\":\"" + response.getData().getOrderNo() + "\",\"payTime\":\"" + orderInfo.getCreateTime() + "\",\"state\": \"1\",\"leftCupCnt\":1}}");
                             ld.show();
                             NO++;
                             SpUtil.save("orderNo", NO);
@@ -709,6 +710,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             final String name = productions.get(i).getProName();
             final String taste = productions.get(i).getTasteStr();
             final double price = productions.get(i).getPrice();
+            final int number = productions.get(i).getNumber();
 
             ThreadPool.getInstantiation().addTask(new Runnable() {
                 @Override
@@ -720,7 +722,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 //                        @Override
 //                        public void run() {
 //                    sendLabel("", "", 1);
-                    sendLabel(name, taste, price);
+                    sendLabel(name, taste, price, number);
 //                        }
 //                    }), 500, TimeUnit.MILLISECONDS);
 //                    Log.e(TAG, "PrintOrder: inner ");
@@ -778,10 +780,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void GetPayBack(EventHandler eventHandler) {
+    public void GetPayBack(TaskBean taskBean) {
         //socket支付回调
         Log.e(TAG, "GetPayBack: ");
-        if (eventHandler.getType() == 1) {//用户支付完成
+        if (taskBean.getData().getState().equals("01")) {//用户支付完成
             ld.loadSuccess();
             PrintOrder(orderBack, change);
         } else {
@@ -831,7 +833,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     /**
      * 发送标签
      */
-    void sendLabel(String pName, String pContent, double price) {
+    void sendLabel(String pName, String pContent, double price, int number) {
         LabelCommand tsc = new LabelCommand();
         // 设置标签尺寸，按照实际尺寸设置
         tsc.addSize(45, 30);
@@ -860,7 +862,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 pContent + "\n");
         Log.e(TAG, "PrintOrder: print 4");
         tsc.addText(0, 110, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
-                "￥" + price);
+                "￥" + price + " * " + number + "份");
         Log.e(TAG, "PrintOrder: print 5");
         tsc.addText(0, 140, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.WORKER_NAME) + "\n");

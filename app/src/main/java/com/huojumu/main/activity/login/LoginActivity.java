@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.huojumu.MyApplication;
 import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.home.HomeActivity;
@@ -49,6 +50,8 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        MyApplication.getSocketTool().sendMsg("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
+
         getCode();
     }
 

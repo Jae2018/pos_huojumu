@@ -7,7 +7,6 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.huojumu.R;
 import com.huojumu.model.MatsBean;
 import com.huojumu.model.Production;
-import com.huojumu.model.Products;
 
 import java.util.List;
 

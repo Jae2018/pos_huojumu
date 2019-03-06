@@ -37,7 +37,7 @@ public class SpUtil {
     }
 
     public static int getOrderId(String key){
-        return sp.getInt(key, Constant.TEST_INT);
+        return sp.getInt(key, Constant.DEFAULT_INT);
     }
 
     public static boolean getBoolean(String key){

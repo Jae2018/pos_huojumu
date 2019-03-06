@@ -1,14 +1,11 @@
 package com.huojumu.main.activity.function;
 
-import android.content.Intent;
 import android.os.Environment;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
-import com.huojumu.main.activity.home.HomeActivity;
-import com.huojumu.main.activity.login.LoginActivity;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.SpUtil;
 

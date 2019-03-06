@@ -1,21 +1,16 @@
 package com.huojumu.main.activity.function;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
-import com.blankj.utilcode.util.ToastUtils;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.huojumu.R;
 import com.huojumu.adapter.VipListAdapter;
 import com.huojumu.base.BaseActivity;
-import com.huojumu.main.activity.home.HomeActivity;
-import com.huojumu.model.VipListBean;
 import com.huojumu.model.BaseBean;
+import com.huojumu.model.VipListBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.SpUtil;

@@ -43,8 +43,6 @@ import com.huojumu.main.dialogs.MoreFunctionDialog;
 import com.huojumu.main.dialogs.QuickPayDialog;
 import com.huojumu.main.dialogs.SingleProCallback;
 import com.huojumu.main.dialogs.UsbDeviceList;
-import com.huojumu.model.TaskBean;
-import com.huojumu.model.VipListBean;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.MatsBean;
 import com.huojumu.model.OrderBack;
@@ -52,6 +50,8 @@ import com.huojumu.model.OrderInfo;
 import com.huojumu.model.Production;
 import com.huojumu.model.Products;
 import com.huojumu.model.SmallType;
+import com.huojumu.model.TaskBean;
+import com.huojumu.model.VipListBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
 import com.huojumu.utils.NetTool;
@@ -65,7 +65,6 @@ import com.tools.command.EscCommand;
 import com.tools.command.LabelCommand;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
-
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -130,7 +129,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //是否修改
     private boolean ok = false;
     //流水号
-    private int NO = 100;
+    private int NO = 1;
 
     //是否是现金支付
     boolean isCash = false;
@@ -146,7 +145,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     protected void initView() {
         MyApplication.getSocketTool().sendHeart();
         EventBus.getDefault().register(this);
-        NO = SpUtil.getOrderId("orderNo");
+        NO = SpUtil.getOrderId("Order_No");
+        Log.e(TAG, "initView: " + NO);
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         //左侧点单列表
         selectedAdapter = new HomeSelectedAdapter(productions);
@@ -592,6 +592,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     orderInfo.setOrderID(PrinterUtil.getOrderID() + (NO < 10 ? "000" + NO : NO < 100 ? "00" + NO : NO < 1000 ? "0" + NO : NO + ""));
                     orderInfo.setPayType(type == 2 ? "020" : "010");
                     orderId = (NO < 10 ? "000" + NO : NO < 100 ? "00" + NO : NO < 1000 ? "0" + NO : NO + "");
+
                     //线上支付
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                         @Override
@@ -606,7 +607,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 //                            MyApplication.getSocketTool().sendMsg("{\"task\": \"pay\",\"data\":{\"orderCode\":\"" + response.getData().getOrderNo() + "\",\"payTime\":\"" + orderInfo.getCreateTime() + "\",\"state\": \"1\",\"leftCupCnt\":1}}");
                             ld.show();
                             NO++;
-                            SpUtil.save("orderNo", NO);
+                            SpUtil.save("Order_No", NO);
                             payOutTime();
                         }
 
@@ -622,7 +623,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 //弹钱箱，打印小票
                 orderInfo.setOrderID(PrinterUtil.getOrderID() + (NO < 10 ? "000" + NO : NO < 100 ? "00" + NO : NO < 1000 ? "0" + NO : NO + ""));
                 isCash = true;
-//                orderInfo.setOrderID(PrinterUtil.getOrderID() + "0031");
+                Log.e(TAG, "OnDialogOkClick: " + NO);
+                Log.e(TAG, "OnDialogOkClick: " + orderInfo.getOrderID());
                 orderInfo.setPayType("900");
                 cashPayDialog.cancel();
                 cashPayDialog = null;
@@ -634,7 +636,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         PrintOrder(response.getData(), charge < 0 ? 0 : charge);
                         clear();
                         NO++;
-                        SpUtil.save("orderNo", NO);
+                        SpUtil.save("Order_No", NO);
                     }
 
                     @Override
@@ -645,11 +647,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 break;
             case "CertainDialog":
                 //关机确认
+                NO = 1;
+                SpUtil.save("Order_No", NO);
                 certainDialog.cancel();
                 PowerUtil.shutdown();
                 break;
         }
     }
+
+
     String orderId;
     @Override
     public void OnUsbCallBack(String name) {
@@ -783,7 +789,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void GetPayBack(TaskBean taskBean) {
         //socket支付回调
-        Log.e(TAG, "GetPayBack: ");
         if (taskBean.getData().getState().equals("01")) {//用户支付完成
             ld.loadSuccess();
             PrintOrder(orderBack, change);
@@ -828,6 +833,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        NO = 1;
+        SpUtil.save("Order_No", NO);
         EventBus.getDefault().unregister(this);
     }
 

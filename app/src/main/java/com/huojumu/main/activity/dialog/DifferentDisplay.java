@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Display;
 import android.view.KeyboardShortcutGroup;
 import android.view.Menu;
-//import android.view.SurfaceView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +18,8 @@ import com.huojumu.adapter.HomeSelectedAdapter;
 import com.huojumu.model.Production;
 
 import java.util.List;
+
+//import android.view.SurfaceView;
 
 /**
  * @author : Jie

@@ -6,7 +6,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.huojumu.R;
 import com.huojumu.model.VipListBean;
-import com.huojumu.model.Vips;
 
 import java.util.List;
 

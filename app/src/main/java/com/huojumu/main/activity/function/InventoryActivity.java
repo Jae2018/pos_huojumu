@@ -10,7 +10,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.huojumu.R;
 import com.huojumu.adapter.WorkInventoryAdapter;
 import com.huojumu.base.BaseActivity;
-import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.InventoryList;
 import com.huojumu.utils.Constant;

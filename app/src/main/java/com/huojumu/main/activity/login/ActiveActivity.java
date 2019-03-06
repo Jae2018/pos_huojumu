@@ -2,7 +2,6 @@ package com.huojumu.main.activity.login;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.huojumu.MyApplication;
@@ -12,7 +11,6 @@ import com.huojumu.model.EventHandler;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.PowerUtil;
 import com.huojumu.utils.QrUtil;
-import com.huojumu.utils.SocketTool;
 import com.huojumu.utils.SpUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -23,8 +21,6 @@ import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 
 
 public class ActiveActivity extends BaseActivity {

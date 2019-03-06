@@ -7,12 +7,12 @@ import android.support.annotation.NonNull;
 import com.huojumu.R;
 import com.huojumu.base.BaseDialog;
 import com.huojumu.main.activity.function.ChangePwdActivity;
+import com.huojumu.main.activity.function.InventoryActivity;
 import com.huojumu.main.activity.function.MaterialActivity;
 import com.huojumu.main.activity.function.OrdersListActivity;
 import com.huojumu.main.activity.function.PayBackActivity;
 import com.huojumu.main.activity.function.SettingActivity;
 import com.huojumu.main.activity.function.VipActivity;
-import com.huojumu.main.activity.function.InventoryActivity;
 import com.huojumu.utils.PrinterUtil;
 
 import butterknife.OnClick;

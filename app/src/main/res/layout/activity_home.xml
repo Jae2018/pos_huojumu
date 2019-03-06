@@ -68,7 +68,7 @@
 
         <Button
             style="@style/HomeButtonStyle"
-            android:text="USB设置"
+            android:text="设置标签机"
             android:onClick="btnUsbConn"/>
 
         <LinearLayout

@@ -625,6 +625,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 //                orderInfo.setOrderID(PrinterUtil.getOrderID() + "0031");
                 orderInfo.setPayType("900");
                 cashPayDialog.cancel();
+                cashPayDialog = null;
                 orderId = (NO < 10 ? "000" + NO : NO < 100 ? "00" + NO : NO < 1000 ? "0" + NO : NO + "");
                 NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                     @Override

@@ -37,7 +37,7 @@ public class CashPayDialog extends BaseDialog {
     private DialogInterface anInterface;
 
     private double cost;//订单金额
-    private int cash = 0;//收取金额
+    private int cash;//收取金额
 
     public CashPayDialog(@NonNull Context context, double cost, DialogInterface anInterface) {
         super(context);
@@ -52,7 +52,6 @@ public class CashPayDialog extends BaseDialog {
 
     @Override
     public void initView() {
-        cash = 0;
         earn1.setText(String.valueOf(cost));
         earn2.addTextChangedListener(new TextWatcher() {
             @Override
@@ -119,6 +118,7 @@ public class CashPayDialog extends BaseDialog {
     }
 
     private void clear(){
+        earn1.setText("");
         earn2.setText("");
         change.setText("");
     }

@@ -8,4 +8,5 @@ package com.huojumu.main.dialogs;
 public interface DialogInterface {
     void OnDialogOkClick(int type, double earn, double cost, double charge, String name);
 
+    void OnUsbCallBack(String name);
 }

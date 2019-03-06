@@ -3,6 +3,7 @@ package com.huojumu.main.dialogs;
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,7 +15,6 @@ import android.widget.TextView;
 import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.base.BaseDialog;
-import com.huojumu.utils.SpUtil;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -77,10 +77,13 @@ public class UsbDeviceList extends BaseDialog {
             while (deviceIterator.hasNext()) {
                 UsbDevice device = deviceIterator.next();
                 String devicename = device.getDeviceName();
-//                String pName = device.getProductName();
+                String pName = "";
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    pName = device.getProductName();
+                }
 
                 if (checkUsbDevicePidVid(device)) {
-                    mUsbDeviceArrayAdapter.add(devicename);
+                    mUsbDeviceArrayAdapter.add(pName + "：" + devicename);
                 }
             }
         } else {
@@ -95,8 +98,7 @@ public class UsbDeviceList extends BaseDialog {
             // Cancel discovery because it's costly and we're about to connect
             // Get the device MAC address, which is the last 17 chars in the View
             String info = ((TextView) v).getText().toString();
-            SpUtil.save("usbName", info);
-            anInterface.OnDialogOkClick(1, 0, 0, 0, "UsbDeviceList");
+            anInterface.OnUsbCallBack(info);
             cancel();
         }
     };

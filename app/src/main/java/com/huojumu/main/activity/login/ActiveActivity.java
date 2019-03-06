@@ -55,6 +55,7 @@ public class ActiveActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        MyApplication.getSocketTool().sendMsg("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
         MyApplication.getSocketTool().sendMsg(String.format(Constant.BAND, uuid));
     }
 
@@ -65,9 +66,9 @@ public class ActiveActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLogin(EventHandler eventHandler){
-        Log.e("active", "Bind: ");
         if (eventHandler.getType() == 2) {
             startActivity(new Intent(ActiveActivity.this, LoginActivity.class));
+            finish();
         }
     }
 

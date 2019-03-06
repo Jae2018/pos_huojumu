@@ -1,6 +1,5 @@
 package com.huojumu.main.activity.function;
 
-import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,7 +15,6 @@ import com.huojumu.R;
 import com.huojumu.adapter.OrderBackContentAdapter;
 import com.huojumu.adapter.OrderEnableBackAdapter;
 import com.huojumu.base.BaseActivity;
-import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.main.dialogs.CertainDialog;
 import com.huojumu.main.dialogs.DialogInterface;
 import com.huojumu.model.BaseBean;
@@ -103,11 +101,15 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
 
     }
 
+    @Override
+    public void OnUsbCallBack(String name) {
+
+    }
+
     private void getEnableBackOrderList() {
         NetTool.getEnableBackOrderList(SpUtil.getInt(Constant.STORE_ID), editText.getText().toString(), new GsonResponseHandler<BaseBean<OrderEnableBackBean>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrderEnableBackBean> response) {
-                Log.e("back", "onSuccess: " + response.getCode());
                 if (response.getCode() != 0 || response.getData() == null) {
                     ToastUtils.showLong("无对应订单数据！");
                 } else {
@@ -133,7 +135,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
                     contentAdapter.setNewData(response.getData().getOrderdetail().getPros());
                     priceTv.setText(String.format("订单金额：%s元", response.getData().getOrderdetail().getTotalPrice()));
                     dateTv.setText(String.format("订单日期：%s", response.getData().getOrderdetail().getCreateTime()));
-                    payTypeTv.setText(String.format("支付方式：%s", response.getData().getOrderdetail().getPayType().equals("010") ? "微信支付" : "支付宝支付"));
+                    payTypeTv.setText(String.format("支付方式：%s", response.getData().getOrderdetail().getPayType().equals("900") ? "现金支付" : "移动支付"));
                 }
                 if (refreshLayout.isRefreshing()) {
                     refreshLayout.setRefreshing(false);
@@ -154,19 +156,22 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
 
     @OnClick(R.id.iv_back)
     void back() {
-//        startActivity(new Intent(PayBackActivity.this, HomeActivity.class));
         finish();
     }
 
-
-    public void cancelBack(View view) {
+    @OnClick(R.id.btn_cancel)
+    void cancelBack() {
+        Log.e("`12", "cancelBack: ");
         finish();
     }
 
-    public void commitBack(View view) {
+    @OnClick(R.id.btn_commit)
+    void commitBack() {
+        Log.e("`12", "commitBack: ");
         if (dialog == null) {
             dialog = new CertainDialog(this, this, "注意！", "确定要退单吗？");
         }
+        dialog.show();
     }
 
     @Override
@@ -174,10 +179,14 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
         NetTool.getPayBack(SpUtil.getInt(Constant.STORE_ID), id, payType, new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
-                ToastUtils.showLong(response.getMsg());
-                if (response.getCode() == 0) {
+                if (response.getMsg().equals("yes")) {
+                    ToastUtils.showLong("退单成功!");
                     clearRight();
+                    getEnableBackOrderList();
+                } else {
+                    ToastUtils.showLong("退单失败!");
                 }
+                dialog.cancel();
             }
 
             @Override

@@ -38,12 +38,14 @@
 
         <activity
             android:name="com.huojumu.main.activity.login.ActiveActivity"
+            android:launchMode="singleInstance"
             android:screenOrientation="landscape">
 
         </activity>
         <activity
             android:name="com.huojumu.main.activity.login.LoginActivity"
             android:screenOrientation="landscape"
+            android:launchMode="singleInstance"
             android:windowSoftInputMode="stateHidden|stateUnchanged" >
 
         </activity>
@@ -70,6 +72,7 @@
         <activity
             android:name="com.huojumu.main.activity.MainActivity"
             android:screenOrientation="landscape"
+            android:launchMode="singleInstance"
             android:windowSoftInputMode="stateHidden|stateUnchanged">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

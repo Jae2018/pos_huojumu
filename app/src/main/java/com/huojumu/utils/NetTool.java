@@ -177,8 +177,16 @@ public class NetTool {
                 .enqueue(handler);
     }
 
+    //日結
+    public static void settlement(long timestamp, GsonResponseHandler<BaseBean<String>> handler) {
+        okHttp.post().url(Constant.BASE_URL + "duty/settlement.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .addParam("token", SpUtil.getString(Constant.MY_TOKEN).split(" ")[1])
+                .addParam("timestamp", timestamp + "")
+                .enqueue(handler);
+    }
+
     //日結、交班工作信息
-    public static void getDailyInfo(int storeId, int pinpaiId, int no, GsonResponseHandler<BaseBean<DailyInfo>> handler) {
+    public static void getDailyInfo(int storeId, int pinpaiId, int no,int status, GsonResponseHandler<BaseBean<DailyInfo>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "duty/shiftInfo.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("token", SpUtil.getString(Constant.MY_TOKEN).split(" ")[1])
@@ -186,6 +194,7 @@ public class NetTool {
                 .addParam("pinpaiId", "" + pinpaiId)
                 .addParam("pageNum", no + "")
                 .addParam("pageSize", 10 + "")
+                .addParam("status", status + "")
                 .enqueue(handler);
     }
 

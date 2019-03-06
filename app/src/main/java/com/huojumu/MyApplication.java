@@ -32,6 +32,7 @@ public class MyApplication extends Application {
         SpUtil.save(Constant.UUID, UUID.randomUUID().toString());
         PrinterUtil.connectPrinter(mContext);
         socketTool = SocketTool.getInstance(this);
+//        socketTool.sendHeart();
     }
 
 

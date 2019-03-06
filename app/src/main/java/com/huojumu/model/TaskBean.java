@@ -62,6 +62,42 @@ public class TaskBean {
         private int shopID;
         private String userName;
         private String  token;
+        private String orderCode;
+        private String payTime;
+        private String state;
+        private int leftCupCnt;
+
+        public String getOrderCode() {
+            return orderCode;
+        }
+
+        public void setOrderCode(String orderCode) {
+            this.orderCode = orderCode;
+        }
+
+        public String getPayTime() {
+            return payTime;
+        }
+
+        public void setPayTime(String payTime) {
+            this.payTime = payTime;
+        }
+
+        public String getState() {
+            return state;
+        }
+
+        public void setState(String state) {
+            this.state = state;
+        }
+
+        public int getLeftCupCnt() {
+            return leftCupCnt;
+        }
+
+        public void setLeftCupCnt(int leftCupCnt) {
+            this.leftCupCnt = leftCupCnt;
+        }
 
         public String getUserName() {
             return userName;

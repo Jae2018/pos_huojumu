@@ -66,6 +66,11 @@
             style="@style/HomeButtonStyle"
             android:text="刷新" />
 
+        <Button
+            style="@style/HomeButtonStyle"
+            android:text="设置标签机"
+            android:onClick="btnUsbConn"/>
+
         <LinearLayout
             android:id="@+id/linearLayout2"
             android:layout_width="0dp"
@@ -268,11 +273,11 @@
             android:layout_height="match_parent"
             android:text="@string/handover" />
 
-        <!--<Button-->
-            <!--android:id="@+id/btn_home_daily"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:text="@string/daily" />-->
+        <Button
+            android:id="@+id/btn_home_daily"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/daily" />
 
     </LinearLayout>
 

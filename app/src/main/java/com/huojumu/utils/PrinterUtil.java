@@ -2,20 +2,21 @@ package com.huojumu.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.util.Log;
 import android.widget.ImageView;
 
 import com.blankj.utilcode.util.ToastUtils;
-import com.data.OrderSave;
 import com.google.gson.Gson;
 import com.huojumu.R;
-import com.huojumu.model.OrderInfo;
-import com.huojumu.model.Products;
+import com.huojumu.model.Production;
 import com.szsicod.print.escpos.PrinterAPI;
 import com.szsicod.print.io.USBAPI;
 
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -250,17 +252,19 @@ public class PrinterUtil {
         return sb.toString();
     }
 
+    //    private static Thread thread;
     //开钱箱
     public static void OpenMoneyBox() {
-        byte[] bytes = {0x1B, 0x70, 0x0, 0x3C, (byte) 0xFF};
-        try {
-            mPrinter.writeIO(bytes, 0, bytes.length - 1, 1000);
-        } catch (Exception e) {
-            Log.d(TAG, "OpenMoneyBox: error");
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                byte[] bytes = {0x1B, 0x70, 0x0, 0x3C, (byte) 0xFF};
+                mPrinter.writeIO(bytes, 0, bytes.length - 1, 1000);
+            }
+        }).start();
     }
 
-    public static String toJson(OrderInfo orderInfo) {
+    public static String toJson(Object orderInfo) {
         if (gson == null) {
             gson = new Gson();
         }
@@ -281,6 +285,12 @@ public class PrinterUtil {
         } else {
             ToastUtils.showLong("未成功连接打印机");
         }
+    }
+
+    public static UsbDevice getUsbDeviceFromName(Context context, String usbName) {
+        UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        HashMap<String, UsbDevice> usbDeviceList = usbManager.getDeviceList();
+        return usbDeviceList.get(usbName);
     }
 
     /**
@@ -304,6 +314,18 @@ public class PrinterUtil {
         return simpleDateFormat.format(date);
     }
 
+    public static String getTabTime() {
+        simpleDateFormat = new SimpleDateFormat("MMdd", Locale.CHINA);
+        simpleDateFormat.format(date);
+        return simpleDateFormat.format(date);
+    }
+
+    public static String getTabHour() {
+        simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.CHINA);
+        simpleDateFormat.format(date);
+        return simpleDateFormat.format(date);
+    }
+
     public static String getPrintDate() {
         simpleDateFormat = new SimpleDateFormat("MM-dd HH:mm:ss", Locale.CHINA);
         simpleDateFormat.format(date);
@@ -316,15 +338,15 @@ public class PrinterUtil {
         return simpleDateFormat.format(date);
     }
 
-    public static String getOrderNo() {
-        simpleDateFormat = new SimpleDateFormat("yyMMddHHmmss", Locale.CHINA);
+    public static String getOrderID() {
+        simpleDateFormat = new SimpleDateFormat("yyMMdd", Locale.CHINA);
         return simpleDateFormat.format(new Date());
     }
 
     /**
      * 打印文本58mm样式// 32 字节
      */
-    public static void printString58(final List<Products.ProductsBean> pList, final double totalPrice, final int totalNumber, final String orderNo, final String orderId, final String time) {
+    public static void printString58(final List<Production> pList, final double totalPrice, final int totalNumber, final String orderNo, final String orderId, final String time) {
         try {
 //            set(DOUBLE_HEIGHT_WIDTH);
             mPrinter.setCharSize(2, 2);
@@ -343,7 +365,7 @@ public class PrinterUtil {
                     .append("付款时间：").append(time).append("\n")
                     .append("打印时间：").append(simpleDateFormat.format(date)).append("\n\n");
             sb.append(printThreeData58("名称", "数量", "单价")).append("\n");
-            for (Products.ProductsBean p : pList) {
+            for (Production p : pList) {
                 sb.append(printThreeData58(p.getProName(), String.valueOf(p.getNumber()), String.valueOf(p.getPrice()))).append("\n");
             }
             sb.append(printThreeData58("合计：", String.valueOf(totalNumber), String.valueOf(totalPrice))).append("\n");
@@ -369,12 +391,15 @@ public class PrinterUtil {
     /**
      * 打印文本80mm小票样式 48 字节
      */
-    public static void printString80(Context c,final List<Products.ProductsBean> pList, final String orderNo, final String name, final String totalMoney, final String earn, final String cost, final String charge) {
+    public static void printString80(Context c, final List<Production> pList, final String orderNo, final String name, final String totalMoney, final String earn, final String cost, final String charge, final String cut) {
         try {
 //            set(DOUBLE_HEIGHT_WIDTH);
+            //居左
             mPrinter.setAlignMode(0);
+            //字体变大
             mPrinter.setCharSize(2, 2);
-            String s = orderNo.substring(orderNo.length() - 12, orderNo.length() - 1) + "\n";
+            //订单流水号
+            String s = orderNo.substring(orderNo.length() - 4, orderNo.length() - 1) + "\n";
             mPrinter.printString(s, "GBK");
 //            set(NORMAL);
             mPrinter.setCharSize(0, 0);
@@ -385,47 +410,85 @@ public class PrinterUtil {
             s = "收银员：" + name + "\n" + "时间：" + PrinterUtil.getPrintDate() + "\n";
             mPrinter.printString(s, "GBK");
             //间隔大的虚线
-            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line2)));
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line4)));
             //商品信息
             StringBuilder sb = new StringBuilder();
+            sb.append("\n");
             sb.append(printThreeData80("商品名称", "数量", "单价", "金额")).append("\n");
             sb.append("\n");
 
-            for (Products.ProductsBean p : pList) {
+            for (Production p : pList) {
                 sb.append(printThreeData80(p.getProName(), String.valueOf(p.getNumber()), String.valueOf(p.getPrice()), String.valueOf(p.getNumber() * p.getPrice()))).append("\n");
                 sb.append(printThreeData80(p.getAddon(), "", "", ""));
             }
             mPrinter.printString(sb.toString(), "GBK");
             //间隔小的虚线
-            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line3)));
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line2)));
             //交易金额明细
             s = "\n" + printTwoData80("消费金额", totalMoney)
                     + "\n" + printTwoData80("应收金额", earn)
                     + "\n" + printTwoData80("客户实付", cost)
+                    + "\n" + printTwoData80("优惠", cut)
                     + "\n" + printTwoData80("找    零", charge);
             mPrinter.printString(s, "GBK");
 
             //虚实线
-            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line4)));
-            //店铺地址+店铺名
-            s = SpUtil.getString(Constant.STORE_ADDRESS) + "·" + SpUtil.getString(Constant.STORE_NAME);
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line3)));
+            //店铺名
+            s = SpUtil.getString(Constant.STORE_NAME);
             mPrinter.printString(s, "GBK");
-
+            //居中
+            mPrinter.setAlignMode(1);
             //logo图片9
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.logo)));
-
+            mPrinter.setAlignMode(0);
             //企业文化描述
-            s = "7港9欢迎您的到来。我们再次从香港出发，希望搜集到各地的特色食品，港印全国。能7(去)香港(港)的(9)九龙喝一杯正宗的港饮是我们对每一位顾客的愿景。几百年来，香港作为东方接触世界的窗口，找寻并创造了一款款独具特色又流传世界的高品饮品。我们在全国超过十年的专业服务与坚持，与97回归共享繁华，秉承独到的调制方法，期许再一次与亲爱的你能擦出下一个十年火花。";
+            s = "7港9欢迎您的到来。我们再次从香港出发，希望搜集到各地的特色食品，港印全国。能7(去)香港(港)的(9)九龙喝一杯正宗的港饮是我们对每一位顾客的愿景。几百年来，香港作为东方接触世界的窗口，找寻并创造了一款款独具特色又流传世界的高品饮品。我们在全国超过十年的专业服务与坚持，与97回归共享繁华，秉承独到的调制方法，期许再一次与亲爱的你能擦出下一个十年火花。\n";
             mPrinter.printString(s, "GBK");
+            mPrinter.setAlignMode(1);
             //品牌二维码
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.qr_code)));
 
             //投诉、加盟热线
-            s = "投诉、加盟热线：010-62655878";
+            s = "\n投诉、加盟热线：010-62655878";
             mPrinter.printString(s, "GBK");
             cutPaper();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.d(TAG, "printDaily: ");
+            ToastUtils.showLong("打印机连接出错");
+        }
+    }
+
+    public static void printDaily(int type, String total, String mobilePay, String cash, int orderNum, String workerName) {
+        try {
+            String t = type == 1 ? "交班" : "日结";
+            String s = t + "\n日期：\n";
+            mPrinter.setCharSize(1, 1);
+            mPrinter.printString(s, "GBK");
+
+            mPrinter.setCharSize(0, 0);
+            //居左
+            mPrinter.setAlignMode(0);
+            s = "本次" + t + "时间：" + getDate() + "\n" + "上次" + t + "时间" + SpUtil.getString("dailyTime") + "\n";
+            mPrinter.printString(s, "GBK");
+
+            mPrinter.setCharSize(1, 1);
+            s = "交款信息：\n";
+            mPrinter.printString(s, "GBK");
+
+            mPrinter.setCharSize(0, 0);
+            s = "总营收金额：" + total + "\n"
+                    + "总虚收金额：" + mobilePay + "\n"
+                    + "总实收金额：" + cash + "\n"
+                    + "总单数：" + orderNum + "\n"
+                    + t + "人员：" + workerName + "\n";
+            mPrinter.printString(s, "GBK");
+
+            //保存本次时间
+            SpUtil.save("dailyTime", getDate());
+        } catch (Exception e) {
+            Log.d(TAG, "printDaily: ");
+            ToastUtils.showLong("打印机连接出错");
         }
     }
 

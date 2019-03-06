@@ -45,16 +45,46 @@ public class Material {
 
     public static class RowsBean {
         /**
-         * unitName : kg
          * matId : 26
-         * stocks : 99999
          * matName : 草莓爆爆蛋
+         * stocks : 99999
+         * unitName : kg
+         * packId: 12,
+         * packName: 100ml/瓶
+         * quantity: 33
          */
 
         private String unitName;
         private int matId;
         private int stocks;
         private String matName;
+        private int packId;
+        private String packName;
+        private int quantity;
+
+        public int getPackId() {
+            return packId;
+        }
+
+        public void setPackId(int packId) {
+            this.packId = packId;
+        }
+
+        public String getPackName() {
+            return packName;
+        }
+
+        public void setPackName(String packName) {
+            this.packName = packName;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public void setQuantity(int quantity) {
+            this.quantity = quantity;
+        }
 
         public String getUnitName() {
             return unitName;

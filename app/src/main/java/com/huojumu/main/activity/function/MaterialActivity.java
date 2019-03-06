@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.TextView;
 
 import com.huojumu.R;
@@ -20,7 +21,9 @@ import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-
+/**
+ * 库存
+ */
 public class MaterialActivity extends BaseActivity {
 
     @BindView(R.id.title)
@@ -30,7 +33,7 @@ public class MaterialActivity extends BaseActivity {
     @BindView(R.id.recycler_material)
     RecyclerView recycler_material;
 
-    MaterialAdapter adapter;
+    private MaterialAdapter adapter;
     String titleStr;
 
     @Override
@@ -45,7 +48,9 @@ public class MaterialActivity extends BaseActivity {
 
         LinearLayoutManager manager = new LinearLayoutManager(this);
         recycler_material.setLayoutManager(manager);
-        recycler_material.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        DividerItemDecoration decoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        decoration.setDrawable(getResources().getDrawable(R.drawable.divider_v));
+        recycler_material.addItemDecoration(decoration);
         adapter = new MaterialAdapter(null);
         recycler_material.setAdapter(adapter);
     }
@@ -57,7 +62,9 @@ public class MaterialActivity extends BaseActivity {
             public void onSuccess(int statusCode, BaseBean<Material> response) {
                 if (response.getData().getRows() == null || response.getData().getRows().isEmpty()) {
                     emptyTv.setText("暂无数据");
+                    emptyTv.setVisibility(View.VISIBLE);
                 } else {
+                    emptyTv.setVisibility(View.GONE);
                     adapter.setNewData(response.getData().getRows());
                 }
             }
@@ -71,7 +78,7 @@ public class MaterialActivity extends BaseActivity {
 
     @OnClick(R.id.back)
     void back() {
-        startActivity(new Intent(MaterialActivity.this, HomeActivity.class));
+//        startActivity(new Intent(MaterialActivity.this, HomeActivity.class));
         finish();
     }
 

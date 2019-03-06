@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/d_4"
+    android:layout_height="@dimen/d_40"
+    android:layout_margin="@dimen/d_10"
+    android:gravity="center"
     android:background="@drawable/spicification_s"
     android:padding="@dimen/d_4"
     android:textColor="@color/addon_text_selector">

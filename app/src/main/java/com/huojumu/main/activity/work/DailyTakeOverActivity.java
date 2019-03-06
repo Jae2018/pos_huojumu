@@ -6,8 +6,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -20,16 +18,13 @@ import com.huojumu.main.dialogs.CertainDialog;
 import com.huojumu.main.dialogs.DialogInterface;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.DailyInfo;
-import com.huojumu.model.OrderNoList;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -43,6 +38,8 @@ import butterknife.OnClick;
  */
 public class DailyTakeOverActivity extends BaseActivity implements DialogInterface {
 
+    @BindView(R.id.tv_work_daily_takeover)
+    TextView title;
     @BindView(R.id.swipe)
     SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.tv_work_daily_name)
@@ -65,6 +62,8 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     private int page = 1;
     private CertainDialog certainDialog;
     private long timestamp;
+    private int types;
+    private int num = 0;
 
     @Override
     protected int setLayout() {
@@ -73,6 +72,8 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
     @Override
     protected void initView() {
+        types = getIntent().getIntExtra("type", 1);
+        title.setText(types == 1 ? "交班" : "日结");
         nameTv.setText(String.format("员工：%s", SpUtil.getString(Constant.WORKER_NAME)));
         dateTv.setText(String.format("日期：%s", PrinterUtil.getCNDate()));
 
@@ -115,15 +116,16 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
     @Override
     protected void initData() {
-        NetTool.getDailyInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.PINPAI_ID), page, new GsonResponseHandler<BaseBean<DailyInfo>>() {
+        NetTool.getDailyInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.PINPAI_ID), page,1, new GsonResponseHandler<BaseBean<DailyInfo>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<DailyInfo> response) {
+                num = response.getData().getOrders().getTotal();
                 rowsBeans.addAll(response.getData().getOrders().getRows());
                 dailyAdapter.setNewData(rowsBeans);
                 earn1.setText(String.format(Locale.CHINA, "实收：%s", response.getData().getSaleData().getReal()));
                 earn2.setText(String.format(Locale.CHINA, "虚收：%s", response.getData().getSaleData().getVirtual()));
-                sellTv.setText(String.format(Locale.CHINA, "提成：%s", response.getData().getSaleData().getTotal()));
-                commissionTv.setText(String.format(Locale.CHINA, "营业额：%s", response.getData().getPushMoneyData().getPushMoney()));
+                sellTv.setText(String.format(Locale.CHINA, "提成：%s", response.getData().getPushMoneyData().getPushMoney()));
+                commissionTv.setText(String.format(Locale.CHINA, "营业额：%s", response.getData().getSaleData().getTotal()));
                 timestamp = response.getData().getTimestamp();
                 if (page < response.getData().getOrders().getPageNum()) {
                     page++;
@@ -141,16 +143,6 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
     }
 
-    @OnClick(R.id.btn_work_daily_type1)
-    void onType1Show() {
-        dailyRecycler.setAdapter(dailyAdapter);
-    }
-
-    @OnClick(R.id.btn_work_daily_type2)
-    void onType2Show() {
-
-    }
-
     @OnClick(R.id.btn_work_daily_cancel)
     void Cancel() {
         startActivity(new Intent(DailyTakeOverActivity.this, HomeActivity.class));
@@ -158,14 +150,28 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
     @OnClick(R.id.btn_work_daily_ok)
     void Ok() {
-        certainDialog = new CertainDialog(this, this, "注意！", "确认要交班吗？");
+        if (types == 1) {
+            certainDialog = new CertainDialog(this, this, "注意！", "确认要交班吗？");
+        } else {
+            certainDialog = new CertainDialog(this, this, "注意！", "确认要日结吗？");
+        }
         certainDialog.show();
     }
 
     @Override
+    public void OnUsbCallBack(String name) {
+
+    }
+
+    @Override
     public void OnDialogOkClick(int type, double earn, double cost, double charge, String name) {
-        //交班确认回调
-        TakeOver();
+        if (types == 1) {
+            //交班确认回调
+            TakeOver();
+        } else {
+            daily();
+        }
+        PrinterUtil.printDaily(types, commissionTv.getText().toString(), earn2.getText().toString(), earn1.getText().toString(), num, SpUtil.getString(Constant.WORKER_NAME));
     }
 
     private void TakeOver(){
@@ -173,7 +179,28 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
                 if (response.getMsg().equals("yes")) {
+                    ToastUtils.showLong("已完成交班！");
                     certainDialog.cancel();
+                    finish();
+                } else {
+                    ToastUtils.showLong(response.getMsg());
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, String error_msg) {
+                ToastUtils.showLong(error_msg);
+            }
+        });
+    }
+
+    private void daily(){
+        NetTool.settlement(timestamp, new GsonResponseHandler<BaseBean<String>>() {
+            @Override
+            public void onSuccess(int statusCode, BaseBean<String> response) {
+                if (response.getMsg().equals("yes")) {
+                    certainDialog.cancel();
+                    ToastUtils.showLong("已完成日结！");
                     startActivity(new Intent(DailyTakeOverActivity.this, LoginActivity.class));
                     finish();
                 } else {
@@ -183,8 +210,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
             @Override
             public void onFailure(int statusCode, String error_msg) {
-                ToastUtils.showLong("网络出错啦！");
+                ToastUtils.showLong(error_msg);
             }
         });
     }
+
 }

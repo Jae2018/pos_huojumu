@@ -1,17 +1,12 @@
 package com.huojumu.utils;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.huojumu.base.BaseActivity;
-import com.huojumu.main.activity.home.HomeActivity;
-import com.huojumu.main.activity.login.LoginActivity;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.EventHandler;
-import com.huojumu.model.OrderBack;
 import com.huojumu.model.StoreInfo;
 import com.huojumu.model.TaskBean;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
@@ -29,10 +24,11 @@ public class SocketTool extends WebSocketListener {
 
     private String TAG = SocketTool.class.getSimpleName();
     private Gson gson = new Gson();
-    private BaseActivity activity;
+//    private BaseActivity activity;
     private WebSocket webSocket;
     private static SocketTool INSTANCE;
     private Context context;
+    private static Thread thread;
 
     public static SocketTool getInstance(Context context) {
         Request request = new Request.Builder()
@@ -41,7 +37,6 @@ public class SocketTool extends WebSocketListener {
         OkHttpClient client = new OkHttpClient();
         INSTANCE = new SocketTool(context);
         client.newWebSocket(request, INSTANCE);
-        Log.e("SocketTool", "getInstance: ");
         return INSTANCE;
     }
 
@@ -51,27 +46,27 @@ public class SocketTool extends WebSocketListener {
 
     public void sendMsg(String s) {
         if (webSocket != null) {
-            Log.e(TAG, "sendMsg: " + s);
             webSocket.send(s);
         }
     }
 
     public void sendHeart() {
         if (webSocket != null) {
-            new Thread() {
+            thread = new Thread() {
                 public void run() {
                     while (true) {
-                        Log.e(TAG, "sendHeart: ");
+//                        Log.e(TAG, "sendHeart: " + activity.getLocalClassName());
                         webSocket.send("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
                         try {
-                            Thread.sleep(60 * 1000);
+                            Thread.sleep(600 * 1000);
                         } catch (Exception e) {
                             e.printStackTrace();
                             Log.e(TAG, "run: error");
                         }
                     }
                 }
-            }.start();
+            };
+            thread.start();
         }
     }
 
@@ -86,45 +81,44 @@ public class SocketTool extends WebSocketListener {
         super.onMessage(webSocket, text);
         Log.e(TAG, "onMessage: " + text);
         TaskBean taskBean = gson.fromJson(text, TaskBean.class);
-        if (taskBean.getTask().equals("machinebind")) {
-            SpUtil.save(Constant.HAS_BAND, true);
-            SpUtil.save(Constant.EQP_NO, taskBean.getData().getEqpNo());
-            NetTool.getMachineInfo(taskBean.getData().getEqpNo(), new GsonResponseHandler<BaseBean<StoreInfo>>() {
-                @Override
-                public void onSuccess(int statusCode, BaseBean<StoreInfo> response) {
-                    if (response.getData() != null) {
-                        SpUtil.save(Constant.STORE_ID, response.getData().getShop().getId());
-                        SpUtil.save(Constant.STORE_NAME, response.getData().getShop().getShopName());
-                        SpUtil.save(Constant.STORE_ADDRESS, response.getData().getShop().getAddr());
-                        SpUtil.save(Constant.STORE_TEL, response.getData().getShop().getMobile());
-                        SpUtil.save(Constant.ENT_ID, response.getData().getEnterPrise().getId());
-                        SpUtil.save(Constant.PINPAI_ID, response.getData().getParentEnterPrise().getId());
-                        SpUtil.save(Constant.ENT_NAME, response.getData().getParentEnterPrise().getEntName());
-                        SpUtil.save(Constant.ENT_DIS, response.getData().getParentEnterPrise().getDiscountsType());
+        switch (taskBean.getTask()) {
+            case Constant.BIND:
+                //绑定设备回调
+                SpUtil.save(Constant.HAS_BAND, true);
+                SpUtil.save(Constant.EQP_NO, taskBean.getData().getEqpNo());
+                NetTool.getMachineInfo(taskBean.getData().getEqpNo(), new GsonResponseHandler<BaseBean<StoreInfo>>() {
+                    @Override
+                    public void onSuccess(int statusCode, BaseBean<StoreInfo> response) {
+                        if (response.getData() != null) {
+                            SpUtil.save(Constant.STORE_ID, response.getData().getShop().getId());
+                            SpUtil.save(Constant.STORE_NAME, response.getData().getShop().getShopName());
+                            SpUtil.save(Constant.STORE_ADDRESS, response.getData().getShop().getAddr());
+                            SpUtil.save(Constant.STORE_TEL, response.getData().getShop().getMobile());
+                            SpUtil.save(Constant.ENT_ID, response.getData().getEnterPrise().getId());
+                            SpUtil.save(Constant.PINPAI_ID, response.getData().getParentEnterPrise().getId());
+                            SpUtil.save(Constant.ENT_NAME, response.getData().getParentEnterPrise().getEntName());
+                            SpUtil.save(Constant.ENT_DIS, response.getData().getParentEnterPrise().getDiscountsType());
+                        }
+                        EventBus.getDefault().post(new EventHandler(Constant.LOGIN));
                     }
-//                    context.startActivity(new Intent(context, LoginActivity.class));
-                    EventBus.getDefault().post(new EventHandler(Constant.LOGIN));
-//                    activity.startActivity(new Intent(activity, LoginActivity.class));
-//                    activity.finish();
-                }
 
-                @Override
-                public void onFailure(int statusCode, String error_msg) {
-                    Log.e("Login", "onFailure: " + error_msg);
-                }
-            });
-        } else if (taskBean.getTask().equals("pay")) {
-            Log.e(TAG, "onMessage: ");
-            //支付完成回调
-            EventBus.getDefault().post(new EventHandler(Constant.PAY));
-        } else if (taskBean.getTask().equals("start")) {
-//            EventBus.getDefault().post(new EventHandler(Constant.LOGIN));
-            SpUtil.save(Constant.WORKER_NAME, taskBean.getData().getUserName());
-            Log.e(TAG, "token: "+taskBean.getData().getToken());
-            SpUtil.save(Constant.MY_TOKEN, "Bearer "+taskBean.getData().getToken());
-            EventBus.getDefault().post(new EventHandler(Constant.HOME));
+                    @Override
+                    public void onFailure(int statusCode, String error_msg) {
+                        Log.e("Login", "onFailure: " + error_msg);
+                    }
+                });
+                break;
+            case Constant.PAYCODE:
+                //支付完成回调
+                EventBus.getDefault().post(taskBean);
+                break;
+            case Constant.START:
+                //扫码登录回调
+                SpUtil.save(Constant.WORKER_NAME, taskBean.getData().getUserName());
+                SpUtil.save(Constant.MY_TOKEN, "Bearer "+taskBean.getData().getToken());
+                EventBus.getDefault().post(new EventHandler(Constant.HOME));
+                break;
         }
-
     }
 
     @Override

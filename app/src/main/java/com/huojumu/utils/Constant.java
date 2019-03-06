@@ -14,7 +14,7 @@ public interface Constant {
     String HEART = "{\"task\": \"heartbeat\",\"machineCode\":\"%s\",\"shopID\":%s,\"eqpType\":\"3\"}";
     String BAND = "{\"task\": \"heartbeat\",\"machineCode\":\"%s\"}";
     String PMENT = "{\"task\": \"pay\",\"data\":{\"orderCode\":\"%s\",\"state\": \"%s\"}}}";
-
+    int USB_REQUEST_CODE = 0x002;
     /* debug param */
     boolean IS_DEBUG = true;
     String NO_DATA_BACK = "无返回值";
@@ -46,6 +46,7 @@ public interface Constant {
     /* default string */
     String DEFAULT_STR = "";
     int DEFAULT_INT = 1;
+    int TEST_INT = 10;
     int PAY = 1;
     int LOGIN = 2;
     int HOME = 3;
@@ -67,4 +68,12 @@ public interface Constant {
 
     /* 小票宽度 */
     String PRINT_WIDTH = "w58or80";
+
+    /* socket 字段*/
+    String BIND = "machinebind";
+    String PAYCODE = "pay";
+    String START = "start";
+
+    String STATE = "state";
+    String DEVICE_ID = "id";
 }

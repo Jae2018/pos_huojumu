@@ -4,30 +4,36 @@ import android.content.Intent;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.huojumu.R;
 import com.huojumu.adapter.OrderListAdapter;
 import com.huojumu.base.BaseActivity;
-import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.OrdersList;
-import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
-import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
-
+/**
+ * 订单查询
+ * */
 public class OrdersListActivity extends BaseActivity {
 
     @BindView(R.id.recycler_orders)
     RecyclerView recyclerView;
 
-    private OrderListAdapter adapter;
+    //
+    private List<OrdersList.RowsBean> rowsBeanList = new ArrayList<>();
+    private OrderListAdapter listAdapter;
+    //
+    private int pageNum = 1, totalPAge;
 
     @Override
     protected int setLayout() {
@@ -38,16 +44,53 @@ public class OrdersListActivity extends BaseActivity {
     protected void initView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        adapter = new OrderListAdapter(null);
-        recyclerView.setAdapter(adapter);
+        listAdapter = new OrderListAdapter(null);
+        recyclerView.setAdapter(listAdapter);
+        listAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
+            @Override
+            public void onLoadMoreRequested() {
+                if (pageNum >= totalPAge) {
+                    listAdapter.loadMoreEnd();
+                } else {
+                    getList();
+                }
+            }
+        }, recyclerView);
+        listAdapter.setUpFetchListener(new BaseQuickAdapter.UpFetchListener() {
+            @Override
+            public void onUpFetch() {
+                listAdapter.setUpFetchEnable(true);
+                rowsBeanList.clear();
+                pageNum = 1;
+                getList();
+            }
+        });
+
+        listAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Intent i = new Intent(OrdersListActivity.this, OrderDetailActivity.class);
+                i.putExtra("detailId", listAdapter.getData().get(position).getOrdId());
+                startActivity(i);
+            }
+        });
+
     }
 
     @Override
     protected void initData() {
-        NetTool.getStoreOrders(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.ENT_ID), SpUtil.getInt(Constant.PINPAI_ID), new GsonResponseHandler<BaseBean<List<OrdersList>>>() {
+        getList();
+    }
+
+    private void getList() {
+        NetTool.getStoreOrderList(pageNum, new GsonResponseHandler<BaseBean<OrdersList>>() {
             @Override
-            public void onSuccess(int statusCode, BaseBean<List<OrdersList>> response) {
-                adapter.setNewData(response.getData());
+            public void onSuccess(int statusCode, BaseBean<OrdersList> response) {
+                rowsBeanList.addAll(response.getData().getRows());
+                listAdapter.setNewData(rowsBeanList);
+                totalPAge = response.getData().getTotal();
+                pageNum++;
+                listAdapter.setUpFetching(false);
             }
 
             @Override
@@ -59,7 +102,6 @@ public class OrdersListActivity extends BaseActivity {
 
     @OnClick(R.id.iv_back)
     void back() {
-        startActivity(new Intent(OrdersListActivity.this, HomeActivity.class));
         finish();
     }
 

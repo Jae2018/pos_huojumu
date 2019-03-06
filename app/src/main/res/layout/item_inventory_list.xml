@@ -4,6 +4,7 @@
     android:layout_height="@dimen/d_80"
     android:gravity="center_vertical"
     android:orientation="horizontal"
+    android:background="@drawable/input_border"
     android:paddingLeft="@dimen/d_16"
     android:paddingRight="@dimen/d_16">
 

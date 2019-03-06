@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-import com.huojumu.MyApplication;
 import com.huojumu.utils.CustomerEngine;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import butterknife.ButterKnife;
 
@@ -17,7 +17,7 @@ import butterknife.ButterKnife;
 public abstract class BaseActivity extends AppCompatActivity {
 
     protected CustomerEngine engine;
-
+    protected LoadingDialog ld;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,7 +28,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         engine = CustomerEngine.getInstance(getApplicationContext());
         initView();
         initData();
-        MyApplication.getSocketTool().sendHeart();
+
     }
 
     // 设置布局
@@ -45,7 +45,4 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-    public void sendMsg(String s) {
-
-    }
 }

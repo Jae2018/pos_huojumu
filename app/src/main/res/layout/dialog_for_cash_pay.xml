@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical">
 
     <TextView
@@ -11,6 +13,7 @@
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/d_16"
         android:paddingRight="@dimen/d_16"
+        android:textSize="@dimen/f_18"
         android:text="现金结账"
         android:textColor="@android:color/white" />
 
@@ -76,8 +79,8 @@
             android:paddingRight="@dimen/d_8"
             android:inputType="numberDecimal"
             android:textColor="@android:color/holo_red_light"
-            android:focusableInTouchMode="true"
             android:textSize="@dimen/f_18" />
+
 
         <TextView
             android:layout_width="@dimen/d_32"
@@ -88,6 +91,14 @@
             android:textColor="@android:color/white"
             android:textSize="@dimen/f_16" />
 
+        <TextView
+            android:id="@+id/text_error"
+            android:text="金额不符合要求！"
+            android:visibility="invisible"
+            android:layout_marginStart="@dimen/d_10"
+            android:textColor="@android:color/holo_red_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 

@@ -170,6 +170,15 @@ public class OrderInfo {
         private List<TastesBean> tastes;
         private List<MakesBean> makes;
         private List<MatsBean> mats;
+        private List<ScaleBean> scales;
+
+        public List<ScaleBean> getScales() {
+            return scales;
+        }
+
+        public void setScales(List<ScaleBean> scales) {
+            this.scales = scales;
+        }
 
         public int getProId() {
             return proId;

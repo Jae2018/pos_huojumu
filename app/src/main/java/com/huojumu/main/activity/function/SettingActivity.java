@@ -65,7 +65,7 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.tv_logout)
     void logout() {
-        startActivity(new Intent(this, LoginActivity.class));
+//        startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
 
@@ -113,7 +113,7 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.iv_back)
     void back() {
-        startActivity(new Intent(SettingActivity.this, HomeActivity.class));
+//        startActivity(new Intent(SettingActivity.this, HomeActivity.class));
         finish();
     }
 

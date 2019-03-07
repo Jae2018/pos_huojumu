@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/LoadingDialog/LoadingDialog.iml" filepath="$PROJECT_DIR$/LoadingDialog/LoadingDialog.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/huojumu_pos.iml" filepath="$PROJECT_DIR$/huojumu_pos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pos_huojumu.iml" filepath="$PROJECT_DIR$/pos_huojumu.iml" />
     </modules>
   </component>
 </project>

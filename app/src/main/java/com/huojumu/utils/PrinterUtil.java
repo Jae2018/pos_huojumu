@@ -432,7 +432,7 @@ public class PrinterUtil {
             //居左
             mPrinter.setAlignMode(0);
             //字体变大
-            mPrinter.setCharSize(2, 2);
+            mPrinter.setCharSize(1, 1);
             //订单流水号
             String s = orderNo.substring(orderNo.length() - 4);
             mPrinter.printString(s, "GBK");
@@ -451,25 +451,22 @@ public class PrinterUtil {
 
             //商品信息
             StringBuilder sb = new StringBuilder();
-            sb.append(printFourData80("商品名称", "数量", "单价", "金额"));
-            mPrinter.printFeed();
-
-            for (Production p : pList) {
-                Log.e(TAG, "printString80: ");
-                sb.append(printFourData80(p.getProName(), String.valueOf(p.getNumber()), String.valueOf(p.getPrice()), String.valueOf(p.getNumber() * p.getPrice()))).append("\n");
-                sb.append(printFourData80(p.getAddon(), "", "", ""));
+            sb.append(printFourData80("商品名称", "数量", "单价", "金额")).append("\n");
+//            mPrinter.printFeed();
+            for (int i = 0; i < pList.size(); i++) {
+                sb.append(printFourData80(pList.get(i).getProName(), String.valueOf(pList.get(i).getNumber()), String.valueOf(pList.get(i).getPrice()), String.valueOf(pList.get(i).getNumber() * pList.get(i).getPrice()))).append("\n");
+                sb.append(printFourData80(pList.get(i).getAddon(), "", "", ""));
             }
             mPrinter.printString(sb.toString(), "GBK");
-            mPrinter.printFeed();
             //间隔小的虚线
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line3)));
 
             //交易金额明细
-            s = "\n" + printTwoData80("消费金额", totalMoney)
-                    + "\n" + printTwoData80("应收金额", earn)
+            s = "\n" + printTwoData80("消费金额", String.format("%.1s",totalMoney))
+                    + "\n" + printTwoData80("应收金额", String.format("%.1s",earn))
                     + "\n" + printTwoData80("客户实付", cost)
                     + "\n" + printTwoData80("优    惠", cut)
-                    + "\n" + printTwoData80("找    零", charge);
+                    + "\n" + printTwoData80("找    零", charge) + "\n";
             mPrinter.printString(s, "GBK");
 
             //虚实线
@@ -478,13 +475,12 @@ public class PrinterUtil {
 
             //居中
             mPrinter.setAlignMode(1);
-            mPrinter.setCharSize(2, 2);
 
             //logo图片9
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.logo)));
-
+            mPrinter.setCharSize(1, 1);
             //店铺名
-            s = SpUtil.getString(Constant.STORE_NAME);
+            s = SpUtil.getString(Constant.STORE_NAME) + "\n";
             mPrinter.printString(s, "GBK");
 
             mPrinter.setAlignMode(0);

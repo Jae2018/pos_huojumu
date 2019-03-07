@@ -745,7 +745,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                     count--;
                                     if (count > 0 && DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getCurrentPrinterCommand() == PrinterCommand.TSC) {
                                         //标签模式可直接使用LabelCommand.addPrint()方法进行打印
-                                        sendLabel(name, taste, price, number);
+                                        sendLabel(name, taste, price, number - count, number);
                                     }
                                 }
                             }), 1000, TimeUnit.MILLISECONDS);
@@ -844,7 +844,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     /**
      * 发送标签
      */
-    void sendLabel(String pName, String pContent, double price, int number) {
+    void sendLabel(String pName, String pContent, double price, int i,int number) {
+        i = i + 1;
+        Log.e(TAG, "sendLabel: ");
         LabelCommand tsc = new LabelCommand();
         // 设置标签尺寸，按照实际尺寸设置
         tsc.addSize(45, 30);
@@ -873,7 +875,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 pContent + "\n");
         Log.e(TAG, "PrintOrder: print 4");
         tsc.addText(0, 110, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
-                "￥" + price + " * " + number + "份");
+                "￥" + price + "    " + i + "/" + number);
         Log.e(TAG, "PrintOrder: print 5");
         tsc.addText(0, 140, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.WORKER_NAME) + "\n");
@@ -886,7 +888,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         Log.e(TAG, "PrintOrder: print 8");
         // 绘制图片
         Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.logo9);
-        tsc.addBitmap(200, 42, LabelCommand.BITMAP_MODE.OVERWRITE, 100, b);
+        tsc.addBitmap(200, 35, LabelCommand.BITMAP_MODE.OVERWRITE, 90, b);
         Log.e(TAG, "PrintOrder: print 9");
         // 打印标签
         tsc.addPrint(1, 1);

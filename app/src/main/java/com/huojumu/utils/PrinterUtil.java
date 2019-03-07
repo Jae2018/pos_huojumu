@@ -436,22 +436,28 @@ public class PrinterUtil {
             //实线
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line1)));
             mPrinter.setCharSize(0, 0);
+
             //员工名 + 时间
             s = "\n收银员：" + name + "\n" + "时间：" + PrinterUtil.getPrintDate();
             mPrinter.printString(s, "GBK");
+
             //间隔大的虚线
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line2)));
+
             //商品信息
             StringBuilder sb = new StringBuilder();
             sb.append(printFourData80("商品名称", "数量", "单价", "金额"));
             mPrinter.printFeed();
+
             for (Production p : pList) {
                 sb.append(printFourData80(p.getProName(), String.valueOf(p.getNumber()), String.valueOf(p.getPrice()), String.valueOf(p.getNumber() * p.getPrice()))).append("\n");
                 sb.append(printFourData80(p.getAddon(), "", "", ""));
             }
             mPrinter.printString(sb.toString(), "GBK");
+
             //间隔小的虚线
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line3)));
+
             //交易金额明细
             s = "\n" + printTwoData80("消费金额", totalMoney)
                     + "\n" + printTwoData80("应收金额", earn)
@@ -463,20 +469,24 @@ public class PrinterUtil {
             //虚实线
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line3)));
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line1)));
+
             //居中
             mPrinter.setAlignMode(1);
             mPrinter.setCharSize(2, 2);
             //店铺名
             s = SpUtil.getString(Constant.STORE_NAME);
             mPrinter.printString(s, "GBK");
+
             //logo图片9
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.logo)));
+
             mPrinter.setAlignMode(0);
             mPrinter.setCharSize(0, 0);
             //企业文化描述
             s = "7港9欢迎您的到来。我们再次从香港出发，希望搜集到各地的特色食品，港印全国。能7(去)香港(港)的(9)九龙喝一杯正宗的港饮是我们对每一位顾客的愿景。几百年来，香港作为东方接触世界的窗口，找寻并创造了一款款独具特色又流传世界的高品饮品。我们在全国超过十年的专业服务与坚持，与97回归共享繁华，秉承独到的调制方法，期许再一次与亲爱的你能擦出下一个十年火花。\n";
             mPrinter.printString(s, "GBK");
             mPrinter.setAlignMode(1);
+
             //品牌二维码
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.qr_code)));
 
@@ -487,6 +497,7 @@ public class PrinterUtil {
             //公司
             s = "\n技术支持 火炬木科技";
             mPrinter.printString(s, "GBK");
+
             cutPaper();
         } catch (Exception e) {
             Log.d(TAG, "printDaily: error");
@@ -519,6 +530,10 @@ public class PrinterUtil {
                     + t + "人员：" + workerName + "\n";
             mPrinter.printString(s, "GBK");
 
+            mPrinter.setAlignMode(1);
+            //公司
+            s = "\n技术支持 火炬木科技";
+            mPrinter.printString(s, "GBK");
             //保存本次时间
             SpUtil.save("dailyTime", getDate());
             cutPaper();

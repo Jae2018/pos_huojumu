@@ -732,7 +732,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
 
         int size = productions.size();
-        if (size == 1) {
+        if (size == 1) {//todo
             final String name = productions.get(0).getProName();
             final String taste = productions.get(0).getTasteStr();
             final double price = productions.get(0).getPrice();

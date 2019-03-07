@@ -454,16 +454,19 @@ public class PrinterUtil {
             sb.append(printFourData80("商品名称", "数量", "单价", "金额")).append("\n");
 //            mPrinter.printFeed();
             Log.e(TAG, "printString80 pList.size: " + pList.size());
+            mPrinter.setFontStyle(1);
             for (int i = 0; i < pList.size(); i++) {
                 Log.e(TAG, "printString80: ");
                 sb.append(printFourData80(pList.get(i).getProName(), String.valueOf(pList.get(i).getNumber()), String.valueOf(pList.get(i).getPrice()), String.valueOf(pList.get(i).getNumber() * pList.get(i).getPrice()))).append("\n");
-                sb.append(printFourData80(pList.get(i).getAddon(), "", "", ""));
+                if (!pList.get(i).getAddon().isEmpty()) {
+                    sb.append(printFourData80(pList.get(i).getAddon(), "", "", ""));
+                }
             }
             mPrinter.printString(sb.toString(), "GBK");
             Log.e(TAG, "printString80: " + sb.toString());
             //间隔小的虚线
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line3)));
-
+            mPrinter.setFontStyle(0);
             //交易金额明细
             s = "\n" + printTwoData80("消费金额", totalMoney)
                     + "\n" + printTwoData80("应收金额", earn)

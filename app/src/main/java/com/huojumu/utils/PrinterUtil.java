@@ -2,7 +2,6 @@ package com.huojumu.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
@@ -245,10 +244,41 @@ public class PrinterUtil {
         return sb.toString();
     }
 
-    private static String printFourData80() {
+    private static String printFourData80(String leftText, String middleText, String three, String rightText) {
         StringBuilder sb = new StringBuilder();
+        // 左边最多显示 LEFT_TEXT_MAX_LENGTH 个汉字 + 两个点
+        if (leftText.length() > LEFT_TEXT_MAX_LENGTH_80) {
+            leftText = leftText.substring(0, LEFT_TEXT_MAX_LENGTH_80) + "..";
+        }
+        int leftTextLength = getBytesLength(leftText);
+        int middleTextLength = getBytesLength(middleText);
+        int threeTextLength = getBytesLength(three);
+        int rightTextLength = getBytesLength(rightText);
 
+        sb.append(leftText);
+        // 计算左侧文字和中间文字的空格长度
+        int marginBetweenLeftAndMiddle = LEFT_LENGTH_80 - leftTextLength - middleTextLength / 2;
 
+        for (int i = 0; i < marginBetweenLeftAndMiddle; i++) {
+            sb.append(" ");
+        }
+        sb.append(middleText);
+        //计算中间文字和第三文字的空格长度
+        int marginBetweenThreeAndFour = 12 - middleTextLength / 2 - threeTextLength / 2;
+
+        for (int i = 0; i < marginBetweenThreeAndFour; i++) {
+            sb.append(" ");
+        }
+
+        // 计算第四文字和第三文字的空格长度
+        int marginBetweenMiddleAndRight = 12 - threeTextLength / 2 - rightTextLength;
+
+        for (int i = 0; i < marginBetweenMiddleAndRight; i++) {
+            sb.append(" ");
+        }
+
+        // 打印的时候发现，最右边的文字总是偏右一个字符，所以需要删除一个空格
+        sb.delete(sb.length() - 1, sb.length()).append(rightText);
         return sb.toString();
     }
 
@@ -399,41 +429,40 @@ public class PrinterUtil {
             //字体变大
             mPrinter.setCharSize(2, 2);
             //订单流水号
-            String s = orderNo.substring(orderNo.length() - 4, orderNo.length() - 1) + "\n";
+            String s = orderNo.substring(orderNo.length() - 4) + "\n";
             mPrinter.printString(s, "GBK");
 //            set(NORMAL);
-            mPrinter.setCharSize(0, 0);
             //实线
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line1)));
 
+            mPrinter.setCharSize(0, 0);
             //员工名 + 时间
-            s = "收银员：" + name + "\n" + "时间：" + PrinterUtil.getPrintDate() + "\n";
+            s = "\n收银员：" + name + "\n" + "时间：" + PrinterUtil.getPrintDate();
             mPrinter.printString(s, "GBK");
             //间隔大的虚线
-            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line4)));
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line2)));
             //商品信息
             StringBuilder sb = new StringBuilder();
-            sb.append("\n");
-            sb.append(printThreeData80("商品名称", "数量", "单价", "金额")).append("\n");
-            sb.append("\n");
+            sb.append(printFourData80("商品名称", "数量", "单价", "金额")).append("\n");
 
             for (Production p : pList) {
-                sb.append(printThreeData80(p.getProName(), String.valueOf(p.getNumber()), String.valueOf(p.getPrice()), String.valueOf(p.getNumber() * p.getPrice()))).append("\n");
-                sb.append(printThreeData80(p.getAddon(), "", "", ""));
+                sb.append(printFourData80(p.getProName(), String.valueOf(p.getNumber()), String.valueOf(p.getPrice()), String.valueOf(p.getNumber() * p.getPrice()))).append("\n");
+                sb.append(printFourData80(p.getAddon(), "", "", ""));
             }
             mPrinter.printString(sb.toString(), "GBK");
             //间隔小的虚线
-            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line2)));
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line3)));
             //交易金额明细
             s = "\n" + printTwoData80("消费金额", totalMoney)
                     + "\n" + printTwoData80("应收金额", earn)
                     + "\n" + printTwoData80("客户实付", cost)
-                    + "\n" + printTwoData80("优惠", cut)
+                    + "\n" + printTwoData80("优    惠", cut)
                     + "\n" + printTwoData80("找    零", charge);
             mPrinter.printString(s, "GBK");
 
             //虚实线
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line3)));
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line1)));
             //店铺名
             s = SpUtil.getString(Constant.STORE_NAME);
             mPrinter.printString(s, "GBK");
@@ -454,7 +483,7 @@ public class PrinterUtil {
             mPrinter.printString(s, "GBK");
             cutPaper();
         } catch (Exception e) {
-            Log.d(TAG, "printDaily: ");
+            Log.d(TAG, "printDaily: error");
             ToastUtils.showLong("打印机连接出错");
         }
     }
@@ -486,6 +515,7 @@ public class PrinterUtil {
 
             //保存本次时间
             SpUtil.save("dailyTime", getDate());
+            cutPaper();
         } catch (Exception e) {
             Log.d(TAG, "printDaily: ");
             ToastUtils.showLong("打印机连接出错");

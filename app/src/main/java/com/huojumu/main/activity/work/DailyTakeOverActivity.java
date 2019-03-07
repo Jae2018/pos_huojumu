@@ -114,18 +114,24 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
         });
     }
 
+    double s1, s2, s3, s4;
+
     @Override
     protected void initData() {
-        NetTool.getDailyInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.PINPAI_ID), page,1, new GsonResponseHandler<BaseBean<DailyInfo>>() {
+        NetTool.getDailyInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.PINPAI_ID), page, 1, new GsonResponseHandler<BaseBean<DailyInfo>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<DailyInfo> response) {
                 num = response.getData().getOrders().getTotal();
                 rowsBeans.addAll(response.getData().getOrders().getRows());
                 dailyAdapter.setNewData(rowsBeans);
-                earn1.setText(String.format(Locale.CHINA, "实收：%s", response.getData().getSaleData().getReal()));
-                earn2.setText(String.format(Locale.CHINA, "虚收：%s", response.getData().getSaleData().getVirtual()));
-                sellTv.setText(String.format(Locale.CHINA, "提成：%s", response.getData().getPushMoneyData().getPushMoney()));
-                commissionTv.setText(String.format(Locale.CHINA, "营业额：%s", response.getData().getSaleData().getTotal()));
+                s1 = response.getData().getSaleData().getReal();
+                earn1.setText(String.format(Locale.CHINA, "实收：%s", s1));
+                s2 = response.getData().getSaleData().getVirtual();
+                earn2.setText(String.format(Locale.CHINA, "虚收：%s", s2));
+                s3 = response.getData().getPushMoneyData().getPushMoney();
+                sellTv.setText(String.format(Locale.CHINA, "提成：%s", s3));
+                s4 = response.getData().getSaleData().getTotal();
+                commissionTv.setText(String.format(Locale.CHINA, "营业额：%s", s4));
                 timestamp = response.getData().getTimestamp();
                 if (page < response.getData().getOrders().getPageNum()) {
                     page++;
@@ -171,10 +177,10 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
         } else {
             daily();
         }
-        PrinterUtil.printDaily(types, commissionTv.getText().toString(), earn2.getText().toString(), earn1.getText().toString(), num, SpUtil.getString(Constant.WORKER_NAME));
+        PrinterUtil.printDaily(types, s4 + "", s2 + "", s1 + "", num, SpUtil.getString(Constant.WORKER_NAME));
     }
 
-    private void TakeOver(){
+    private void TakeOver() {
         NetTool.takeOver(timestamp, new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
@@ -194,7 +200,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
         });
     }
 
-    private void daily(){
+    private void daily() {
         NetTool.settlement(timestamp, new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {

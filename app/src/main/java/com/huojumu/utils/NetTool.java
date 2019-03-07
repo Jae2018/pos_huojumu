@@ -1,6 +1,5 @@
 package com.huojumu.utils;
 
-import com.huojumu.model.VipListBean;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.DailyInfo;
 import com.huojumu.model.InventoryDetail;
@@ -14,6 +13,7 @@ import com.huojumu.model.Products;
 import com.huojumu.model.SmallType;
 import com.huojumu.model.Specification;
 import com.huojumu.model.StoreInfo;
+import com.huojumu.model.VipListBean;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 

@@ -1,6 +1,5 @@
 package com.huojumu.main.activity.function;
 
-import android.content.Intent;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +9,6 @@ import android.widget.TextView;
 import com.huojumu.R;
 import com.huojumu.adapter.MaterialAdapter;
 import com.huojumu.base.BaseActivity;
-import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.Material;
 import com.huojumu.utils.Constant;

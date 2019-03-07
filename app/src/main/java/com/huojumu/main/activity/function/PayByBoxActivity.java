@@ -8,7 +8,6 @@ import android.webkit.WebViewClient;
 import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
 
-
 import butterknife.BindView;
 import butterknife.OnClick;
 

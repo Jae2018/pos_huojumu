@@ -432,7 +432,7 @@ public class PrinterUtil {
             //居左
             mPrinter.setAlignMode(0);
             //字体变大
-            mPrinter.setCharSize(1, 1);
+            mPrinter.setCharSize(2, 2);
             //订单流水号
             String s = orderNo.substring(orderNo.length() - 4);
             mPrinter.printString(s, "GBK");
@@ -453,17 +453,20 @@ public class PrinterUtil {
             StringBuilder sb = new StringBuilder();
             sb.append(printFourData80("商品名称", "数量", "单价", "金额")).append("\n");
 //            mPrinter.printFeed();
+            Log.e(TAG, "printString80 pList.size: " + pList.size());
             for (int i = 0; i < pList.size(); i++) {
+                Log.e(TAG, "printString80: ");
                 sb.append(printFourData80(pList.get(i).getProName(), String.valueOf(pList.get(i).getNumber()), String.valueOf(pList.get(i).getPrice()), String.valueOf(pList.get(i).getNumber() * pList.get(i).getPrice()))).append("\n");
                 sb.append(printFourData80(pList.get(i).getAddon(), "", "", ""));
             }
             mPrinter.printString(sb.toString(), "GBK");
+            Log.e(TAG, "printString80: " + sb.toString());
             //间隔小的虚线
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line3)));
 
             //交易金额明细
-            s = "\n" + printTwoData80("消费金额", String.format("%.1s",totalMoney))
-                    + "\n" + printTwoData80("应收金额", String.format("%.1s",earn))
+            s = "\n" + printTwoData80("消费金额", totalMoney)
+                    + "\n" + printTwoData80("应收金额", earn)
                     + "\n" + printTwoData80("客户实付", cost)
                     + "\n" + printTwoData80("优    惠", cut)
                     + "\n" + printTwoData80("找    零", charge) + "\n";

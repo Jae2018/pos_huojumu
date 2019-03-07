@@ -144,6 +144,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //
     private String isRecommend = "0";
 
+    private Handler handler = new Handler();
 
     private UsbManager usbManager;
     private int id = 0;
@@ -642,7 +643,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         orderBack = response.getData();
                         orderNo = response.getData().getOrderNo();
                         PrintOrder(response.getData(), charge < 0 ? 0 : charge);
-                        clear();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                clear();
+                            }
+                        }, 1500);
                     }
 
                     @Override
@@ -654,7 +660,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             case "CertainDialog":
                 //关机确认
                 certainDialog.cancel();
-                new Handler().postDelayed(new Runnable() {
+                handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         PowerUtil.shutdown();
@@ -743,9 +749,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                 @Override
                                 public void run() {
                                     count--;
-                                    if (count > 0 && DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getCurrentPrinterCommand() == PrinterCommand.TSC) {
+                                    if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getCurrentPrinterCommand() == PrinterCommand.TSC) {
                                         //标签模式可直接使用LabelCommand.addPrint()方法进行打印
-                                        sendLabel(name, taste, price, number - count, number);
+                                        sendLabel(name, taste, price, count, number);
                                     }
                                 }
                             }), 1000, TimeUnit.MILLISECONDS);
@@ -805,7 +811,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         } else {
             ld.loadFailed();
         }
-        clear();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                clear();
+            }
+        }, 1500);
     }
 
     private void usbConn(UsbDevice usbDevice) {

@@ -515,6 +515,7 @@ public class PrinterUtil {
 
             //保存本次时间
             SpUtil.save("dailyTime", getDate());
+            cutPaper();
         } catch (Exception e) {
             Log.d(TAG, "printDaily: ");
             ToastUtils.showLong("打印机连接出错");

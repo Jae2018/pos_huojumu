@@ -244,43 +244,6 @@ public class PrinterUtil {
         return sb.toString();
     }
 
-    private static String printFourData80(String leftText, String middleText, String three, String rightText) {
-        StringBuilder sb = new StringBuilder();
-        // 左边最多显示 LEFT_TEXT_MAX_LENGTH 个汉字 + 两个点
-        if (leftText.length() > LEFT_TEXT_MAX_LENGTH_80) {
-            leftText = leftText.substring(0, LEFT_TEXT_MAX_LENGTH_80) + "..";
-        }
-        int leftTextLength = getBytesLength(leftText);
-        int middleTextLength = getBytesLength(middleText);
-        int threeTextLength = getBytesLength(three);
-        int rightTextLength = getBytesLength(rightText);
-
-        sb.append(leftText);
-        // 计算左侧文字和中间文字的空格长度
-        int marginBetweenLeftAndMiddle = LEFT_LENGTH_80 - leftTextLength - middleTextLength / 2;
-
-        for (int i = 0; i < marginBetweenLeftAndMiddle; i++) {
-            sb.append(" ");
-        }
-        sb.append(middleText);
-        //计算中间文字和第三文字的空格长度
-        int marginBetweenThreeAndFour = 12 - middleTextLength / 2 - threeTextLength / 2;
-
-        for (int i = 0; i < marginBetweenThreeAndFour; i++) {
-            sb.append(" ");
-        }
-
-        // 计算第四文字和第三文字的空格长度
-        int marginBetweenMiddleAndRight = 12 - threeTextLength / 2 - rightTextLength;
-
-        for (int i = 0; i < marginBetweenMiddleAndRight; i++) {
-            sb.append(" ");
-        }
-
-        // 打印的时候发现，最右边的文字总是偏右一个字符，所以需要删除一个空格
-        sb.delete(sb.length() - 1, sb.length()).append(rightText);
-        return sb.toString();
-    }
 
     //    private static Thread thread;
     //开钱箱
@@ -418,6 +381,47 @@ public class PrinterUtil {
         mPrinter.writeIO(bytes, 0, bytes.length, 100);
     }
 
+
+    private static String printFourData80(String leftText, String middleText, String three, String rightText) {
+        StringBuilder sb = new StringBuilder();
+        // 左边最多显示 LEFT_TEXT_MAX_LENGTH 个汉字 + 两个点
+        if (leftText.length() > LEFT_TEXT_MAX_LENGTH_80) {
+            leftText = leftText.substring(0, LEFT_TEXT_MAX_LENGTH_80) + "..";
+        }
+        int leftTextLength = getBytesLength(leftText);
+        int middleTextLength = getBytesLength(middleText);
+        int threeTextLength = getBytesLength(three);
+        int rightTextLength = getBytesLength(rightText);
+
+        sb.append(leftText);
+
+        // 计算左侧文字和中间文字的空格长度
+        int marginBetweenLeftAndMiddle = LEFT_LENGTH_80 - leftTextLength - middleTextLength / 2;
+
+        for (int i = 0; i < marginBetweenLeftAndMiddle; i++) {
+            sb.append(" ");
+        }
+        sb.append(middleText);
+
+        //计算中间文字和第三文字的空格长度
+        int marginBetweenThreeAndFour = (LEFT_LENGTH_80 - middleTextLength / 2 - threeTextLength - rightTextLength) / 2;
+
+        for (int i = 0; i < marginBetweenThreeAndFour; i++) {
+            sb.append(" ");
+        }
+        sb.append(three);
+
+        // 计算第四文字和第三文字的空格长度
+        for (int i = 0; i < marginBetweenThreeAndFour; i++) {
+            sb.append(" ");
+        }
+//        sb.append(rightText);
+
+        // 打印的时候发现，最右边的文字总是偏右一个字符，所以需要删除一个空格
+        sb.delete(sb.length() - 1, sb.length()).append(rightText);
+        return sb.toString();
+    }
+
     /**
      * 打印文本80mm小票样式 48 字节
      */
@@ -451,11 +455,12 @@ public class PrinterUtil {
             mPrinter.printFeed();
 
             for (Production p : pList) {
+                Log.e(TAG, "printString80: ");
                 sb.append(printFourData80(p.getProName(), String.valueOf(p.getNumber()), String.valueOf(p.getPrice()), String.valueOf(p.getNumber() * p.getPrice()))).append("\n");
                 sb.append(printFourData80(p.getAddon(), "", "", ""));
             }
             mPrinter.printString(sb.toString(), "GBK");
-
+            mPrinter.printFeed();
             //间隔小的虚线
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line3)));
 
@@ -474,12 +479,13 @@ public class PrinterUtil {
             //居中
             mPrinter.setAlignMode(1);
             mPrinter.setCharSize(2, 2);
-            //店铺名
-            s = SpUtil.getString(Constant.STORE_NAME);
-            mPrinter.printString(s, "GBK");
 
             //logo图片9
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.logo)));
+
+            //店铺名
+            s = SpUtil.getString(Constant.STORE_NAME);
+            mPrinter.printString(s, "GBK");
 
             mPrinter.setAlignMode(0);
             mPrinter.setCharSize(0, 0);

@@ -720,20 +720,23 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
 
         int size = productions.size();
-        for (int i = 0; i < size; i++) {
-            final String name = productions.get(i).getProName();
-            final String taste = productions.get(i).getTasteStr();
-            final double price = productions.get(i).getPrice();
-            final int number = productions.get(i).getNumber();
+        if (size == 1) {
+            for (int i = 0; i < size; i++) {
+                final String name = productions.get(i).getProName();
+                final String taste = productions.get(i).getTasteStr();
+                final double price = productions.get(i).getPrice();
+                final int number = productions.get(i).getNumber();
 
-            ThreadPool.getInstantiation().addTask(new Runnable() {
-                @Override
-                public void run() {
+                ThreadPool.getInstantiation().addTask(new Runnable() {
+                    @Override
+                    public void run() {
 
-                    sendLabel(name, taste, price, number);
+                        sendLabel(name, taste, price, number);
 
-                }
-            });
+                    }
+                });
+            }
+
         }
 
     }

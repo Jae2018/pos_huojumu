@@ -139,6 +139,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //
     private String isRecommend = "0";
 
+
+    private UsbManager usbManager;
+    private int id = 0;
+    String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
+    UsbDeviceList usbDeviceList;
+
     @Override
     protected int setLayout() {
         return R.layout.activity_home;
@@ -794,11 +800,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 .build();
         DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].openPort();
     }
-
-    private UsbManager usbManager;
-    private int id = 0;
-    String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
-    UsbDeviceList usbDeviceList;
 
     public void btnUsbConn(View view) {
         if (usbDeviceList == null) {

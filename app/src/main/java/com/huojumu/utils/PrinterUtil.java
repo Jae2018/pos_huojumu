@@ -421,7 +421,8 @@ public class PrinterUtil {
     /**
      * 打印文本80mm小票样式 48 字节
      */
-    public static void printString80(Context c, final List<Production> pList, final String orderNo, final String name, final String totalMoney, final String earn, final String cost, final String charge, final String cut) {
+    public static void printString80(Context c, final List<Production> pList, final String orderNo, final String name, final String totalMoney,
+                                     final String earn, final String cost, final String charge, final String cut) {
         try {
 //            set(DOUBLE_HEIGHT_WIDTH);
             //居左
@@ -526,10 +527,12 @@ public class PrinterUtil {
             s = "总营收金额：" + total + "\n"
                     + "总虚收金额：" + mobilePay + "\n"
                     + "总实收金额：" + cash + "\n"
-                    + "总单数：" + orderNum + "\n"
+                    + "总  单  数：" + orderNum + "\n"
                     + t + "人员：" + workerName + "\n";
             mPrinter.printString(s, "GBK");
 
+            Log.e(TAG, "printDaily: " + s);
+            mPrinter.printFeed();
             mPrinter.setAlignMode(1);
             //公司
             s = "\n技术支持 火炬木科技";

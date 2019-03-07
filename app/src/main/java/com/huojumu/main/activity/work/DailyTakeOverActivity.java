@@ -6,6 +6,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -177,7 +178,8 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
         } else {
             daily();
         }
-        PrinterUtil.printDaily(types, s4 + "", s2 + "", s1 + "", num, SpUtil.getString(Constant.WORKER_NAME));
+        Log.e("daily", "OnDialogOkClick: " + s4 + "___" + s2 + "___" + s1);
+        PrinterUtil.printDaily(types, String.valueOf(s4) , String.valueOf(s2), String.valueOf(s1), num, SpUtil.getString(Constant.WORKER_NAME));
     }
 
     private void TakeOver() {

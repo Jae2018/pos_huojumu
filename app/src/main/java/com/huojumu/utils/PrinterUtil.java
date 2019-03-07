@@ -483,6 +483,10 @@ public class PrinterUtil {
             //投诉、加盟热线
             s = "\n投诉、加盟热线：010-62655878";
             mPrinter.printString(s, "GBK");
+
+            //公司
+            s = "\n技术支持 火炬木科技";
+            mPrinter.printString(s, "GBK");
             cutPaper();
         } catch (Exception e) {
             Log.d(TAG, "printDaily: error");

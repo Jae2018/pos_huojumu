@@ -119,7 +119,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
     @Override
     protected void initData() {
-        NetTool.getDailyInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.PINPAI_ID), page, 1, new GsonResponseHandler<BaseBean<DailyInfo>>() {
+        NetTool.getDailyInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.PINPAI_ID), page, 0, new GsonResponseHandler<BaseBean<DailyInfo>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<DailyInfo> response) {
                 num = response.getData().getOrders().getTotal();
@@ -137,9 +137,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                 if (page < response.getData().getOrders().getPageNum()) {
                     page++;
                 }
-                if (swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                }
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
@@ -178,8 +176,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
         } else {
             daily();
         }
-        Log.e("daily", "OnDialogOkClick: " + s4 + "___" + s2 + "___" + s1);
-        PrinterUtil.printDaily(types, String.valueOf(s4) , String.valueOf(s2), String.valueOf(s1), num, SpUtil.getString(Constant.WORKER_NAME));
+        PrinterUtil.printDaily(types, String.valueOf(s4), String.valueOf(s2), String.valueOf(s1), num, SpUtil.getString(Constant.WORKER_NAME));
     }
 
     private void TakeOver() {

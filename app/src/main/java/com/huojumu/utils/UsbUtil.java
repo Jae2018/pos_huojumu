@@ -32,7 +32,7 @@ public class UsbUtil {
             while (deviceIterator.hasNext()) {
                 UsbDevice device = deviceIterator.next();
 
-                if (checkUsbDevicePidVid(device)) {
+                if (device != null && checkUsbDevicePidVid(device)) {
                     devicename = device.getDeviceName();
                 }
             }

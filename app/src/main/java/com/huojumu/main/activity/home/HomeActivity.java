@@ -128,7 +128,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     //订单数据
     private OrderInfo orderInfo;
-//    private Handler handler = new Handler();
+    //    private Handler handler = new Handler();
     //是否修改
     private boolean ok = false;
     //流水号
@@ -659,25 +659,24 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
     }
 
-
-//    String orderId;
     @Override
     public void OnUsbCallBack(String name) {
         closeport();
         getUsb(name);
     }
 
-    private void getUsb(String name){
+    private void getUsb(String name) {
         //获取USB设备名
         //通过USB设备名找到USB设备
         UsbDevice usbDevice = PrinterUtil.getUsbDeviceFromName(HomeActivity.this, name);
         //判断USB设备是否有权限
-        if (usbManager.hasPermission(usbDevice)) {
-            usbConn(usbDevice);
-        } else {//请求权限
-            PendingIntent mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
-            usbManager.requestPermission(usbDevice, mPermissionIntent);
-        }
+        if (usbDevice != null)
+            if (usbManager.hasPermission(usbDevice)) {
+                usbConn(usbDevice);
+            } else {//请求权限
+                PendingIntent mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+                usbManager.requestPermission(usbDevice, mPermissionIntent);
+            }
     }
 
     /**

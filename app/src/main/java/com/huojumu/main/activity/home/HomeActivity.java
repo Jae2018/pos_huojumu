@@ -57,10 +57,12 @@ import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
+import com.huojumu.utils.PrinterCommand;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.QrUtil;
 import com.huojumu.utils.SocketBack;
 import com.huojumu.utils.SpUtil;
+import com.huojumu.utils.ThreadFactoryBuilder;
 import com.huojumu.utils.ThreadPool;
 import com.huojumu.utils.UsbUtil;
 import com.tools.command.EscCommand;
@@ -76,6 +78,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.Vector;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -698,6 +703,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         timer.start();
     }
 
+    int count = 0;
     /**
      * 打印订单小票
      */
@@ -721,22 +727,31 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         int size = productions.size();
         if (size == 1) {
-            for (int i = 0; i < size; i++) {
-                final String name = productions.get(i).getProName();
-                final String taste = productions.get(i).getTasteStr();
-                final double price = productions.get(i).getPrice();
-                final int number = productions.get(i).getNumber();
-
+            final String name = productions.get(0).getProName();
+            final String taste = productions.get(0).getTasteStr();
+            final double price = productions.get(0).getPrice();
+            final int number = productions.get(0).getNumber();
+            count = number;
                 ThreadPool.getInstantiation().addTask(new Runnable() {
                     @Override
                     public void run() {
-
-                        sendLabel(name, taste, price, number);
-
+                        if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] != null
+                                && DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getConnState()) {
+                            ThreadFactoryBuilder threadFactoryBuilder = new ThreadFactoryBuilder("MainActivity_sendContinuity_Timer");
+                            ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(1, threadFactoryBuilder);
+                            scheduledExecutorService.schedule(threadFactoryBuilder.newThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    count--;
+                                    if (count > 0 && DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getCurrentPrinterCommand() == PrinterCommand.TSC) {
+                                        //标签模式可直接使用LabelCommand.addPrint()方法进行打印
+                                        sendLabel(name, taste, price, number);
+                                    }
+                                }
+                            }), 1000, TimeUnit.MILLISECONDS);
+                        }
                     }
                 });
-            }
-
         }
 
     }

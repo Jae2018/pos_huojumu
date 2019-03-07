@@ -76,5 +76,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation project(':LoadingDialog')
-//    implementation files('libs/gprintersdkv1.jar')
+    //    implementation files('libs/gprintersdkv1.jar')
+    implementation files('libs/gprintersdkv1.jar')
 }

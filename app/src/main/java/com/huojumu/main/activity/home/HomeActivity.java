@@ -14,6 +14,7 @@ import android.hardware.usb.UsbManager;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -38,6 +39,7 @@ import com.huojumu.adapter.HomeSelectedAdapter;
 import com.huojumu.adapter.HomeTypeAdapter;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.dialog.SingleProAddonDialog;
+import com.huojumu.main.activity.login.LoginActivity;
 import com.huojumu.main.activity.work.DailyTakeOverActivity;
 import com.huojumu.main.dialogs.CashPayDialog;
 import com.huojumu.main.dialogs.CertainDialog;
@@ -166,7 +168,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * 使用打印机指令错误
      */
     private static final int PRINTER_COMMAND_ERROR = 0x008;
+
+    int count = 0;
+    String name, taste;
+    double price;
     private ThreadPool threadPool;
+
+    String TAG = "home";
+    private OrderBack orderBack;
+    private double change;
 
     @Override
     protected int setLayout() {
@@ -571,7 +581,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     void takeover() {
         Intent intent = new Intent(HomeActivity.this, DailyTakeOverActivity.class);
         intent.putExtra("type", 1);
-        startActivity(intent);
+        startActivityForResult(intent, Constant.WORK_BACK_OVER);
     }
 
     /**
@@ -581,7 +591,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     void Daily() {
         Intent intent = new Intent(HomeActivity.this, DailyTakeOverActivity.class);
         intent.putExtra("type", 2);
-        startActivity(intent);
+        startActivityForResult(intent, Constant.WORK_BACK_DAILY);
     }
 
 //    /**
@@ -605,9 +615,36 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 //        quickPayDialog.show();
 //    }
 
-    String TAG = "home";
-    private OrderBack orderBack;
-    private double change;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case Constant.WORK_BACK_OVER:
+                    Log.e(TAG, "onActivityResult: over");
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+                            finish();
+                        }
+                    }, 10 * 1000);
+                    break;
+                case Constant.WORK_BACK_DAILY:
+                    Log.e(TAG, "onActivityResult: daily");
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            PowerUtil.shutdown();
+                        }
+                    }, 30 * 1000);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
     /**
      * 结账 dialog 按钮回调
@@ -684,7 +721,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     public void run() {
                         PowerUtil.shutdown();
                     }
-                }, 1000);
+                }, 2000);
                 break;
         }
     }
@@ -731,9 +768,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         timer.start();
     }
 
-    int count = 0;
-    String name, taste;
-    double price;
 
     /**
      * 打印订单小票

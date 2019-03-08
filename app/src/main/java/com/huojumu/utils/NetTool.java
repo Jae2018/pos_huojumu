@@ -169,7 +169,7 @@ public class NetTool {
                 .enqueue(handler);
     }
 
-    //日結、交班
+    //交班
     public static void takeOver(long timestamp, GsonResponseHandler<BaseBean<String>> handler) {
         okHttp.post().url(Constant.BASE_URL + "duty/shift.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("token", SpUtil.getString(Constant.MY_TOKEN).split(" ")[1])

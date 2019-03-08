@@ -65,6 +65,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     private long timestamp;
     private int types;
     private int num = 0;
+    private Intent intent;
 
     @Override
     protected int setLayout() {
@@ -126,13 +127,13 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                 rowsBeans.addAll(response.getData().getOrders().getRows());
                 dailyAdapter.setNewData(rowsBeans);
                 s1 = response.getData().getSaleData().getReal();
-                earn1.setText(String.format(Locale.CHINA, "实收：%s", s1));
+                earn1.setText(String.format(Locale.CHINA, "实收：%.2f", s1));
                 s2 = response.getData().getSaleData().getVirtual();
-                earn2.setText(String.format(Locale.CHINA, "虚收：%s", s2));
+                earn2.setText(String.format(Locale.CHINA, "虚收：%.2f", s2));
                 s3 = response.getData().getPushMoneyData().getPushMoney();
-                sellTv.setText(String.format(Locale.CHINA, "提成：%s", s3));
+                sellTv.setText(String.format(Locale.CHINA, "提成：%.4f", s3));
                 s4 = response.getData().getSaleData().getTotal();
-                commissionTv.setText(String.format(Locale.CHINA, "营业额：%s", s4));
+                commissionTv.setText(String.format(Locale.CHINA, "营业额：%.2f", s4));
                 timestamp = response.getData().getTimestamp();
                 if (page < response.getData().getOrders().getPageNum()) {
                     page++;
@@ -184,8 +185,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
                 if (response.getMsg().equals("yes")) {
-                    ToastUtils.showLong("已完成交班！");
+                    ToastUtils.showLong("已完成交班！10秒后将退出登录！");
                     certainDialog.cancel();
+                    setResult(RESULT_OK);
                     finish();
                 } else {
                     ToastUtils.showLong(response.getMsg());
@@ -205,8 +207,8 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             public void onSuccess(int statusCode, BaseBean<String> response) {
                 if (response.getMsg().equals("yes")) {
                     certainDialog.cancel();
-                    ToastUtils.showLong("已完成日结！");
-                    startActivity(new Intent(DailyTakeOverActivity.this, LoginActivity.class));
+                    ToastUtils.showLong("已完成日结！30秒后系统将关闭");
+                    setResult(RESULT_OK);
                     finish();
                 } else {
                     ToastUtils.showLong(response.getMsg());

@@ -15,7 +15,8 @@ public interface Constant {
     String BAND = "{\"task\": \"heartbeat\",\"machineCode\":\"%s\"}";
     String PMENT = "{\"task\": \"pay\",\"data\":{\"orderCode\":\"%s\",\"state\": \"%s\"}}}";
     String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
-    int USB_REQUEST_CODE = 0x002;
+    int WORK_BACK_OVER = 0x002;
+    int WORK_BACK_DAILY = WORK_BACK_OVER << 1;
     /* debug param */
     boolean IS_DEBUG = true;
     String NO_DATA_BACK = "无返回值";

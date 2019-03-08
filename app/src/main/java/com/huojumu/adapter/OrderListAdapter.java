@@ -22,7 +22,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrdersList.RowsBean, Base
 
     @Override
     protected void convert(BaseViewHolder helper, OrdersList.RowsBean item) {
-        helper.setText(R.id.tv_order_list_no, "订单号：" + item.getOrdNo().substring(item.getOrdNo().length() - 4))
+        helper.setText(R.id.tv_order_list_no, "订单号：C" + item.getOrdNo().substring(item.getOrdNo().length() - 8))
                 .setText(R.id.tv_order_list_price, String.format("订单金额：%s 元", item.getTotalPrice()))
                 .setText(R.id.tv_order_list_time, String.format("订单时间：%s", item.getCreateTime()))
                 .setText(R.id.tv_order_list_status, "订单状态：" + (item.getStatus().equals("2") ? "未支付" : item.getStatus().equals("5") ? "已完成" : item.getStatus().equals("6") ? "已退单" : "等待中"))

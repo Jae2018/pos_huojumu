@@ -391,7 +391,7 @@ public class PrinterUtil {
         int leftTextLength = getBytesLength(leftText);
         int middleTextLength = getBytesLength(middleText);
         int threeTextLength = getBytesLength(three);
-        int rightTextLength = getBytesLength(rightText);
+        int fourTextLength = getBytesLength(rightText);
 
         sb.append(leftText);
 
@@ -404,13 +404,14 @@ public class PrinterUtil {
         sb.append(middleText);
 
         //计算中间文字和第三文字的空格长度
-        int marginBetweenThreeAndFour = (LEFT_LENGTH_80 - middleTextLength / 2 - threeTextLength - rightTextLength) / 2;
+        int marginBetweenThreeAndMiddle = 12 - middleTextLength / 2 - threeTextLength / 2;
 
-        for (int i = 0; i < marginBetweenThreeAndFour; i++) {
+        for (int i = 0; i < marginBetweenThreeAndMiddle; i++) {
             sb.append(" ");
         }
         sb.append(three);
 
+        int marginBetweenThreeAndFour = 12 - fourTextLength - threeTextLength / 2;
         // 计算第四文字和第三文字的空格长度
         for (int i = 0; i < marginBetweenThreeAndFour; i++) {
             sb.append(" ");
@@ -432,7 +433,7 @@ public class PrinterUtil {
             //居左
             mPrinter.setAlignMode(0);
             //字体变大
-            mPrinter.setCharSize(2, 2);
+            mPrinter.setCharSize(1, 1);
             //订单流水号
             String s = orderNo.substring(orderNo.length() - 4);
             mPrinter.printString(s, "GBK");

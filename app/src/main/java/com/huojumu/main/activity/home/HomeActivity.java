@@ -734,13 +734,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     private void getUsb(String name) {
-
+        Log.e(TAG, "getUsb: ");
         //获取USB设备名
         //通过USB设备名找到USB设备
         UsbDevice usbDevice = PrinterUtil.getUsbDeviceFromName(HomeActivity.this, name);
         //判断USB设备是否有权限
         if (usbDevice != null)
             if (usbManager.hasPermission(usbDevice)) {
+                Log.e(TAG, "getUsb: 1");
                 usbConn(usbDevice);
             } else {//请求权限
                 Log.e(TAG, "getUsb: 2");
@@ -915,6 +916,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     private void closeport() {
+        Log.e(TAG, "closeport: ");
         if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] != null && DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].mPort != null) {
             DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].reader.cancel();
             DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].mPort.closePort();

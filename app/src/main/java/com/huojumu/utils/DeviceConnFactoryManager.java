@@ -119,16 +119,16 @@ public class DeviceConnFactoryManager {
     private PrinterCommand currentPrinterCommand;
     private static final byte FLAG = 0x10;
     private static final int READ_DATA = 10000;
-    private static final String READ_DATA_CNT = "read_data_cnt";
-    private static final String READ_BUFFER_ARRAY = "read_buffer_array";
-    private static final String ACTION_CONN_STATE = "action_connect_state";
-    private static final String ACTION_QUERY_PRINTER_STATE = "action_query_printer_state";
-    private static final String STATE = "state";
-    private static final String DEVICE_ID = "id";
-    private static final int CONN_STATE_DISCONNECT = 0x90;
-    private static final int CONN_STATE_CONNECTING = CONN_STATE_DISCONNECT << 1;
-    private static final int CONN_STATE_FAILED = CONN_STATE_DISCONNECT << 2;
-    private static final int CONN_STATE_CONNECTED = CONN_STATE_DISCONNECT << 3;
+    public static final String READ_DATA_CNT = "read_data_cnt";
+    public static final String READ_BUFFER_ARRAY = "read_buffer_array";
+    public static final String ACTION_CONN_STATE = "action_connect_state";
+    public static final String ACTION_QUERY_PRINTER_STATE = "action_query_printer_state";
+    public static final String STATE = "state";
+    public static final String DEVICE_ID = "id";
+    public static final int CONN_STATE_DISCONNECT = 0x90;
+    public static final int CONN_STATE_CONNECTING = CONN_STATE_DISCONNECT << 1;
+    public static final int CONN_STATE_FAILED = CONN_STATE_DISCONNECT << 2;
+    public static final int CONN_STATE_CONNECTED = CONN_STATE_DISCONNECT << 3;
     public PrinterReader reader;
 
     public enum CONN_METHOD {

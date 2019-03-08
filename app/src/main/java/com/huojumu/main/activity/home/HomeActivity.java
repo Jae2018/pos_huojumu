@@ -1,9 +1,11 @@
 package com.huojumu.main.activity.home;
 
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -85,6 +87,12 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static android.hardware.usb.UsbManager.ACTION_USB_DEVICE_ATTACHED;
+import static android.hardware.usb.UsbManager.ACTION_USB_DEVICE_DETACHED;
+import static com.huojumu.utils.Constant.ACTION_USB_PERMISSION;
+import static com.huojumu.utils.DeviceConnFactoryManager.ACTION_QUERY_PRINTER_STATE;
+import static com.huojumu.utils.DeviceConnFactoryManager.CONN_STATE_FAILED;
+
 
 public class HomeActivity extends BaseActivity implements DialogInterface, SocketBack,
         SingleProCallback, MediaPlayer.OnPreparedListener, SurfaceHolder.Callback {
@@ -119,6 +127,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private List<VipListBean> activeBeanList;//活动列表
     private SparseArray<List<Production>> map = new SparseArray<>();//分类切换
     private ArrayList<Production> productions = new ArrayList<>();//选择的奶茶
+    private ArrayList<Production> printProducts = new ArrayList<>();//标签打印的产品
     private double totalPrice = 0, totalCut;//订单总价
 
     private List<Production> gTemp = new ArrayList<>();//挂单
@@ -148,8 +157,16 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     private UsbManager usbManager;
     private int id = 0;
-    String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
     UsbDeviceList usbDeviceList;
+    /**
+     * 连接状态断开
+     */
+    private static final int CONN_STATE_DISCONN = 0x007;
+    /**
+     * 使用打印机指令错误
+     */
+    private static final int PRINTER_COMMAND_ERROR = 0x008;
+    private ThreadPool threadPool;
 
     @Override
     protected int setLayout() {
@@ -160,6 +177,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     protected void initView() {
         MyApplication.getSocketTool().sendHeart();
         EventBus.getDefault().register(this);
+
+        threadPool = ThreadPool.getInstantiation();
         //链接标签机
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         getUsb(UsbUtil.getUsbDeviceList(this));
@@ -673,10 +692,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     public void OnUsbCallBack(String name) {
         closeport();
+        Log.e(TAG, "OnUsbCallBack: ");
         getUsb(name);
     }
 
     private void getUsb(String name) {
+
         //获取USB设备名
         //通过USB设备名找到USB设备
         UsbDevice usbDevice = PrinterUtil.getUsbDeviceFromName(HomeActivity.this, name);
@@ -685,6 +706,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             if (usbManager.hasPermission(usbDevice)) {
                 usbConn(usbDevice);
             } else {//请求权限
+                Log.e(TAG, "getUsb: 2");
                 PendingIntent mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
                 usbManager.requestPermission(usbDevice, mPermissionIntent);
             }
@@ -710,11 +732,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     int count = 0;
+    String name, taste;
+    double price;
+
     /**
      * 打印订单小票
      */
     private void PrintOrder(final OrderBack orderBack, final double charge) {
-        ThreadPool.getInstantiation().addTask(new Runnable() {
+        threadPool.addTask(new Runnable() {
             @Override
             public void run() {
                 if (isCash) {
@@ -731,35 +756,51 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             return;
         }
 
-        int size = productions.size();
-        if (size == 1) {//todo
-            final String name = productions.get(0).getProName();
-            final String taste = productions.get(0).getTasteStr();
-            final double price = productions.get(0).getPrice();
-            final int number = productions.get(0).getNumber();
-            count = number;
-                ThreadPool.getInstantiation().addTask(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] != null
-                                && DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getConnState()) {
-                            ThreadFactoryBuilder threadFactoryBuilder = new ThreadFactoryBuilder("MainActivity_sendContinuity_Timer");
-                            ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(1, threadFactoryBuilder);
-                            scheduledExecutorService.schedule(threadFactoryBuilder.newThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    count--;
-                                    if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getCurrentPrinterCommand() == PrinterCommand.TSC) {
-                                        //标签模式可直接使用LabelCommand.addPrint()方法进行打印
-                                        sendLabel(name, taste, price, count, number);
-                                    }
-                                }
-                            }), 1000, TimeUnit.MILLISECONDS);
-                        }
-                    }
-                });
+        printcount = 0;
+        continuityprint = true;
+        printProducts.clear();
+        for (int i = 0; i < productions.size(); i++) {
+            name = productions.get(i).getProName();
+            taste = productions.get(i).getTasteStr();
+            price = productions.get(i).getPrice();
+            count = productions.get(i).getNumber();
+            for (int j = 0; j < productions.get(i).getNumber(); j++) {
+                Production p = new Production();
+                p.setProName(name);
+                p.setTasteStr(taste);
+                p.setPrice(price);
+                p.setNumber(count);
+                printProducts.add(p);
+                printcount++;
+            }
         }
 
+        Log.e(TAG, "PrintOrder: " + printcount);
+        printLabel();
+    }
+
+    private void printLabel() {
+        threadPool.addTask(new Runnable() {
+            @Override
+            public void run() {
+                if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] != null
+                        && DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getConnState()) {
+                    ThreadFactoryBuilder threadFactoryBuilder = new ThreadFactoryBuilder("MainActivity_sendContinuity_Timer");
+                    ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(1, threadFactoryBuilder);
+                    scheduledExecutorService.schedule(threadFactoryBuilder.newThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            printcount--;
+                            if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getCurrentPrinterCommand() == PrinterCommand.TSC) {
+                                //标签模式可直接使用LabelCommand.addPrint()方法进行打印
+                                Log.e(TAG, "printLabel run: " + printcount);
+                                sendLabel(printProducts.get(printcount).getProName(), printProducts.get(printcount).getTasteStr(), printProducts.get(printcount).getPrice(), printcount, printProducts.size());
+                            }
+                        }
+                    }), 1000, TimeUnit.MILLISECONDS);
+                }
+            }
+        });
     }
 
     /**
@@ -820,6 +861,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     private void usbConn(UsbDevice usbDevice) {
+        Log.e(TAG, "usbConn: ");
         new DeviceConnFactoryManager.Build()
                 .setId(id)
                 .setConnMethod(DeviceConnFactoryManager.CONN_METHOD.USB)
@@ -850,12 +892,16 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        DeviceConnFactoryManager.closeAllPort();
+        if (threadPool != null) {
+            threadPool.stopThreadPool();
+        }
     }
 
     /**
      * 发送标签
      */
-    void sendLabel(String pName, String pContent, double price, int i,int number) {
+    void sendLabel(String pName, String pContent, double price, int i, int number) {
         i = i + 1;
         Log.e(TAG, "sendLabel: ");
         LabelCommand tsc = new LabelCommand();
@@ -915,4 +961,99 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].sendDataImmediately(datas);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+        filter.addAction(ACTION_USB_DEVICE_DETACHED);
+        filter.addAction(ACTION_QUERY_PRINTER_STATE);
+        filter.addAction(DeviceConnFactoryManager.ACTION_CONN_STATE);
+        filter.addAction(ACTION_USB_DEVICE_ATTACHED);
+        registerReceiver(receiver, filter);
+    }
+
+    private boolean continuityprint = false;
+    private int printcount = 0;
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            switch (action) {
+                case ACTION_USB_PERMISSION:
+                    synchronized (this) {
+                        UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                        if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                            if (device != null) {
+                                System.out.println("permission ok for device " + device);
+                                usbConn(device);
+                            }
+                        } else {
+                            System.out.println("permission denied for device " + device);
+                        }
+                    }
+                    break;
+                //Usb连接断开、蓝牙连接断开广播
+                case ACTION_USB_DEVICE_DETACHED:
+                    handler.obtainMessage(CONN_STATE_DISCONN).sendToTarget();
+                    break;
+                case DeviceConnFactoryManager.ACTION_CONN_STATE:
+                    int state = intent.getIntExtra(DeviceConnFactoryManager.STATE, -1);
+                    int deviceId = intent.getIntExtra(DeviceConnFactoryManager.DEVICE_ID, -1);
+                    switch (state) {
+                        case DeviceConnFactoryManager.CONN_STATE_DISCONNECT:
+                            if (id == deviceId) {
+                                ToastUtils.showLong("标签打印机已断开");
+                            }
+                            break;
+                        case DeviceConnFactoryManager.CONN_STATE_CONNECTING:
+
+                            break;
+                        case DeviceConnFactoryManager.CONN_STATE_CONNECTED:
+                            ToastUtils.showLong("标签打印机已连接");
+//                            if(DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].connMethod== DeviceConnFactoryManager.CONN_METHOD.WIFI){
+//                                wificonn=true;
+//                                if(keepConn==null) {
+//                                    keepConn = new KeepConn();
+//                                    keepConn.start();
+//                                }
+//                            }
+                            break;
+                        case CONN_STATE_FAILED:
+//                            Utils.toast(MainActivity.this, getString(R.string.str_conn_fail));
+                            ToastUtils.showLong("标签打印机连接失败");
+                            //wificonn=false;
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case ACTION_QUERY_PRINTER_STATE:
+                    Log.e(TAG, "onReceive print: 0");
+                    if (printcount >= 0) {
+                        if (continuityprint) {
+//                            printcount++;
+                            Log.e(TAG, "onReceive print: 1");
+//                            Utils.toast(MainActivity.this, getString(R.string.str_continuityprinter) + " " + printcount);
+                        }
+                        if (printcount != 0) {
+                            printLabel();
+                            Log.e(TAG, "onReceive print: 2");
+                        } else {
+                            continuityprint = false;
+                            Log.e(TAG, "onReceive print: 3");
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(receiver);
+    }
 }

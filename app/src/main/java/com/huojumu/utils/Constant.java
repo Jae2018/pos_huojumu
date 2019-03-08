@@ -14,6 +14,7 @@ public interface Constant {
     String HEART = "{\"task\": \"heartbeat\",\"machineCode\":\"%s\",\"shopID\":%s,\"eqpType\":\"3\"}";
     String BAND = "{\"task\": \"heartbeat\",\"machineCode\":\"%s\"}";
     String PMENT = "{\"task\": \"pay\",\"data\":{\"orderCode\":\"%s\",\"state\": \"%s\"}}}";
+    String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
     int USB_REQUEST_CODE = 0x002;
     /* debug param */
     boolean IS_DEBUG = true;

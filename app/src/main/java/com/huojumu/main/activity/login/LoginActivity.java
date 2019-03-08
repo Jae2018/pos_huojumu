@@ -1,8 +1,12 @@
 package com.huojumu.main.activity.login;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.CountDownTimer;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,6 +29,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -38,6 +44,14 @@ public class LoginActivity extends BaseActivity {
 
     private CountDownTimer countDownTimer;
 
+    ArrayList<String> per = new ArrayList<>();
+    private String[] permissions = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.BLUETOOTH
+    };
+    private static final int REQUEST_CODE = 0x004;
+
     @Override
     protected int setLayout() {
         return R.layout.activity_login;
@@ -46,6 +60,8 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
+        checkPermission();
+        requestPermission();
     }
 
     @Override
@@ -53,6 +69,23 @@ public class LoginActivity extends BaseActivity {
         MyApplication.getSocketTool().sendMsg("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
 
         getCode();
+    }
+
+
+
+    private void checkPermission() {
+        for (String permission : permissions) {
+            if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(this, permission)) {
+                per.add(permission);
+            }
+        }
+    }
+
+    private void requestPermission() {
+        if (per.size() > 0) {
+            String[] p = new String[per.size()];
+            ActivityCompat.requestPermissions(this, per.toArray(p), REQUEST_CODE);
+        }
     }
 
     private void getCode() {

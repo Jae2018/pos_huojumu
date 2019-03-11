@@ -517,14 +517,17 @@ public class PrinterUtil {
 
     public static void printDaily(int type, String total, String mobilePay, String cash, int orderNum, String workerName) {
         try {
-            String t = type == 1 ? "交班" : "日结";
-            String s = t + "\n日期：\n";
+
             mPrinter.setCharSize(1, 1);
+            String t = type == 1 ? "交班" : "日结";
+            mPrinter.printString(t, "GBK");
+
+            //居左
+            mPrinter.setAlignMode(0);
+            String s = t + "\n日期：\n";
             mPrinter.printString(s, "GBK");
 
             mPrinter.setCharSize(0, 0);
-            //居左
-            mPrinter.setAlignMode(0);
             s = "本次" + t + "时间：" + getDate() + "\n" + "上次" + t + "时间" + SpUtil.getString("dailyTime") + "\n";
             mPrinter.printString(s, "GBK");
 

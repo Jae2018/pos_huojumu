@@ -6,7 +6,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -14,7 +13,6 @@ import com.huojumu.R;
 import com.huojumu.adapter.WorkDailyAdapter;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.home.HomeActivity;
-import com.huojumu.main.activity.login.LoginActivity;
 import com.huojumu.main.dialogs.CertainDialog;
 import com.huojumu.main.dialogs.DialogInterface;
 import com.huojumu.model.BaseBean;
@@ -65,7 +63,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     private long timestamp;
     private int types;
     private int num = 0;
-    private Intent intent;
+//    private Intent intent;
 
     @Override
     protected int setLayout() {
@@ -171,12 +169,12 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
     @Override
     public void OnDialogOkClick(int type, double earn, double cost, double charge, String name) {
-        if (types == 1) {
-            //交班确认回调
-            TakeOver();
-        } else {
-            daily();
-        }
+//        if (types == 1) {
+//            //交班确认回调
+//            TakeOver();
+//        } else {
+        daily();
+//        }
         PrinterUtil.printDaily(types, String.valueOf(s4), String.valueOf(s2), String.valueOf(s1), num, SpUtil.getString(Constant.WORKER_NAME));
     }
 
@@ -207,7 +205,11 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             public void onSuccess(int statusCode, BaseBean<String> response) {
                 if (response.getMsg().equals("yes")) {
                     certainDialog.cancel();
-                    ToastUtils.showLong("已完成日结！30秒后系统将关闭");
+                    if (types == 1) {
+                        ToastUtils.showLong("已完成交班！10秒后将退出登录！");
+                    } else {
+                        ToastUtils.showLong("已完成日结！30秒后系统将关闭");
+                    }
                     setResult(RESULT_OK);
                     finish();
                 } else {

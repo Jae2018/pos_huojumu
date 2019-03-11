@@ -3,6 +3,7 @@ package com.huojumu.main.activity.dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -180,7 +181,8 @@ public class SingleProAddonDialog extends BaseDialog {
                         public View getView(FlowLayout parent, int position, MatsBean o) {
                             TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
                                     flowLayout1, false);
-                            tv.setText(o.getMatName());
+                            tv.setGravity(Gravity.CENTER);
+                            tv.setText(String.format("%s\n%s",o.getMatName(),o.getIngredientPrice()));
                             return tv;
                         }
                     });

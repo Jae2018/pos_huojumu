@@ -3,7 +3,6 @@ package com.huojumu.utils;
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
-import android.os.Build;
 
 import java.util.HashMap;
 import java.util.Iterator;

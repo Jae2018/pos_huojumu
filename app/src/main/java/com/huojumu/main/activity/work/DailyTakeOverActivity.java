@@ -63,7 +63,6 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     private long timestamp;
     private int types;
     private int num = 0;
-//    private Intent intent;
 
     @Override
     protected int setLayout() {
@@ -169,12 +168,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
     @Override
     public void OnDialogOkClick(int type, double earn, double cost, double charge, String name) {
-//        if (types == 1) {
-//            //交班确认回调
-//            TakeOver();
-//        } else {
         daily();
-//        }
         PrinterUtil.printDaily(types, String.valueOf(s4), String.valueOf(s2), String.valueOf(s1), num, SpUtil.getString(Constant.WORKER_NAME));
     }
 

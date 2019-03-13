@@ -67,7 +67,7 @@ public class CashPayDialog extends BaseDialog {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() > 0) {
-                    cash = Integer.valueOf(s.toString());
+                    cash = Integer.valueOf(s.toString().trim());
                 }
                 if (cash < cost) {
                     okBtn.setEnabled(false);

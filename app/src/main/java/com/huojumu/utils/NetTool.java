@@ -132,7 +132,7 @@ public class NetTool {
         okHttp.post()
                 .url(Constant.BASE_URL + "system/orderon.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("type", "7")
-                .addParam("ordSource", "3")
+//                .addParam("ordSource", "3")
                 .addParam("ordDate", PrinterUtil.getTime())
                 .addParam("pageNum", pageNum + "")
                 .addParam("pageSize", "10")

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:focusable="true"
@@ -77,7 +78,7 @@
             android:gravity="center_vertical|end"
             android:paddingLeft="@dimen/d_8"
             android:paddingRight="@dimen/d_8"
-            android:inputType="numberDecimal"
+            android:inputType="number"
             android:textColor="@android:color/holo_red_light"
             android:textSize="@dimen/f_18" />
 

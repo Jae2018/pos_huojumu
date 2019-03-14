@@ -110,6 +110,7 @@
             android:screenOrientation="landscape" />
         <activity android:name="com.huojumu.main.activity.function.PaymentActivity" />
         <activity android:name=".main.activity.function.OrderDetailActivity" />
+        <activity android:name=".main.activity.dialog.RegisterVipDialog" />
 
         <receiver android:name="com.huojumu.receiver.PosReceiver">
             <intent-filter>

@@ -168,7 +168,13 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
     @Override
     public void OnDialogOkClick(int type, double earn, double cost, double charge, String name) {
-        daily();
+        if (types == 1) {
+            //交班确认回调
+            TakeOver();
+        } else {
+            TakeOver();
+            daily();
+        }
         PrinterUtil.printDaily(types, String.valueOf(s4), String.valueOf(s2), String.valueOf(s1), num, SpUtil.getString(Constant.WORKER_NAME));
     }
 
@@ -180,6 +186,8 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                     ToastUtils.showLong("已完成交班！10秒后将退出登录！");
                     certainDialog.cancel();
                     setResult(RESULT_OK);
+                    //认为正常日结
+                    SpUtil.save("Daily_success", true);
                     finish();
                 } else {
                     ToastUtils.showLong(response.getMsg());
@@ -199,11 +207,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             public void onSuccess(int statusCode, BaseBean<String> response) {
                 if (response.getMsg().equals("yes")) {
                     certainDialog.cancel();
-                    if (types == 1) {
-                        ToastUtils.showLong("已完成交班！10秒后将退出登录！");
-                    } else {
-                        ToastUtils.showLong("已完成日结！30秒后系统将关闭");
-                    }
+                    ToastUtils.showLong("已完成日结！30秒后系统将关闭");
                     setResult(RESULT_OK);
                     finish();
                 } else {

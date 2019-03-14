@@ -188,6 +188,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         MyApplication.getSocketTool().sendHeart();
         EventBus.getDefault().register(this);
 
+        //正常进入系统主页，默认值
+        SpUtil.save("Daily_success", false);
         threadPool = ThreadPool.getInstantiation();
         //链接标签机
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);

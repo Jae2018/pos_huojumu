@@ -90,7 +90,11 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             public void onRefresh() {
                 page = 1;
                 rowsBeans.clear();
-                initData();
+                if (types == 1) {
+                    getTakeOverInfo();
+                } else {
+                    getDailyInfo();
+                }
             }
         });
 
@@ -117,32 +121,11 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
     @Override
     protected void initData() {
-        NetTool.getDailyInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.PINPAI_ID), page, 0, new GsonResponseHandler<BaseBean<DailyInfo>>() {
-            @Override
-            public void onSuccess(int statusCode, BaseBean<DailyInfo> response) {
-                num = response.getData().getOrders().getTotal();
-                rowsBeans.addAll(response.getData().getOrders().getRows());
-                dailyAdapter.setNewData(rowsBeans);
-                s1 = response.getData().getSaleData().getReal();
-                earn1.setText(String.format(Locale.CHINA, "实收：%.2f", s1));
-                s2 = response.getData().getSaleData().getVirtual();
-                earn2.setText(String.format(Locale.CHINA, "虚收：%.2f", s2));
-                s3 = response.getData().getPushMoneyData().getPushMoney();
-                sellTv.setText(String.format(Locale.CHINA, "提成：%.4f", s3));
-                s4 = response.getData().getSaleData().getTotal();
-                commissionTv.setText(String.format(Locale.CHINA, "营业额：%.2f", s4));
-                timestamp = response.getData().getTimestamp();
-                if (page < response.getData().getOrders().getPageNum()) {
-                    page++;
-                }
-                swipeRefreshLayout.setRefreshing(false);
-            }
-
-            @Override
-            public void onFailure(int statusCode, String error_msg) {
-
-            }
-        });
+        if (types == 1) {
+            getTakeOverInfo();
+        } else {
+            getDailyInfo();
+        }
 
     }
 
@@ -176,6 +159,62 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             daily();
         }
         PrinterUtil.printDaily(types, String.valueOf(s4), String.valueOf(s2), String.valueOf(s1), num, SpUtil.getString(Constant.WORKER_NAME));
+    }
+
+    private void getTakeOverInfo(){
+        NetTool.getDailyInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.PINPAI_ID), page, 0, new GsonResponseHandler<BaseBean<DailyInfo>>() {
+            @Override
+            public void onSuccess(int statusCode, BaseBean<DailyInfo> response) {
+                num = response.getData().getOrders().getTotal();
+                rowsBeans.addAll(response.getData().getOrders().getRows());
+                dailyAdapter.setNewData(rowsBeans);
+                s1 = response.getData().getSaleData().getReal();
+                earn1.setText(String.format(Locale.CHINA, "实收金额：%.2f", s1));
+                s2 = response.getData().getSaleData().getVirtual();
+                earn2.setText(String.format(Locale.CHINA, "虚收金额：%.2f", s2));
+                s3 = response.getData().getPushMoneyData().getPushMoney();
+                sellTv.setText(String.format(Locale.CHINA, "提成：%.4f", s3));
+                s4 = response.getData().getSaleData().getTotal();
+                commissionTv.setText(String.format(Locale.CHINA, "营业额：%.2f", s4));
+                timestamp = response.getData().getTimestamp();
+                if (page < response.getData().getOrders().getPageNum()) {
+                    page++;
+                }
+                swipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onFailure(int statusCode, String error_msg) {
+
+            }
+        });
+    }
+
+    private void getDailyInfo(){
+        NetTool.getSettlementInfo(SpUtil.getInt(Constant.STORE_ID), 1, new GsonResponseHandler<BaseBean<DailyInfo>>() {
+            @Override
+            public void onSuccess(int statusCode, BaseBean<DailyInfo> response) {
+                num = response.getData().getOrders().getTotal();
+                rowsBeans.addAll(response.getData().getOrders().getRows());
+                dailyAdapter.setNewData(rowsBeans);
+                s1 = response.getData().getSaleData().getReal();
+                earn1.setText(String.format(Locale.CHINA, "总实收金额：%.2f", s1));
+                s2 = response.getData().getSaleData().getVirtual();
+                earn2.setText(String.format(Locale.CHINA, "总虚收金额：%.2f", s2));
+                s4 = response.getData().getSaleData().getTotal();
+                commissionTv.setText(String.format(Locale.CHINA, "总销售金额：%.2f", s4));
+                timestamp = response.getData().getTimestamp();
+                if (page < response.getData().getOrders().getPageNum()) {
+                    page++;
+                }
+                swipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onFailure(int statusCode, String error_msg) {
+
+            }
+        });
     }
 
     private void TakeOver() {

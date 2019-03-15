@@ -440,11 +440,17 @@ public class PrinterUtil {
             mPrinter.printFeed();
 
             //实线
-            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line1)));
+//            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line1)));
+            mPrinter.setCharSize(2, 2);
+            mPrinter.setFontStyle(1);
+            s = "------------------------------------------------";
+            mPrinter.printString(s.trim(), "GBK");
+            mPrinter.printFeed();
+
             mPrinter.setCharSize(0, 0);
 
             //员工名 + 时间
-            s = "\n收银员：" + name + "\n" + "时间：" + PrinterUtil.getPrintDate();
+            s = "收银员：" + name + "\n" + "时间：" + PrinterUtil.getPrintDate();
             mPrinter.printString(s, "GBK");
 
             //间隔大的虚线

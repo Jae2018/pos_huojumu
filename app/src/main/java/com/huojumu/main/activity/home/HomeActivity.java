@@ -293,6 +293,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 .setSuccessText("支付成功")//显示加载成功时的文字
                 .setFailedText("支付失败");
 
+        if (!SpUtil.getBoolean("Daily_success")) {
+            //非正常日结情况
+            daily();
+        }
     }
 
     @OnClick(R.id.button5)
@@ -1093,5 +1097,19 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     protected void onStop() {
         super.onStop();
         unregisterReceiver(receiver);
+    }
+
+
+    private void daily() {
+        NetTool.settlement(System.currentTimeMillis(), new GsonResponseHandler<BaseBean<String>>() {
+            @Override
+            public void onSuccess(int statusCode, BaseBean<String> response) {
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, String error_msg) {
+            }
+        });
     }
 }

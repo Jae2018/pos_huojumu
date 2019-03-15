@@ -69,10 +69,7 @@ public class LoginActivity extends BaseActivity {
         MyApplication.getSocketTool().sendMsg("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
 
         getCode();
-        if (!SpUtil.getBoolean("Daily_success")) {
-            //非正常日结情况
-            daily();
-        }
+
     }
 
 
@@ -143,18 +140,6 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    private void daily() {
-        NetTool.settlement(System.currentTimeMillis(), new GsonResponseHandler<BaseBean<String>>() {
-            @Override
-            public void onSuccess(int statusCode, BaseBean<String> response) {
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, String error_msg) {
-            }
-        });
-    }
 
     @Override
     protected void onDestroy() {

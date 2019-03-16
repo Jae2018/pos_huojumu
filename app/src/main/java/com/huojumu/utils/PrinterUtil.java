@@ -437,17 +437,19 @@ public class PrinterUtil {
             //订单流水号
             String s = orderNo.substring(orderNo.length() - 4);
             mPrinter.printString(s, "GBK");
-            mPrinter.printFeed();
-
-            //实线
-//            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line1)));
-            mPrinter.setCharSize(2, 2);
-            mPrinter.setFontStyle(1);
-            s = "------------------------------------------------";
-            mPrinter.printString(s.trim(), "GBK");
-            mPrinter.printFeed();
 
             mPrinter.setCharSize(0, 0);
+            s = "\n    ";
+            mPrinter.printString(s, "GBK");
+
+            //实线
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line1)));
+//            mPrinter.setCharSize(2, 2);
+//            mPrinter.setFontStyle(1);
+//            s = "------------------------------------------------";
+//            mPrinter.printString(s.trim(), "GBK");
+//            mPrinter.printFeed();
+
 
             //员工名 + 时间
             s = "收银员：" + name + "\n" + "时间：" + PrinterUtil.getPrintDate();

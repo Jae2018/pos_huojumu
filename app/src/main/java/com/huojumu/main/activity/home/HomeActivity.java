@@ -187,7 +187,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         EventBus.getDefault().register(this);
 
         //正常进入系统主页，默认值
-        SpUtil.save("Daily_success", false);
+//        SpUtil.save("Daily_success", true);
         threadPool = ThreadPool.getInstantiation();
         //链接标签机
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
@@ -291,10 +291,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 .setSuccessText("支付成功")//显示加载成功时的文字
                 .setFailedText("支付失败");
 
-        if (!SpUtil.getBoolean("Daily_success")) {
-            //非正常日结情况
-            daily();
-        }
+//        if (!SpUtil.getBoolean("Daily_success")) {
+//            //非正常日结情况
+//            daily();
+//        }
     }
 
     @OnClick(R.id.button5)
@@ -588,13 +588,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     @OnClick(R.id.btn_home_hand_over)
     void takeover() {
-        if (SpUtil.getBoolean("hasOverOrder")) {
-            ToastUtils.showLong("人有未提交的交班订单数据");
-        } else {
-            Intent intent = new Intent(HomeActivity.this, DailyTakeOverActivity.class);
-            intent.putExtra("type", 1);
-            startActivityForResult(intent, Constant.WORK_BACK_OVER);
-        }
+        Intent intent = new Intent(HomeActivity.this, DailyTakeOverActivity.class);
+        intent.putExtra("type", 1);
+        startActivityForResult(intent, Constant.WORK_BACK_OVER);
     }
 
     /**
@@ -602,9 +598,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     @OnClick(R.id.btn_home_daily)
     void Daily() {
-        Intent intent = new Intent(HomeActivity.this, DailyTakeOverActivity.class);
-        intent.putExtra("type", 2);
-        startActivityForResult(intent, Constant.WORK_BACK_DAILY);
+        if (SpUtil.getBoolean("hasOverOrder")) {
+            ToastUtils.showLong("还有未提交的交班订单数据");
+        } else {
+            Intent intent = new Intent(HomeActivity.this, DailyTakeOverActivity.class);
+            intent.putExtra("type", 2);
+            startActivityForResult(intent, Constant.WORK_BACK_DAILY);
+        }
     }
 
 //    /**
@@ -1091,16 +1091,17 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
 
-    private void daily() {
-        NetTool.settlement(SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<String>>() {
-            @Override
-            public void onSuccess(int statusCode, BaseBean<String> response) {
+//    private void daily() {
+//        NetTool.settlement(SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<String>>() {
+//            @Override
+//            public void onSuccess(int statusCode, BaseBean<String> response) {
+//
+//            }
+//
+//            @Override
+//            public void onFailure(int statusCode, String error_msg) {
+//            }
+//        });
+//    }
 
-            }
-
-            @Override
-            public void onFailure(int statusCode, String error_msg) {
-            }
-        });
-    }
 }

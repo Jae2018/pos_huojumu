@@ -2,6 +2,8 @@ package com.huojumu.main.activity.dialog;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.huojumu.R;
 import com.huojumu.base.BaseDialog;
 import com.huojumu.main.dialogs.SingleProCallback;
@@ -249,6 +252,22 @@ public class SingleProAddonDialog extends BaseDialog {
             productsBean.getMakes().clear();
         }
 
+        numTV.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     @OnClick(R.id.btn_home_addon_cancel)
@@ -258,8 +277,11 @@ public class SingleProAddonDialog extends BaseDialog {
 
     @OnClick(R.id.btn_home_addon_ok)
     void Ok() {
-
-        number = Integer.parseInt(numTV.getText().toString());
+        if (numTV.getText().toString().isEmpty()) {
+            number = 1;
+        } else {
+            number = Integer.parseInt(numTV.getText().toString().trim());
+        }
         productsBean.setAddon(addOnET.getText().toString());//备注
         productsBean.setTasteStr(tastesBean != null ? tastesBean.getTasteName() : "");
         OrderInfo.DataBean dataBean = new OrderInfo.DataBean();

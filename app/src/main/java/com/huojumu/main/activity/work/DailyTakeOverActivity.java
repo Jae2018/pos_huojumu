@@ -58,6 +58,8 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     TextView earn2;
     @BindView(R.id.btn_work_daily_ok)
     Button commit;
+    @BindView(R.id.btn_work_daily_cancel)
+    Button cancel;
 
     private WorkDailyAdapter dailyAdapter;
     private List<DailyInfo.OrdersBean.RowsBean> rowsBeans = new ArrayList<>();
@@ -156,8 +158,10 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     public void OnDialogOkClick(int type, double earn, double cost, double charge, String name) {
         if (types == 1) {
             //交班确认回调
+            commit.setEnabled(false);
             TakeOver();
         } else {
+            cancel.setEnabled(false);
             daily();
         }
         PrinterUtil.printDaily(types, String.valueOf(s4), String.valueOf(s2), String.valueOf(s1), num, SpUtil.getString(Constant.WORKER_NAME));
@@ -196,7 +200,6 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
         NetTool.getSettlementInfo(SpUtil.getInt(Constant.STORE_ID), 1, new GsonResponseHandler<BaseBean<DailyInfo>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<DailyInfo> response) {
-//                commit.setEnabled(true);
                 num = response.getData().getOrders().getTotal();
                 rowsBeans.addAll(response.getData().getOrders().getRows());
                 dailyAdapter.setNewData(rowsBeans);
@@ -215,8 +218,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
             @Override
             public void onFailure(int statusCode, String error_msg) {
-//                commit.setEnabled(false);
-//                ToastUtils.showLong("暂无日结信息");
+
             }
         });
     }
@@ -230,7 +232,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                     certainDialog.cancel();
                     setResult(RESULT_OK);
                     //认为正常日结
-                    SpUtil.save("Daily_success", true);
+//                    SpUtil.save("Daily_success", true);
                     finish();
                 } else {
                     ToastUtils.showLong(response.getMsg());
@@ -240,6 +242,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             @Override
             public void onFailure(int statusCode, String error_msg) {
                 ToastUtils.showLong(error_msg);
+                commit.setEnabled(true);
             }
         });
     }
@@ -261,6 +264,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             @Override
             public void onFailure(int statusCode, String error_msg) {
                 ToastUtils.showLong(error_msg);
+                cancel.setEnabled(true);
             }
         });
     }

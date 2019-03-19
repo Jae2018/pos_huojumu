@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/d_100"
-    android:layout_height="@dimen/d_120"
+    android:layout_width="@dimen/d_121"
+    android:layout_height="wrap_content"
     android:background="@drawable/pro_border"
     android:padding="@dimen/d_1"
     android:layout_margin="@dimen/d_10" >
 
     <ImageView
         android:id="@+id/iv_product_url"
-        android:layout_width="@dimen/d_100"
-        android:layout_height="@dimen/d_100"
+        android:layout_width="@dimen/d_120"
+        android:layout_height="@dimen/d_120"
+        android:src="@drawable/pro_default"
         android:contentDescription="@string/des" />
 
     <TextView

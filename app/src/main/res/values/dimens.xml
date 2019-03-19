@@ -25,6 +25,7 @@
     <dimen name="d_100">100dp</dimen>
     <dimen name="d_101">101dp</dimen>
     <dimen name="d_120">120dp</dimen>
+    <dimen name="d_121">121dp</dimen>
     <dimen name="d_190">190dp</dimen>
     <dimen name="d_200">200dp</dimen>
     <dimen name="d_250">250dp</dimen>

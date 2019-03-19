@@ -23,6 +23,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -121,6 +122,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //有无挂单
     @BindView(R.id.iv_has_gua_dan)
     ImageView hasGua;
+    @BindView(R.id.btn_home_hand_over)
+    Button takeover;
+    @BindView(R.id.btn_home_daily)
+    Button dailyBtn;
 
     private HomeSelectedAdapter selectedAdapter;//所选
     private HomeTypeAdapter typeAdapter;//类别
@@ -270,7 +275,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         //商品列表
         productAdapter = new HomeProductAdapter(null);
-        GridLayoutManager grid2 = new GridLayoutManager(this, 5);
+        GridLayoutManager grid2 = new GridLayoutManager(this, 6);
         rBottom.setLayoutManager(grid2);
         rBottom.setAdapter(productAdapter);
         productAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -290,7 +295,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         ld.setLoadingText("支付中")
                 .setSuccessText("支付成功")//显示加载成功时的文字
                 .setFailedText("支付失败");
-
+        dailyBtn.setEnabled(false);
 //        if (!SpUtil.getBoolean("Daily_success")) {
 //            //非正常日结情况
 //            daily();
@@ -390,20 +395,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     public void callback(String s) {
 
     }
-
-//    @Override
-//    public void sendMsg(String s) {
-//        if ("0".equals(s)) {
-//            //线上付款完成
-//            handler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    productions.clear();
-//                }
-//            }, 2000);
-//            selectedAdapter.setNewData(productions);
-//        }
-//    }
 
     private void checkPriceForDisplay() {
         double totalPrice = 0.0, totalCut = 0.0;
@@ -636,6 +627,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             switch (requestCode) {
                 case Constant.WORK_BACK_OVER:
                     SpUtil.save("hasOverOrder", false);
+                    ToastUtils.showLong("已完成交班！10秒后将退出登录！");
                     MyOkHttp.mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -643,6 +635,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             finish();
                         }
                     }, 10 * 1000);
+                    dailyBtn.setEnabled(true);
                     break;
                 case Constant.WORK_BACK_DAILY:
                     MyOkHttp.mHandler.postDelayed(new Runnable() {
@@ -791,7 +784,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     isCash = false;
                     PrinterUtil.OpenMoneyBox();
                 }
-                PrinterUtil.printString80(HomeActivity.this, productions, orderBack.getOrderNo(), SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(), "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "", totalCut + "");
+                PrinterUtil.printString80(HomeActivity.this, productions, orderBack.getOrderNo(),
+                        SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
+                        "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "",
+                        totalCut + "");
             }
         });
 

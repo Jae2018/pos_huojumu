@@ -10,6 +10,7 @@ import android.graphics.drawable.NinePatchDrawable;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -427,27 +428,18 @@ public class PrinterUtil {
     public static void printString80(Context c, final List<Production> pList, final String orderNo, final String name, final String totalMoney,
                                      final String earn, final String cost, final String charge, final String cut) {
         try {
-//            set(DOUBLE_HEIGHT_WIDTH);
             //居左
             mPrinter.setAlignMode(0);
             //字体变大
-            mPrinter.setCharSize(1, 1);
+//            mPrinter.setCharSize(1, 1);
             //订单流水号
             String s = orderNo.substring(orderNo.length() - 4);
             mPrinter.printString(s, "GBK");
+            mPrinter.printFeed();
 
-            mPrinter.setCharSize(0, 0);
-            s = "\n    ";
-            mPrinter.printString(s, "GBK");
-
+//            mPrinter.setCharSize(0, 0);
             //实线
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line1)));
-//            mPrinter.setCharSize(2, 2);
-//            mPrinter.setFontStyle(1);
-//            s = "------------------------------------------------";
-//            mPrinter.printString(s.trim(), "GBK");
-//            mPrinter.printFeed();
-
 
             //员工名 + 时间
             s = "收银员：" + name + "\n" + "时间：" + PrinterUtil.getPrintDate();
@@ -459,21 +451,20 @@ public class PrinterUtil {
             //商品信息
             StringBuilder sb = new StringBuilder();
             sb.append(printFourData80("商品名称", "数量", "单价", "金额")).append("\n");
-//            mPrinter.printFeed();
-            Log.e(TAG, "printString80 pList.size: " + pList.size());
+
             mPrinter.setFontStyle(1);
             for (int i = 0; i < pList.size(); i++) {
-                Log.e(TAG, "printString80: ");
                 sb.append(printFourData80(pList.get(i).getProName(), String.valueOf(pList.get(i).getNumber()), String.valueOf(pList.get(i).getPrice()), String.valueOf(pList.get(i).getNumber() * pList.get(i).getPrice()))).append("\n");
                 if (!pList.get(i).getAddon().isEmpty()) {
                     sb.append(printFourData80(pList.get(i).getAddon(), "", "", ""));
                 }
             }
             mPrinter.printString(sb.toString(), "GBK");
-            Log.e(TAG, "printString80: " + sb.toString());
+
             //间隔小的虚线
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line3)));
             mPrinter.setFontStyle(0);
+
             //交易金额明细
             s = "\n" + printTwoData80("消费金额", totalMoney)
                     + "\n" + printTwoData80("应收金额", earn)
@@ -651,4 +642,10 @@ public class PrinterUtil {
         }
     }
 
+    public static Bitmap convertViewToBitmap(View view) {
+        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+        view.buildDrawingCache();
+        return view.getDrawingCache();
+    }
 }

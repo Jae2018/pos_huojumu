@@ -9,8 +9,11 @@ import com.huojumu.main.activity.login.ActiveActivity;
 import com.huojumu.main.activity.login.LoginActivity;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.SpUtil;
+import com.tsy.sdk.myokhttp.MyOkHttp;
 
 public class MainActivity extends BaseActivity {
+
+    Intent intent = new Intent();
 
     @Override
     protected int setLayout() {
@@ -19,13 +22,26 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        Intent intent = new Intent();
+
         if (SpUtil.getBoolean(Constant.HAS_BAND)) {
-            intent.setClass(MainActivity.this, LoginActivity.class);
+            MyOkHttp.mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    intent.setClass(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }, 2000);
         } else {
-            intent.setClass(MainActivity.this, ActiveActivity.class);
+            MyOkHttp.mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    intent.setClass(MainActivity.this, ActiveActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }, 2000);
         }
-        startActivity(intent);
 
     }
 

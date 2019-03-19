@@ -110,16 +110,12 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
         NetTool.getEnableBackOrderList(SpUtil.getInt(Constant.STORE_ID), editText.getText().toString(), new GsonResponseHandler<BaseBean<OrderEnableBackBean>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrderEnableBackBean> response) {
-                if (response.getMsg().equals("yes")) {
-                    backAdapter.setNewData(response.getData().getOrders());
-                } else {
-                    ToastUtils.showLong("无对应订单数据！");
-                }
+                backAdapter.setNewData(response.getData().getOrders());
             }
 
             @Override
             public void onFailure(int statusCode, String error_msg) {
-
+                ToastUtils.showLong("订单信息有误");
             }
         });
     }

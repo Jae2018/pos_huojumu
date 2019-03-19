@@ -7,7 +7,7 @@
     <!-- 主界面 -->
     <string name="hold_on" translatable="false">挂单</string>
     <string name="clear" translatable="false">删除全部</string>
-    <string name="referral" translatable="false">推介</string>
+    <string name="referral" translatable="false">推荐</string>
     <string name="function" translatable="false">功能</string>
     <string name="shutdown" translatable="false">关机</string>
 

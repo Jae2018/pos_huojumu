@@ -13,7 +13,6 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
@@ -71,6 +70,7 @@ import com.huojumu.utils.ThreadPool;
 import com.huojumu.utils.UsbUtil;
 import com.tools.command.EscCommand;
 import com.tools.command.LabelCommand;
+import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
@@ -80,6 +80,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.ScheduledExecutorService;
@@ -144,7 +145,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     //订单数据
     private OrderInfo orderInfo;
-    //    private Handler handler = new Handler();
     //是否修改
     private boolean ok = false;
     //流水号
@@ -152,10 +152,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     //是否是现金支付
     boolean isCash = false;
-    //
-    private String isRecommend = "0";
-
-    private Handler handler = new Handler();
 
     private UsbManager usbManager;
     private int id = 0;
@@ -177,6 +173,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     String TAG = "home";
     private OrderBack orderBack;
     private double change;
+    //是否推荐
+    private boolean isRecommend = false;
 
     @Override
     protected int setLayout() {
@@ -302,7 +300,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @OnClick(R.id.button5)
     void refresh() {
         getTypeList();
-        getProList(isRecommend);
+        getProList("0");
         getActiveInfo();
     }
 
@@ -321,7 +319,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     protected void initData() {
 
         getTypeList();
-        getProList(isRecommend);
+        getProList("0");
         getActiveInfo();
 
     }
@@ -379,8 +377,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     @OnClick(R.id.button4)
     void getRecommend() {
-        isRecommend = isRecommend.equals("") ? "1" : "";
-        getProList(isRecommend);
+        if (isRecommend) {
+            getProList("1");
+            isRecommend = false;
+        } else {
+            getProList("0");
+            isRecommend = true;
+        }
     }
 
     @Override
@@ -441,9 +444,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 }
             }
         }
-        total_number.setText(String.format("数量：%s 份", totalCount));
-        total_price.setText(String.format("总价：%s 元", totalPrice));
-        cut_number.setText(String.format("优惠：%s 元", totalCut));
+        total_number.setText(String.format(Locale.CHINA,"数量：%d 份", totalCount));
+        total_price.setText(String.format(Locale.CHINA,"总价：%.2f 元", totalPrice));
+        cut_number.setText(String.format(Locale.CHINA,"优惠：%.2f 元", totalCut));
         //副屏刷新
         if (engine != null) {
             engine.refresh(productions);
@@ -585,9 +588,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     @OnClick(R.id.btn_home_hand_over)
     void takeover() {
-        Intent intent = new Intent(HomeActivity.this, DailyTakeOverActivity.class);
-        intent.putExtra("type", 1);
-        startActivityForResult(intent, Constant.WORK_BACK_OVER);
+        if (SpUtil.getBoolean("hasOverOrder")) {
+            ToastUtils.showLong("人有未提交的交班订单数据");
+        } else {
+            Intent intent = new Intent(HomeActivity.this, DailyTakeOverActivity.class);
+            intent.putExtra("type", 1);
+            startActivityForResult(intent, Constant.WORK_BACK_OVER);
+        }
     }
 
     /**
@@ -628,8 +635,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case Constant.WORK_BACK_OVER:
-                    Log.e(TAG, "onActivityResult: over");
-                    handler.postDelayed(new Runnable() {
+                    SpUtil.save("hasOverOrder", false);
+                    MyOkHttp.mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             startActivity(new Intent(HomeActivity.this, LoginActivity.class));
@@ -638,8 +645,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     }, 10 * 1000);
                     break;
                 case Constant.WORK_BACK_DAILY:
-                    Log.e(TAG, "onActivityResult: daily");
-                    handler.postDelayed(new Runnable() {
+                    MyOkHttp.mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             PowerUtil.shutdown();
@@ -683,6 +689,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
                             ld.show();
                             payOutTime();
+                            SpUtil.save("hasOverOrder", true);
                         }
 
                         @Override
@@ -705,7 +712,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         orderBack = response.getData();
                         orderNo = response.getData().getOrderNo();
                         PrintOrder(response.getData(), charge < 0 ? 0 : charge);
-                        handler.postDelayed(new Runnable() {
+                        SpUtil.save("hasOverOrder", true);
+                        MyOkHttp.mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 clear();
@@ -722,7 +730,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             case "CertainDialog":
                 //关机确认
                 certainDialog.cancel();
-                handler.postDelayed(new Runnable() {
+                MyOkHttp.mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         PowerUtil.shutdown();
@@ -735,22 +743,18 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     public void OnUsbCallBack(String name) {
         closeport();
-        Log.e(TAG, "OnUsbCallBack: ");
         getUsb(name);
     }
 
     private void getUsb(String name) {
-        Log.e(TAG, "getUsb: ");
         //获取USB设备名
         //通过USB设备名找到USB设备
         UsbDevice usbDevice = PrinterUtil.getUsbDeviceFromName(HomeActivity.this, name);
         //判断USB设备是否有权限
         if (usbDevice != null)
             if (usbManager.hasPermission(usbDevice)) {
-                Log.e(TAG, "getUsb: 1");
                 usbConn(usbDevice);
             } else {//请求权限
-                Log.e(TAG, "getUsb: 2");
                 PendingIntent mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
                 usbManager.requestPermission(usbDevice, mPermissionIntent);
             }
@@ -816,7 +820,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
         }
 
-        Log.e(TAG, "PrintOrder: " + printcount);
         printLabel();
     }
 
@@ -834,7 +837,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             printcount--;
                             if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getCurrentPrinterCommand() == PrinterCommand.TSC) {
                                 //标签模式可直接使用LabelCommand.addPrint()方法进行打印
-                                Log.e(TAG, "printLabel run: " + printcount);
                                 sendLabel(printProducts.get(printcount).getProName(), printProducts.get(printcount).getTasteStr(), printProducts.get(printcount).getPrice(), printcount, printProducts.size());
                             }
                         }
@@ -893,7 +895,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         } else {
             ld.loadFailed();
         }
-        handler.postDelayed(new Runnable() {
+        MyOkHttp.mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 clear();
@@ -902,7 +904,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     private void usbConn(UsbDevice usbDevice) {
-        Log.e(TAG, "usbConn: ");
         new DeviceConnFactoryManager.Build()
                 .setId(id)
                 .setConnMethod(DeviceConnFactoryManager.CONN_METHOD.USB)
@@ -922,7 +923,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     private void closeport() {
-        Log.e(TAG, "closeport: ");
         if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] != null && DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].mPort != null) {
             DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].reader.cancel();
             DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].mPort.closePort();
@@ -945,7 +945,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     void sendLabel(String pName, String pContent, double price, int i, int number) {
         i = i + 1;
-        Log.e(TAG, "sendLabel: ");
         LabelCommand tsc = new LabelCommand();
         // 设置标签尺寸，按照实际尺寸设置
         tsc.addSize(45, 30);
@@ -961,30 +960,22 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         tsc.addTear(EscCommand.ENABLE.ON);
         // 清除打印缓冲区
         tsc.addCls();
-        int x = (300 - pName.length() * 30) / 2;
+//        int x = (300 - pName.length() * 30) / 2;
         // 绘制简体中文
-        Log.e(TAG, "PrintOrder: print 1");
-        tsc.addText(x, 13, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(13, 13, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.STORE_NAME) + "\n");
-        Log.e(TAG, "PrintOrder: print 2");
         tsc.addText(0, 43, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 pName + "\n");
-        Log.e(TAG, "PrintOrder: print 3");
         tsc.addText(0, 78, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 pContent + "\n");
-        Log.e(TAG, "PrintOrder: print 4");
         tsc.addText(0, 110, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 "￥" + price + "    " + i + "/" + number);
-        Log.e(TAG, "PrintOrder: print 5");
         tsc.addText(0, 140, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.WORKER_NAME) + "\n");
-        Log.e(TAG, "PrintOrder: print 6");
         tsc.addText(0, 170, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 PrinterUtil.getTabTime() + orderNo.substring(orderNo.length() - 4) + "-" + PrinterUtil.getTabHour() + "\n");
-        Log.e(TAG, "PrintOrder: print 7");
         tsc.addText(0, 200, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.STORE_ADDRESS));
-        Log.e(TAG, "PrintOrder: print 8");
         // 绘制图片
         Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.logo9);
         tsc.addBitmap(200, 35, LabelCommand.BITMAP_MODE.OVERWRITE, 90, b);
@@ -1037,7 +1028,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     break;
                 //Usb连接断开、蓝牙连接断开广播
                 case ACTION_USB_DEVICE_DETACHED:
-                    handler.obtainMessage(CONN_STATE_DISCONN).sendToTarget();
+                    MyOkHttp.mHandler.obtainMessage(CONN_STATE_DISCONN).sendToTarget();
                     break;
                 case DeviceConnFactoryManager.ACTION_CONN_STATE:
                     int state = intent.getIntExtra(DeviceConnFactoryManager.STATE, -1);
@@ -1101,7 +1092,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
 
     private void daily() {
-        NetTool.settlement(System.currentTimeMillis(), new GsonResponseHandler<BaseBean<String>>() {
+        NetTool.settlement(SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
 

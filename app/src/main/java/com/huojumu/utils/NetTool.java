@@ -178,10 +178,10 @@ public class NetTool {
     }
 
     //日結
-    public static void settlement(long timestamp, GsonResponseHandler<BaseBean<String>> handler) {
+    public static void settlement(int storeId, GsonResponseHandler<BaseBean<String>> handler) {
         okHttp.post().url(Constant.BASE_URL + "duty/settlement.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("token", SpUtil.getString(Constant.MY_TOKEN).split(" ")[1])
-                .addParam("timestamp", timestamp + "")
+                .addParam("storeId", storeId + "")
                 .enqueue(handler);
     }
 
@@ -201,7 +201,7 @@ public class NetTool {
     //日結工作信息
     public static void getSettlementInfo(int storeId, int pageNum, GsonResponseHandler<BaseBean<DailyInfo>> handler) {
         okHttp.post()
-                .url(Constant.BASE_URL + "duty/shiftInfo.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .url(Constant.BASE_URL + "duty/settlementInfo.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("token", SpUtil.getString(Constant.MY_TOKEN).split(" ")[1])
                 .addParam("storeId", "" + storeId)
                 .addParam("pageNum", "" + pageNum)

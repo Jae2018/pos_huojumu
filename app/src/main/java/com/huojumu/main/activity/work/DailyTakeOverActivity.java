@@ -6,6 +6,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -55,6 +56,8 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     TextView earn1;
     @BindView(R.id.tv_daily_earn2)
     TextView earn2;
+    @BindView(R.id.btn_work_daily_ok)
+    Button commit;
 
     private WorkDailyAdapter dailyAdapter;
     private List<DailyInfo.OrdersBean.RowsBean> rowsBeans = new ArrayList<>();
@@ -155,7 +158,6 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             //交班确认回调
             TakeOver();
         } else {
-            TakeOver();
             daily();
         }
         PrinterUtil.printDaily(types, String.valueOf(s4), String.valueOf(s2), String.valueOf(s1), num, SpUtil.getString(Constant.WORKER_NAME));
@@ -194,6 +196,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
         NetTool.getSettlementInfo(SpUtil.getInt(Constant.STORE_ID), 1, new GsonResponseHandler<BaseBean<DailyInfo>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<DailyInfo> response) {
+//                commit.setEnabled(true);
                 num = response.getData().getOrders().getTotal();
                 rowsBeans.addAll(response.getData().getOrders().getRows());
                 dailyAdapter.setNewData(rowsBeans);
@@ -212,7 +215,8 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
             @Override
             public void onFailure(int statusCode, String error_msg) {
-
+//                commit.setEnabled(false);
+//                ToastUtils.showLong("暂无日结信息");
             }
         });
     }
@@ -241,7 +245,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     }
 
     private void daily() {
-        NetTool.settlement(timestamp, new GsonResponseHandler<BaseBean<String>>() {
+        NetTool.settlement(SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
                 if (response.getMsg().equals("yes")) {

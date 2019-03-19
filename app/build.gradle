@@ -24,6 +24,7 @@ android {
     }
     lintOptions {
         disable 'GoogleAppIndexingWarning'
+        checkReleaseBuilds false
     }
     //配置 .so
     sourceSets {

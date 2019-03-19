@@ -7,19 +7,16 @@ package com.huojumu.model;
  */
 public class BaseBean<T> {
 
-    private int code;
+    private String code;
     private T data;
     private String msg;
 
-    public boolean isSuccess() {
-        return code == 200;
-    }
 
-    public int getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(int code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

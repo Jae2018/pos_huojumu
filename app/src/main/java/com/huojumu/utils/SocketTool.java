@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.google.gson.Gson;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.EventHandler;
@@ -55,13 +56,12 @@ public class SocketTool extends WebSocketListener {
             thread = new Thread() {
                 public void run() {
                     while (true) {
-//                        Log.e(TAG, "sendHeart: " + activity.getLocalClassName());
                         webSocket.send("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
                         try {
                             Thread.sleep(600 * 1000);
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Log.e(TAG, "run: error");
+                            new Throwable().printStackTrace();
                         }
                     }
                 }
@@ -103,8 +103,8 @@ public class SocketTool extends WebSocketListener {
                     }
 
                     @Override
-                    public void onFailure(int statusCode, String error_msg) {
-                        Log.e("Login", "onFailure: " + error_msg);
+                    public void onFailure(int statusCode,String code, String error_msg) {
+                        ToastUtils.showLong(error_msg);
                     }
                 });
                 break;

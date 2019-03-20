@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.huojumu.MyApplication;
 import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
@@ -66,13 +67,14 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        MyApplication.getSocketTool().sendMsg("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
-
         getCode();
-
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MyApplication.getSocketTool().sendMsg("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
+    }
 
     private void checkPermission() {
         for (String permission : permissions) {
@@ -112,8 +114,8 @@ public class LoginActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(int statusCode, String error_msg) {
-
+            public void onFailure(int statusCode, String code,String error_msg) {
+                ToastUtils.showLong(error_msg);
             }
         });
     }

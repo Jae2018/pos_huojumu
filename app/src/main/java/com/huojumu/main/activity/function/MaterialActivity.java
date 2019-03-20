@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.huojumu.R;
 import com.huojumu.adapter.MaterialAdapter;
 import com.huojumu.base.BaseActivity;
@@ -68,15 +69,14 @@ public class MaterialActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(int statusCode, String error_msg) {
-
+            public void onFailure(int statusCode,String code, String error_msg) {
+                ToastUtils.showLong(error_msg);
             }
         });
     }
 
     @OnClick(R.id.back)
     void back() {
-//        startActivity(new Intent(MaterialActivity.this, HomeActivity.class));
         finish();
     }
 

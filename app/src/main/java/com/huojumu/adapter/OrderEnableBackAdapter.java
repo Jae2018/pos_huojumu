@@ -20,7 +20,7 @@ public class OrderEnableBackAdapter extends BaseQuickAdapter<OrderBackBean , Bas
 
     @Override
     protected void convert(BaseViewHolder helper, OrderBackBean item) {
-        helper.setText(R.id.tv_order_back_no, item.getId().substring(item.getId().length() - 4))
-                .setText(R.id.tv_order_back_date, item.getCreateTime());
+        helper.setText(R.id.tv_order_back_no, String.format("C%s",item.getOrdNo().substring(item.getId().length() - 8)))
+                .setText(R.id.tv_order_back_date, String.format("C%s",item.getCreateTime()));
     }
 }

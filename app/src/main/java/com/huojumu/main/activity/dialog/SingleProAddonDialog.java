@@ -237,7 +237,7 @@ public class SingleProAddonDialog extends BaseDialog {
             }
 
             @Override
-            public void onFailure(int statusCode, String error_msg) {
+            public void onFailure(int statusCode,String code, String error_msg) {
 
             }
         });

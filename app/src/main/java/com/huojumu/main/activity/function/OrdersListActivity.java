@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.huojumu.R;
 import com.huojumu.adapter.OrderListAdapter;
@@ -94,8 +95,8 @@ public class OrdersListActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(int statusCode, String error_msg) {
-
+            public void onFailure(int statusCode,String code, String error_msg) {
+                ToastUtils.showLong(error_msg);
             }
         });
     }

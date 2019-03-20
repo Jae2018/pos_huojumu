@@ -191,8 +191,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         MyApplication.getSocketTool().sendHeart();
         EventBus.getDefault().register(this);
 
-        //正常进入系统主页，默认值
-//        SpUtil.save("Daily_success", true);
         threadPool = ThreadPool.getInstantiation();
         //链接标签机
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
@@ -295,7 +293,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         ld.setLoadingText("支付中")
                 .setSuccessText("支付成功")//显示加载成功时的文字
                 .setFailedText("支付失败");
-        dailyBtn.setEnabled(false);
+//        dailyBtn.setEnabled(false);
 //        if (!SpUtil.getBoolean("Daily_success")) {
 //            //非正常日结情况
 //            daily();
@@ -342,7 +340,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     }
 
                     @Override
-                    public void onFailure(int statusCode, String error_msg) {
+                    public void onFailure(int statusCode, String code,String error_msg) {
 
                     }
                 });
@@ -359,7 +357,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     }
 
                     @Override
-                    public void onFailure(int statusCode, String error_msg) {
+                    public void onFailure(int statusCode, String code,String error_msg) {
                         ToastUtils.showLong("网络出错，点击刷新");
                     }
                 });
@@ -374,7 +372,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
 
             @Override
-            public void onFailure(int statusCode, String error_msg) {
+            public void onFailure(int statusCode, String code,String error_msg) {
 
             }
         });
@@ -635,7 +633,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             finish();
                         }
                     }, 10 * 1000);
-                    dailyBtn.setEnabled(true);
                     break;
                 case Constant.WORK_BACK_DAILY:
                     MyOkHttp.mHandler.postDelayed(new Runnable() {
@@ -686,7 +683,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         }
 
                         @Override
-                        public void onFailure(int statusCode, String error_msg) {
+                        public void onFailure(int statusCode,String code, String error_msg) {
                             ToastUtils.showLong(error_msg);
                         }
                     });
@@ -715,7 +712,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     }
 
                     @Override
-                    public void onFailure(int statusCode, String error_msg) {
+                    public void onFailure(int statusCode,String code, String error_msg) {
                         ToastUtils.showLong(error_msg);
                     }
                 });

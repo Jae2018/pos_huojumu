@@ -44,8 +44,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/d_16"
-                android:text="请输入订单号："
-                android:textSize="@dimen/f_18" />
+                android:text="请输入订单号后四位："
+                android:textSize="@dimen/f_16" />
 
             <EditText
                 android:id="@+id/et_order_id"

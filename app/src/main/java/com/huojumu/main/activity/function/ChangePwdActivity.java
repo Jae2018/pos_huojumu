@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.home.HomeActivity;
@@ -41,7 +42,6 @@ public class ChangePwdActivity extends BaseActivity {
 
     @OnClick(R.id.btn_cancel)
     void onCancel() {
-//        startActivity(new Intent(ChangePwdActivity.this, HomeActivity.class));
         finish();
     }
 
@@ -63,8 +63,8 @@ public class ChangePwdActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(int statusCode, String error_msg) {
-
+            public void onFailure(int statusCode,String code, String error_msg) {
+                ToastUtils.showLong(error_msg);
             }
         });
     }

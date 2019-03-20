@@ -4,7 +4,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -22,6 +21,7 @@ import com.huojumu.model.OrderDetails;
 import com.huojumu.model.OrderEnableBackBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
+import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
@@ -36,7 +36,7 @@ import butterknife.OnClick;
 public class PayBackActivity extends BaseActivity implements DialogInterface {
 
     @BindView(R.id.et_order_id)
-    EditText editText;//ID
+    EditText editText;
     @BindView(R.id.recycler_order_back)
     RecyclerView backRecycler;
     @BindView(R.id.tv_order_back_name)
@@ -60,6 +60,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
     private String id,payType;
     //
     private CertainDialog dialog;
+    private OrderDetails details;
 
     @Override
     protected int setLayout() {
@@ -73,7 +74,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
         backAdapter = new OrderEnableBackAdapter(null);
         contentAdapter = new OrderBackContentAdapter(null);
         DividerItemDecoration decoration = new DividerItemDecoration(this,DividerItemDecoration.VERTICAL);
-        decoration.setDrawable(getResources().getDrawable(R.drawable.divider_v));
+        decoration.setDrawable(getResources().getDrawable(R.drawable.divider_v,null));
         backRecycler.addItemDecoration(decoration);
         backRecycler.setAdapter(backAdapter);
         detailRecycler.setAdapter(contentAdapter);
@@ -81,7 +82,6 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
         backAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                Log.e("back", "onItemClick: " );
                 id = backAdapter.getData().get(position).getId();
                 payType = backAdapter.getData().get(position).getPayType();
                 getOrderDetail(id);
@@ -114,8 +114,8 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
             }
 
             @Override
-            public void onFailure(int statusCode, String error_msg) {
-                ToastUtils.showLong("订单信息有误");
+            public void onFailure(int statusCode,String code, String error_msg) {
+                ToastUtils.showLong(error_msg);
             }
         });
     }
@@ -128,6 +128,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
                     buyer.setText(String.format("下单客户：%s", response.getData().getMember().getNickname()));
                 }
                 if (response.getData().getOrderdetail() != null) {
+                    details = response.getData();
                     contentAdapter.setNewData(response.getData().getOrderdetail().getPros());
                     priceTv.setText(String.format("订单金额：%s元", response.getData().getOrderdetail().getTotalPrice()));
                     dateTv.setText(String.format("订单日期：%s", response.getData().getOrderdetail().getCreateTime()));
@@ -139,8 +140,8 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
             }
 
             @Override
-            public void onFailure(int statusCode, String error_msg) {
-
+            public void onFailure(int statusCode,String code, String error_msg) {
+                ToastUtils.showLong(error_msg);
             }
         });
     }
@@ -157,13 +158,11 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
 
     @OnClick(R.id.btn_cancel)
     void cancelBack() {
-        Log.e("`12", "cancelBack: ");
         finish();
     }
 
     @OnClick(R.id.btn_commit)
     void commitBack() {
-        Log.e("`12", "commitBack: ");
         if (dialog == null) {
             dialog = new CertainDialog(this, this, "注意！", "确定要退单吗？");
         }
@@ -178,7 +177,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
                 if (response.getMsg().equals("yes")) {
                     ToastUtils.showLong("退单成功!");
                     clearRight();
-                    getEnableBackOrderList();
+                    PrinterUtil.printPayBack(details);
                 } else {
                     ToastUtils.showLong("退单失败!");
                 }
@@ -186,8 +185,8 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
             }
 
             @Override
-            public void onFailure(int statusCode, String error_msg) {
-
+            public void onFailure(int statusCode,String code, String error_msg) {
+                ToastUtils.showLong(error_msg);
             }
         });
     }

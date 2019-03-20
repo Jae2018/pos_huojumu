@@ -22,6 +22,7 @@ import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
+import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
 import java.util.ArrayList;
@@ -68,6 +69,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     private long timestamp;
     private int types;
     private int num = 0;
+    private double s1, s2, s3, s4;
 
     @Override
     protected int setLayout() {
@@ -121,8 +123,6 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             }
         });
     }
-
-    double s1, s2, s3, s4;
 
     @Override
     protected void initData() {
@@ -189,8 +189,8 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             }
 
             @Override
-            public void onFailure(int statusCode, String error_msg) {
-
+            public void onFailure(int statusCode,String code, String error_msg) {
+                ToastUtils.showLong(error_msg);
             }
         });
     }
@@ -208,6 +208,8 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                 earn2.setText(String.format(Locale.CHINA, "总虚收金额：%.2f", s2));
                 s4 = response.getData().getSaleData().getTotal();
                 commissionTv.setText(String.format(Locale.CHINA, "总销售金额：%.2f", s4));
+                commit.setEnabled(s4 != 0);
+
                 timestamp = response.getData().getTimestamp();
                 if (page < response.getData().getOrders().getPageNum()) {
                     page++;
@@ -216,8 +218,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             }
 
             @Override
-            public void onFailure(int statusCode, String error_msg) {
-
+            public void onFailure(int statusCode,String code, String error_msg) {
+                ToastUtils.showLong(error_msg);
+                commit.setEnabled(false);
             }
         });
     }
@@ -236,9 +239,17 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             }
 
             @Override
-            public void onFailure(int statusCode, String error_msg) {
+            public void onFailure(int statusCode,String code, String error_msg) {
+                if (code.equals("1220")) {
+                    MyOkHttp.mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ToastUtils.showLong("即将退出");
+                            finish();
+                        }
+                    }, 5000);
+                }
                 ToastUtils.showLong(error_msg);
-                commit.setEnabled(true);
             }
         });
     }
@@ -258,9 +269,8 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             }
 
             @Override
-            public void onFailure(int statusCode, String error_msg) {
+            public void onFailure(int statusCode,String code, String error_msg) {
                 ToastUtils.showLong(error_msg);
-                cancel.setEnabled(true);
             }
         });
     }

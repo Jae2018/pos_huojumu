@@ -774,6 +774,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * 打印订单小票
      */
     private void PrintOrder(final OrderBack orderBack, final double charge) {
+        Log.e(TAG, "PrintOrder:》》 "+orderInfo.getCreateTime() );
         threadPool.addTask(new Runnable() {
             @Override
             public void run() {
@@ -781,10 +782,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     isCash = false;
                     PrinterUtil.OpenMoneyBox();
                 }
+
                 PrinterUtil.printString80(HomeActivity.this, productions, orderBack.getOrderNo(),
                         SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
                         "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "",
-                        totalCut + "");
+                        totalCut + "", orderInfo.getCreateTime());
             }
         });
 

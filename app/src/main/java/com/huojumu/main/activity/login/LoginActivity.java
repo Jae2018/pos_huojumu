@@ -24,6 +24,7 @@ import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
 import com.huojumu.utils.QrUtil;
 import com.huojumu.utils.SpUtil;
+import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
 import org.greenrobot.eventbus.EventBus;
@@ -67,7 +68,12 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        getCode();
+        MyOkHttp.mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getCode();
+            }
+        }, 1000);
     }
 
     @Override

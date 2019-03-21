@@ -272,7 +272,6 @@ public class PrinterUtil {
     public static void connectPrinter(Context context) {
         mPrinter = new PrinterAPI();
         io = new USBAPI(context);
-        date = new Date(System.currentTimeMillis());
         if (PrinterAPI.SUCCESS == mPrinter.connect(io)) {
             ToastUtils.showLong("已连接打印机");
         } else {
@@ -297,44 +296,41 @@ public class PrinterUtil {
     }
 
     public static String getDate() {
+        date = new Date(System.currentTimeMillis());
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         return simpleDateFormat.format(date);
     }
 
     public static String getTime() {
+        date = new Date(System.currentTimeMillis());
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
-        simpleDateFormat.format(date);
         return simpleDateFormat.format(date);
     }
 
     public static String getTabTime() {
+        date = new Date(System.currentTimeMillis());
         simpleDateFormat = new SimpleDateFormat("MMdd", Locale.CHINA);
-        simpleDateFormat.format(date);
         return simpleDateFormat.format(date);
     }
 
     public static String getTabHour() {
+        date = new Date(System.currentTimeMillis());
         simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.CHINA);
-        simpleDateFormat.format(date);
         return simpleDateFormat.format(date);
     }
 
-    public static String getPrintDate() {
+    private static String getPrintDate() {
+        date = new Date(System.currentTimeMillis());
         simpleDateFormat = new SimpleDateFormat("MM-dd HH:mm:ss", Locale.CHINA);
-        simpleDateFormat.format(date);
         return simpleDateFormat.format(date);
     }
 
     public static String getCNDate() {
+        date = new Date(System.currentTimeMillis());
         simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
-        simpleDateFormat.format(date);
         return simpleDateFormat.format(date);
     }
 
-    public static String getOrderID() {
-        simpleDateFormat = new SimpleDateFormat("yyMMdd", Locale.CHINA);
-        return simpleDateFormat.format(new Date());
-    }
 
     /**
      * 打印文本58mm样式// 32 字节
@@ -427,7 +423,7 @@ public class PrinterUtil {
      * 打印文本80mm小票样式 48 字节
      */
     public static void printString80(Context c, final List<Production> pList, final String orderNo, final String name, final String totalMoney,
-                                     final String earn, final String cost, final String charge, final String cut) {
+                                     final String earn, final String cost, final String charge, final String cut, final String date) {
         try {
             //居左
             mPrinter.setAlignMode(0);
@@ -442,7 +438,7 @@ public class PrinterUtil {
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line1)));
 
             //员工名 + 时间
-            s = "收银员：" + name + "\n" + "时间：" + PrinterUtil.getPrintDate();
+            s = "收银员：" + name + "\n" + "下单时间：" + date;
             mPrinter.printString(s, "GB-2312");
 
             //间隔大的虚线
@@ -561,7 +557,7 @@ public class PrinterUtil {
     /**
      * 打印退单
      */
-    public static void printPayBack(OrderDetails details){
+    public static void printPayBack(OrderDetails details,String date){
 
         try {
             String s = "退账单";
@@ -570,7 +566,10 @@ public class PrinterUtil {
 
             mPrinter.setAlignMode(0);
 
-            s = "操作人：" + SpUtil.getString(Constant.WORKER_NAME) + "\n" + "时间：" + PrinterUtil.getPrintDate();
+            s = "操作人：" + SpUtil.getString(Constant.WORKER_NAME)
+                    + "\n" + "下单时间：" + details.getOrderdetail().getCreateTime()
+                    + "\n" + "退单时间：" + date
+                    + "\n" + "原订单号：" + details.getOrderdetail().getOrdNo().substring(details.getOrderdetail().getOrdNo().length() - 4);
             mPrinter.printString(s, "GB-2312");
 
             s = "------------------------------------------------";
@@ -587,9 +586,11 @@ public class PrinterUtil {
             mPrinter.printString(sb.toString(), "GB-2312");
 
             //公司
+            mPrinter.setAlignMode(1);
             s = "\n技术支持：火炬木科技";
             mPrinter.printString(s, "GB-2312");
             mPrinter.feedToStartPos();
+
             cutPaper();
         } catch (Exception e) {
             ToastUtils.showLong("打印机连接出错");

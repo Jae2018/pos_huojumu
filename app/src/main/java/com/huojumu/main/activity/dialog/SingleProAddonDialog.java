@@ -277,7 +277,7 @@ public class SingleProAddonDialog extends BaseDialog {
 
     @OnClick(R.id.btn_home_addon_ok)
     void Ok() {
-        if (numTV.getText().toString().isEmpty()) {
+        if (numTV.getText().length() < 1) {
             number = 1;
         } else {
             number = Integer.parseInt(numTV.getText().toString().trim());

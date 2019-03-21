@@ -18,6 +18,7 @@ import com.huojumu.adapter.HomeSelectedAdapter;
 import com.huojumu.model.Production;
 
 import java.util.List;
+import java.util.Locale;
 
 //import android.view.SurfaceView;
 
@@ -88,7 +89,7 @@ public class DifferentDisplay extends Presentation {
 
     public void setPrice(double total, double cut) {
         priceTV.setText(String.valueOf(total));
-        cutTV.setText(String.format("优惠：%.2s元", String.valueOf(cut)));
+        cutTV.setText(String.format(Locale.CHINA,"优惠：%.2f元", cut));
     }
 
     public ImageView getAliIV() {

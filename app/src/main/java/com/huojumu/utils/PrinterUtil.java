@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.gson.Gson;
 import com.huojumu.R;
+import com.huojumu.model.MatsBean;
 import com.huojumu.model.OrderDetails;
 import com.huojumu.model.Production;
 import com.szsicod.print.escpos.PrinterAPI;
@@ -450,12 +451,11 @@ public class PrinterUtil {
             sb.append(printFourData80("商品名称", "数量", "单价", "金额")).append("\n");
 
             mPrinter.setFontStyle(1);
-            for (int i = 0; i < pList.size(); i++) {
-                int n = pList.get(i).getNumber();
-                sb.append(printFourData80(pList.get(i).getProName(), String.valueOf(n), String.valueOf(pList.get(i).getPrice()), String.valueOf(n * pList.get(i).getPrice()))).append("\n");
-                for (int j = 0; j < pList.get(i).getMats().size(); j++) {
-                    int p = pList.get(i).getMats().get(j).getIngredientPrice() * n;
-                    sb.append(printFourData80(" "+pList.get(i).getMats().get(j).getMatName(),String.valueOf(n),String.valueOf(pList.get(i).getMats().get(j).getIngredientPrice()),String.valueOf(p))).append("\n");
+            for (Production p: pList) {
+                int n = p.getNumber();
+                sb.append(printFourData80(p.getProName(), String.valueOf(n), String.valueOf(p.getPrice()), String.valueOf(n * p.getPrice()))).append("\n");
+                for (MatsBean bean: p.getMats()) {
+                    sb.append(printFourData80(" " + bean.getMatName(), String.valueOf(n), String.valueOf(bean.getIngredientPrice()), String.valueOf(n*bean.getIngredientPrice()))).append("\n");
                 }
             }
             mPrinter.printString(sb.toString(), "GB-2312");
@@ -560,7 +560,7 @@ public class PrinterUtil {
     /**
      * 打印退单
      */
-    public static void printPayBack(OrderDetails details,String date){
+    public static void printPayBack(OrderDetails details, String date) {
 
         try {
             String s = "退账单";

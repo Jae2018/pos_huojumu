@@ -29,12 +29,12 @@ public class OrderBack {
     private String origionTotalPrice;
     private String creatTime;
 
-    public String getCreateTime() {
+    public String getCreatTime() {
         return creatTime;
     }
 
-    public void setCreateTime(String createTime) {
-        this.creatTime = createTime;
+    public void setCreatTime(String creatTime) {
+        this.creatTime = creatTime;
     }
 
     public String getPickUpCode() {

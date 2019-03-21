@@ -7,10 +7,13 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Display;
 import android.view.KeyboardShortcutGroup;
 import android.view.Menu;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.huojumu.R;
@@ -35,6 +38,7 @@ public class DifferentDisplay extends Presentation {
     private HomeSelectedAdapter selectedAdapter;
     //结账二维码
     private ImageView aliIV;
+    private RelativeLayout adsLinear;
 
     public DifferentDisplay(Context outerContext, Display display) {
         super(outerContext, display);
@@ -50,12 +54,14 @@ public class DifferentDisplay extends Presentation {
         priceTV = findViewById(R.id.tv_differ_money);
         cutTV = findViewById(R.id.tv_differ_cut);
         aliIV = findViewById(R.id.iv_pay_image);
+        adsLinear = findViewById(R.id.ads_linear);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         rv.setLayoutManager(manager);
         selectedAdapter = new HomeSelectedAdapter(null);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
         itemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.line_v_for_recycler));
         rv.addItemDecoration(itemDecoration);
+        Log.e(">>>", "onCreate: " + adsLinear.getWidth() + "___" + adsLinear.getHeight());
     }
 
     @Override

@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/pro_border"
     android:padding="@dimen/d_1"
-    android:layout_margin="@dimen/d_10" >
+    android:layout_margin="@dimen/d_8" >
 
     <ImageView
         android:id="@+id/iv_product_url"

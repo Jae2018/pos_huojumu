@@ -27,8 +27,6 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
         ImageView iv = helper.getView(R.id.iv_product_url);
         if (!item.getImgs().isEmpty()) {
             GlideApp.with(mContext).load(item.getImgs().get(0).getPath()).placeholder(R.drawable.placeholder).into(iv);
-        } else {
-            iv.setImageDrawable(mContext.getResources().getDrawable(R.drawable.placeholder));
         }
         helper.setText(R.id.tv_product_cut, String.format("¥ %s", (item.getIsBargain() != null) && (item.getIsBargain().equals("1")) ? item.getPrice() : item.getOrigionPrice()))
                 .setText(R.id.tv_product_name, item.getProName());

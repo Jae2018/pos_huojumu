@@ -10,7 +10,7 @@
         android:id="@+id/iv_product_url"
         android:layout_width="@dimen/d_120"
         android:layout_height="@dimen/d_120"
-        android:src="@drawable/pro_default"
+        android:src="@drawable/placeholder"
         android:contentDescription="@string/des" />
 
     <TextView

@@ -813,13 +813,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 p.setTasteStr(taste);
                 p.setPrice(price);
                 p.setNumber(count);
+                p.setScaleStr(productions.get(i).getScaleStr());
                 p.setMatStr(productions.get(i).getMatStr());
                 printProducts.add(p);
                 printcount++;
             }
         }
 
-        printLabel(backStr);
+        printLabel(orderBack.getTotalPrice());
     }
 
     private void printLabel(final String price) {
@@ -836,7 +837,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             printcount--;
                             if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getCurrentPrinterCommand() == PrinterCommand.TSC) {
                                 //标签模式可直接使用LabelCommand.addPrint()方法进行打印
-                                sendLabel(printProducts.get(printcount).getProName(), printProducts.get(printcount).getTasteStr(), price, printcount, printProducts.size(), printProducts.get(printcount).getMatStr());
+                                String name = printProducts.get(printcount).getProName();
+                                if (name.length() > 6) {
+                                    name = name.substring(0, 6);
+                                }
+                                String mate = printProducts.get(printcount).getMatStr();
+                                if (mate.length() > 8) {
+                                    mate = mate.substring(0, 8);
+                                }
+                                sendLabel(name, printProducts.get(printcount).getTasteStr(), price, printcount, printProducts.size(), mate, printProducts.get(printcount).getScaleStr());
                             }
                         }
                     }), 1000, TimeUnit.MILLISECONDS);
@@ -942,7 +951,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     /**
      * 发送标签
      */
-    void sendLabel(String pName, String pContent, String price, int i, int number,String matStr) {
+    void sendLabel(String pName, String pContent, String price, int i, int number,String matStr,String scale) {
         i = i + 1;
         LabelCommand tsc = new LabelCommand();
         // 设置标签尺寸，按照实际尺寸设置
@@ -960,23 +969,25 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         // 清除打印缓冲区
         tsc.addCls();
         // 绘制简体中文
-        tsc.addText(5, 13, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(0, 3, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.STORE_NAME) + "\n");
-        tsc.addText(0, 43, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(0, 33, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 pName + "\n");
-        tsc.addText(0, 78, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
-                pContent + " ￥" + price + " " + i + "/" + number + "\n");
-        tsc.addText(0, 110, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(0, 63, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 matStr);
-        tsc.addText(0, 140, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(0, 93, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+                scale + " "+i + "/" + number +"\n");
+        tsc.addText(0, 123, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+                pContent + " ￥" + price + " " +  "\n");
+        tsc.addText(0, 153, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.WORKER_NAME).substring(0,3) + "\n");
-        tsc.addText(0, 170, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(0, 183, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 PrinterUtil.getTabTime() + orderNo.substring(orderNo.length() - 4) + "-" + PrinterUtil.getTabHour() + "\n");
-        tsc.addText(0, 200, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(0, 213, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.STORE_ADDRESS));
         // 绘制图片
         Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.logo9);
-        tsc.addBitmap(200, 35, LabelCommand.BITMAP_MODE.OVERWRITE, 90, b);
+        tsc.addBitmap(200, 40, LabelCommand.BITMAP_MODE.OVERWRITE, 80, b);
         Log.e(TAG, "PrintOrder: print 9");
         // 打印标签
         tsc.addPrint(1, 1);
@@ -1042,18 +1053,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             break;
                         case DeviceConnFactoryManager.CONN_STATE_CONNECTED:
                             ToastUtils.showLong("标签打印机已连接");
-//                            if(DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].connMethod== DeviceConnFactoryManager.CONN_METHOD.WIFI){
-//                                wificonn=true;
-//                                if(keepConn==null) {
-//                                    keepConn = new KeepConn();
-//                                    keepConn.start();
-//                                }
-//                            }
                             break;
                         case CONN_STATE_FAILED:
-//                            Utils.toast(MainActivity.this, getString(R.string.str_conn_fail));
                             ToastUtils.showLong("标签打印机连接失败");
-                            //wificonn=false;
                             break;
                         default:
                             break;
@@ -1063,9 +1065,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     Log.e(TAG, "onReceive print: 0");
                     if (printcount >= 0) {
                         if (continuityprint) {
-//                            printcount++;
                             Log.e(TAG, "onReceive print: 1");
-//                            Utils.toast(MainActivity.this, getString(R.string.str_continuityprinter) + " " + printcount);
                         }
                         if (printcount != 0) {
                             printLabel(backStr);

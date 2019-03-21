@@ -832,7 +832,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             printcount--;
                             if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getCurrentPrinterCommand() == PrinterCommand.TSC) {
                                 //标签模式可直接使用LabelCommand.addPrint()方法进行打印
-                                sendLabel(printProducts.get(printcount).getProName(), printProducts.get(printcount).getTasteStr(), printProducts.get(printcount).getPrice(), printcount, printProducts.size());
+                                sendLabel(printProducts.get(printcount).getProName(), printProducts.get(printcount).getTasteStr(), printProducts.get(printcount).getPrice(), printcount, printProducts.size(),printProducts.get(printcount).getMatStr());
                             }
                         }
                     }), 1000, TimeUnit.MILLISECONDS);
@@ -938,7 +938,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     /**
      * 发送标签
      */
-    void sendLabel(String pName, String pContent, double price, int i, int number) {
+    void sendLabel(String pName, String pContent, double price, int i, int number,String matStr) {
         i = i + 1;
         LabelCommand tsc = new LabelCommand();
         // 设置标签尺寸，按照实际尺寸设置
@@ -963,7 +963,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         tsc.addText(0, 78, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 pContent + " ￥" + price + " " + i + "/" + number + "\n");
         tsc.addText(0, 110, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
-                "￥" + price + "    " + i + "/" + number);
+                matStr);
         tsc.addText(0, 140, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.WORKER_NAME).substring(0,3) + "\n");
         tsc.addText(0, 170, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,

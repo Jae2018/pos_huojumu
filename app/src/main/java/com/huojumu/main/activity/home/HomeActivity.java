@@ -625,14 +625,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             switch (requestCode) {
                 case Constant.WORK_BACK_OVER:
                     SpUtil.save("hasOverOrder", false);
-                    ToastUtils.showLong("已完成交班！10秒后将退出登录！");
+                    ToastUtils.showLong("已完成交班！即将退出登录！");
                     MyOkHttp.mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                             finish();
                         }
-                    }, 10 * 1000);
+                    }, 1000);
                     break;
                 case Constant.WORK_BACK_DAILY:
                     MyOkHttp.mHandler.postDelayed(new Runnable() {

@@ -190,7 +190,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
             @Override
             public void onFailure(int statusCode,String code, String error_msg) {
-                ToastUtils.showLong(error_msg);
+                if (!code.equals("0")) {
+                    ToastUtils.showLong(error_msg);
+                }
             }
         });
     }
@@ -219,7 +221,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
             @Override
             public void onFailure(int statusCode,String code, String error_msg) {
-                ToastUtils.showLong(error_msg);
+                if (!code.equals("0")) {
+                    ToastUtils.showLong(error_msg);
+                }
                 commit.setEnabled(false);
             }
         });
@@ -248,8 +252,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                             finish();
                         }
                     }, 5000);
+                }else if (!code.equals("0")) {
+                    ToastUtils.showLong(error_msg);
                 }
-                ToastUtils.showLong(error_msg);
             }
         });
     }
@@ -270,7 +275,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
             @Override
             public void onFailure(int statusCode,String code, String error_msg) {
-                ToastUtils.showLong(error_msg);
+                if (!code.equals("0")) {
+                    ToastUtils.showLong(error_msg);
+                }
             }
         });
     }

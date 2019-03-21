@@ -27,7 +27,15 @@ public class OrderBack {
     private String aliPayQrcode;
     private String chinaUnionQrcode;
     private String origionTotalPrice;
-    private String createTime;
+    private String creatTime;
+
+    public String getCreateTime() {
+        return creatTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.creatTime = createTime;
+    }
 
     public String getPickUpCode() {
         return pickUpCode;

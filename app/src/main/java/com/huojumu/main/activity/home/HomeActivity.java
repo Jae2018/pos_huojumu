@@ -702,6 +702,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         orderBack = response.getData();
                         orderNo = response.getData().getOrderNo();
                         PrintOrder(response.getData(), charge < 0 ? 0 : charge);
+                        backStr = response.getData().getTotalPrice();
                         SpUtil.save("hasOverOrder", true);
                         MyOkHttp.mHandler.postDelayed(new Runnable() {
                             @Override
@@ -729,6 +730,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 break;
         }
     }
+
+    private String backStr;
 
     @Override
     public void OnUsbCallBack(String name) {
@@ -786,7 +789,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 PrinterUtil.printString80(HomeActivity.this, productions, orderBack.getOrderNo(),
                         SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
                         "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "",
-                        totalCut + "", orderInfo.getCreateTime());
+                        totalCut + "", orderBack.getCreateTime());
             }
         });
 
@@ -815,10 +818,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
         }
 
-        printLabel();
+        printLabel(backStr);
     }
 
-    private void printLabel() {
+    private void printLabel(final String price) {
         threadPool.addTask(new Runnable() {
             @Override
             public void run() {
@@ -832,7 +835,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             printcount--;
                             if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getCurrentPrinterCommand() == PrinterCommand.TSC) {
                                 //标签模式可直接使用LabelCommand.addPrint()方法进行打印
-                                sendLabel(printProducts.get(printcount).getProName(), printProducts.get(printcount).getTasteStr(), printProducts.get(printcount).getPrice(), printcount, printProducts.size(),printProducts.get(printcount).getMatStr());
+                                sendLabel(printProducts.get(printcount).getProName(), printProducts.get(printcount).getTasteStr(), price, printcount, printProducts.size(), printProducts.get(printcount).getMatStr());
                             }
                         }
                     }), 1000, TimeUnit.MILLISECONDS);
@@ -938,7 +941,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     /**
      * 发送标签
      */
-    void sendLabel(String pName, String pContent, double price, int i, int number,String matStr) {
+    void sendLabel(String pName, String pContent, String price, int i, int number,String matStr) {
         i = i + 1;
         LabelCommand tsc = new LabelCommand();
         // 设置标签尺寸，按照实际尺寸设置
@@ -1064,7 +1067,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 //                            Utils.toast(MainActivity.this, getString(R.string.str_continuityprinter) + " " + printcount);
                         }
                         if (printcount != 0) {
-                            printLabel();
+                            printLabel(backStr);
                             Log.e(TAG, "onReceive print: 2");
                         } else {
                             continuityprint = false;

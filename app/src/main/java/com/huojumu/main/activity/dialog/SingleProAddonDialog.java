@@ -304,6 +304,12 @@ public class SingleProAddonDialog extends BaseDialog {
             tastesBeans.add(tastesBean);
         }
 
+        String matStr = "";
+        for (int i = 0; i < matsBeans.size(); i++) {
+            matStr += matsBeans.get(i).getMatName()+" ";
+        }
+        productsBean.setMatStr(matStr);
+
         dataBean.setMakes(makesBeans);
         dataBean.setMats(matsBeans);
         dataBean.setTastes(tastesBeans);

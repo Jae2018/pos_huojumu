@@ -31,6 +31,15 @@ public class Production {
     private String addon;
     private String tasteStr;
     private String scaleStr;
+    private String matStr;
+
+    public String getMatStr() {
+        return matStr;
+    }
+
+    public void setMatStr(String matStr) {
+        this.matStr = matStr;
+    }
 
     public int getScaleId() {
         return scaleId;

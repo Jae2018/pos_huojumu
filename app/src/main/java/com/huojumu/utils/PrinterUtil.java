@@ -455,7 +455,7 @@ public class PrinterUtil {
                     sb.append(printFourData80(pList.get(i).getAddon(), "", "", ""));
                 }
                 for (int j = 0; j < pList.get(i).getMats().size(); j++) {
-                    sb.append(pList.get(i).getMats().get(j).getMatName()).append(" ");
+                    sb.append(printFourData80(pList.get(i).getMats().get(j).getMatName(),"1",pList.get(i).getMats().get(j).getIngredientPrice()+"",pList.get(i).getMats().get(j).getIngredientPrice()+"")).append("\n");
                 }
             }
             mPrinter.printString(sb.toString(), "GB-2312");

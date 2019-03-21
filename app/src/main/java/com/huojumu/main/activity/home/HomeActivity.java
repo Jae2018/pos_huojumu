@@ -805,7 +805,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         for (int i = 0; i < productions.size(); i++) {
             name = productions.get(i).getProName();
             taste = productions.get(i).getTasteStr();
-            price = productions.get(i).getPrice();
+            price = productions.get(i).getPrice() + productions.get(i).getMateP();
             count = productions.get(i).getNumber();
             for (int j = 0; j < productions.get(i).getNumber(); j++) {
                 Production p = new Production();
@@ -820,10 +820,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
         }
 
-        printLabel(orderBack.getTotalPrice());
+        printLabel();
     }
 
-    private void printLabel(final String price) {
+    private void printLabel() {
         threadPool.addTask(new Runnable() {
             @Override
             public void run() {
@@ -845,7 +845,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                 if (mate.length() > 8) {
                                     mate = mate.substring(0, 8);
                                 }
-                                sendLabel(name, printProducts.get(printcount).getTasteStr(), price, printcount, printProducts.size(), mate, printProducts.get(printcount).getScaleStr());
+                                sendLabel(name, printProducts.get(printcount).getTasteStr(), printProducts.get(printcount).getPrice()+"", printcount, printProducts.size(), mate, printProducts.get(printcount).getScaleStr());
                             }
                         }
                     }), 1000, TimeUnit.MILLISECONDS);
@@ -987,7 +987,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 SpUtil.getString(Constant.STORE_ADDRESS));
         // 绘制图片
         Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.logo9);
-        tsc.addBitmap(200, 40, LabelCommand.BITMAP_MODE.OVERWRITE, 80, b);
+        tsc.addBitmap(220, 40, LabelCommand.BITMAP_MODE.OVERWRITE, 80, b);
         Log.e(TAG, "PrintOrder: print 9");
         // 打印标签
         tsc.addPrint(1, 1);
@@ -1068,7 +1068,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             Log.e(TAG, "onReceive print: 1");
                         }
                         if (printcount != 0) {
-                            printLabel(backStr);
+                            printLabel();
                             Log.e(TAG, "onReceive print: 2");
                         } else {
                             continuityprint = false;

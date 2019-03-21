@@ -415,7 +415,7 @@ public class PrinterUtil {
 //        sb.append(rightText);
 
         // 打印的时候发现，最右边的文字总是偏右一个字符，所以需要删除一个空格
-        sb.delete(sb.length() - 1, sb.length()).append(rightText);
+//        sb.delete(sb.length() - 1, sb.length()).append(rightText);
         return sb.toString();
     }
 
@@ -451,12 +451,11 @@ public class PrinterUtil {
 
             mPrinter.setFontStyle(1);
             for (int i = 0; i < pList.size(); i++) {
-                sb.append(printFourData80(pList.get(i).getProName(), String.valueOf(pList.get(i).getNumber()), String.valueOf(pList.get(i).getPrice()), String.valueOf(pList.get(i).getNumber() * pList.get(i).getPrice()))).append("\n");
-                if (!pList.get(i).getAddon().isEmpty()) {
-                    sb.append(printFourData80(pList.get(i).getAddon(), "", "", ""));
-                }
+                int n = pList.get(i).getNumber();
+                sb.append(printFourData80(pList.get(i).getProName(), String.valueOf(n), String.valueOf(pList.get(i).getPrice()), String.valueOf(n * pList.get(i).getPrice()))).append("\n");
                 for (int j = 0; j < pList.get(i).getMats().size(); j++) {
-                    sb.append(printFourData80(pList.get(i).getMats().get(j).getMatName(),"1",pList.get(i).getMats().get(j).getIngredientPrice()+"",pList.get(i).getMats().get(j).getIngredientPrice()+"")).append("\n");
+                    int p = pList.get(i).getMats().get(j).getIngredientPrice() * n;
+                    sb.append(printFourData80(" "+pList.get(i).getMats().get(j).getMatName(),String.valueOf(n),String.valueOf(pList.get(i).getMats().get(j).getIngredientPrice()),String.valueOf(p))).append("\n");
                 }
             }
             mPrinter.printString(sb.toString(), "GB-2312");

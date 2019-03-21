@@ -32,6 +32,16 @@ public class Production {
     private String tasteStr;
     private String scaleStr;
     private String matStr;
+    private double mateP;
+
+
+    public double getMateP() {
+        return mateP;
+    }
+
+    public void setMateP(double mateP) {
+        this.mateP = mateP;
+    }
 
     public String getMatStr() {
         return matStr;

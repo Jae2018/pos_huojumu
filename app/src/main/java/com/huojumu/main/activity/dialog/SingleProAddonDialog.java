@@ -302,10 +302,13 @@ public class SingleProAddonDialog extends BaseDialog {
         }
 
         String matStr = "";
+        double matP = 0;
         for (int i = 0; i < matsBeans.size(); i++) {
             matStr += matsBeans.get(i).getMatName()+" ";
+            matP += matsBeans.get(i).getIngredientPrice();
         }
         productsBean.setMatStr(matStr);
+        productsBean.setMateP(matP);
 
         dataBean.setMakes(makesBeans);
         dataBean.setMats(matsBeans);

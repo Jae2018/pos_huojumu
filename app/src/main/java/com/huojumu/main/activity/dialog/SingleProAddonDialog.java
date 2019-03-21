@@ -4,14 +4,12 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.huojumu.R;
 import com.huojumu.base.BaseDialog;
 import com.huojumu.main.dialogs.SingleProCallback;
@@ -25,7 +23,6 @@ import com.huojumu.model.Specification;
 import com.huojumu.model.TastesBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
-import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 import com.zhy.view.flowlayout.FlowLayout;
@@ -320,7 +317,7 @@ public class SingleProAddonDialog extends BaseDialog {
         productsBean.setTastes(tastesBeans);
         proId = productsBean.getProId();
         callback.onSingleCallBack(proId, number, productsBean, dataBean, position);
-        Log.e("number", "productsBean: {" + PrinterUtil.toJson(productsBean) + "\n}");
+//        Log.e("number", "productsBean: {" + PrinterUtil.toJson(productsBean) + "\n}");
         number = 1;
         cancel();
     }

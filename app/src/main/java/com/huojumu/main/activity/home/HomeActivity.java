@@ -836,7 +836,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             printcount--;
                             if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getCurrentPrinterCommand() == PrinterCommand.TSC) {
                                 //标签模式可直接使用LabelCommand.addPrint()方法进行打印
-                                Log.e(TAG, "run: " + printProducts.get(printcount).getMatStr());
                                 sendLabel(printProducts.get(printcount).getProName(), printProducts.get(printcount).getTasteStr(), price, printcount, printProducts.size(), printProducts.get(printcount).getMatStr());
                             }
                         }

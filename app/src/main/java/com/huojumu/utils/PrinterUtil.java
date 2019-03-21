@@ -425,6 +425,7 @@ public class PrinterUtil {
     public static void printString80(Context c, final List<Production> pList, final String orderNo, final String name, final String totalMoney,
                                      final String earn, final String cost, final String charge, final String cut, final String date) {
         try {
+            mPrinter.init();
             //居左
             mPrinter.setAlignMode(0);
             //字体变大
@@ -516,7 +517,7 @@ public class PrinterUtil {
      */
     public static void printDaily(int type, String total, String mobilePay, String cash, int orderNum, String workerName) {
         try {
-
+            mPrinter.init();
             mPrinter.setCharSize(1, 1);
             String t = type == 1 ? "交班" : "日结";
             mPrinter.printString(t, "GBK");

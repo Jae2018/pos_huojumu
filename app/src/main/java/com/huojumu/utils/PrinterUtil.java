@@ -413,7 +413,7 @@ public class PrinterUtil {
         for (int i = 0; i < marginBetweenThreeAndFour; i++) {
             sb.append(" ");
         }
-//        sb.append(rightText);
+        sb.append(rightText);
 
         // 打印的时候发现，最右边的文字总是偏右一个字符，所以需要删除一个空格
 //        sb.delete(sb.length() - 1, sb.length()).append(rightText);

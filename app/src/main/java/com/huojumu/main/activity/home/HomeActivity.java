@@ -293,11 +293,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         ld.setLoadingText("支付中")
                 .setSuccessText("支付成功")//显示加载成功时的文字
                 .setFailedText("支付失败");
-//        dailyBtn.setEnabled(false);
-//        if (!SpUtil.getBoolean("Daily_success")) {
-//            //非正常日结情况
-//            daily();
-//        }
+
     }
 
     @OnClick(R.id.button5)

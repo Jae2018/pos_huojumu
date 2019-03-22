@@ -416,7 +416,7 @@ public class PrinterUtil {
         sb.append(rightText);
 
         // 打印的时候发现，最右边的文字总是偏右一个字符，所以需要删除一个空格
-//        sb.delete(sb.length() - 1, sb.length()).append(rightText);
+        sb.delete(sb.length() - 1, sb.length()).append(rightText);
         return sb.toString();
     }
 
@@ -518,16 +518,19 @@ public class PrinterUtil {
         try {
             mPrinter.init();
             mPrinter.setCharSize(1, 1);
+            mPrinter.setLineSpace(1);
             String t = type == 1 ? "交班" : "日结";
             mPrinter.printString(t, "GBK");
 
             //居左
             mPrinter.setAlignMode(0);
-            String s = t + "\n日期：\n";
+            String s = t + "日期：\n";
             mPrinter.printString(s, "GBK");
 
             mPrinter.setCharSize(0, 0);
-            s = "本次" + t + "时间：" + getDate() + "\n" + "上次" + t + "时间" + SpUtil.getString("dailyTime") + "\n";
+            s = "本次" + t + "时间：" + getDate() + "\n"
+                    + "上次" + t + "时间" + SpUtil.getString("dailyTime") + "\n"
+                    + t + "人员：" + workerName + "\n";
             mPrinter.printString(s, "GBK");
 
             mPrinter.setCharSize(1, 1);
@@ -535,11 +538,10 @@ public class PrinterUtil {
             mPrinter.printString(s, "GBK");
 
             mPrinter.setCharSize(0, 0);
-            s = "总营收金额：" + total + "\n"
+            s = "本次" + t + "销售总额：" + total + "\n"
                     + "总虚收金额：" + mobilePay + "\n"
                     + "总实收金额：" + cash + "\n"
-                    + "总  单  数：" + orderNum + "\n"
-                    + t + "人员：" + workerName + "\n";
+                    + "总  单  数：" + orderNum + "\n";
             mPrinter.printString(s, "GBK");
 
             Log.e(TAG, "printDaily: " + s);

@@ -455,6 +455,7 @@ public class PrinterUtil {
                 sb.append(printFourData80(pList.get(i).getProName(), String.valueOf(n), String.valueOf(pList.get(i).getPrice()), String.valueOf(n * pList.get(i).getPrice()))).append("\n");
                 for (int j = 0; j < pList.get(i).getMats().size(); j++) {
                     int p = pList.get(i).getMats().get(j).getIngredientPrice() * n;
+                    Log.e(TAG, "printString80 mats price: " + p);
                     sb.append(printFourData80(" "+pList.get(i).getMats().get(j).getMatName(),String.valueOf(n),String.valueOf(pList.get(i).getMats().get(j).getIngredientPrice()),String.valueOf(p))).append("\n");
                 }
             }

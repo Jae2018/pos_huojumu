@@ -458,12 +458,13 @@ public class PrinterUtil {
             sb.append(printFourData80("商品名称", "数量", "单价", "金额")).append("\n");
 
             mPrinter.setFontStyle(1);
-            for (Production p: pList) {
+            for (Production p : pList) {
                 int n = p.getNumber();
                 sb.append(printFourData80(p.getProName(), String.valueOf(n), String.valueOf(p.getPrice()), String.valueOf(n * p.getPrice()))).append("\n");
-                for (MatsBean bean: p.getMats()) {
-                    sb.append(printFourData80(" " + bean.getMatName(), String.valueOf(n), String.valueOf(bean.getIngredientPrice()), String.valueOf(n*bean.getIngredientPrice()))).append("\n");
-                }
+                if (p.getMats().size() > 0)
+                    for (MatsBean bean : p.getMats()) {
+                        sb.append(printFourData80(" " + bean.getMatName(), String.valueOf(n), String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()))).append("\n");
+                    }
             }
             mPrinter.printString(sb.toString(), "GB-2312");
 
@@ -551,7 +552,6 @@ public class PrinterUtil {
                     + "总  单  数：" + orderNum + "\n";
             mPrinter.printString(s, "GBK");
 
-            Log.e(TAG, "printDaily: " + s);
             mPrinter.printFeed();
             mPrinter.setAlignMode(1);
             //公司

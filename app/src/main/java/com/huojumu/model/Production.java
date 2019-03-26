@@ -266,4 +266,39 @@ public class Production {
     public void setScaleStr(String scaleStr) {
         this.scaleStr = scaleStr;
     }
+
+    @Override
+    public String toString() {
+        return "Production{" +
+                "scaleId=" + scaleId +
+                ", proType='" + proType + '\'' +
+                ", origionPrice=" + origionPrice +
+                ", remark='" + remark + '\'' +
+                ", isDiscount='" + isDiscount + '\'' +
+                ", proNo='" + proNo + '\'' +
+                ", isMoneyOff='" + isMoneyOff + '\'' +
+                ", saleCnt=" + saleCnt +
+                ", compId=" + compId +
+                ", price=" + price +
+                ", proId=" + proId +
+                ", isBargain='" + isBargain + '\'' +
+                ", isSaled='" + isSaled + '\'' +
+                ", isPresented='" + isPresented + '\'' +
+                ", typeId=" + typeId +
+                ", startTime='" + startTime + '\'' +
+                ", proName='" + proName + '\'' +
+                ", endTime='" + endTime + '\'' +
+                ", mats=" + mats +
+                ", imgs=" + imgs +
+                ", tastes=" + tastes +
+                ", makes=" + makes +
+                ", taocan=" + taocan +
+                ", number=" + number +
+                ", addon='" + addon + '\'' +
+                ", tasteStr='" + tasteStr + '\'' +
+                ", scaleStr='" + scaleStr + '\'' +
+                ", matStr='" + matStr + '\'' +
+                ", mateP=" + mateP +
+                '}';
+    }
 }

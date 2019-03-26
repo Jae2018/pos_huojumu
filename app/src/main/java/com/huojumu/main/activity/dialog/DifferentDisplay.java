@@ -38,7 +38,7 @@ public class DifferentDisplay extends Presentation {
     private HomeSelectedAdapter selectedAdapter;
     //结账二维码
     private ImageView aliIV;
-    private RelativeLayout adsLinear;
+    private ImageView adsLinear;
 
     public DifferentDisplay(Context outerContext, Display display) {
         super(outerContext, display);
@@ -49,19 +49,17 @@ public class DifferentDisplay extends Presentation {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_for_differ_screen);
-//        sv = findViewById(R.id.sv_differ_video);
         rv = findViewById(R.id.recycler_for_differ);
         priceTV = findViewById(R.id.tv_differ_money);
         cutTV = findViewById(R.id.tv_differ_cut);
         aliIV = findViewById(R.id.iv_pay_image);
-        adsLinear = findViewById(R.id.ads_linear);
+        adsLinear = findViewById(R.id.iv_ads_image);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         rv.setLayoutManager(manager);
         selectedAdapter = new HomeSelectedAdapter(null);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
         itemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.line_v_for_recycler));
         rv.addItemDecoration(itemDecoration);
-        Log.e(">>>", "onCreate: " + adsLinear.getWidth() + "___" + adsLinear.getHeight());
     }
 
     @Override
@@ -102,4 +100,7 @@ public class DifferentDisplay extends Presentation {
         return aliIV;
     }
 
+    public ImageView getAdsLinear() {
+        return adsLinear;
+    }
 }

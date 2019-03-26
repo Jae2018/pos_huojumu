@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/d_121"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/pro_border"
     android:padding="@dimen/d_1"
@@ -31,6 +31,13 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/f_20"
         android:layout_below="@id/iv_product_url"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/tv_product_scale"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/f_20"
+        android:layout_below="@id/tv_product_name"
         android:gravity="center" />
 
     <TextView

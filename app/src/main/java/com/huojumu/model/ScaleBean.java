@@ -65,4 +65,16 @@ public class ScaleBean {
     public void setCapacity(double capacity) {
         this.capacity = capacity;
     }
+
+    @Override
+    public String toString() {
+        return "ScaleBean{" +
+                "scaleId=" + scaleId +
+                ", scaName='" + scaName + '\'' +
+                ", unitName='" + unitName + '\'' +
+                ", unitId=" + unitId +
+                ", type='" + type + '\'' +
+                ", capacity=" + capacity +
+                '}';
+    }
 }

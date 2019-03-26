@@ -69,4 +69,8 @@ public class CustomerEngine {
     public ImageView getWxIV() {
         return mCustomerDisplay.getAliIV();
     }
+
+    public ImageView getAdsImage(){
+        return mCustomerDisplay.getAdsLinear();
+    }
 }

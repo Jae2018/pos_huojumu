@@ -113,6 +113,13 @@
                 <!--android:visibility="gone" />-->
 
             <ImageView
+                android:id="@+id/iv_ads_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:contentDescription="@string/des" />
+
+            <ImageView
                 android:id="@+id/iv_pay_image"
                 android:layout_width="@dimen/d_200"
                 android:layout_height="@dimen/d_200"

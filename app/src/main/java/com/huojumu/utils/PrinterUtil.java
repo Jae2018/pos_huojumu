@@ -123,6 +123,11 @@ public class PrinterUtil {
      */
     public static final byte[] LINE_SPACING_DEFAULT = {0x1b, 0x32};
 
+    /**
+     * 清空打印缓存区
+     */
+    public static final byte[] CLEAR_TEMP = {0x1B, 0x40};
+
     private static int getBytesLength(String msg) {
         return msg.getBytes(Charset.forName("GB2312")).length;
     }
@@ -426,7 +431,7 @@ public class PrinterUtil {
     public static void printString80(Context c, final List<Production> pList, final String orderNo, final String name, final String totalMoney,
                                      final String earn, final String cost, final String charge, final String cut, final String date) {
         try {
-            mPrinter.init();
+
             //居左
             mPrinter.setAlignMode(0);
             //字体变大
@@ -434,13 +439,15 @@ public class PrinterUtil {
             //订单流水号
             String s = orderNo.substring(orderNo.length() - 4);
             mPrinter.printString(s, "GB-2312");
+            set(CLEAR_TEMP);
 
-            mPrinter.setCharSize(0, 0);
             //实线
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line1)));
 
+            set(CLEAR_TEMP);
+            mPrinter.setCharSize(0, 0);
             //员工名 + 时间
-            s = "收银员：" + name + "\n" + "下单时间：" + date;
+            s = "\n收银员：" + name + "\n" + "下单时间：" + date;
             mPrinter.printString(s, "GB-2312");
 
             //间隔大的虚线
@@ -481,12 +488,13 @@ public class PrinterUtil {
 
             //logo图片9
             printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.logo)));
+
+            mPrinter.setAlignMode(0);
             mPrinter.setCharSize(1, 1);
             //店铺名
             s = SpUtil.getString(Constant.STORE_NAME) + "\n";
             mPrinter.printString(s, "GB-2312");
 
-            mPrinter.setAlignMode(0);
             mPrinter.setCharSize(0, 0);
             //企业文化描述
             s = "7港9欢迎您的到来。我们再次从香港出发，希望搜集到各地的特色食品，港印全国。能7(去)香港(港)的(9)九龙喝一杯正宗的港饮是我们对每一位顾客的愿景。几百年来，香港作为东方接触世界的窗口，找寻并创造了一款款独具特色又流传世界的高品饮品。我们在全国超过十年的专业服务与坚持，与97回归共享繁华，秉承独到的调制方法，期许再一次与亲爱的你能擦出下一个十年火花。\n";
@@ -516,9 +524,8 @@ public class PrinterUtil {
      */
     public static void printDaily(int type, String total, String mobilePay, String cash, int orderNum, String workerName) {
         try {
-            mPrinter.init();
+            set(CLEAR_TEMP);
             mPrinter.setCharSize(1, 1);
-            mPrinter.setLineSpace(1);
             String t = type == 1 ? "交班" : "日结";
             mPrinter.printString(t, "GBK");
 
@@ -565,6 +572,7 @@ public class PrinterUtil {
     public static void printPayBack(OrderDetails details, String date) {
 
         try {
+            set(CLEAR_TEMP);
             String s = "退账单";
             mPrinter.printString(s, "GB-2312");
             mPrinter.printAndFeedLine(1);
@@ -647,7 +655,7 @@ public class PrinterUtil {
      *
      * @param bitmap 要打印的图片
      */
-    public static void printImage(Bitmap bitmap) {
+    private static void printImage(Bitmap bitmap) {
         try {
             if (PrinterAPI.SUCCESS == mPrinter.printRasterBitmap(bitmap)) {
                 Log.d(TAG, "printImage: finish");

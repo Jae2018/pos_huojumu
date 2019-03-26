@@ -1,5 +1,6 @@
 package com.huojumu.utils;
 
+import com.huojumu.model.AdsBean;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.DailyInfo;
 import com.huojumu.model.InventoryDetail;
@@ -237,4 +238,11 @@ public class NetTool {
                 .enqueue(handler);
     }
 
+    //广告
+    public static void getAdsList(int shopID, GsonResponseHandler<BaseBean<List<AdsBean>>> handler) {
+        okHttp.post()
+                .url(Constant.BASE_URL + "system/advsearch.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .addParam("shopID", "" + shopID)
+                .enqueue(handler);
+    }
 }

@@ -32,6 +32,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemSwipeListener;
+import com.github.promeg.pinyinhelper.Pinyin;
 import com.huojumu.MyApplication;
 import com.huojumu.R;
 import com.huojumu.adapter.HomeProductAdapter;
@@ -48,6 +49,7 @@ import com.huojumu.main.dialogs.MoreFunctionDialog;
 import com.huojumu.main.dialogs.QuickPayDialog;
 import com.huojumu.main.dialogs.SingleProCallback;
 import com.huojumu.main.dialogs.UsbDeviceList;
+import com.huojumu.model.AdsBean;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.MatsBean;
 import com.huojumu.model.OrderBack;
@@ -59,6 +61,7 @@ import com.huojumu.model.TaskBean;
 import com.huojumu.model.VipListBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
+import com.huojumu.utils.GlideApp;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
 import com.huojumu.utils.PrinterCommand;
@@ -195,7 +198,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //链接标签机
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         getUsb(UsbUtil.getUsbDeviceList(this));
-
+        Pinyin.init(Pinyin.newConfig());
         //左侧点单列表
         selectedAdapter = new HomeSelectedAdapter(productions);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -211,6 +214,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         selectedAdapter.setOnItemSwipeListener(new OnItemSwipeListener() {
             @Override
             public void onItemSwipeStart(RecyclerView.ViewHolder viewHolder, int pos) {
+
 
             }
 
@@ -316,11 +320,27 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     @Override
     protected void initData() {
-
+        getAdsList();
         getTypeList();
         getProList("0");
         getActiveInfo();
 
+    }
+
+    private void getAdsList(){
+        NetTool.getAdsList(SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<List<AdsBean>>>() {
+            @Override
+            public void onSuccess(int statusCode, BaseBean<List<AdsBean>> response) {
+                if (response.getData().size() > 0) {
+                    GlideApp.with(HomeActivity.this).load(response.getData().get(0).getPath()).placeholder(R.drawable.pro_default).into(engine.getAdsImage());
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, String code, String error_msg) {
+
+            }
+        });
     }
 
     private void getTypeList() {
@@ -349,7 +369,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     @Override
                     public void onSuccess(int statusCode, BaseBean<Products> response) {
                         tempProduces = response.getData().getProducts();
+                        productAdapter.setScale(response.getData().getScales());
                         productAdapter.setNewData(response.getData().getProducts());
+
+//                        Pinyin.toPinyin("啊","");
+
                     }
 
                     @Override
@@ -698,7 +722,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         orderBack = response.getData();
                         orderNo = response.getData().getOrderNo();
                         PrintOrder(response.getData(), charge < 0 ? 0 : charge);
-                        backStr = response.getData().getTotalPrice();
                         SpUtil.save("hasOverOrder", true);
                         MyOkHttp.mHandler.postDelayed(new Runnable() {
                             @Override
@@ -726,8 +749,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 break;
         }
     }
-
-    private String backStr;
 
     @Override
     public void OnUsbCallBack(String name) {
@@ -780,9 +801,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     isCash = false;
                     PrinterUtil.OpenMoneyBox();
                 }
+            }
+        });
 
+        threadPool.addTask(new Runnable() {
+            @Override
+            public void run() {
+                String p = orderBack.getTotalPrice().substring(0, orderBack.getTotalPrice().length() - 1);
                 PrinterUtil.printString80(HomeActivity.this, productions, orderBack.getOrderNo(),
-                        SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
+                        SpUtil.getString(Constant.WORKER_NAME), p, p,
                         "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "",
                         totalCut + "", orderBack.getCreatTime());
             }

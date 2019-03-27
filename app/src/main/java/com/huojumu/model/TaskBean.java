@@ -66,6 +66,33 @@ public class TaskBean {
         private String payTime;
         private String state;
         private int leftCupCnt;
+        private int userId;
+        private String loginName;
+        private String mobile;
+
+        public int getUserId() {
+            return userId;
+        }
+
+        public void setUserId(int userId) {
+            this.userId = userId;
+        }
+
+        public String getLoginName() {
+            return loginName;
+        }
+
+        public void setLoginName(String loginName) {
+            this.loginName = loginName;
+        }
+
+        public String getMobile() {
+            return mobile;
+        }
+
+        public void setMobile(String mobile) {
+            this.mobile = mobile;
+        }
 
         public String getOrderCode() {
             return orderCode;

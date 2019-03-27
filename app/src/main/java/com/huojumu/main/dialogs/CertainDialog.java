@@ -51,7 +51,11 @@ public class CertainDialog extends BaseDialog {
 
     @OnClick(R.id.btn_ok_certain_dialog)
     void OK() {
-        anInterface.OnDialogOkClick(0, 0, 0, 0, "CertainDialog");
+        if (anInterface != null) {
+            anInterface.OnDialogOkClick(0, 0, 0, 0, "CertainDialog");
+        } else {
+            cancel();
+        }
     }
 
 }

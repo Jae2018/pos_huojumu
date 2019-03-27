@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.gson.Gson;
+import com.huojumu.main.dialogs.CertainDialog;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.EventHandler;
 import com.huojumu.model.StoreInfo;
@@ -48,6 +49,7 @@ public class SocketTool extends WebSocketListener {
     public void sendMsg(String s) {
         if (webSocket != null) {
             webSocket.send(s);
+            Log.e(TAG, "sendMsg: " + s);
         }
     }
 
@@ -74,6 +76,7 @@ public class SocketTool extends WebSocketListener {
     public void onOpen(WebSocket webSocket, Response response) {
         super.onOpen(webSocket, response);
         this.webSocket = webSocket;
+        Log.e(TAG, "onOpen: ");
     }
 
     @Override
@@ -114,9 +117,15 @@ public class SocketTool extends WebSocketListener {
                 break;
             case Constant.START:
                 //扫码登录回调
-                SpUtil.save(Constant.WORKER_NAME, taskBean.getData().getUserName());
-                SpUtil.save(Constant.MY_TOKEN, "Bearer "+taskBean.getData().getToken());
-                EventBus.getDefault().post(new EventHandler(Constant.HOME));
+                if (taskBean.getCode().equals("0")) {
+                    SpUtil.save(Constant.WORKER_NAME, taskBean.getData().getUserName());
+                    SpUtil.save(Constant.MY_TOKEN, "Bearer " + taskBean.getData().getToken());
+                    EventBus.getDefault().post(new EventHandler(Constant.HOME));
+                } else {
+                    CertainDialog dialog = new CertainDialog(context, null, "注意！", "您当前无法登陆，上一班次未正常交班\n请联系"
+                            + taskBean.getData().getUserName() + "完成交班\n联系电话：" + taskBean.getData().getMobile());
+                    dialog.show();
+                }
                 break;
         }
     }
@@ -124,18 +133,18 @@ public class SocketTool extends WebSocketListener {
     @Override
     public void onMessage(WebSocket webSocket, ByteString bytes) {
         super.onMessage(webSocket, bytes);
-        Log.d(TAG, "bytes:   " + bytes);
+        Log.e(TAG, "bytes:   " + bytes);
     }
 
     @Override
     public void onClosed(WebSocket webSocket, int code, String reason) {
         super.onClosed(webSocket, code, reason);
-        Log.d(TAG, "reason:   " + reason + "      code:  " + code);
+        Log.e(TAG, "reason:   " + reason + "      code:  " + code);
     }
 
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, @Nullable Response response) {
         super.onFailure(webSocket, t, response);
-        Log.d(TAG, "response:   " + response + "      t:  " + t);
+        Log.e(TAG, "response:   " + response + "      t:  " + t);
     }
 }

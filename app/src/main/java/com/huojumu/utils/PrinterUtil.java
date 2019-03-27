@@ -570,7 +570,6 @@ public class PrinterUtil {
      * 打印退单
      */
     public static void printPayBack(OrderDetails details, String date) {
-
         try {
             set(CLEAR_TEMP);
             String s = "退账单";

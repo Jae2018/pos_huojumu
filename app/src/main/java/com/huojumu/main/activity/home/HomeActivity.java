@@ -403,8 +403,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     private void checkPriceForDisplay() {
-
-
         double totalPrice = 0.0, totalCut = 0.0;
         int totalCount = 0;
         for (Production p : productions) {

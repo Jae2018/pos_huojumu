@@ -32,7 +32,6 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemSwipeListener;
-import com.github.promeg.pinyinhelper.Pinyin;
 import com.huojumu.MyApplication;
 import com.huojumu.R;
 import com.huojumu.adapter.HomeProductAdapter;
@@ -168,14 +167,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * 连接状态断开
      */
     private static final int CONN_STATE_DISCONN = 0x007;
-    /**
-     * 使用打印机指令错误
-     */
-    private static final int PRINTER_COMMAND_ERROR = 0x008;
 
     int count = 0;
     String name, taste;
-    double price;
     private ThreadPool threadPool;
 
     String TAG = "home";
@@ -183,6 +177,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private double change;
     //是否推荐
     private boolean isRecommend = false;
+
+    private List<OrderInfo.DataBean> dataBeans = new ArrayList<>();
 
     @Override
     protected int setLayout() {
@@ -198,13 +194,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //链接标签机
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         getUsb(UsbUtil.getUsbDeviceList(this));
-        Pinyin.init(Pinyin.newConfig());
         //左侧点单列表
         selectedAdapter = new HomeSelectedAdapter(productions);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         left.setLayoutManager(linearLayoutManager);
         DividerItemDecoration d = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        d.setDrawable(getResources().getDrawable(R.drawable.divider_n));
+        d.setDrawable(getResources().getDrawable(R.drawable.divider_n, null));
         left.addItemDecoration(d);
         selectedAdapter.enableSwipeItem();
         ItemDragAndSwipeCallback mItemDragAndSwipeCallback = new ItemDragAndSwipeCallback(selectedAdapter);
@@ -284,10 +279,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 //点菜逻辑
-                if ("1".equals(tempProduces.get(position).getIsSaled())) {
-                    ToastUtils.showLong("该商品已售罄");
-                    return;
-                }
                 addonDialog = new SingleProAddonDialog(HomeActivity.this, HomeActivity.this, tempProduces.get(position), tempProduces.get(position).getProId(), false, position);
                 addonDialog.show();
             }
@@ -327,7 +318,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     }
 
-    private void getAdsList(){
+    private void getAdsList() {
         NetTool.getAdsList(SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<List<AdsBean>>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<List<AdsBean>> response) {
@@ -356,7 +347,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     }
 
                     @Override
-                    public void onFailure(int statusCode, String code,String error_msg) {
+                    public void onFailure(int statusCode, String code, String error_msg) {
 
                     }
                 });
@@ -369,15 +360,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     @Override
                     public void onSuccess(int statusCode, BaseBean<Products> response) {
                         tempProduces = response.getData().getProducts();
-                        productAdapter.setScale(response.getData().getScales());
                         productAdapter.setNewData(response.getData().getProducts());
-
-//                        Pinyin.toPinyin("啊","");
 
                     }
 
                     @Override
-                    public void onFailure(int statusCode, String code,String error_msg) {
+                    public void onFailure(int statusCode, String code, String error_msg) {
                         ToastUtils.showLong("网络出错，点击刷新");
                     }
                 });
@@ -392,7 +380,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
 
             @Override
-            public void onFailure(int statusCode, String code,String error_msg) {
+            public void onFailure(int statusCode, String code, String error_msg) {
 
             }
         });
@@ -415,6 +403,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     private void checkPriceForDisplay() {
+
+
         double totalPrice = 0.0, totalCut = 0.0;
         int totalCount = 0;
         for (Production p : productions) {
@@ -426,36 +416,36 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         c += m.getIngredientPrice();
                     }
                 }
-                totalPrice += p.getOrigionPrice() * p.getNumber() + c * p.getNumber();
+                totalPrice += p.getPrice() * p.getNumber() + c * p.getNumber();
                 totalCut = 0;
 
-            } else {
-                if (p.getIsBargain() != null && p.getIsBargain().equals("1")) {
-                    double c = 0;
-                    if (!p.getMats().isEmpty()) {
-                        for (MatsBean m : p.getMats()) {
-                            c += m.getIngredientPrice();
-                        }
-                    }
-                    totalPrice += p.getPrice() * p.getNumber() + c * p.getNumber();
-                    totalCut += (p.getOrigionPrice() - p.getPrice()) * p.getNumber();
-
-                } else if (p.getIsPresented() != null && p.getIsPresented().equals("1")) {
-                    double c = 0;
-                    if (!p.getMats().isEmpty()) {
-                        for (MatsBean m : p.getMats()) {
-                            c += m.getIngredientPrice();
-                        }
-                    }
-                    totalPrice += p.getOrigionPrice() * (p.getNumber() > 1 ? p.getNumber() - 1 : 1) + c * (p.getNumber() > 1 ? p.getNumber() - 1 : 1);
-                    totalCut += p.getOrigionPrice() * (p.getNumber() > 1 ? 1 : 0);
-
-                }
             }
+//            else {
+//                if (p.getIsBargain() != null && p.getIsBargain().equals("1")) {
+//                    double c = 0;
+//                    if (!p.getMats().isEmpty()) {
+//                        for (MatsBean m : p.getMats()) {
+//                            c += m.getIngredientPrice();
+//                        }
+//                    }
+//                    totalPrice += p.getPrice() * p.getNumber() + c * p.getNumber();
+//                    totalCut += (p.getOrigionPrice() - p.getPrice()) * p.getNumber();
+//
+//                } else if (p.getIsPresented() != null && p.getIsPresented().equals("1")) {
+//                    double c = 0;
+//                    if (!p.getMats().isEmpty()) {
+//                        for (MatsBean m : p.getMats()) {
+//                            c += m.getIngredientPrice();
+//                        }
+//                    }
+//                    totalPrice += p.getPrice() * (p.getNumber() > 1 ? p.getNumber() - 1 : 1) + c * (p.getNumber() > 1 ? p.getNumber() - 1 : 1);
+//                    totalCut += p.getPrice() * (p.getNumber() > 1 ? 1 : 0);
+//                }
+//            }
         }
-        total_number.setText(String.format(Locale.CHINA,"数量：%d 份", totalCount));
-        total_price.setText(String.format(Locale.CHINA,"总价：%.2f 元", totalPrice));
-        cut_number.setText(String.format(Locale.CHINA,"优惠：%.2f 元", totalCut));
+        total_number.setText(String.format(Locale.CHINA, "数量：%d 份", totalCount));
+        total_price.setText(String.format(Locale.CHINA, "总价：%.1f 元", totalPrice));
+        cut_number.setText(String.format(Locale.CHINA, "优惠：%.1f 元", totalCut));
         //副屏刷新
         if (engine != null) {
             engine.refresh(productions);
@@ -466,38 +456,25 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     }
 
-    List<OrderInfo.DataBean> dataBeans = new ArrayList<>();
-    int n = 0;
 
     /**
      * 单品详情dialog配置回调
      */
     @Override
-    public void onSingleCallBack(int proId, int number, Production productsBean, OrderInfo.DataBean dataBean, int position) {
-        //加入已选清单中
+    public void onSingleCallBack(int proId, int number, Production productsBean, OrderInfo.DataBean dataBean, int position, double price) {
+
+        //修改已选，删除旧数据，新添加
         if (ok) {
-            productions.get(position).setNumber(number);
+            productions.remove(position);
             ok = false;
-        } else {
-            boolean isAdd = false;
-            n = 0;
-            if (!productions.isEmpty())
-                for (int i = 0; i < productions.size(); i++) {
-                    if (productions.get(i).getProId() == proId) {
-                        isAdd = true;
-                        n = productions.get(i).getNumber() + number;
-                        productions.get(i).setNumber(n);
-                        dataBean.setNum(n);
-                        productsBean.setNumber(n);
-                        break;
-                    }
-                }
-            if (!isAdd) {
-                dataBean.setNum(number);
-                productsBean.setNumber(number);
-                productions.add(productsBean);
-            }
         }
+
+        //加入订单数据
+        dataBean.setNum(number);
+        //左侧点单列表
+        productsBean.setNumber(number);
+        productsBean.setPrice(price);
+        productions.add(productsBean);
 
         addonDialog = null;
         addonDialog2 = null;
@@ -506,20 +483,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //计算副频金额
         checkPriceForDisplay();
 
-        orderInfo = new OrderInfo();
-        orderInfo.setOrderID(UUID.randomUUID().toString().replace("-", ""));
-        orderInfo.setShopID(SpUtil.getInt(Constant.STORE_ID));
-        orderInfo.setCreateTime(PrinterUtil.getDate());
-        orderInfo.setEnterpriseID(SpUtil.getInt(Constant.ENT_ID));
-        orderInfo.setPinpaiID(SpUtil.getInt(Constant.PINPAI_ID));
-        orderInfo.setQuanIds(new ArrayList<Integer>());
-        orderInfo.setDiscountsType(SpUtil.getString(Constant.ENT_DIS));
-
         dataBean.setProId(productsBean.getProId());
         dataBean.setProType(productsBean.getProType());
         dataBeans.add(dataBean);
-        orderInfo.setData(dataBeans);
-        orderInfo.setOrdSource("3");
+
     }
 
     /**
@@ -668,6 +635,19 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
     }
 
+    private void initOrder() {
+        orderInfo = new OrderInfo();
+        orderInfo.setOrderID(UUID.randomUUID().toString().replace("-", ""));
+        orderInfo.setShopID(SpUtil.getInt(Constant.STORE_ID));
+        orderInfo.setCreateTime(PrinterUtil.getDate());
+        orderInfo.setEnterpriseID(SpUtil.getInt(Constant.ENT_ID));
+        orderInfo.setPinpaiID(SpUtil.getInt(Constant.PINPAI_ID));
+        orderInfo.setQuanIds(new ArrayList<Integer>());
+        orderInfo.setDiscountsType(SpUtil.getString(Constant.ENT_DIS));
+        orderInfo.setData(dataBeans);
+        orderInfo.setOrdSource("3");
+    }
+
     /**
      * 结账 dialog 按钮回调
      */
@@ -683,6 +663,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     }
                     cashPayDialog.show();
                 } else {
+                    initOrder();
                     orderInfo.setPayType(type == 2 ? "020" : "010");
 
                     //线上支付
@@ -703,7 +684,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         }
 
                         @Override
-                        public void onFailure(int statusCode,String code, String error_msg) {
+                        public void onFailure(int statusCode, String code, String error_msg) {
                             ToastUtils.showLong(error_msg);
                         }
                     });
@@ -713,9 +694,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             case "CashPayDialog":
                 //弹钱箱，打印小票
                 isCash = true;
+
+                initOrder();
                 orderInfo.setPayType("900");
+
                 cashPayDialog.cancel();
                 cashPayDialog = null;
+
                 NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
@@ -732,7 +717,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     }
 
                     @Override
-                    public void onFailure(int statusCode,String code, String error_msg) {
+                    public void onFailure(int statusCode, String code, String error_msg) {
                         ToastUtils.showLong(error_msg);
                     }
                 });
@@ -828,13 +813,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         for (int i = 0; i < productions.size(); i++) {
             name = productions.get(i).getProName();
             taste = productions.get(i).getTasteStr();
-            price = productions.get(i).getPrice() + productions.get(i).getMateP();
+//            price = productions.get(i).getPrice() + productions.get(i).getMateP();
             count = productions.get(i).getNumber();
             for (int j = 0; j < productions.get(i).getNumber(); j++) {
                 Production p = new Production();
                 p.setProName(name);
                 p.setTasteStr(taste);
-                p.setPrice(price);
+//                p.setPrice(price);
                 p.setNumber(count);
                 p.setScaleStr(productions.get(i).getScaleStr());
                 p.setMatStr(productions.get(i).getMatStr());
@@ -868,7 +853,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                 if (mate.length() > 8) {
                                     mate = mate.substring(0, 8);
                                 }
-                                sendLabel(name, printProducts.get(printcount).getTasteStr(), printProducts.get(printcount).getPrice()+"", printcount, printProducts.size(), mate, printProducts.get(printcount).getScaleStr());
+//                                sendLabel(name, printProducts.get(printcount).getTasteStr(), printProducts.get(printcount).getPrice()+"", printcount, printProducts.size(), mate, printProducts.get(printcount).getScaleStr());
                             }
                         }
                     }), 1000, TimeUnit.MILLISECONDS);
@@ -974,7 +959,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     /**
      * 发送标签
      */
-    void sendLabel(String pName, String pContent, String price, int i, int number,String matStr,String scale) {
+    void sendLabel(String pName, String pContent, String price, int i, int number, String matStr, String scale) {
         i = i + 1;
         LabelCommand tsc = new LabelCommand();
         // 设置标签尺寸，按照实际尺寸设置
@@ -999,9 +984,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         tsc.addText(0, 63, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 matStr);
         tsc.addText(0, 93, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
-                scale + " "+i + "/" + number +"\n");
+                scale + " " + i + "/" + number + "\n");
         tsc.addText(0, 123, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
-                pContent + " ￥" + price + " " +  "\n");
+                pContent + " ￥" + price + " " + "\n");
         tsc.addText(0, 153, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.WORKER_NAME) + "\n");
         tsc.addText(0, 183, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,

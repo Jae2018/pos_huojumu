@@ -361,7 +361,7 @@ public class PrinterUtil {
                     .append("打印时间：").append(simpleDateFormat.format(date)).append("\n\n");
             sb.append(printThreeData58("名称", "数量", "单价")).append("\n");
             for (Production p : pList) {
-                sb.append(printThreeData58(p.getProName(), String.valueOf(p.getNumber()), String.valueOf(p.getPrice()))).append("\n");
+//                sb.append(printThreeData58(p.getProName(), String.valueOf(p.getNumber()), String.valueOf(p.getPrice()))).append("\n");
             }
             sb.append(printThreeData58("合计：", String.valueOf(totalNumber), String.valueOf(totalPrice))).append("\n");
             mPrinter.printString(sb.toString(), "GBK");
@@ -460,7 +460,7 @@ public class PrinterUtil {
             mPrinter.setFontStyle(1);
             for (Production p : pList) {
                 int n = p.getNumber();
-                sb.append(printFourData80(p.getProName(), String.valueOf(n), String.valueOf(p.getPrice()), String.valueOf(n * p.getPrice()))).append("\n");
+//                sb.append(printFourData80(p.getProName(), String.valueOf(n), String.valueOf(p.getPrice()), String.valueOf(n * p.getPrice()))).append("\n");
                 if (p.getMats().size() > 0)
                     for (MatsBean bean : p.getMats()) {
                         sb.append(printFourData80(" " + bean.getMatName(), String.valueOf(n), String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()))).append("\n");

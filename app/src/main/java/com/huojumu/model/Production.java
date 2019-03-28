@@ -1,39 +1,53 @@
 package com.huojumu.model;
 
+
 import java.util.List;
 
 public class Production {
 
-    private int scaleId;
-    private String proType;
-    private double origionPrice;
-    private String remark;
-    private String isDiscount;
-    private String proNo;
-    private String isMoneyOff;
-    private int saleCnt;
-    private int compId;
-    private double price;
-    private int proId;
-    private String isBargain;
-    private String isSaled;
-    private String isPresented;
-    private int typeId;
-    private String startTime;
-    private String proName;
-    private String endTime;
+
     private List<MatsBean> mats;
     private List<ImgsBean> imgs;
     private List<TastesBean> tastes;
     private List<MakesBean> makes;
     private List<TaoCanBean> taocan;
+    private String proType;
     private int number = 1;
     private String addon;
     private String tasteStr;
     private String scaleStr;
     private String matStr;
-    private double mateP;
+    private double mateP;//加料价格
+    private double price;//单品价格
 
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    /**
+     * proNo : CP-CN32-0001-0004
+     * imgs : []
+     * proId : 4
+     * minPrice : 0.01
+     * proName : 什么都有奶绿
+     */
+
+    private String proNo;
+    private int proId;
+    private double minPrice;
+    private String proName;
+
+    public String getProType() {
+        return proType;
+    }
+
+    public void setProType(String proType) {
+        this.proType = proType;
+    }
 
     public double getMateP() {
         return mateP;
@@ -51,149 +65,7 @@ public class Production {
         this.matStr = matStr;
     }
 
-    public int getScaleId() {
-        return scaleId;
-    }
 
-    public void setScaleId(int scaleId) {
-        this.scaleId = scaleId;
-    }
-
-    public String getProType() {
-        return proType;
-    }
-
-    public void setProType(String proType) {
-        this.proType = proType;
-    }
-
-    public double getOrigionPrice() {
-        return origionPrice;
-    }
-
-    public void setOrigionPrice(double origionPrice) {
-        this.origionPrice = origionPrice;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
-
-    public String getIsDiscount() {
-        return isDiscount;
-    }
-
-    public void setIsDiscount(String isDiscount) {
-        this.isDiscount = isDiscount;
-    }
-
-    public String getProNo() {
-        return proNo;
-    }
-
-    public void setProNo(String proNo) {
-        this.proNo = proNo;
-    }
-
-    public String getIsMoneyOff() {
-        return isMoneyOff;
-    }
-
-    public void setIsMoneyOff(String isMoneyOff) {
-        this.isMoneyOff = isMoneyOff;
-    }
-
-    public int getSaleCnt() {
-        return saleCnt;
-    }
-
-    public void setSaleCnt(int saleCnt) {
-        this.saleCnt = saleCnt;
-    }
-
-    public int getCompId() {
-        return compId;
-    }
-
-    public void setCompId(int compId) {
-        this.compId = compId;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public int getProId() {
-        return proId;
-    }
-
-    public void setProId(int proId) {
-        this.proId = proId;
-    }
-
-    public String getIsBargain() {
-        return isBargain;
-    }
-
-    public void setIsBargain(String isBargain) {
-        this.isBargain = isBargain;
-    }
-
-    public String getIsSaled() {
-        return isSaled;
-    }
-
-    public void setIsSaled(String isSaled) {
-        this.isSaled = isSaled;
-    }
-
-    public String getIsPresented() {
-        return isPresented;
-    }
-
-    public void setIsPresented(String isPresented) {
-        this.isPresented = isPresented;
-    }
-
-    public int getTypeId() {
-        return typeId;
-    }
-
-    public void setTypeId(int typeId) {
-        this.typeId = typeId;
-    }
-
-    public String getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
-    }
-
-    public String getProName() {
-        return proName;
-    }
-
-    public void setProName(String proName) {
-        this.proName = proName;
-    }
-
-    public String getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
-    }
 
     public List<MatsBean> getMats() {
         return mats;
@@ -267,38 +139,37 @@ public class Production {
         this.scaleStr = scaleStr;
     }
 
-    @Override
-    public String toString() {
-        return "Production{" +
-                "scaleId=" + scaleId +
-                ", proType='" + proType + '\'' +
-                ", origionPrice=" + origionPrice +
-                ", remark='" + remark + '\'' +
-                ", isDiscount='" + isDiscount + '\'' +
-                ", proNo='" + proNo + '\'' +
-                ", isMoneyOff='" + isMoneyOff + '\'' +
-                ", saleCnt=" + saleCnt +
-                ", compId=" + compId +
-                ", price=" + price +
-                ", proId=" + proId +
-                ", isBargain='" + isBargain + '\'' +
-                ", isSaled='" + isSaled + '\'' +
-                ", isPresented='" + isPresented + '\'' +
-                ", typeId=" + typeId +
-                ", startTime='" + startTime + '\'' +
-                ", proName='" + proName + '\'' +
-                ", endTime='" + endTime + '\'' +
-                ", mats=" + mats +
-                ", imgs=" + imgs +
-                ", tastes=" + tastes +
-                ", makes=" + makes +
-                ", taocan=" + taocan +
-                ", number=" + number +
-                ", addon='" + addon + '\'' +
-                ", tasteStr='" + tasteStr + '\'' +
-                ", scaleStr='" + scaleStr + '\'' +
-                ", matStr='" + matStr + '\'' +
-                ", mateP=" + mateP +
-                '}';
+
+    public String getProNo() {
+        return proNo;
     }
+
+    public void setProNo(String proNo) {
+        this.proNo = proNo;
+    }
+
+    public int getProId() {
+        return proId;
+    }
+
+    public void setProId(int proId) {
+        this.proId = proId;
+    }
+
+    public double getMinPrice() {
+        return minPrice;
+    }
+
+    public void setMinPrice(double minPrice) {
+        this.minPrice = minPrice;
+    }
+
+    public String getProName() {
+        return proName;
+    }
+
+    public void setProName(String proName) {
+        this.proName = proName;
+    }
+
 }

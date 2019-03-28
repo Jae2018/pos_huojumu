@@ -40,8 +40,8 @@ public class HomeSelectedAdapter extends BaseItemDraggableAdapter<Production, Ba
                 .setText(R.id.tv_home_selected_scale, "规格：" + item.getScaleStr())
                 .setText(R.id.tv_home_selected_addon, "加料：" + (mat.isEmpty() ? "无" : mat))
                 .setText(R.id.tv_home_selected_taste, "口味：" + item.getTasteStr())
-                .setText(R.id.tv_home_selected_price, "单价：" + ((item.getIsBargain() != null) && (item.getIsBargain().equals("1")) ? item.getPrice() : item.getOrigionPrice()))
-                .setText(R.id.tv_home_selected_msg, "备注：" + (item.getAddon().isEmpty() ? "无" : item.getAddon()))
-                .setText(R.id.tv_home_selected_cost, "" + (((item.getIsBargain() != null) && (item.getIsBargain().equals("1")) ? item.getPrice() : item.getOrigionPrice()) * item.getNumber() + m));
+//                .setText(R.id.tv_home_selected_price, "单价：" + ((item.getIsBargain() != null) && (item.getIsBargain().equals("1")) ? item.getPrice() : item.getOrigionPrice()))
+                .setText(R.id.tv_home_selected_msg, "备注：" + (item.getAddon().isEmpty() ? "无" : item.getAddon()));
+//                .setText(R.id.tv_home_selected_cost, "" + (((item.getIsBargain() != null) && (item.getIsBargain().equals("1")) ? item.getPrice() : item.getOrigionPrice()) * item.getNumber() + m));
     }
 }

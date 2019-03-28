@@ -83,7 +83,7 @@ public class SingleProAddonDialog extends BaseDialog {
     private MatsBean matsBean;
     private MakesBean makesBean;
     private ScaleBean scaleBean;
-
+    private double price = 0;
     private int p = -1;
 
     public SingleProAddonDialog(@NonNull Context context, SingleProCallback callback,
@@ -107,9 +107,9 @@ public class SingleProAddonDialog extends BaseDialog {
     public void initView() {
         matsBeans.clear();
         final LayoutInflater mInflater = LayoutInflater.from(getContext());
-        NetTool.getSpecification(SpUtil.getInt(Constant.PINPAI_ID), proId, new GsonResponseHandler<BaseBean<Specification>>() {
+        NetTool.getSpecification(SpUtil.getInt(Constant.PINPAI_ID), proId, SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<Specification>>() {
             @Override
-            public void onSuccess(int statusCode,final BaseBean<Specification> response) {
+            public void onSuccess(int statusCode, final BaseBean<Specification> response) {
                 //规格
                 if (response.getData().getScales() == null || response.getData().getScales().isEmpty()) {
                     t3.setVisibility(View.GONE);
@@ -142,7 +142,7 @@ public class SingleProAddonDialog extends BaseDialog {
                 if (response.getData().getTastes() == null || response.getData().getTastes().isEmpty()) {
                     t4.setVisibility(View.GONE);
                     flowLayout2.setVisibility(View.GONE);
-                }else {
+                } else {
                     TagAdapter tastesAdapter = new TagAdapter<TastesBean>(response.getData().getTastes()) {
                         @Override
                         public View getView(FlowLayout parent, int position, TastesBean o) {
@@ -182,7 +182,7 @@ public class SingleProAddonDialog extends BaseDialog {
                             TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
                                     flowLayout1, false);
                             tv.setGravity(Gravity.CENTER);
-                            tv.setText(String.format("%s\n%s",o.getMatName(),o.getIngredientPrice()));
+                            tv.setText(String.format("%s\n%s", o.getMatName(), o.getIngredientPrice()));
                             return tv;
                         }
                     });
@@ -234,7 +234,7 @@ public class SingleProAddonDialog extends BaseDialog {
             }
 
             @Override
-            public void onFailure(int statusCode,String code, String error_msg) {
+            public void onFailure(int statusCode, String code, String error_msg) {
 
             }
         });
@@ -267,6 +267,7 @@ public class SingleProAddonDialog extends BaseDialog {
         });
     }
 
+
     @OnClick(R.id.btn_home_addon_cancel)
     void Cancel() {
         dismiss();
@@ -291,6 +292,7 @@ public class SingleProAddonDialog extends BaseDialog {
         }
 
         if (scaleBean != null) {
+            price += scaleBean.getPrice();
             scaleBeans.clear();
             scaleBeans.add(scaleBean);
             productsBean.setScaleStr(scaleBean.getScaName());
@@ -304,7 +306,7 @@ public class SingleProAddonDialog extends BaseDialog {
         String matStr = "";
         double matP = 0;
         for (int i = 0; i < matsBeans.size(); i++) {
-            matStr += matsBeans.get(i).getMatName()+" ";
+            matStr += matsBeans.get(i).getMatName() + " ";
             matP += matsBeans.get(i).getIngredientPrice();
         }
         productsBean.setMatStr(matStr);
@@ -319,9 +321,12 @@ public class SingleProAddonDialog extends BaseDialog {
         productsBean.setMats(matsBeans);
         productsBean.setTastes(tastesBeans);
         proId = productsBean.getProId();
-        callback.onSingleCallBack(proId, number, productsBean, dataBean, position);
-//        Log.e("number", "productsBean: {" + PrinterUtil.toJson(productsBean) + "\n}");
+
+
+        callback.onSingleCallBack(proId, number, productsBean, dataBean, position, price);
+
         number = 1;
+        price = 0;
         cancel();
     }
 

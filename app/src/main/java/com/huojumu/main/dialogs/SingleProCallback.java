@@ -11,6 +11,6 @@ import com.huojumu.model.Production;
  */
 public interface SingleProCallback {
 
-    void onSingleCallBack(int scaleId, int number, Production productsBean, OrderInfo.DataBean dataBean, int position);
+    void onSingleCallBack(int scaleId, int number, Production productsBean, OrderInfo.DataBean dataBean, int position, double price);
 
 }

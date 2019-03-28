@@ -16,7 +16,25 @@ public class ScaleBean {
     private String unitName;
     private int unitId;
     private String type;
+    private double price;
     private double capacity;
+    private int proId;
+
+    public int getProId() {
+        return proId;
+    }
+
+    public void setProId(int proId) {
+        this.proId = proId;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
 
     public int getScaleId() {
         return scaleId;

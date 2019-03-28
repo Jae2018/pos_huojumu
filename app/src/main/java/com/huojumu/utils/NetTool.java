@@ -58,7 +58,7 @@ public class NetTool {
     }
 
     //设备所属信息查询
-    public static void getMachineInfo(String machineCode, GsonResponseHandler<BaseBean<StoreInfo>> handler) {
+    static void getMachineInfo(String machineCode, GsonResponseHandler<BaseBean<StoreInfo>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "system/machineinfo.action")
                 .addParam("machineCode", machineCode)
@@ -78,10 +78,10 @@ public class NetTool {
     //商品列表查询
     public static void getStoreProduces(int shopID, int enterpriseID, int pinpaiID, String isRecommend, GsonResponseHandler<BaseBean<Products>> handler) {
         okHttp.post()
-                .url(Constant.BASE_URL + "product/shopproduct.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .url(Constant.BASE_URL + "product/showPros.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("shopID", shopID + "")
-                .addParam("enterpriseID", enterpriseID + "")
-                .addParam("pinpaiID", pinpaiID + "")
+//                .addParam("enterpriseID", enterpriseID + "")
+//                .addParam("pinpaiID", pinpaiID + "")
                 .addParam("isRecommend", isRecommend)
                 .enqueue(handler);
     }
@@ -211,10 +211,11 @@ public class NetTool {
     }
 
     //查询单品规格信息
-    public static void getSpecification(int pinpaiID, int proId, GsonResponseHandler<BaseBean<Specification>> handler) {
+    public static void getSpecification(int pinpaiID, int proId, int shopId,GsonResponseHandler<BaseBean<Specification>> handler) {
         okHttp.post().url(Constant.BASE_URL + "product/tasteChoose.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("pinpaiID", pinpaiID + "")
                 .addParam("proId", proId + "")
+                .addParam("shopId", shopId + "")
                 .enqueue(handler);
     }
 

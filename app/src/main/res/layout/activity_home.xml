@@ -281,4 +281,9 @@
 
     </LinearLayout>
 
+    <WebView
+        android:id="@+id/web_order"
+        android:layout_width="@dimen/d_300"
+        android:layout_height="match_parent" />
+
 </RelativeLayout>

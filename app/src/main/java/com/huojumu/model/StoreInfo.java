@@ -1104,6 +1104,23 @@ public class StoreInfo {
         private String account;
         private String merchantNo;
         private String status;
+        private String receiptTemplate;
+
+        public String geteMail() {
+            return eMail;
+        }
+
+        public void seteMail(String eMail) {
+            this.eMail = eMail;
+        }
+
+        public String getReceiptTemplate() {
+            return receiptTemplate;
+        }
+
+        public void setReceiptTemplate(String receiptTemplate) {
+            this.receiptTemplate = receiptTemplate;
+        }
 
         public String getLicenseNo() {
             return licenseNo;

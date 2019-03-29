@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Picture;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.media.MediaPlayer;
@@ -23,6 +24,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -61,6 +63,7 @@ import com.huojumu.model.VipListBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
 import com.huojumu.utils.GlideApp;
+import com.huojumu.utils.H5Order;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
 import com.huojumu.utils.PrinterCommand;
@@ -128,6 +131,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     Button takeover;
     @BindView(R.id.btn_home_daily)
     Button dailyBtn;
+    @BindView(R.id.web_order)
+    WebView webView;
 
     private HomeSelectedAdapter selectedAdapter;//所选
     private HomeTypeAdapter typeAdapter;//类别
@@ -194,6 +199,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //链接标签机
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         getUsb(UsbUtil.getUsbDeviceList(this));
+
+//        WebView.enableSlowWholeDocumentDraw();
+
         //左侧点单列表
         selectedAdapter = new HomeSelectedAdapter(productions);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -385,6 +393,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
         });
     }
+
 
     @OnClick(R.id.button4)
     void getRecommend() {
@@ -772,11 +781,42 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         timer.start();
     }
 
+    private void initWebOrder(String OrderNo, String date, String proList, String totalMoney,
+                              String cost, String charge, String cut) {
+        String html = SpUtil.getString(Constant.HTML);
+        html = html.replace("{1}", OrderNo.substring(OrderNo.length() - 4))
+                .replace("{2}", SpUtil.getString(Constant.WORKER_NAME))
+                .replace("{3}", date)
+                .replace("{4}", proList)
+                .replace("{5}", totalMoney)
+                .replace("{6}", cost)
+                .replace("{7}", cut)
+                .replace("{8}", charge)
+                .replace("{9}", Constant.LOGO_PNG)
+                .replace("{10}", Constant.QR_CODE);
+        Log.e(TAG, "initWebOrder: " + html);
+        webView.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+//        Bitmap bitmap = webView.getDrawingCache();
+//        PrinterUtil.printImage(bitmap);
+    }
 
     /**
      * 打印订单小票
      */
     private void PrintOrder(final OrderBack orderBack, final double charge) {
+        String str = orderBack.getTotalPrice().substring(0, orderBack.getTotalPrice().length() - 1);
+        String proList = "";
+        for (Production p : productions) {
+            int n = p.getNumber();
+            proList += PrinterUtil.printFourData80(p.getProName(), String.valueOf(n), String.valueOf(p.getPrice()), String.valueOf(n * p.getPrice()), webView.getWidth()) + "\n";
+            if (p.getMats().size() > 0)
+                for (MatsBean bean : p.getMats()) {
+                    proList += PrinterUtil.printFourData80(" " + bean.getMatName(), String.valueOf(n), String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()), webView.getWidth()) + "\n";
+                }
+        }
+
+        initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList,str, (Double.parseDouble(orderBack.getTotalPrice()) + charge)+"", charge + "", totalCut + "");
+
         threadPool.addTask(new Runnable() {
             @Override
             public void run() {
@@ -790,11 +830,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         threadPool.addTask(new Runnable() {
             @Override
             public void run() {
-                String p = orderBack.getTotalPrice().substring(0, orderBack.getTotalPrice().length() - 1);
-                PrinterUtil.printString80(HomeActivity.this, productions, orderBack.getOrderNo(),
-                        SpUtil.getString(Constant.WORKER_NAME), p, p,
-                        "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "",
-                        totalCut + "", orderBack.getCreatTime());
+
+
             }
         });
 
@@ -811,13 +848,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         for (int i = 0; i < productions.size(); i++) {
             name = productions.get(i).getProName();
             taste = productions.get(i).getTasteStr();
-//            price = productions.get(i).getPrice() + productions.get(i).getMateP();
             count = productions.get(i).getNumber();
             for (int j = 0; j < productions.get(i).getNumber(); j++) {
                 Production p = new Production();
                 p.setProName(name);
                 p.setTasteStr(taste);
-//                p.setPrice(price);
+                p.setPrice(productions.get(i).getPrice() + productions.get(i).getMateP());
                 p.setNumber(count);
                 p.setScaleStr(productions.get(i).getScaleStr());
                 p.setMatStr(productions.get(i).getMatStr());
@@ -851,7 +887,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                 if (mate.length() > 8) {
                                     mate = mate.substring(0, 8);
                                 }
-//                                sendLabel(name, printProducts.get(printcount).getTasteStr(), printProducts.get(printcount).getPrice()+"", printcount, printProducts.size(), mate, printProducts.get(printcount).getScaleStr());
+                                sendLabel(name, printProducts.get(printcount).getTasteStr(), printProducts.get(printcount).getPrice()+"", printcount, printProducts.size(), mate, printProducts.get(printcount).getScaleStr());
                             }
                         }
                     }), 1000, TimeUnit.MILLISECONDS);

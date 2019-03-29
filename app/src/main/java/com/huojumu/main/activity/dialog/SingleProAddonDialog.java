@@ -243,11 +243,12 @@ public class SingleProAddonDialog extends BaseDialog {
             number = productsBean.getNumber();
             numTV.setText(String.valueOf(number));
             addOnET.setText(productsBean.getAddon());
-        } else {
-            productsBean.getMats().clear();
-            productsBean.getTastes().clear();
-            productsBean.getMakes().clear();
         }
+//        else {
+//            productsBean.getMats().clear();
+//            productsBean.getTastes().clear();
+//            productsBean.getMakes().clear();
+//        }
 
         numTV.addTextChangedListener(new TextWatcher() {
             @Override

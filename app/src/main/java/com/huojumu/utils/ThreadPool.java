@@ -29,7 +29,7 @@ public class ThreadPool {
     /**
      * 线程存活时间
      */
-    private final static long ALIVETIME = 300L;
+    private final static long ALIVETIME = 500L;
 
     /**
      * 核心线程数

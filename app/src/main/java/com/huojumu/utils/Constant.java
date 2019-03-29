@@ -29,6 +29,9 @@ public interface Constant {
     String ENT_ID = "entId";
     String ENT_NAME = "entName";
     String ENT_DIS = "entDis";
+    String HTML = "HTML";
+    String LOGO_PNG = "file:///android_res/drawable/logo.jpg";
+    String QR_CODE = "file:///android_res/drawable/qr_code.jpg";
 
     /* network params */
     int REQUEST_CODE_PICK_IMAGE = 1;

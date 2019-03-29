@@ -101,6 +101,7 @@ public class SocketTool extends WebSocketListener {
                             SpUtil.save(Constant.PINPAI_ID, response.getData().getParentEnterPrise().getId());
                             SpUtil.save(Constant.ENT_NAME, response.getData().getParentEnterPrise().getEntName());
                             SpUtil.save(Constant.ENT_DIS, response.getData().getParentEnterPrise().getDiscountsType());
+                            SpUtil.save(Constant.HTML,response.getData().getParentEnterPrise().getReceiptTemplate());
                         }
                         EventBus.getDefault().post(new EventHandler(Constant.LOGIN));
                     }

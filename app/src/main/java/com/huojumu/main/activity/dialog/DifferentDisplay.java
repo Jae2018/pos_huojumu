@@ -11,6 +11,9 @@ import android.util.Log;
 import android.view.Display;
 import android.view.KeyboardShortcutGroup;
 import android.view.Menu;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -39,6 +42,7 @@ public class DifferentDisplay extends Presentation {
     //结账二维码
     private ImageView aliIV;
     private ImageView adsLinear;
+    private WebView web_order;
 
     public DifferentDisplay(Context outerContext, Display display) {
         super(outerContext, display);
@@ -54,6 +58,20 @@ public class DifferentDisplay extends Presentation {
         cutTV = findViewById(R.id.tv_differ_cut);
         aliIV = findViewById(R.id.iv_pay_image);
         adsLinear = findViewById(R.id.iv_ads_image);
+
+        web_order = findViewById(R.id.web_order);
+        WebView.enableSlowWholeDocumentDraw();
+        web_order.setWebChromeClient(new WebChromeClient());
+        //声明WebSettings子类
+        WebSettings webSettings = web_order.getSettings();
+
+        //如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
+        webSettings.setJavaScriptEnabled(true);
+
+        //设置自适应屏幕，两者合用
+        webSettings.setUseWideViewPort(true);
+        webSettings.setLoadWithOverviewMode(true);
+
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         rv.setLayoutManager(manager);
         selectedAdapter = new HomeSelectedAdapter(null);
@@ -66,6 +84,10 @@ public class DifferentDisplay extends Presentation {
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         rv.setAdapter(selectedAdapter);
+    }
+
+    public WebView getWeb_order() {
+        return web_order;
     }
 
     @Override

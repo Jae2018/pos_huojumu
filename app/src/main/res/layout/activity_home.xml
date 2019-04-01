@@ -282,10 +282,10 @@
 
     </LinearLayout>
 
-    <WebView
-        android:id="@+id/web_order"
-        android:layout_width="@dimen/d_540"
-        android:layout_alignParentEnd="true"
-        android:layout_height="match_parent" />
+    <!--<WebView-->
+        <!--android:id="@+id/web_order"-->
+        <!--android:layout_width="@dimen/d_540"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_height="match_parent" />-->
 
 </RelativeLayout>

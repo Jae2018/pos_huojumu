@@ -133,8 +133,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     Button takeover;
     @BindView(R.id.btn_home_daily)
     Button dailyBtn;
-    @BindView(R.id.web_order)
-    WebView webView;
+//    @BindView(R.id.web_order)
+//    WebView webView;
 
     private HomeSelectedAdapter selectedAdapter;//所选
     private HomeTypeAdapter typeAdapter;//类别
@@ -203,17 +203,17 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         getUsb(UsbUtil.getUsbDeviceList(this));
 
-        WebView.enableSlowWholeDocumentDraw();
-        webView.setWebChromeClient(new WebChromeClient());
-        //声明WebSettings子类
-        WebSettings webSettings = webView.getSettings();
-
-        //如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
-        webSettings.setJavaScriptEnabled(true);
-
-        //设置自适应屏幕，两者合用
-        webSettings.setUseWideViewPort(true);
-        webSettings.setLoadWithOverviewMode(true);
+//        WebView.enableSlowWholeDocumentDraw();
+//        webView.setWebChromeClient(new WebChromeClient());
+//        //声明WebSettings子类
+//        WebSettings webSettings = webView.getSettings();
+//
+//        //如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
+//        webSettings.setJavaScriptEnabled(true);
+//
+//        //设置自适应屏幕，两者合用
+//        webSettings.setUseWideViewPort(true);
+//        webSettings.setLoadWithOverviewMode(true);
         //左侧点单列表
         selectedAdapter = new HomeSelectedAdapter(productions);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -808,7 +808,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 .replace("{9}", Constant.LOGO_PNG)
                 .replace("{10}", Constant.QR_CODE);
 
-        webView.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+        engine.getWebView().setVisibility(View.VISIBLE);
+        engine.getWebView().loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
     }
 
     /**
@@ -868,8 +869,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 //                threadPool.addTask(new Runnable() {
 //                    @Override
 //                    public void run() {
-                        Bitmap bitmap = captureWebView(webView);
-                        PrinterUtil.printImage(bitmap);
+                Bitmap bitmap = captureWebView(engine.getWebView());
+                PrinterUtil.printImage(bitmap);
+                engine.getWebView().setVisibility(View.INVISIBLE);
 //                    }
 //                });
 

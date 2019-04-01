@@ -126,6 +126,13 @@
                 android:layout_centerInParent="true"
                 android:contentDescription="@string/des" />
 
+            <WebView
+                android:id="@+id/web_order"
+                android:layout_width="@dimen/d_420"
+                android:layout_centerHorizontal="true"
+                android:visibility="invisible"
+                android:layout_height="match_parent"/>
+
 
         </RelativeLayout>
 

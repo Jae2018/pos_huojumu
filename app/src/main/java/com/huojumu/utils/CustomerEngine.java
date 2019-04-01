@@ -4,6 +4,7 @@ import android.content.Context;
 import android.hardware.display.DisplayManager;
 import android.view.Display;
 import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.ImageView;
 
 import com.huojumu.main.activity.dialog.DifferentDisplay;
@@ -73,4 +74,9 @@ public class CustomerEngine {
     public ImageView getAdsImage(){
         return mCustomerDisplay.getAdsLinear();
     }
+
+    public WebView getWebView(){
+        return mCustomerDisplay.getWeb_order();
+    }
+
 }

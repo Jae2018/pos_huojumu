@@ -9,7 +9,7 @@ public interface Constant {
 
     /* api interface */
     //base url
-    String BASE_URL = "http://47.105.207.183/pos/sale_inte/";//http://47.105.207.183/pos/sale_inte/ ；http://192.168.1.177:9873/pos/sale_inte/
+    String BASE_URL = "http://47.105.207.183/pos/sale_inte/";//http://47.105.207.183/pos/sale_inte/ ；http://192.168.1.177:9873/pos/sale_inte/      39：https://www.goodb2b.cn/pos/sale_inte
     String SOCKET = "ws://47.105.207.183/pos/sale_inte/shopws";
     String HEART = "{\"task\": \"heartbeat\",\"machineCode\":\"%s\",\"shopID\":%s,\"eqpType\":\"3\"}";
     String BAND = "{\"task\": \"heartbeat\",\"machineCode\":\"%s\"}";

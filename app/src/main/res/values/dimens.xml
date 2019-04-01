@@ -34,7 +34,7 @@
     <dimen name="d_300">300dp</dimen>
     <dimen name="d_350">350dp</dimen>
     <dimen name="d_420">424dp</dimen>
-
+    <dimen name="d_540">540dp</dimen>
     <!-- fonts' sp -->
     <dimen name="f_16">16sp</dimen>
     <dimen name="f_18">18sp</dimen>

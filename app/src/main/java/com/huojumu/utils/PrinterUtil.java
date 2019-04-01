@@ -132,6 +132,10 @@ public class PrinterUtil {
         return msg.getBytes(Charset.forName("GB2312")).length;
     }
 
+    public static PrinterAPI getmPrinter() {
+        return mPrinter;
+    }
+
     /**
      * 打印两列
      *
@@ -263,11 +267,11 @@ public class PrinterUtil {
         });
     }
 
-    public static String toJson(Object orderInfo) {
+    public static String toJson(Object obj) {
         if (gson == null) {
             gson = new Gson();
         }
-        return gson.toJson(orderInfo);
+        return gson.toJson(obj);
     }
 
     /**
@@ -384,7 +388,7 @@ public class PrinterUtil {
     }
 
 
-    public static String printFourData80(String leftText, String middleText, String three, String rightText,int width) {
+    public static String printFourData80(String leftText, String middleText, String three, String rightText) {
         StringBuilder sb = new StringBuilder();
         // 左边最多显示 LEFT_TEXT_MAX_LENGTH 个汉字 + 两个点
         if (leftText.length() > 7) {
@@ -394,10 +398,6 @@ public class PrinterUtil {
         int middleTextLength = getBytesLength(middleText);
         int threeTextLength = getBytesLength(three);
         int fourTextLength = getBytesLength(rightText);
-        Log.e(">>>", "leftTextLength: " + leftTextLength);
-        Log.e(">>>", "middleTextLength: " + middleTextLength);
-        Log.e(">>>", "threeTextLength: " + threeTextLength);
-        Log.e(">>>", "fourTextLength: " + fourTextLength);
 
         sb.append(leftText);
 
@@ -432,97 +432,97 @@ public class PrinterUtil {
     /**
      * 打印文本80mm小票样式 48 字节
      */
-//    public static void printString80(Context c, final List<Production> pList, final String orderNo, final String name, final String totalMoney,
-//                                     final String earn, final String cost, final String charge, final String cut, final String date) {
-//        try {
-//
-//            //居左
-//            mPrinter.setAlignMode(0);
-//            //字体变大
-//            mPrinter.setCharSize(1, 1);
-//            //订单流水号
-//            String s = orderNo.substring(orderNo.length() - 4);
-//            mPrinter.printString(s, "GB-2312");
-//            set(CLEAR_TEMP);
-//
-//            //实线
-//            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line1)));
-//
-//            set(CLEAR_TEMP);
-//            mPrinter.setCharSize(0, 0);
-//            //员工名 + 时间
-//            s = "\n收银员：" + name + "\n" + "下单时间：" + date;
-//            mPrinter.printString(s, "GB-2312");
-//
-//            //间隔大的虚线
-//            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line2)));
-//
-//            //商品信息
-//            StringBuilder sb = new StringBuilder();
-//            sb.append(printFourData80("商品名称", "数量", "单价", "金额")).append("\n");
-//
-//            mPrinter.setFontStyle(1);
-//            for (Production p : pList) {
-//                int n = p.getNumber();
-//                sb.append(printFourData80(p.getProName(), String.valueOf(n), String.valueOf(p.getPrice()), String.valueOf(n * p.getPrice()))).append("\n");
-//                if (p.getMats().size() > 0)
-//                    for (MatsBean bean : p.getMats()) {
-//                        sb.append(printFourData80(" " + bean.getMatName(), String.valueOf(n), String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()))).append("\n");
-//                    }
-//            }
-//            mPrinter.printString(sb.toString(), "GB-2312");
-//
-//            //间隔小的虚线
-//            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line3)));
-//            mPrinter.setFontStyle(0);
-//
-//            //交易金额明细
-//            s = "\n" + printTwoData80("消费金额", totalMoney)
-//                    + "\n" + printTwoData80("应收金额", earn)
-//                    + "\n" + printTwoData80("客户实付", cost)
-//                    + "\n" + printTwoData80("优    惠", cut)
-//                    + "\n" + printTwoData80("找    零", charge) + "\n";
-//            mPrinter.printString(s, "GB-2312");
-//
-//            //虚实线
-//            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line3)));
-//            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line1)));
-//
-//            //居中
-//            mPrinter.setAlignMode(1);
-//
-//            //logo图片9
-//            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.logo)));
-//
-//            mPrinter.setAlignMode(0);
-//            mPrinter.setCharSize(1, 1);
-//            //店铺名
-//            s = SpUtil.getString(Constant.STORE_NAME) + "\n";
-//            mPrinter.printString(s, "GB-2312");
-//
-//            mPrinter.setCharSize(0, 0);
-//            //企业文化描述
-//            s = "7港9欢迎您的到来。我们再次从香港出发，希望搜集到各地的特色食品，港印全国。能7(去)香港(港)的(9)九龙喝一杯正宗的港饮是我们对每一位顾客的愿景。几百年来，香港作为东方接触世界的窗口，找寻并创造了一款款独具特色又流传世界的高品饮品。我们在全国超过十年的专业服务与坚持，与97回归共享繁华，秉承独到的调制方法，期许再一次与亲爱的你能擦出下一个十年火花。\n";
-//            mPrinter.printString(s, "GB-2312");
-//            mPrinter.setAlignMode(1);
-//
-//            //品牌二维码
-//            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.qr_code)));
-//
-//            //投诉、加盟热线
-//            s = "\n投诉、加盟热线：010-62655878";
-//            mPrinter.printString(s, "GB-2312");
-//
-//            //公司
-//            s = "\n技术支持：火炬木科技";
-//            mPrinter.printString(s, "GB-2312");
-//            mPrinter.feedToStartPos();
-//            cutPaper();
-//        } catch (Exception e) {
-//            Log.d(TAG, "printDaily: error");
-//            ToastUtils.showLong("打印机连接出错");
-//        }
-//    }
+    public static void printString80(Context c, final List<Production> pList, final String orderNo, final String name, final String totalMoney,
+                                     final String earn, final String cost, final String charge, final String cut, final String date) {
+        try {
+
+            //居左
+            mPrinter.setAlignMode(0);
+            //字体变大
+            mPrinter.setCharSize(1, 1);
+            //订单流水号
+            String s = orderNo.substring(orderNo.length() - 4);
+            mPrinter.printString(s, "GB-2312");
+            set(CLEAR_TEMP);
+
+            //实线
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line1)));
+
+            set(CLEAR_TEMP);
+            mPrinter.setCharSize(0, 0);
+            //员工名 + 时间
+            s = "\n收银员：" + name + "\n" + "下单时间：" + date;
+            mPrinter.printString(s, "GB-2312");
+
+            //间隔大的虚线
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line2)));
+
+            //商品信息
+            StringBuilder sb = new StringBuilder();
+            sb.append(printFourData80("商品名称", "数量", "单价", "金额")).append("\n");
+
+            mPrinter.setFontStyle(1);
+            for (Production p : pList) {
+                int n = p.getNumber();
+                sb.append(printFourData80(p.getProName(), String.valueOf(n), String.valueOf(p.getPrice()), String.valueOf(n * p.getPrice()))).append("\n");
+                if (p.getMats().size() > 0)
+                    for (MatsBean bean : p.getMats()) {
+                        sb.append(printFourData80(" " + bean.getMatName(), String.valueOf(n), String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()))).append("\n");
+                    }
+            }
+            mPrinter.printString(sb.toString(), "GB-2312");
+
+            //间隔小的虚线
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line3)));
+            mPrinter.setFontStyle(0);
+
+            //交易金额明细
+            s = "\n" + printTwoData80("消费金额", totalMoney)
+                    + "\n" + printTwoData80("应收金额", earn)
+                    + "\n" + printTwoData80("客户实付", cost)
+                    + "\n" + printTwoData80("优    惠", cut)
+                    + "\n" + printTwoData80("找    零", charge) + "\n";
+            mPrinter.printString(s, "GB-2312");
+
+            //虚实线
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line3)));
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.line1)));
+
+            //居中
+            mPrinter.setAlignMode(1);
+
+            //logo图片9
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.logo)));
+
+            mPrinter.setAlignMode(0);
+            mPrinter.setCharSize(1, 1);
+            //店铺名
+            s = SpUtil.getString(Constant.STORE_NAME) + "\n";
+            mPrinter.printString(s, "GB-2312");
+
+            mPrinter.setCharSize(0, 0);
+            //企业文化描述
+            s = "7港9欢迎您的到来。我们再次从香港出发，希望搜集到各地的特色食品，港印全国。能7(去)香港(港)的(9)九龙喝一杯正宗的港饮是我们对每一位顾客的愿景。几百年来，香港作为东方接触世界的窗口，找寻并创造了一款款独具特色又流传世界的高品饮品。我们在全国超过十年的专业服务与坚持，与97回归共享繁华，秉承独到的调制方法，期许再一次与亲爱的你能擦出下一个十年火花。\n";
+            mPrinter.printString(s, "GB-2312");
+            mPrinter.setAlignMode(1);
+
+            //品牌二维码
+            printImage(drawable2Bitmap(c.getResources().getDrawable(R.drawable.qr_code)));
+
+            //投诉、加盟热线
+            s = "\n投诉、加盟热线：010-62655878";
+            mPrinter.printString(s, "GB-2312");
+
+            //公司
+            s = "\n技术支持：火炬木科技";
+            mPrinter.printString(s, "GB-2312");
+            mPrinter.feedToStartPos();
+            cutPaper();
+        } catch (Exception e) {
+            Log.d(TAG, "printDaily: error");
+            ToastUtils.showLong("打印机连接出错");
+        }
+    }
 
     /**
      * 打印交班、日结
@@ -593,12 +593,12 @@ public class PrinterUtil {
 
             //商品信息
             StringBuilder sb = new StringBuilder();
-            sb.append(printFourData80("商品名称", "数量", "单价", "金额",0)).append("\n");
+            sb.append(printFourData80("商品名称", "数量", "单价", "金额")).append("\n");
 
             mPrinter.setFontStyle(1);
             for (int i = 0; i < details.getOrderdetail().getPros().size(); i++) {
                 sb.append(printFourData80(details.getOrderdetail().getPros().get(i).getProName(), String.valueOf(details.getOrderdetail().getPros().get(i).getCups().size()), String.valueOf(details.getOrderdetail().getPros().get(i).getPrice()),
-                        String.valueOf(details.getOrderdetail().getPros().get(i).getCups().size() * details.getOrderdetail().getPros().get(i).getPrice()),0)).append("\n");
+                        String.valueOf(details.getOrderdetail().getPros().get(i).getCups().size() * details.getOrderdetail().getPros().get(i).getPrice()))).append("\n");
             }
             mPrinter.printString(sb.toString(), "GB-2312");
 
@@ -660,6 +660,7 @@ public class PrinterUtil {
      * @param bitmap 要打印的图片
      */
     public static void printImage(Bitmap bitmap) {
+        mPrinter.setAlignMode(1);
         try {
             if (PrinterAPI.SUCCESS == mPrinter.printRasterBitmap(bitmap)) {
                 Log.d(TAG, "printImage: finish");
@@ -667,6 +668,8 @@ public class PrinterUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        set(CLEAR_TEMP);
+        cutPaper();
     }
 
     /**

@@ -24,6 +24,8 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.View;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -181,6 +183,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private OrderBack orderBack;
     private double change;
     //是否推荐
+
     private boolean isRecommend = false;
 
     private List<OrderInfo.DataBean> dataBeans = new ArrayList<>();
@@ -200,8 +203,17 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         getUsb(UsbUtil.getUsbDeviceList(this));
 
-//        WebView.enableSlowWholeDocumentDraw();
+        WebView.enableSlowWholeDocumentDraw();
+        webView.setWebChromeClient(new WebChromeClient());
+        //声明WebSettings子类
+        WebSettings webSettings = webView.getSettings();
 
+        //如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
+        webSettings.setJavaScriptEnabled(true);
+
+        //设置自适应屏幕，两者合用
+        webSettings.setUseWideViewPort(true);
+        webSettings.setLoadWithOverviewMode(true);
         //左侧点单列表
         selectedAdapter = new HomeSelectedAdapter(productions);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -783,39 +795,33 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     private void initWebOrder(String OrderNo, String date, String proList, String totalMoney,
                               String cost, String charge, String cut) {
-        String html = SpUtil.getString(Constant.HTML);
-        html = html.replace("{1}", OrderNo.substring(OrderNo.length() - 4))
+        String html = H5Order.html;
+        html = html.replace("{1}", "N" + OrderNo.substring(OrderNo.length() - 4))
                 .replace("{2}", SpUtil.getString(Constant.WORKER_NAME))
                 .replace("{3}", date)
-                .replace("{4}", proList)
-                .replace("{5}", totalMoney)
-                .replace("{6}", cost)
-                .replace("{7}", cut)
-                .replace("{8}", charge)
+                .replace("{data}", proList)
+                .replace("{4}", totalMoney)
+                .replace("{5}", cost)
+                .replace("{6}", cut)
+                .replace("{7}", charge)
+                .replace("{8}", SpUtil.getString(Constant.STORE_NAME))
                 .replace("{9}", Constant.LOGO_PNG)
                 .replace("{10}", Constant.QR_CODE);
-        Log.e(TAG, "initWebOrder: " + html);
+
         webView.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
-//        Bitmap bitmap = webView.getDrawingCache();
-//        PrinterUtil.printImage(bitmap);
     }
 
     /**
      * 打印订单小票
      */
     private void PrintOrder(final OrderBack orderBack, final double charge) {
-        String str = orderBack.getTotalPrice().substring(0, orderBack.getTotalPrice().length() - 1);
-        String proList = "";
-        for (Production p : productions) {
-            int n = p.getNumber();
-            proList += PrinterUtil.printFourData80(p.getProName(), String.valueOf(n), String.valueOf(p.getPrice()), String.valueOf(n * p.getPrice()), webView.getWidth()) + "\n";
-            if (p.getMats().size() > 0)
-                for (MatsBean bean : p.getMats()) {
-                    proList += PrinterUtil.printFourData80(" " + bean.getMatName(), String.valueOf(n), String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()), webView.getWidth()) + "\n";
-                }
+
+        if (PrinterUtil.getmPrinter() == null) {
+            PrinterUtil.connectPrinter(getApplicationContext());
         }
 
-        initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList,str, (Double.parseDouble(orderBack.getTotalPrice()) + charge)+"", charge + "", totalCut + "");
+        String str = orderBack.getTotalPrice().substring(0, orderBack.getTotalPrice().length() - 1);
+        String proList = PrinterUtil.toJson(productions);
 
         threadPool.addTask(new Runnable() {
             @Override
@@ -824,14 +830,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     isCash = false;
                     PrinterUtil.OpenMoneyBox();
                 }
-            }
-        });
-
-        threadPool.addTask(new Runnable() {
-            @Override
-            public void run() {
-
-
             }
         });
 
@@ -862,7 +860,33 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
         }
 
-        printLabel();
+        initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList, str, (Double.parseDouble(orderBack.getTotalPrice()) + charge) + "", charge + "", totalCut + "");
+
+        MyOkHttp.mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+//                threadPool.addTask(new Runnable() {
+//                    @Override
+//                    public void run() {
+                        Bitmap bitmap = captureWebView(webView);
+                        PrinterUtil.printImage(bitmap);
+//                    }
+//                });
+
+                printLabel();
+            }
+        }, 1000);
+
+    }
+
+    private Bitmap captureWebView(WebView webView) {
+        Picture snapShot = webView.capturePicture();
+        Log.e(TAG, "width: " + snapShot.getWidth() + "     height:" + snapShot.getHeight());
+        Bitmap bitmap = Bitmap.createBitmap(snapShot.getWidth(),
+                snapShot.getHeight(), Bitmap.Config.RGB_565);
+        Canvas canvas = new Canvas(bitmap);
+        snapShot.draw(canvas);
+        return bitmap;
     }
 
     private void printLabel() {
@@ -887,7 +911,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                 if (mate.length() > 8) {
                                     mate = mate.substring(0, 8);
                                 }
-                                sendLabel(name, printProducts.get(printcount).getTasteStr(), printProducts.get(printcount).getPrice()+"", printcount, printProducts.size(), mate, printProducts.get(printcount).getScaleStr());
+                                sendLabel(name, printProducts.get(printcount).getTasteStr(), printProducts.get(printcount).getPrice() + "", printcount, printProducts.size(), mate, printProducts.get(printcount).getScaleStr());
                             }
                         }
                     }), 1000, TimeUnit.MILLISECONDS);

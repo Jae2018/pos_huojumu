@@ -76,17 +76,14 @@ dependencies {
     implementation 'com.tencent.bugly:crashreport:2.6.6.1'
     //二维码
     implementation 'com.google.zxing:core:3.3.3'
-//    implementation 'com.tsy:myokhttp:1.1.4'
+    //    implementation 'com.tsy:myokhttp:1.1.4'
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
-
     implementation 'org.greenrobot:eventbus:3.1.1'
-
     implementation project(':LoadingDialog')
     //    implementation files('libs/gprintersdkv1.jar')
     implementation project(':myokhttp')
-
-    implementation 'com.github.promeg:tinypinyin:2.0.3' // TinyPinyin核心包，约80KB
-
+    implementation 'com.github.promeg:tinypinyin:2.0.3'
+    // TinyPinyin核心包，约80KB
     implementation 'com.github.promeg:tinypinyin-lexicons-android-cncity:2.0.3'
 }

@@ -43,7 +43,7 @@ public class HomeSelectedAdapter extends BaseItemDraggableAdapter<Production, Ba
                 .setText(R.id.tv_home_selected_taste, "口味：" + item.getTasteStr())
                 .setText(R.id.tv_home_selected_price, "商品单价：" + item.getPrice())
                 .setText(R.id.tv_home_selected_msg, "备注：" + (item.getAddon().isEmpty() ? "无" : item.getAddon()))
-                .setText(R.id.tv_home_selected_cost, "" + item.getPrice() * item.getNumber() + m);
+                .setText(R.id.tv_home_selected_cost, "" + (item.getPrice() * item.getNumber() + m));
 
     }
 }

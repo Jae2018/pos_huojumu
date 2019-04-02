@@ -670,6 +670,7 @@ public class PrinterUtil {
         }
         set(CLEAR_TEMP);
         cutPaper();
+        bitmap.recycle();
     }
 
     /**

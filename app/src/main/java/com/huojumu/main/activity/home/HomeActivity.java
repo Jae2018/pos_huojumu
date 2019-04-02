@@ -862,22 +862,20 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
 
         initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList, str, (Double.parseDouble(orderBack.getTotalPrice()) + charge) + "", charge + "", totalCut + "");
-
+        final Bitmap bitmap = captureWebView(engine.getWebView());
+        threadPool.addTask(new Runnable() {
+            @Override
+            public void run() {
+                PrinterUtil.printImage(bitmap);
+            }
+        });
         MyOkHttp.mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-//                threadPool.addTask(new Runnable() {
-//                    @Override
-//                    public void run() {
-                Bitmap bitmap = captureWebView(engine.getWebView());
-                PrinterUtil.printImage(bitmap);
-                engine.getWebView().setVisibility(View.INVISIBLE);
-//                    }
-//                });
-
+                engine.getWebView().setVisibility(View.GONE);
                 printLabel();
             }
-        }, 1000);
+        }, 500);
 
     }
 

@@ -817,19 +817,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 .replace("{7}", charge)
                 .replace("{8}", SpUtil.getString(Constant.STORE_NAME));
 
-        Log.e(TAG, "initWebOrder: " + System.currentTimeMillis());
         webView.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
-
-
-        MyOkHttp.mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-//                PrinterUtil.printImage(bitmap);
-//                printLabel();
-            }
-        }, 1000);
-
-
     }
 
     /**

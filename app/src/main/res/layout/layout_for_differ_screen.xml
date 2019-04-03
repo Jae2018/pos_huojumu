@@ -116,7 +116,7 @@
                 android:id="@+id/iv_ads_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_centerInParent="true"
+                android:visibility="gone"
                 android:contentDescription="@string/des" />
 
             <ImageView
@@ -125,14 +125,6 @@
                 android:layout_height="@dimen/d_200"
                 android:layout_centerInParent="true"
                 android:contentDescription="@string/des" />
-
-            <WebView
-                android:id="@+id/web_order"
-                android:layout_width="@dimen/d_420"
-                android:layout_centerHorizontal="true"
-                android:visibility="invisible"
-                android:layout_height="match_parent"/>
-
 
         </RelativeLayout>
 

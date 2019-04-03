@@ -75,8 +75,8 @@ public class CustomerEngine {
         return mCustomerDisplay.getAdsLinear();
     }
 
-    public WebView getWebView(){
-        return mCustomerDisplay.getWeb_order();
-    }
+//    public WebView getWebView(){
+//        return mCustomerDisplay.getWeb_order();
+//    }
 
 }

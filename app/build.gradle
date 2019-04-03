@@ -18,6 +18,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug{
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
     dataBinding {
         enabled = true
@@ -83,7 +87,7 @@ dependencies {
     implementation project(':LoadingDialog')
     //    implementation files('libs/gprintersdkv1.jar')
     implementation project(':myokhttp')
-    implementation 'com.github.promeg:tinypinyin:2.0.3'
+//    implementation 'com.github.promeg:tinypinyin:2.0.3'
     // TinyPinyin核心包，约80KB
-    implementation 'com.github.promeg:tinypinyin-lexicons-android-cncity:2.0.3'
+//    implementation 'com.github.promeg:tinypinyin-lexicons-android-cncity:2.0.3'
 }

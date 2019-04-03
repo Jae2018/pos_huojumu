@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Picture;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.media.MediaPlayer;
@@ -20,15 +19,18 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Base64;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -133,8 +135,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     Button takeover;
     @BindView(R.id.btn_home_daily)
     Button dailyBtn;
-//    @BindView(R.id.web_order)
-//    WebView webView;
+    @BindView(R.id.parent_relative)
+    RelativeLayout parent_relative;
+    @BindView(R.id.web_order)
+    WebView webView;
 
     private HomeSelectedAdapter selectedAdapter;//所选
     private HomeTypeAdapter typeAdapter;//类别
@@ -203,17 +207,19 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         getUsb(UsbUtil.getUsbDeviceList(this));
 
-//        WebView.enableSlowWholeDocumentDraw();
-//        webView.setWebChromeClient(new WebChromeClient());
-//        //声明WebSettings子类
-//        WebSettings webSettings = webView.getSettings();
-//
-//        //如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
-//        webSettings.setJavaScriptEnabled(true);
-//
-//        //设置自适应屏幕，两者合用
-//        webSettings.setUseWideViewPort(true);
-//        webSettings.setLoadWithOverviewMode(true);
+        WebView.enableSlowWholeDocumentDraw();
+        webView.setWebChromeClient(new WebChromeClient());
+        //声明WebSettings子类
+        WebSettings webSettings = webView.getSettings();
+
+        //如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
+        webSettings.setJavaScriptEnabled(true);
+
+        //设置自适应屏幕，两者合用
+        webSettings.setUseWideViewPort(true);
+        webSettings.setLoadWithOverviewMode(true);
+
+
         //左侧点单列表
         selectedAdapter = new HomeSelectedAdapter(productions);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -309,7 +315,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 .setSuccessText("支付成功")//显示加载成功时的文字
                 .setFailedText("支付失败");
 
+        webView.addJavascriptInterface(new JsInterface(), "JSInterface");
+
     }
+
 
     @OnClick(R.id.button5)
     void refresh() {
@@ -339,10 +348,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     private void getAdsList() {
+        //广告
         NetTool.getAdsList(SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<List<AdsBean>>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<List<AdsBean>> response) {
                 if (response.getData().size() > 0) {
+                    engine.getAdsImage().setVisibility(View.VISIBLE);
                     GlideApp.with(HomeActivity.this).load(response.getData().get(0).getPath()).placeholder(R.drawable.pro_default).into(engine.getAdsImage());
                 }
             }
@@ -684,7 +695,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 } else {
                     initOrder();
                     orderInfo.setPayType(type == 2 ? "020" : "010");
-
+                    engine.getAdsImage().setVisibility(View.GONE);
                     //线上支付
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                         @Override
@@ -804,12 +815,21 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 .replace("{5}", cost)
                 .replace("{6}", cut)
                 .replace("{7}", charge)
-                .replace("{8}", SpUtil.getString(Constant.STORE_NAME))
-                .replace("{9}", Constant.LOGO_PNG)
-                .replace("{10}", Constant.QR_CODE);
+                .replace("{8}", SpUtil.getString(Constant.STORE_NAME));
 
-        engine.getWebView().setVisibility(View.VISIBLE);
-        engine.getWebView().loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+        Log.e(TAG, "initWebOrder: " + System.currentTimeMillis());
+        webView.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+
+
+        MyOkHttp.mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+//                PrinterUtil.printImage(bitmap);
+//                printLabel();
+            }
+        }, 1000);
+
+
     }
 
     /**
@@ -823,16 +843,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         String str = orderBack.getTotalPrice().substring(0, orderBack.getTotalPrice().length() - 1);
         String proList = PrinterUtil.toJson(productions);
-
-        threadPool.addTask(new Runnable() {
-            @Override
-            public void run() {
-                if (isCash) {
-                    isCash = false;
-                    PrinterUtil.OpenMoneyBox();
-                }
-            }
-        });
+        initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList, str, (Double.parseDouble(orderBack.getTotalPrice()) + charge) + "", charge + "", totalCut + "");
 
         if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] == null ||
                 !DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getConnState()) {
@@ -860,33 +871,20 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 printcount++;
             }
         }
+        openCash();
+        printLabel();
+    }
 
-        initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList, str, (Double.parseDouble(orderBack.getTotalPrice()) + charge) + "", charge + "", totalCut + "");
-        final Bitmap bitmap = captureWebView(engine.getWebView());
+    private void openCash() {
         threadPool.addTask(new Runnable() {
             @Override
             public void run() {
-                PrinterUtil.printImage(bitmap);
+                if (isCash) {
+                    isCash = false;
+                    PrinterUtil.OpenMoneyBox();
+                }
             }
         });
-        MyOkHttp.mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                engine.getWebView().setVisibility(View.GONE);
-                printLabel();
-            }
-        }, 500);
-
-    }
-
-    private Bitmap captureWebView(WebView webView) {
-        Picture snapShot = webView.capturePicture();
-        Log.e(TAG, "width: " + snapShot.getWidth() + "     height:" + snapShot.getHeight());
-        Bitmap bitmap = Bitmap.createBitmap(snapShot.getWidth(),
-                snapShot.getHeight(), Bitmap.Config.RGB_565);
-        Canvas canvas = new Canvas(bitmap);
-        snapShot.draw(canvas);
-        return bitmap;
     }
 
     private void printLabel() {
@@ -973,8 +971,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             @Override
             public void run() {
                 clear();
+                engine.getAdsImage().setVisibility(View.VISIBLE);
             }
-        }, 1500);
+        }, 1000);
     }
 
     private void usbConn(UsbDevice usbDevice) {
@@ -1154,18 +1153,31 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         unregisterReceiver(receiver);
     }
 
+    public static Bitmap stringToBitmap(String string) {
+        Bitmap bitmap = null;
+        try {
+            byte[] bitmapArray = Base64.decode(string.split(",")[1], Base64.DEFAULT);
+            bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
 
-//    private void daily() {
-//        NetTool.settlement(SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<String>>() {
-//            @Override
-//            public void onSuccess(int statusCode, BaseBean<String> response) {
-//
-//            }
-//
-//            @Override
-//            public void onFailure(int statusCode, String error_msg) {
-//            }
-//        });
-//    }
+    public class JsInterface {
 
+        @JavascriptInterface
+        public void save(final String string) {
+            Log.e(TAG, "save: " + string);
+
+            threadPool.addTask(new Runnable() {
+                @Override
+                public void run() {
+                    Log.e(TAG, "run: ");
+                    Bitmap bitmap = stringToBitmap(string);
+                    PrinterUtil.printImage(bitmap);
+                }
+            });
+        }
+    }
 }

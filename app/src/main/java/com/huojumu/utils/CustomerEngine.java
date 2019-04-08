@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import com.huojumu.main.activity.dialog.DifferentDisplay;
 import com.huojumu.model.Production;
+import com.youth.banner.Banner;
 
 import java.util.List;
 
@@ -71,8 +72,11 @@ public class CustomerEngine {
         return mCustomerDisplay.getAliIV();
     }
 
-    public ImageView getAdsImage(){
-        return mCustomerDisplay.getAdsLinear();
+    public Banner getBanner(){
+        if (mCustomerDisplay != null) {
+            return mCustomerDisplay.getBanner();
+        }
+        return null;
     }
 
 //    public WebView getWebView(){

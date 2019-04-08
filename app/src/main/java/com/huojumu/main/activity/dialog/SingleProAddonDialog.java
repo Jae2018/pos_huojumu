@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.huojumu.R;
 import com.huojumu.base.BaseDialog;
 import com.huojumu.main.dialogs.SingleProCallback;
-import com.huojumu.model.BaseBean;
 import com.huojumu.model.MakesBean;
 import com.huojumu.model.MatsBean;
 import com.huojumu.model.OrderInfo;
@@ -21,10 +20,6 @@ import com.huojumu.model.Production;
 import com.huojumu.model.ScaleBean;
 import com.huojumu.model.Specification;
 import com.huojumu.model.TastesBean;
-import com.huojumu.utils.Constant;
-import com.huojumu.utils.NetTool;
-import com.huojumu.utils.SpUtil;
-import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 import com.zhy.view.flowlayout.FlowLayout;
 import com.zhy.view.flowlayout.TagAdapter;
 import com.zhy.view.flowlayout.TagFlowLayout;
@@ -65,7 +60,6 @@ public class SingleProAddonDialog extends BaseDialog {
     @BindView(R.id.et_addon)
     EditText addOnET;//备注
 
-    private int proId;//商品ID
     private int number = 1;//数量
 
     private Production productsBean;//单品
@@ -86,14 +80,16 @@ public class SingleProAddonDialog extends BaseDialog {
     private double price = 0;
     private int p = -1;
 
+    private Specification specification;
+
     public SingleProAddonDialog(@NonNull Context context, SingleProCallback callback,
                                 Production productsBean,
-                                int proId,
+                                Specification specification,
                                 boolean isChange, int pos) {
         super(context);
         this.productsBean = productsBean;
         this.callback = callback;
-        this.proId = proId;
+        this.specification = specification;
         this.isChange = isChange;
         this.position = pos;
     }
@@ -107,148 +103,135 @@ public class SingleProAddonDialog extends BaseDialog {
     public void initView() {
         matsBeans.clear();
         final LayoutInflater mInflater = LayoutInflater.from(getContext());
-        NetTool.getSpecification(SpUtil.getInt(Constant.PINPAI_ID), proId, SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<Specification>>() {
-            @Override
-            public void onSuccess(int statusCode, final BaseBean<Specification> response) {
-                //规格
-                if (response.getData().getScales() == null || response.getData().getScales().isEmpty()) {
-                    t3.setVisibility(View.GONE);
-                    flowLayout1.setVisibility(View.GONE);
-                } else {
-                    TagAdapter makesAdapter = new TagAdapter<ScaleBean>(response.getData().getScales()) {
-                        @Override
-                        public View getView(FlowLayout parent, int position, ScaleBean o) {
-                            TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
-                                    flowLayout1, false);
-                            tv.setText(o.getScaName());
-                            return tv;
-                        }
-                    };
-                    makesAdapter.setSelectedList(0);
-                    scaleBean = response.getData().getScales().get(0);
-                    flowLayout1.setMaxSelectCount(1);
+        if (specification != null) {
+            //规格
+            if (specification.getScales() == null || specification.getScales().isEmpty()) {
+                t3.setVisibility(View.GONE);
+                flowLayout1.setVisibility(View.GONE);
+            } else {
+                TagAdapter makesAdapter = new TagAdapter<ScaleBean>(specification.getScales()) {
+                    @Override
+                    public View getView(FlowLayout parent, int position, ScaleBean o) {
+                        TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
+                                flowLayout1, false);
+                        tv.setText(o.getScaName());
+                        return tv;
+                    }
+                };
+                makesAdapter.setSelectedList(0);
+                scaleBean = specification.getScales().get(0);
+                flowLayout1.setMaxSelectCount(1);
 
-                    flowLayout1.setOnTagClickListener(new TagFlowLayout.OnTagClickListener() {
-                        @Override
-                        public boolean onTagClick(View view, int position, FlowLayout parent) {
-                            scaleBean = response.getData().getScales().get(position);
-                            return true;
-                        }
-                    });
-                    flowLayout1.setAdapter(makesAdapter);
-                }
-
-                //口味
-                if (response.getData().getTastes() == null || response.getData().getTastes().isEmpty()) {
-                    t4.setVisibility(View.GONE);
-                    flowLayout2.setVisibility(View.GONE);
-                } else {
-                    TagAdapter tastesAdapter = new TagAdapter<TastesBean>(response.getData().getTastes()) {
-                        @Override
-                        public View getView(FlowLayout parent, int position, TastesBean o) {
-                            TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
-                                    flowLayout1, false);
-                            tv.setText(o.getTasteName());
-                            return tv;
-                        }
-
-                        @Override
-                        public void onSelected(int position, View view) {
-                            super.onSelected(position, view);
-
-                        }
-                    };
-                    tastesAdapter.setSelectedList(0);
-                    tastesBean = response.getData().getTastes().get(0);
-                    flowLayout2.setMaxSelectCount(1);
-                    flowLayout2.setOnTagClickListener(new TagFlowLayout.OnTagClickListener() {
-                        @Override
-                        public boolean onTagClick(View view, int position, FlowLayout parent) {
-                            tastesBean = response.getData().getTastes().get(position);
-                            return true;
-                        }
-                    });
-                    flowLayout2.setAdapter(tastesAdapter);
-                }
-
-                //加料
-                if (response.getData().getMats() == null || response.getData().getMats().isEmpty()) {
-                    t5.setVisibility(View.GONE);
-                    flowLayout3.setVisibility(View.GONE);
-                } else {
-                    flowLayout3.setAdapter(new TagAdapter<MatsBean>(response.getData().getMats()) {
-                        @Override
-                        public View getView(FlowLayout parent, int position, MatsBean o) {
-                            TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
-                                    flowLayout1, false);
-                            tv.setGravity(Gravity.CENTER);
-                            tv.setText(String.format("%s\n%s", o.getMatName(), o.getIngredientPrice()));
-                            return tv;
-                        }
-                    });
-
-                    flowLayout3.setOnTagClickListener(new TagFlowLayout.OnTagClickListener() {
-                        @Override
-                        public boolean onTagClick(View view, int position, FlowLayout parent) {
-                            if (p != position) {
-                                p = position;
-                                matsBean = response.getData().getMats().get(position);
-                                matsBeans.add(matsBean);
-                            } else {
-                                matsBeans.remove(matsBean);
-                                p = -1;
-                            }
-                            return false;
-                        }
-                    });
-
-                }
-
-                //做法
-                if (response.getData().getMakes() == null || response.getData().getMakes().isEmpty()) {
-                    t6.setVisibility(View.GONE);
-                    flowLayout4.setVisibility(View.GONE);
-                } else {
-                    TagAdapter makeAdapter = new TagAdapter<MakesBean>(response.getData().getMakes()) {
-                        @Override
-                        public View getView(FlowLayout parent, int position, MakesBean o) {
-                            TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
-                                    flowLayout1, false);
-                            tv.setText(o.getPracticeName());
-                            return tv;
-                        }
-                    };
-                    flowLayout4.setAdapter(makeAdapter);
-                    flowLayout4.setMaxSelectCount(1);
-                    makeAdapter.setSelectedList(0);
-                    makesBean = response.getData().getMakes().get(0);
-
-                    flowLayout4.setOnTagClickListener(new TagFlowLayout.OnTagClickListener() {
-                        @Override
-                        public boolean onTagClick(View view, int position, FlowLayout parent) {
-                            makesBean = response.getData().getMakes().get(position);
-                            return false;
-                        }
-                    });
-                }
+                flowLayout1.setOnTagClickListener(new TagFlowLayout.OnTagClickListener() {
+                    @Override
+                    public boolean onTagClick(View view, int position, FlowLayout parent) {
+                        scaleBean = specification.getScales().get(position);
+                        return true;
+                    }
+                });
+                flowLayout1.setAdapter(makesAdapter);
             }
 
-            @Override
-            public void onFailure(int statusCode, String code, String error_msg) {
+            //口味
+            if (specification.getTastes() == null || specification.getTastes().isEmpty()) {
+                t4.setVisibility(View.GONE);
+                flowLayout2.setVisibility(View.GONE);
+            } else {
+                TagAdapter tastesAdapter = new TagAdapter<TastesBean>(specification.getTastes()) {
+                    @Override
+                    public View getView(FlowLayout parent, int position, TastesBean o) {
+                        TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
+                                flowLayout1, false);
+                        tv.setText(o.getTasteName());
+                        return tv;
+                    }
+
+                    @Override
+                    public void onSelected(int position, View view) {
+                        super.onSelected(position, view);
+
+                    }
+                };
+                tastesAdapter.setSelectedList(0);
+                tastesBean = specification.getTastes().get(0);
+                flowLayout2.setMaxSelectCount(1);
+                flowLayout2.setOnTagClickListener(new TagFlowLayout.OnTagClickListener() {
+                    @Override
+                    public boolean onTagClick(View view, int position, FlowLayout parent) {
+                        tastesBean = specification.getTastes().get(position);
+                        return true;
+                    }
+                });
+                flowLayout2.setAdapter(tastesAdapter);
+            }
+
+            //加料
+            if (specification.getMats() == null || specification.getMats().isEmpty()) {
+                t5.setVisibility(View.GONE);
+                flowLayout3.setVisibility(View.GONE);
+            } else {
+                flowLayout3.setAdapter(new TagAdapter<MatsBean>(specification.getMats()) {
+                    @Override
+                    public View getView(FlowLayout parent, int position, MatsBean o) {
+                        TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
+                                flowLayout1, false);
+                        tv.setGravity(Gravity.CENTER);
+                        tv.setText(String.format("%s\n%s", o.getMatName(), o.getIngredientPrice()));
+                        return tv;
+                    }
+                });
+
+                flowLayout3.setOnTagClickListener(new TagFlowLayout.OnTagClickListener() {
+                    @Override
+                    public boolean onTagClick(View view, int position, FlowLayout parent) {
+                        if (p != position) {
+                            p = position;
+                            matsBean = specification.getMats().get(position);
+                            matsBeans.add(matsBean);
+                        } else {
+                            matsBeans.remove(matsBean);
+                            p = -1;
+                        }
+                        return false;
+                    }
+                });
 
             }
-        });
+
+            //做法
+            if (specification.getMakes() == null || specification.getMakes().isEmpty()) {
+                t6.setVisibility(View.GONE);
+                flowLayout4.setVisibility(View.GONE);
+            } else {
+                TagAdapter makeAdapter = new TagAdapter<MakesBean>(specification.getMakes()) {
+                    @Override
+                    public View getView(FlowLayout parent, int position, MakesBean o) {
+                        TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
+                                flowLayout1, false);
+                        tv.setText(o.getPracticeName());
+                        return tv;
+                    }
+                };
+                flowLayout4.setAdapter(makeAdapter);
+                flowLayout4.setMaxSelectCount(1);
+                makeAdapter.setSelectedList(0);
+                makesBean = specification.getMakes().get(0);
+
+                flowLayout4.setOnTagClickListener(new TagFlowLayout.OnTagClickListener() {
+                    @Override
+                    public boolean onTagClick(View view, int position, FlowLayout parent) {
+                        makesBean = specification.getMakes().get(position);
+                        return false;
+                    }
+                });
+            }
+        }
 
         if (isChange) {
             number = productsBean.getNumber();
             numTV.setText(String.valueOf(number));
             addOnET.setText(productsBean.getAddon());
         }
-//        else {
-//            productsBean.getMats().clear();
-//            productsBean.getTastes().clear();
-//            productsBean.getMakes().clear();
-//        }
 
         numTV.addTextChangedListener(new TextWatcher() {
             @Override
@@ -321,10 +304,9 @@ public class SingleProAddonDialog extends BaseDialog {
         productsBean.setMakes(makesBeans);
         productsBean.setMats(matsBeans);
         productsBean.setTastes(tastesBeans);
-        proId = productsBean.getProId();
 
 
-        callback.onSingleCallBack(proId, number, productsBean, dataBean, position, price);
+        callback.onSingleCallBack(productsBean.getProId(), number, productsBean, dataBean, position, price);
 
         number = 1;
         price = 0;

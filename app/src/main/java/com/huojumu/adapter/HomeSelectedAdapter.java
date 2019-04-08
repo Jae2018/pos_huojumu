@@ -1,6 +1,9 @@
 package com.huojumu.adapter;
 
+import android.graphics.Color;
 import android.support.annotation.Nullable;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseItemDraggableAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -23,27 +26,17 @@ public class HomeSelectedAdapter extends BaseItemDraggableAdapter<Production, Ba
 
     @Override
     protected void convert(BaseViewHolder helper, Production item) {
-        String mat = "";
-        double m = 0;
+
+        helper.setText(R.id.tv_home_selected_name, item.getProName() + "  " + item.getScaleStr() + " * " + item.getNumber() + " " + item.getPrice());
+
         if (!item.getMats().isEmpty()) {
             for (MatsBean mats : item.getMats()) {
-                mat += mats.getMatName() + "、";
-                m += mats.getIngredientPrice();
+                TextView t = new TextView(mContext);
+                t.setText(String.format(mContext.getString(R.string.selected_linear_one), mats.getMatName(), item.getNumber(), mats.getIngredientPrice()));
+                t.setPadding(8, 4, 8, 4);
+                t.setTextColor(Color.WHITE);
+                ((LinearLayout) helper.getView(R.id.linear_mats)).addView(t);
             }
         }
-        if (!mat.isEmpty()) {
-            mat = mat.substring(0, mat.length() - 1);
-        }
-
-        helper.setText(R.id.tv_home_selected_name, item.getProName())
-                .setText(R.id.tv_home_selected_number, item.getNumber() + "份")
-                .setText(R.id.tv_home_selected_scale, "规格：" + item.getScaleStr())
-                .setText(R.id.tv_home_selected_addon, "加料：" + (mat.isEmpty() ? "无" : mat))
-                .setText(R.id.tv_home_selected_addon_price, "加料价格：" + m)
-                .setText(R.id.tv_home_selected_taste, "口味：" + item.getTasteStr())
-                .setText(R.id.tv_home_selected_price, "商品单价：" + item.getPrice())
-                .setText(R.id.tv_home_selected_msg, "备注：" + (item.getAddon().isEmpty() ? "无" : item.getAddon()))
-                .setText(R.id.tv_home_selected_cost, "" + (item.getPrice() * item.getNumber() + m));
-
     }
 }

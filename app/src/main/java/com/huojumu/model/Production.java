@@ -16,9 +16,18 @@ public class Production {
     private String addon;
     private String tasteStr;
     private String scaleStr;
+    private String proAlsname;
     private String matStr;
     private double mateP;//加料价格
     private double price;//单品价格
+
+    public String getProAlsname() {
+        return proAlsname;
+    }
+
+    public void setProAlsname(String proAlsname) {
+        this.proAlsname = proAlsname;
+    }
 
     public double getPrice() {
         return price;

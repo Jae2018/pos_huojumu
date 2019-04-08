@@ -29,4 +29,10 @@
     <string name="str_printer_error">打印机出错</string>
     <string name="str_state">状态：</string>
     <string name="str_printer_printmode_esc">打印模式:ESC</string>
+
+    <string name="selected_linear_one">%1$s * %2$d ￥ %3$d</string>
+
+    <string name="up_page">&lt;&lt; 上一页 </string>
+    <string name="next_page">下一页 &gt;&gt;</string>
+
 </resources>

@@ -106,18 +106,10 @@
             android:background="@android:color/white"
             android:layout_marginTop="@dimen/d_97">
 
-            <!--<SurfaceView-->
-                <!--android:id="@+id/sv_differ_video"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:visibility="gone" />-->
-
-            <ImageView
-                android:id="@+id/iv_ads_image"
+            <com.youth.banner.Banner
+                android:id="@+id/banner"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                android:contentDescription="@string/des" />
+                android:layout_height="match_parent"/>
 
             <ImageView
                 android:id="@+id/iv_pay_image"

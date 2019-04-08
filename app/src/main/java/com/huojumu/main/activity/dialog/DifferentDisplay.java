@@ -7,26 +7,20 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Display;
 import android.view.KeyboardShortcutGroup;
 import android.view.Menu;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.huojumu.R;
 import com.huojumu.adapter.HomeSelectedAdapter;
 import com.huojumu.model.Production;
+import com.youth.banner.Banner;
 
 import java.util.List;
 import java.util.Locale;
 
-//import android.view.SurfaceView;
 
 /**
  * @author : Jie
@@ -35,14 +29,12 @@ import java.util.Locale;
  */
 public class DifferentDisplay extends Presentation {
 
-//    private SurfaceView sv;
     private RecyclerView rv;
     private TextView priceTV, cutTV;
     private HomeSelectedAdapter selectedAdapter;
     //结账二维码
     private ImageView aliIV;
-    private ImageView adsLinear;
-//    private WebView web_order;
+    private Banner banner;
 
     public DifferentDisplay(Context outerContext, Display display) {
         super(outerContext, display);
@@ -57,14 +49,16 @@ public class DifferentDisplay extends Presentation {
         priceTV = findViewById(R.id.tv_differ_money);
         cutTV = findViewById(R.id.tv_differ_cut);
         aliIV = findViewById(R.id.iv_pay_image);
-        adsLinear = findViewById(R.id.iv_ads_image);
+        banner = findViewById(R.id.banner);
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         rv.setLayoutManager(manager);
         selectedAdapter = new HomeSelectedAdapter(null);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
-        itemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.line_v_for_recycler));
+        itemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.line_v_for_recycler,null));
         rv.addItemDecoration(itemDecoration);
+
+//        banner.setImageLoader(new GlideImageLoader());
     }
 
     @Override
@@ -82,10 +76,6 @@ public class DifferentDisplay extends Presentation {
     public void onPointerCaptureChanged(boolean hasCapture) {
 
     }
-
-//    public SurfaceView getSv() {
-//        return sv;
-//    }
 
     public void refresh(List<Production> list) {
         selectedAdapter.setNewData(list);
@@ -105,7 +95,23 @@ public class DifferentDisplay extends Presentation {
         return aliIV;
     }
 
-    public ImageView getAdsLinear() {
-        return adsLinear;
+    public Banner getBanner() {
+        return banner;
     }
+
+//    private class GlideImageLoader extends ImageLoader {
+//        @Override
+//        public void displayImage(Context context, Object path, ImageView imageView) {
+//            //具体方法内容自己去选择，次方法是为了减少banner过多的依赖第三方包，所以将这个权限开放给使用者去选择
+//            Glide.with(context.getApplicationContext())
+//                    .load(path)
+//                    .into(imageView);
+//        }
+//
+////    @Override
+////    public ImageView createImageView(Context context) {
+////        //圆角
+////        return new RoundAngleImageView(context);
+////    }
+//    }
 }

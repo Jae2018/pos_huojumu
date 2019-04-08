@@ -9,11 +9,14 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,7 +31,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -43,6 +46,9 @@ import com.huojumu.R;
 import com.huojumu.adapter.HomeProductAdapter;
 import com.huojumu.adapter.HomeSelectedAdapter;
 import com.huojumu.adapter.HomeTypeAdapter;
+import com.huojumu.adapter.HorizontalPageLayoutManager;
+import com.huojumu.adapter.PagingItemDecoration;
+import com.huojumu.adapter.PagingScrollHelper;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.dialog.SingleProAddonDialog;
 import com.huojumu.main.activity.login.LoginActivity;
@@ -62,11 +68,12 @@ import com.huojumu.model.OrderInfo;
 import com.huojumu.model.Production;
 import com.huojumu.model.Products;
 import com.huojumu.model.SmallType;
+import com.huojumu.model.Specification;
 import com.huojumu.model.TaskBean;
 import com.huojumu.model.VipListBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
-import com.huojumu.utils.GlideApp;
+//import com.huojumu.utils.GlideApp;
 import com.huojumu.utils.H5Order;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
@@ -108,7 +115,8 @@ import static com.huojumu.utils.DeviceConnFactoryManager.CONN_STATE_FAILED;
 
 
 public class HomeActivity extends BaseActivity implements DialogInterface, SocketBack,
-        SingleProCallback, MediaPlayer.OnPreparedListener, SurfaceHolder.Callback {
+        SingleProCallback, MediaPlayer.OnPreparedListener, SurfaceHolder.Callback,
+        PagingScrollHelper.onPageChangeListener{
 
     //下单列表
     @BindView(R.id.recyclerView)
@@ -131,14 +139,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //有无挂单
     @BindView(R.id.iv_has_gua_dan)
     ImageView hasGua;
-    @BindView(R.id.btn_home_hand_over)
-    Button takeover;
-    @BindView(R.id.btn_home_daily)
-    Button dailyBtn;
     @BindView(R.id.parent_relative)
     RelativeLayout parent_relative;
     @BindView(R.id.web_order)
     WebView webView;
+    @BindView(R.id.edit_search)
+    EditText edit_search;
 
     private HomeSelectedAdapter selectedAdapter;//所选
     private HomeTypeAdapter typeAdapter;//类别
@@ -157,9 +163,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private QuickPayDialog quickPayDialog;//快捷支付弹窗
     private CashPayDialog cashPayDialog;//现金支付弹窗
     private SingleProAddonDialog addonDialog;//单品设置弹窗
-    private SingleProAddonDialog addonDialog2;//单品修改弹窗
     private MoreFunctionDialog functionDialog;//功能弹窗
     private CertainDialog certainDialog;//关机确认弹窗
+    PagingScrollHelper scrollHelper = new PagingScrollHelper();
+    int pageNo = 0;
 
     //订单数据
     private OrderInfo orderInfo;
@@ -187,8 +194,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private OrderBack orderBack;
     private double change;
     //是否推荐
-
     private boolean isRecommend = false;
+    private HorizontalPageLayoutManager horizontalPageLayoutManager = null;
+    private PagingItemDecoration pagingItemDecoration = null;
 
     private List<OrderInfo.DataBean> dataBeans = new ArrayList<>();
 
@@ -219,6 +227,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
 
+        horizontalPageLayoutManager = new HorizontalPageLayoutManager(3, 4);
+        pagingItemDecoration = new PagingItemDecoration(this, horizontalPageLayoutManager);
 
         //左侧点单列表
         selectedAdapter = new HomeSelectedAdapter(productions);
@@ -232,6 +242,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(mItemDragAndSwipeCallback);
         mItemTouchHelper.attachToRecyclerView(left);
         mItemDragAndSwipeCallback.setSwipeMoveFlags(ItemTouchHelper.START | ItemTouchHelper.END);
+
+        final Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setTextSize(30);
+        paint.setColor(Color.WHITE);
+
         selectedAdapter.setOnItemSwipeListener(new OnItemSwipeListener() {
             @Override
             public void onItemSwipeStart(RecyclerView.ViewHolder viewHolder, int pos) {
@@ -253,7 +269,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
             @Override
             public void onItemSwipeMoving(Canvas canvas, RecyclerView.ViewHolder viewHolder, float dX, float dY, boolean isCurrentlyActive) {
-
+                canvas.drawColor(ContextCompat.getColor(HomeActivity.this, R.color.red_delete));
+                canvas.drawText("删除", 10, 50, paint);
             }
         });
         selectedAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -261,16 +278,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 //显示单品附加信息
                 ok = true;
-                addonDialog2 = new SingleProAddonDialog(HomeActivity.this, HomeActivity.this, productions.get(position), productions.get(position).getProId(), true, position);
-                addonDialog2.show();
+                showSpe(position);
             }
         });
         left.setAdapter(selectedAdapter);
 
         //分类列表
         typeAdapter = new HomeTypeAdapter(null);
-        GridLayoutManager grid1 = new GridLayoutManager(this, 6);
-        rTop.setLayoutManager(grid1);
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        rTop.setLayoutManager(manager);
         rTop.setAdapter(typeAdapter);
         typeAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -298,15 +314,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         //商品列表
         productAdapter = new HomeProductAdapter(null);
-        GridLayoutManager grid2 = new GridLayoutManager(this, 6);
-        rBottom.setLayoutManager(grid2);
+        rBottom.setLayoutManager(horizontalPageLayoutManager);
         rBottom.setAdapter(productAdapter);
         productAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                //点菜逻辑
-                addonDialog = new SingleProAddonDialog(HomeActivity.this, HomeActivity.this, tempProduces.get(position), tempProduces.get(position).getProId(), false, position);
-                addonDialog.show();
+                showSpe(position);
             }
         });
 
@@ -319,13 +332,28 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     }
 
+    private void showSpe(final int position) {
+        NetTool.getSpecification(SpUtil.getInt(Constant.PINPAI_ID), tempProduces.get(position).getProId(), SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<Specification>>() {
+            @Override
+            public void onSuccess(int statusCode, final BaseBean<Specification> response) {
+                //点菜逻辑
+                addonDialog = new SingleProAddonDialog(HomeActivity.this, HomeActivity.this, tempProduces.get(position), response.getData(), false, position);
+                addonDialog.show();
+            }
 
-    @OnClick(R.id.button5)
-    void refresh() {
-        getTypeList();
-        getProList("0");
-        getActiveInfo();
+            @Override
+            public void onFailure(int statusCode, String code, String error_msg) {
+
+            }
+        });
     }
+
+//    @OnClick(R.id.button5)
+//    void refresh() {
+//        getTypeList();
+//        getProList("0");
+//        getActiveInfo();
+//    }
 
     @Override
     public void onTrimMemory(int level) {
@@ -352,9 +380,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         NetTool.getAdsList(SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<List<AdsBean>>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<List<AdsBean>> response) {
-                if (response.getData().size() > 0) {
-                    engine.getAdsImage().setVisibility(View.VISIBLE);
-                    GlideApp.with(HomeActivity.this).load(response.getData().get(0).getPath()).placeholder(R.drawable.pro_default).into(engine.getAdsImage());
+                if (engine != null && engine.getBanner() != null) {
+                    engine.getBanner().setImages(response.getData())
+                            .setImageLoader(new MyLoader())
+                            .startAutoPlay();
                 }
             }
 
@@ -417,6 +446,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         });
     }
 
+    private void search(){
+
+    }
 
     @OnClick(R.id.button4)
     void getRecommend() {
@@ -507,7 +539,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         productions.add(productsBean);
 
         addonDialog = null;
-        addonDialog2 = null;
+//        addonDialog2 = null;
         //刷新选择列表数据
         selectedAdapter.setNewData(productions);
         //计算副频金额
@@ -592,7 +624,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     /**
      * 交班
      */
-    @OnClick(R.id.btn_home_hand_over)
+//    @OnClick(R.id.btn_home_hand_over)
     void takeover() {
         Intent intent = new Intent(HomeActivity.this, DailyTakeOverActivity.class);
         intent.putExtra("type", 1);
@@ -602,7 +634,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     /**
      * 日结
      */
-    @OnClick(R.id.btn_home_daily)
+//    @OnClick(R.id.btn_home_daily)
     void Daily() {
         if (SpUtil.getBoolean("hasOverOrder")) {
             ToastUtils.showLong("还有未提交的交班订单数据");
@@ -695,7 +727,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 } else {
                     initOrder();
                     orderInfo.setPayType(type == 2 ? "020" : "010");
-                    engine.getAdsImage().setVisibility(View.GONE);
+//                    engine.getAdsImage().setVisibility(View.GONE);
                     //线上支付
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                         @Override
@@ -959,7 +991,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             @Override
             public void run() {
                 clear();
-                engine.getAdsImage().setVisibility(View.VISIBLE);
+//                engine.getAdsImage().setVisibility(View.VISIBLE);
             }
         }, 1000);
     }
@@ -1029,11 +1061,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         tsc.addText(0, 63, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 matStr);
         tsc.addText(0, 93, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
-                scale + " " + i + "/" + number + "\n");
+                scale + "\n");
         tsc.addText(0, 123, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 pContent + " ￥" + price + " " + "\n");
         tsc.addText(0, 153, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
-                SpUtil.getString(Constant.WORKER_NAME) + "\n");
+                SpUtil.getString(Constant.WORKER_NAME) + " " + i + "/" + number + "\n");
         tsc.addText(0, 183, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 PrinterUtil.getTabTime() + orderNo.substring(orderNo.length() - 4) + "-" + PrinterUtil.getTabHour() + "\n");
         tsc.addText(0, 213, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
@@ -1150,6 +1182,29 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             e.printStackTrace();
         }
         return bitmap;
+    }
+
+    @Override
+    public void onPageChange(int index) {
+
+    }
+
+    @OnClick(R.id.btn_up)
+    void btnUp(){
+        pageNo++;
+        if (pageNo > scrollHelper.getPageCount()) {
+            pageNo = scrollHelper.getPageCount();
+        }
+        scrollHelper.scrollToPosition(pageNo);
+    }
+
+    @OnClick(R.id.btn_next)
+    void btnNext(){
+        pageNo--;
+        if (pageNo < 0) {
+            pageNo = 0;
+        }
+        scrollHelper.scrollToPosition(pageNo);
     }
 
     public class JsInterface {

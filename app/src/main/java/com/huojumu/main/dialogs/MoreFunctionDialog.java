@@ -1,9 +1,11 @@
 package com.huojumu.main.dialogs;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.huojumu.R;
 import com.huojumu.base.BaseDialog;
 import com.huojumu.main.activity.function.ChangePwdActivity;
@@ -13,7 +15,11 @@ import com.huojumu.main.activity.function.OrdersListActivity;
 import com.huojumu.main.activity.function.PayBackActivity;
 import com.huojumu.main.activity.function.SettingActivity;
 import com.huojumu.main.activity.function.VipActivity;
+import com.huojumu.main.activity.home.HomeActivity;
+import com.huojumu.main.activity.work.DailyTakeOverActivity;
+import com.huojumu.utils.Constant;
 import com.huojumu.utils.PrinterUtil;
+import com.huojumu.utils.SpUtil;
 
 import butterknife.OnClick;
 
@@ -25,9 +31,11 @@ import butterknife.OnClick;
 public class MoreFunctionDialog extends BaseDialog {
 
     private Intent intent = new Intent();
+    private Activity activity;
 
-    public MoreFunctionDialog(@NonNull Context context) {
-        super(context);
+    public MoreFunctionDialog(@NonNull Activity activity) {
+        super(activity);
+        this.activity = activity;
     }
 
     @Override
@@ -48,7 +56,7 @@ public class MoreFunctionDialog extends BaseDialog {
     @OnClick(R.id.iv_more_fuc1)
     void Fuc1() {
         //退单
-        intent.setClass(getContext(), PayBackActivity.class);
+        intent.setClass(activity, PayBackActivity.class);
         getContext().startActivity(intent);
         dismiss();
     }
@@ -56,9 +64,13 @@ public class MoreFunctionDialog extends BaseDialog {
     @OnClick(R.id.iv_more_fuc4)
     void Fuc2() {
         //系统设置
-        intent.setClass(getContext(), SettingActivity.class);
-        getContext().startActivity(intent);
-        dismiss();
+//        intent.setClass(getContext(), SettingActivity.class);
+//        getContext().startActivity(intent);
+//        dismiss();
+        //交班
+        Intent intent = new Intent(activity, DailyTakeOverActivity.class);
+        intent.putExtra("type", 1);
+        activity.startActivityForResult(intent, Constant.WORK_BACK_OVER);
     }
 
 //    @OnClick(R.id.iv_more_fuc2)
@@ -79,9 +91,17 @@ public class MoreFunctionDialog extends BaseDialog {
 
     @OnClick(R.id.iv_more_fuc5)
     void Fuc5() {
-        intent.setClass(getContext(), ChangePwdActivity.class);
-        getContext().startActivity(intent);
-        dismiss();
+//        intent.setClass(getContext(), ChangePwdActivity.class);
+//        getContext().startActivity(intent);
+//        dismiss();
+        //日结
+        if (SpUtil.getBoolean("hasOverOrder")) {
+            ToastUtils.showLong("还有未提交的交班订单数据");
+        } else {
+            Intent intent = new Intent(activity, DailyTakeOverActivity.class);
+            intent.putExtra("type", 2);
+            activity.startActivityForResult(intent, Constant.WORK_BACK_DAILY);
+        }
     }
 
     @OnClick(R.id.iv_more_fuc6)

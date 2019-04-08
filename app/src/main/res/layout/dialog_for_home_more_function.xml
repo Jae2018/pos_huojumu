@@ -47,16 +47,16 @@
             android:gravity="center"
             android:text="退单" />
 
-        <!--<TextView-->
-            <!--android:id="@+id/iv_more_fuc2"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginStart="@dimen/d_16"-->
-            <!--android:contentDescription="@string/des"-->
-            <!--android:drawableTop="@drawable/guqingxianliang_pressed"-->
-            <!--android:drawablePadding="@dimen/d_8"-->
-            <!--android:gravity="center"-->
-            <!--android:text="估清限量" />-->
+        <TextView
+            android:id="@+id/iv_more_fuc4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/d_16"
+            android:contentDescription="@string/des"
+            android:drawableTop="@drawable/ic_fjs_function"
+            android:drawablePadding="@dimen/d_8"
+            android:gravity="center"
+            android:text="交班" />
 
         <!--<TextView-->
             <!--android:id="@+id/iv_more_fuc3"-->
@@ -69,16 +69,16 @@
             <!--android:gravity="center"-->
             <!--android:text="后台管理" />-->
 
-        <TextView
-            android:id="@+id/iv_more_fuc4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/d_16"
-            android:contentDescription="@string/des"
-            android:drawableTop="@drawable/ic_setting_function"
-            android:drawablePadding="@dimen/d_8"
-            android:gravity="center"
-            android:text="系统设置" />
+        <!--<TextView-->
+            <!--android:id="@+id/iv_more_fuc4"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginStart="@dimen/d_16"-->
+            <!--android:contentDescription="@string/des"-->
+            <!--android:drawableTop="@drawable/ic_setting_function"-->
+            <!--android:drawablePadding="@dimen/d_8"-->
+            <!--android:gravity="center"-->
+            <!--android:text="系统设置" />-->
 
         <TextView
             android:id="@+id/iv_more_fuc5"
@@ -89,7 +89,7 @@
             android:drawableTop="@drawable/ic_fjs_function"
             android:drawablePadding="@dimen/d_8"
             android:gravity="center"
-            android:text="修改密码" />
+            android:text="日结" />
 
         <TextView
             android:id="@+id/iv_more_fuc6"

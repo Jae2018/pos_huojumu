@@ -196,7 +196,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //是否推荐
     private boolean isRecommend = false;
     private HorizontalPageLayoutManager horizontalPageLayoutManager = null;
-    private PagingItemDecoration pagingItemDecoration = null;
+//    private PagingItemDecoration pagingItemDecoration = null;
 
     private List<OrderInfo.DataBean> dataBeans = new ArrayList<>();
 
@@ -228,7 +228,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         webSettings.setLoadWithOverviewMode(true);
 
         horizontalPageLayoutManager = new HorizontalPageLayoutManager(3, 4);
-        pagingItemDecoration = new PagingItemDecoration(this, horizontalPageLayoutManager);
+//        pagingItemDecoration = new PagingItemDecoration(this, horizontalPageLayoutManager);
 
         //左侧点单列表
         selectedAdapter = new HomeSelectedAdapter(productions);

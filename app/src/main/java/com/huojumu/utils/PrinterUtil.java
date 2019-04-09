@@ -405,23 +405,23 @@ public class PrinterUtil {
         int marginBetweenLeftAndMiddle = 24 - leftTextLength - ((middleTextLength % 2 == 0)? (middleTextLength / 2) : (middleTextLength / 2 + 1));
         Log.e(">>>", "marginBetweenLeftAndMiddle: " + marginBetweenLeftAndMiddle);
         for (int i = 0; i < marginBetweenLeftAndMiddle/4; i++) {
-            sb.append("&emsp;");
+            sb.append(" ");
         }
-        sb.append("&nbsp;").append("&nbsp;");
+//        sb.append("&nbsp;").append("&nbsp;");
         sb.append(middleText);
 
         //计算中间文字和第三文字的空格长度
         int marginBetweenThreeAndMiddle = 24 - threeTextLength - fourTextLength;
 
         for (int i = 0; i < marginBetweenThreeAndMiddle; i++) {
-            sb.append("&nbsp;");
+            sb.append(" ");
         }
         sb.append(three);
 
         int marginBetweenThreeAndFour = 24 - fourTextLength - threeTextLength / 2;
         // 计算第四文字和第三文字的空格长度
         for (int i = 0; i < marginBetweenThreeAndFour; i++) {
-            sb.append("&nbsp;");
+            sb.append(" ");
         }
         sb.append(rightText);
         Log.e(">>>", "printFourData80: " + sb.toString());

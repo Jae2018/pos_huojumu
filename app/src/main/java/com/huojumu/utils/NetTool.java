@@ -76,12 +76,10 @@ public class NetTool {
     }
 
     //商品列表查询
-    public static void getStoreProduces(int shopID, int enterpriseID, int pinpaiID, String isRecommend, GsonResponseHandler<BaseBean<Products>> handler) {
+    public static void getStoreProduces(int shopID, String isRecommend, GsonResponseHandler<BaseBean<Products>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "product/showPros.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("shopID", shopID + "")
-//                .addParam("enterpriseID", enterpriseID + "")
-//                .addParam("pinpaiID", pinpaiID + "")
                 .addParam("isRecommend", isRecommend)
                 .enqueue(handler);
     }

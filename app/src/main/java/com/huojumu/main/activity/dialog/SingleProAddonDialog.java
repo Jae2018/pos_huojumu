@@ -4,10 +4,12 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.huojumu.R;
@@ -20,6 +22,8 @@ import com.huojumu.model.Production;
 import com.huojumu.model.ScaleBean;
 import com.huojumu.model.Specification;
 import com.huojumu.model.TastesBean;
+import com.huojumu.utils.GlideApp;
+import com.huojumu.utils.PrinterUtil;
 import com.zhy.view.flowlayout.FlowLayout;
 import com.zhy.view.flowlayout.TagAdapter;
 import com.zhy.view.flowlayout.TagFlowLayout;
@@ -54,11 +58,16 @@ public class SingleProAddonDialog extends BaseDialog {
     TextView t5;
     @BindView(R.id.textView17)
     TextView t6;
+    @BindView(R.id.image)
+    ImageView image;
 
     @BindView(R.id.tv_home_addon_number)
     EditText numTV;//数量
     @BindView(R.id.et_addon)
     EditText addOnET;//备注
+
+    @BindView(R.id.tv_product_name)
+    TextView name;
 
     private int number = 1;//数量
 
@@ -101,6 +110,10 @@ public class SingleProAddonDialog extends BaseDialog {
 
     @Override
     public void initView() {
+        name.setText(productsBean.getProName());
+        if (productsBean.getImgs().size() > 0) {
+            GlideApp.with(getContext()).load(productsBean.getImgs().get(0).getPath()).into(image);
+        }
         matsBeans.clear();
         final LayoutInflater mInflater = LayoutInflater.from(getContext());
         if (specification != null) {
@@ -133,7 +146,7 @@ public class SingleProAddonDialog extends BaseDialog {
             }
 
             //口味
-            if (specification.getTastes() == null || specification.getTastes().isEmpty()) {
+            if (specification.getTastes() == null || specification.getTasteList().isEmpty()) {
                 t4.setVisibility(View.GONE);
                 flowLayout2.setVisibility(View.GONE);
             } else {
@@ -176,7 +189,7 @@ public class SingleProAddonDialog extends BaseDialog {
                         TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
                                 flowLayout1, false);
                         tv.setGravity(Gravity.CENTER);
-                        tv.setText(String.format("%s\n%s", o.getMatName(), o.getIngredientPrice()));
+                        tv.setText(String.format("%s\n￥ %s", o.getMatName(), o.getIngredientPrice()));
                         return tv;
                     }
                 });

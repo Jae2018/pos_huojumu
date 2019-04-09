@@ -10,8 +10,8 @@
         android:id="@+id/web_order"
         android:layout_width="@dimen/d_540"
         android:layout_height="match_parent"
-        android:visibility="invisible"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:visibility="invisible" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -28,8 +28,60 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:background="@color/colorPrimary"
-            android:layout_height="@dimen/d_48">
+            android:layout_height="@dimen/d_48"
+            android:background="@color/colorPrimary">
+
+            <LinearLayout
+                android:id="@+id/linear2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/d_36"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/worker_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/d_36"
+                    android:text="asda"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/order_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/d_36"
+                    android:layout_marginTop="@dimen/d_8"
+                    android:text="12312312123"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/linear2"
+                android:layout_marginStart="@dimen/d_30"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/worker_name1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/d_36"
+                    android:text="asda"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/order_num1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/d_36"
+                    android:layout_marginTop="@dimen/d_8"
+                    android:text="12312312123"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
+
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -91,81 +143,6 @@
 
         </RelativeLayout>
 
-
-        <!--<RelativeLayout-->
-        <!--android:layout_width="@dimen/d_101"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginEnd="@dimen/d_16">-->
-
-        <!--<TextView-->
-        <!--android:id="@+id/button1"-->
-        <!--android:layout_width="@dimen/d_101"-->
-        <!--android:layout_height="@dimen/d_48"-->
-        <!--android:background="@color/btn_den"-->
-        <!--android:gravity="center"-->
-        <!--android:text="@string/hold_on"-->
-        <!--android:textColor="@color/btn_text"-->
-        <!--android:textSize="@dimen/f_16" />-->
-
-        <!--<ImageView-->
-        <!--android:id="@+id/iv_has_gua_dan"-->
-        <!--android:layout_width="@dimen/d_16"-->
-        <!--android:layout_height="@dimen/d_16"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--android:layout_marginTop="@dimen/d_8"-->
-        <!--android:layout_marginEnd="@dimen/d_8"-->
-        <!--android:contentDescription="@string/des"-->
-        <!--android:src="@drawable/shape_circle_red"-->
-        <!--android:visibility="invisible" />-->
-        <!--</RelativeLayout>-->
-
-        <!--<TextView-->
-        <!--android:id="@+id/button2"-->
-        <!--android:layout_width="@dimen/d_101"-->
-        <!--android:layout_height="@dimen/d_48"-->
-        <!--android:layout_marginEnd="@dimen/d_16"-->
-        <!--android:background="@color/btn_den"-->
-        <!--android:gravity="center"-->
-        <!--android:text="@string/clear"-->
-        <!--android:textColor="@android:color/holo_red_light" />-->
-
-        <!--<Button-->
-        <!--android:id="@+id/button4"-->
-        <!--style="@style/HomeButtonStyle"-->
-        <!--android:text="@string/referral" />-->
-
-        <!--<Button-->
-        <!--android:id="@+id/button5"-->
-        <!--style="@style/HomeButtonStyle"-->
-        <!--android:text="刷新" />-->
-
-        <!--<Button-->
-        <!--style="@style/HomeButtonStyle"-->
-        <!--android:onClick="btnUsbConn"-->
-        <!--android:text="设置标签机" />-->
-
-        <!--<LinearLayout-->
-        <!--android:id="@+id/linearLayout2"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="@dimen/d_64"-->
-        <!--android:layout_marginStart="@dimen/d_30"-->
-        <!--android:layout_marginTop="@dimen/d_8"-->
-        <!--android:layout_marginEnd="@dimen/d_16"-->
-        <!--android:layout_marginBottom="@dimen/d_8"-->
-        <!--android:layout_weight="1"-->
-        <!--android:orientation="vertical">-->
-
-        <!--<TextView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="@dimen/d_32" />-->
-
-        <!--<TextView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="@dimen/d_32" />-->
-
-        <!--</LinearLayout>-->
-
-
     </LinearLayout>
 
     <View
@@ -177,7 +154,7 @@
 
     <TextView
         android:id="@+id/text1"
-        android:layout_width="@dimen/d_160"
+        android:layout_width="@dimen/d_250"
         android:layout_height="@dimen/d_40"
         android:layout_below="@+id/line"
         android:gravity="center"
@@ -193,7 +170,7 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
-        android:layout_width="@dimen/d_160"
+        android:layout_width="@dimen/d_250"
         android:layout_height="match_parent"
         android:layout_above="@+id/relativeLayout"
         android:layout_below="@+id/view2"
@@ -202,8 +179,8 @@
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
-        android:layout_width="@dimen/d_160"
-        android:layout_height="@dimen/d_56"
+        android:layout_width="@dimen/d_250"
+        android:layout_height="@dimen/d_50"
         android:layout_alignParentBottom="true"
         android:background="@color/home_left_bottom"
         android:padding="@dimen/d_4">
@@ -248,7 +225,7 @@
 
     <LinearLayout
         android:id="@+id/linear1"
-        android:layout_width="@dimen/d_96"
+        android:layout_width="@dimen/d_120"
         android:layout_height="match_parent"
         android:layout_below="@+id/line"
         android:layout_toEndOf="@+id/view1"
@@ -396,23 +373,31 @@
             android:text="@string/next_page"
             android:textColor="@android:color/white" />
 
+        <!--<android.support.v4.widget.SwipeRefreshLayout-->
+        <!--android:id="@+id/swipe"-->
+        <!---->
+        <!--android:layout_width="@dimen/d_700"-->
+        <!--android:layout_height="@dimen/d_640">-->
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView3"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="@dimen/d_700"
+            android:layout_height="@dimen/d_640"
             android:layout_marginTop="@dimen/d_48"
-            android:layout_toStartOf="@+id/btn_search"
             android:overScrollMode="never" />
+
+        <!--</android.support.v4.widget.SwipeRefreshLayout>-->
+
 
         <LinearLayout
             android:id="@+id/btn_search"
-            android:layout_width="@dimen/d_60"
+            android:layout_width="@dimen/d_250"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:layout_margin="@dimen/d_16"
             android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:layout_margin="@dimen/d_16">
+            android:orientation="vertical">
 
             <ImageView
                 android:layout_width="@dimen/d_48"
@@ -420,14 +405,36 @@
                 android:contentDescription="@string/des"
                 android:src="@drawable/icon_search" />
 
-            <EditText
-                android:id="@+id/edit_search"
-                android:layout_width="@dimen/d_60"
-                android:layout_height="@dimen/d_36"
-                android:inputType="text"
-                android:gravity="center"
-                android:hint="请输入"
-                android:background="@drawable/input_border"/>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/pinyin"
+                android:layout_width="@dimen/d_250"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/input_border">
+
+                <TextView
+                    android:id="@+id/edit_search"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/d_36"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:gravity="center" />
+
+                <View
+                    android:layout_width="@dimen/d_1"
+                    android:layout_height="@dimen/d_36"
+                    android:background="@color/home_other_pay" />
+
+                <ImageView
+                    android:id="@+id/input_clear_btn"
+                    android:layout_width="@dimen/d_36"
+                    android:layout_height="@dimen/d_36"
+                    android:contentDescription="@string/des"
+                    android:src="@drawable/clear" />
+            </LinearLayout>
         </LinearLayout>
 
     </RelativeLayout>
@@ -435,55 +442,37 @@
     <LinearLayout
         android:id="@+id/linear3"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d_56"
+        android:layout_height="@dimen/d_50"
         android:layout_alignParentBottom="true"
         android:layout_toEndOf="@id/recyclerView"
         android:background="@color/home_bottom"
         android:gravity="center"
         android:orientation="horizontal">
 
-        <TextView
+        <ImageView
             android:id="@+id/btn_home_quick_pay"
             android:layout_width="@dimen/d_96"
-            android:layout_height="@dimen/d_40"
-            android:background="@drawable/home_quick_btn"
-            android:gravity="center"
-            android:text="@string/home_quick_invoice"
-            android:textColor="@color/home_text" />
+            android:layout_height="@dimen/d_36"
+            android:background="@drawable/quick"
+            android:contentDescription="@string/des" />
 
-        <TextView
+        <ImageView
             android:id="@+id/btn_home_check"
             android:layout_width="@dimen/d_96"
             android:layout_height="@dimen/d_40"
-            android:layout_marginStart="@dimen/d_16"
-            android:background="@drawable/home_other_pay"
-            android:textColor="@color/home_text"
-            android:enabled="false"
-            android:gravity="center"
-            android:text="结算" />
+            android:layout_marginStart="@dimen/d_32"
+            android:background="@drawable/check"
+            android:contentDescription="@string/des"
+            android:enabled="false" />
 
-        <TextView
+        <ImageView
             android:id="@+id/btn_home_take_out"
             android:layout_width="@dimen/d_96"
             android:layout_height="@dimen/d_40"
-            android:layout_marginStart="@dimen/d_16"
-            android:background="@drawable/home_other_pay"
-            android:textColor="@color/home_text"
-            android:enabled="false"
-            android:gravity="center"
-            android:text="@string/takeout" />
-
-        <!--<Button-->
-        <!--android:id="@+id/btn_home_hand_over"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:text="@string/handover" />-->
-
-        <!--<Button-->
-        <!--android:id="@+id/btn_home_daily"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:text="@string/daily" />-->
+            android:layout_marginStart="@dimen/d_32"
+            android:background="@drawable/out"
+            android:contentDescription="@string/des"
+            android:enabled="false" />
 
     </LinearLayout>
 

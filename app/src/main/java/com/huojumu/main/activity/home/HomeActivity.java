@@ -17,13 +17,12 @@ import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.util.SparseArray;
@@ -33,7 +32,6 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -49,8 +47,8 @@ import com.huojumu.adapter.HomeProductAdapter;
 import com.huojumu.adapter.HomeSelectedAdapter;
 import com.huojumu.adapter.HomeTypeAdapter;
 import com.huojumu.adapter.HorizontalPageLayoutManager;
-import com.huojumu.adapter.PagingItemDecoration;
 import com.huojumu.adapter.PagingScrollHelper;
+import com.huojumu.adapter.PinYinAdapter;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.dialog.SingleProAddonDialog;
 import com.huojumu.main.activity.login.LoginActivity;
@@ -75,7 +73,6 @@ import com.huojumu.model.TaskBean;
 import com.huojumu.model.VipListBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
-//import com.huojumu.utils.GlideApp;
 import com.huojumu.utils.H5Order;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
@@ -98,6 +95,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -118,7 +116,7 @@ import static com.huojumu.utils.DeviceConnFactoryManager.CONN_STATE_FAILED;
 
 public class HomeActivity extends BaseActivity implements DialogInterface, SocketBack,
         SingleProCallback, MediaPlayer.OnPreparedListener, SurfaceHolder.Callback,
-        PagingScrollHelper.onPageChangeListener{
+        PagingScrollHelper.onPageChangeListener {
 
     //下单列表
     @BindView(R.id.recyclerView)
@@ -146,7 +144,19 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @BindView(R.id.web_order)
     WebView webView;
     @BindView(R.id.edit_search)
-    EditText edit_search;
+    TextView edit_search;
+    @BindView(R.id.pinyin)
+    RecyclerView pinyin;
+    //    @BindView(R.id.swipe)
+//    SwipeRefreshLayout swipe;
+    @BindView(R.id.worker_name)
+    TextView workName;
+    @BindView(R.id.order_num)
+    TextView order_num;
+    @BindView(R.id.worker_name1)
+    TextView workName1;
+    @BindView(R.id.order_num1)
+    TextView order_num1;
 
     private HomeSelectedAdapter selectedAdapter;//所选
     private HomeTypeAdapter typeAdapter;//类别
@@ -158,6 +168,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private ArrayList<Production> productions = new ArrayList<>();//选择的奶茶
     private ArrayList<Production> printProducts = new ArrayList<>();//标签打印的产品
     private double totalPrice = 0, totalCut;//订单总价
+    private List<Production> searchList = new ArrayList<>();//搜索列表
 
     private List<Production> gTemp = new ArrayList<>();//挂单
     private boolean hasHoldOn = false;//是否已有挂单
@@ -173,7 +184,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //订单数据
     private OrderInfo orderInfo;
     //是否修改
-    private boolean ok = false;
+//    private boolean ok = false;
     //流水号
     private String orderNo;
 
@@ -215,7 +226,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         threadPool = ThreadPool.getInstantiation();
         //链接标签机
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-        getUsb(UsbUtil.getUsbDeviceList(this));
+        getUsb(UsbUtil.getUsbDeviceList(HomeActivity.this));
 
         WebView.enableSlowWholeDocumentDraw();
         webView.setWebChromeClient(new WebChromeClient());
@@ -264,7 +275,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
             @Override
             public void onItemSwiped(RecyclerView.ViewHolder viewHolder, int pos) {
-                productions.remove(pos);
+//                productions.remove(pos);
                 selectedAdapter.notifyItemRemoved(pos);
                 checkPriceForDisplay();
             }
@@ -279,7 +290,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 //显示单品附加信息
-                ok = true;
                 showSpe(position);
             }
         });
@@ -297,7 +307,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     if (map.get(position) == null) {
                         List<Production> temp = new ArrayList<>();
                         for (Production p : tempProduces) {
-                            if (typeAdapter.getData().get(position).getTypeNo().equals(p.getProType())) {
+                            if (typeAdapter.getData().get(position).getId() == Integer.valueOf(p.getProType())) {
                                 temp.add(p);
                             }
                         }
@@ -325,6 +335,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
         });
 
+        scrollHelper.setUpRecycleView(rBottom);
+
         ld = new LoadingDialog(this);
         ld.setLoadingText("支付中")
                 .setSuccessText("支付成功")//显示加载成功时的文字
@@ -332,23 +344,52 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         webView.addJavascriptInterface(new JsInterface(), "JSInterface");
 
-        edit_search.addTextChangedListener(new TextWatcher() {
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 5);
+        pinyin.setLayoutManager(gridLayoutManager);
+
+        PinYinAdapter pinYinAdapter = new PinYinAdapter(Arrays.asList(py));
+        pinyin.setAdapter(pinYinAdapter);
+        pinYinAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                //todo 搜索查询
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                searchStr += py[position];
+                edit_search.setText(searchStr);
+                Log.e(TAG, "onItemClick: " + searchStr);
+                search(searchStr);
             }
         });
+
+        workName.setText("日期：");
+        order_num.setText("当前收入：");
+        workName1.setText("当前在班人员：" + SpUtil.getString(Constant.WORKER_NAME));
+        order_num1.setText("当前出单：");
+
     }
+
+
+    private double woeker_p = 0;
+    private int orderNum = 0;
+
+    @OnClick(R.id.input_clear_btn)
+    void inputClear() {
+        edit_search.setText("");
+        searchStr = "";
+        searchList.clear();
+        productAdapter.setNewData(tempProduces);
+    }
+
+    private void search(String searchStr) {
+        searchList.clear();
+        for (Production p : tempProduces) {
+            if (p.getProAlsname() != null && p.getProAlsname().contains(searchStr)) {
+                searchList.add(p);
+            }
+        }
+        productAdapter.setNewData(searchList);
+    }
+
+    private String[] py = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+    private String searchStr = "";
 
     private void showSpe(final int position) {
         NetTool.getSpecification(SpUtil.getInt(Constant.PINPAI_ID), tempProduces.get(position).getProId(), SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<Specification>>() {
@@ -433,12 +474,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     //商品列表
     private void getProList(String isRecommend) {
-        NetTool.getStoreProduces(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.ENT_ID), SpUtil.getInt(Constant.PINPAI_ID), isRecommend,
+        NetTool.getStoreProduces(SpUtil.getInt(Constant.STORE_ID), isRecommend,
                 new GsonResponseHandler<BaseBean<Products>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<Products> response) {
                         tempProduces = response.getData().getProducts();
                         productAdapter.setNewData(response.getData().getProducts());
+//                        if (swipe.isRefreshing()) {
+//                            swipe.setRefreshing(false);
+//                        }
 
                     }
 
@@ -464,9 +508,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         });
     }
 
-    private void search(){
-
-    }
 
     @OnClick(R.id.button4)
     void getRecommend() {
@@ -542,13 +583,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     @Override
     public void onSingleCallBack(int proId, int number, Production productsBean, OrderInfo.DataBean dataBean, int position, double price) {
-
-        //修改已选，删除旧数据，新添加
-        if (ok) {
-            productions.remove(position);
-            ok = false;
-        }
-
         //加入订单数据
         dataBean.setNum(number);
         //左侧点单列表
@@ -557,7 +591,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         productions.add(productsBean);
 
         addonDialog = null;
-//        addonDialog2 = null;
         //刷新选择列表数据
         selectedAdapter.setNewData(productions);
         //计算副频金额
@@ -639,29 +672,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
     }
 
-    /**
-     * 交班
-     */
-//    @OnClick(R.id.btn_home_hand_over)
-//    void takeover() {
-//        Intent intent = new Intent(HomeActivity.this, DailyTakeOverActivity.class);
-//        intent.putExtra("type", 1);
-//        startActivityForResult(intent, Constant.WORK_BACK_OVER);
-//    }
-
-    /**
-     * 日结
-     */
-//    @OnClick(R.id.btn_home_daily)
-//    void Daily() {
-//        if (SpUtil.getBoolean("hasOverOrder")) {
-//            ToastUtils.showLong("还有未提交的交班订单数据");
-//        } else {
-//            Intent intent = new Intent(HomeActivity.this, DailyTakeOverActivity.class);
-//            intent.putExtra("type", 2);
-//            startActivityForResult(intent, Constant.WORK_BACK_DAILY);
-//        }
-//    }
 
 //    /**
 //     * 结账
@@ -815,10 +825,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
     }
 
+    String usbName;
+
     @Override
     public void OnUsbCallBack(String name) {
-        closeport();
-        getUsb(name);
+//        closeport();
+//        usbName = name;
+//        getUsb(name);
     }
 
     private void getUsb(String name) {
@@ -828,8 +841,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //判断USB设备是否有权限
         if (usbDevice != null)
             if (usbManager.hasPermission(usbDevice)) {
+                Log.e(TAG, "getUsb: 1");
                 usbConn(usbDevice);
             } else {//请求权限
+                Log.e(TAG, "getUsb: 2");
                 PendingIntent mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
                 usbManager.requestPermission(usbDevice, mPermissionIntent);
             }
@@ -874,20 +889,17 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * 打印订单小票
      */
     private void PrintOrder(final OrderBack orderBack, final double charge) {
-
-        if (PrinterUtil.getmPrinter() == null) {
-            PrinterUtil.connectPrinter(getApplicationContext());
-        }
+        openCash();
 
         String str = orderBack.getTotalPrice().substring(0, orderBack.getTotalPrice().length() - 1);
         String proList = PrinterUtil.toJson(productions);
         initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList, str, (Double.parseDouble(orderBack.getTotalPrice()) + charge) + "", charge + "", totalCut + "");
 
-        if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] == null ||
-                !DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getConnState()) {
-            ToastUtils.showLong("未连接标签打印机");
-            return;
-        }
+//        if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] == null ||
+//                !DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getConnState()) {
+//            ToastUtils.showLong("未连接标签打印机");
+//            return;
+//        }
 
         printcount = 0;
         continuityprint = true;
@@ -909,7 +921,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 printcount++;
             }
         }
-        openCash();
+
         printLabel();
     }
 
@@ -1130,17 +1142,31 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                         if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                             if (device != null) {
-                                System.out.println("permission ok for device " + device);
+                                Log.e(TAG, "permission ok for device " + device);
                                 usbConn(device);
                             }
                         } else {
-                            System.out.println("permission denied for device " + device);
+                            Log.e(TAG, "permission denied for device " + device);
                         }
                     }
                     break;
                 //Usb连接断开、蓝牙连接断开广播
                 case ACTION_USB_DEVICE_DETACHED:
-                    MyOkHttp.mHandler.obtainMessage(CONN_STATE_DISCONN).sendToTarget();
+                    Log.e(TAG, "onReceive: ACTION_USB_DEVICE_DETACHED");
+//                    MyOkHttp.mHandler.obtainMessage(CONN_STATE_DISCONN).sendToTarget();
+//                    closeport();
+                    PrinterUtil.disconnectPrinter();
+                    break;
+                //Usb连接断开、蓝牙连接广播
+                case ACTION_USB_DEVICE_ATTACHED:
+                    Log.e(TAG, "onReceive: ACTION_USB_DEVICE_ATTACHED");
+                    getUsb(UsbUtil.getUsbDeviceList(HomeActivity.this));
+                    threadPool.addTask(new Runnable() {
+                        @Override
+                        public void run() {
+                            PrinterUtil.connectPrinter(getApplicationContext());
+                        }
+                    });
                     break;
                 case DeviceConnFactoryManager.ACTION_CONN_STATE:
                     int state = intent.getIntExtra(DeviceConnFactoryManager.STATE, -1);
@@ -1148,7 +1174,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     switch (state) {
                         case DeviceConnFactoryManager.CONN_STATE_DISCONNECT:
                             if (id == deviceId) {
-                                ToastUtils.showLong("标签打印机已断开");
+//                                getUsb(UsbUtil.getUsbDeviceList(HomeActivity.this));
                             }
                             break;
                         case DeviceConnFactoryManager.CONN_STATE_CONNECTING:
@@ -1156,9 +1182,19 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             break;
                         case DeviceConnFactoryManager.CONN_STATE_CONNECTED:
                             ToastUtils.showLong("标签打印机已连接");
+//                            if(DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].connMethod== DeviceConnFactoryManager.CONN_METHOD.WIFI){
+//                                wificonn=true;
+//                                if(keepConn==null) {
+//                                    keepConn = new KeepConn();
+//                                    keepConn.start();
+//                                }
+//                            }
                             break;
                         case CONN_STATE_FAILED:
+//                            Utils.toast(MainActivity.this, getString(R.string.str_conn_fail));
                             ToastUtils.showLong("标签打印机连接失败");
+                            getUsb(UsbUtil.getUsbDeviceList(HomeActivity.this));
+                            //wificonn=false;
                             break;
                         default:
                             break;
@@ -1208,19 +1244,19 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     @OnClick(R.id.btn_up)
-    void btnUp(){
-        pageNo++;
-        if (pageNo > scrollHelper.getPageCount()) {
-            pageNo = scrollHelper.getPageCount();
+    void btnUp() {
+        pageNo--;
+        if (pageNo < 0) {
+            pageNo = 0;
         }
         scrollHelper.scrollToPosition(pageNo);
     }
 
     @OnClick(R.id.btn_next)
-    void btnNext(){
-        pageNo--;
-        if (pageNo < 0) {
-            pageNo = 0;
+    void btnNext() {
+        pageNo++;
+        if (pageNo > scrollHelper.getPageCount()) {
+            pageNo = scrollHelper.getPageCount();
         }
         scrollHelper.scrollToPosition(pageNo);
     }

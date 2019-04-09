@@ -2,39 +2,14 @@ package com.huojumu.model;
 
 public class ScaleBean {
 
-    /**
-     * scaleId : 6
-     * scaName : 常温大杯
-     * unitName : ml
-     * unitId : 20
-     * type : 3
-     * capacity : 750.0
-     */
-
     private int scaleId;
     private String scaName;
     private String unitName;
+    private double price;
+    private int proId;
     private int unitId;
     private String type;
-    private double price;
     private double capacity;
-    private int proId;
-
-    public int getProId() {
-        return proId;
-    }
-
-    public void setProId(int proId) {
-        this.proId = proId;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
 
     public int getScaleId() {
         return scaleId;
@@ -60,6 +35,22 @@ public class ScaleBean {
         this.unitName = unitName;
     }
 
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public int getProId() {
+        return proId;
+    }
+
+    public void setProId(int proId) {
+        this.proId = proId;
+    }
+
     public int getUnitId() {
         return unitId;
     }
@@ -82,17 +73,5 @@ public class ScaleBean {
 
     public void setCapacity(double capacity) {
         this.capacity = capacity;
-    }
-
-    @Override
-    public String toString() {
-        return "ScaleBean{" +
-                "scaleId=" + scaleId +
-                ", scaName='" + scaName + '\'' +
-                ", unitName='" + unitName + '\'' +
-                ", unitId=" + unitId +
-                ", type='" + type + '\'' +
-                ", capacity=" + capacity +
-                '}';
     }
 }

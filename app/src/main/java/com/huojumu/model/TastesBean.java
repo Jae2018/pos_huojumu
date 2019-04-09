@@ -1,30 +1,17 @@
 package com.huojumu.model;
 
 public class TastesBean {
-    /**     口味
-     * tasteId : 19
-     * tasteName : 微辣
+    /**
+     * tasteId : 2
+     * tasteName : 默认口味
      * groupId : 1
-     * multiple : 0.1
+     * multiple : 1.0
      */
 
     private int tasteId;
     private String tasteName;
     private int groupId;
     private double multiple;
-    private int tasteGroupId = 0;
-
-    public int getTasteGroupId() {
-        return tasteGroupId;
-    }
-
-    public void setTasteGroupId(int tasteGroupId) {
-        this.tasteGroupId = tasteGroupId;
-    }
-
-    public TastesBean(int tasteId) {
-        this.tasteId = tasteId;
-    }
 
     public int getTasteId() {
         return tasteId;

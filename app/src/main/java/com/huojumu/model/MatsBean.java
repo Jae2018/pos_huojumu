@@ -2,37 +2,25 @@ package com.huojumu.model;
 
 public class MatsBean {
 
-    /**     加料
-     * proMatId : 40
-     * dosage : 11
-     * ingredientDosage : 5
-     * ingredientPrice : 3
+    /**
+     * proMatId : 3285
+     * dosage : 0.0
+     * ingredientDosage : 1.0
+     * ingredientPrice : 2.0
      * addIndex : 1
-     * matNo : YL-0003
-     * orgId : 3
-     * matName : 纯牛奶
+     * matNo : YL-0076
+     * orgId : 76
+     * matName : 苏打水
      */
 
     private int proMatId;
-    private int dosage;
-    private int ingredientDosage;
-    private int ingredientPrice;
+    private double dosage;
+    private double ingredientDosage;
+    private double ingredientPrice;
     private int addIndex;
     private String matNo;
     private int orgId;
     private String matName;
-
-    public MatsBean(int proMatId) {
-        this.proMatId = proMatId;
-    }
-
-//    public boolean isSelected() {
-//        return isSelected;
-//    }
-//
-//    public void setSelected(boolean selected) {
-//        isSelected = selected;
-//    }
 
     public int getProMatId() {
         return proMatId;
@@ -42,27 +30,27 @@ public class MatsBean {
         this.proMatId = proMatId;
     }
 
-    public int getDosage() {
+    public double getDosage() {
         return dosage;
     }
 
-    public void setDosage(int dosage) {
+    public void setDosage(double dosage) {
         this.dosage = dosage;
     }
 
-    public int getIngredientDosage() {
+    public double getIngredientDosage() {
         return ingredientDosage;
     }
 
-    public void setIngredientDosage(int ingredientDosage) {
+    public void setIngredientDosage(double ingredientDosage) {
         this.ingredientDosage = ingredientDosage;
     }
 
-    public int getIngredientPrice() {
+    public double getIngredientPrice() {
         return ingredientPrice;
     }
 
-    public void setIngredientPrice(int ingredientPrice) {
+    public void setIngredientPrice(double ingredientPrice) {
         this.ingredientPrice = ingredientPrice;
     }
 
@@ -97,5 +85,4 @@ public class MatsBean {
     public void setMatName(String matName) {
         this.matName = matName;
     }
-
 }

@@ -5,7 +5,7 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d_64"
+        android:layout_height="@dimen/d_48"
         android:background="@drawable/shape_dialog_top_blue_corner_bg"
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/d_16"
@@ -16,14 +16,13 @@
 
     <ImageButton
         android:id="@+id/btn_close_dialog"
-        android:layout_width="@dimen/d_48"
-        android:layout_height="@dimen/d_48"
+        android:layout_width="@dimen/d_40"
+        android:layout_height="@dimen/d_40"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/d_8"
-        android:layout_marginEnd="@dimen/d_8"
+        android:layout_marginEnd="@dimen/d_16"
         android:background="@null"
         android:contentDescription="@string/des"
-        android:src="@drawable/ic_cancel_close" />
+        android:src="@drawable/close_fun" />
 
     <LinearLayout
         android:id="@+id/linearLayout4"

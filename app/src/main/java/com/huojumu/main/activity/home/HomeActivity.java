@@ -22,6 +22,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.util.SparseArray;
@@ -330,6 +332,22 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         webView.addJavascriptInterface(new JsInterface(), "JSInterface");
 
+        edit_search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //todo 搜索查询
+            }
+        });
     }
 
     private void showSpe(final int position) {
@@ -625,25 +643,25 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * 交班
      */
 //    @OnClick(R.id.btn_home_hand_over)
-    void takeover() {
-        Intent intent = new Intent(HomeActivity.this, DailyTakeOverActivity.class);
-        intent.putExtra("type", 1);
-        startActivityForResult(intent, Constant.WORK_BACK_OVER);
-    }
+//    void takeover() {
+//        Intent intent = new Intent(HomeActivity.this, DailyTakeOverActivity.class);
+//        intent.putExtra("type", 1);
+//        startActivityForResult(intent, Constant.WORK_BACK_OVER);
+//    }
 
     /**
      * 日结
      */
 //    @OnClick(R.id.btn_home_daily)
-    void Daily() {
-        if (SpUtil.getBoolean("hasOverOrder")) {
-            ToastUtils.showLong("还有未提交的交班订单数据");
-        } else {
-            Intent intent = new Intent(HomeActivity.this, DailyTakeOverActivity.class);
-            intent.putExtra("type", 2);
-            startActivityForResult(intent, Constant.WORK_BACK_DAILY);
-        }
-    }
+//    void Daily() {
+//        if (SpUtil.getBoolean("hasOverOrder")) {
+//            ToastUtils.showLong("还有未提交的交班订单数据");
+//        } else {
+//            Intent intent = new Intent(HomeActivity.this, DailyTakeOverActivity.class);
+//            intent.putExtra("type", 2);
+//            startActivityForResult(intent, Constant.WORK_BACK_DAILY);
+//        }
+//    }
 
 //    /**
 //     * 结账

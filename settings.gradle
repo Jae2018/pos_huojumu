@@ -1,1 +1,1 @@
-include ':app', ':LoadingDialog', ':myokhttp'
+include ':app', ':LoadingDialog', ':myokhttp', ':banner'

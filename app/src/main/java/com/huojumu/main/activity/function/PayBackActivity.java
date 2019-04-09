@@ -51,13 +51,17 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
     RecyclerView detailRecycler;
     @BindView(R.id.swipe)
     SwipeRefreshLayout refreshLayout;
+    @BindView(R.id.tv_order_back_operator)
+    TextView operator;
+    @BindView(R.id.tv_order_back_operator_join)
+    TextView join;
 
     //可退单集合
     private OrderEnableBackAdapter backAdapter;
     //明细集合
     private OrderBackContentAdapter contentAdapter;
     //
-    private String id,payType;
+    private String id, payType;
     //
     private CertainDialog dialog;
     private OrderDetails details;
@@ -73,8 +77,8 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
         detailRecycler.setLayoutManager(new LinearLayoutManager(this));
         backAdapter = new OrderEnableBackAdapter(null);
         contentAdapter = new OrderBackContentAdapter(null);
-        DividerItemDecoration decoration = new DividerItemDecoration(this,DividerItemDecoration.VERTICAL);
-        decoration.setDrawable(getResources().getDrawable(R.drawable.divider_v,null));
+        DividerItemDecoration decoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        decoration.setDrawable(getResources().getDrawable(R.drawable.divider_v, null));
         backRecycler.addItemDecoration(decoration);
         backRecycler.setAdapter(backAdapter);
         detailRecycler.setAdapter(contentAdapter);
@@ -114,7 +118,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
             }
 
             @Override
-            public void onFailure(int statusCode,String code, String error_msg) {
+            public void onFailure(int statusCode, String code, String error_msg) {
                 ToastUtils.showLong(error_msg);
             }
         });
@@ -124,9 +128,6 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
         NetTool.getOrderInfo(orderId, new GsonResponseHandler<BaseBean<OrderDetails>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrderDetails> response) {
-                if (response.getData().getMember() != null) {
-                    buyer.setText(String.format("下单客户：%s", response.getData().getMember().getNickname()));
-                }
                 if (response.getData().getOrderdetail() != null) {
                     details = response.getData();
                     contentAdapter.setNewData(response.getData().getOrderdetail().getPros());
@@ -134,13 +135,17 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
                     dateTv.setText(String.format("订单日期：%s", response.getData().getOrderdetail().getCreateTime()));
                     payTypeTv.setText(String.format("支付方式：%s", response.getData().getOrderdetail().getPayType().equals("900") ? "现金支付" : "移动支付"));
                 }
+                if (response.getData().getOperator() != null) {
+                    operator.setText(String.format("操作员工：%s", response.getData().getOperator().getNickname()));
+                    join.setText(String.format("员工入职时间：%s", response.getData().getOperator().getJoinTime()));
+                }
                 if (refreshLayout.isRefreshing()) {
                     refreshLayout.setRefreshing(false);
                 }
             }
 
             @Override
-            public void onFailure(int statusCode,String code, String error_msg) {
+            public void onFailure(int statusCode, String code, String error_msg) {
                 ToastUtils.showLong(error_msg);
             }
         });
@@ -177,7 +182,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
                 if (response.getMsg().equals("yes")) {
                     ToastUtils.showLong("退单成功!");
                     clearRight();
-                    PrinterUtil.printPayBack(details,response.getData());
+                    PrinterUtil.printPayBack(details, response.getData());
                 } else {
                     ToastUtils.showLong("退单失败!");
                 }
@@ -185,7 +190,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
             }
 
             @Override
-            public void onFailure(int statusCode,String code, String error_msg) {
+            public void onFailure(int statusCode, String code, String error_msg) {
                 if (!code.equals("0")) {
                     ToastUtils.showLong(error_msg);
                 }
@@ -193,7 +198,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
         });
     }
 
-    private void clearRight(){
+    private void clearRight() {
         buyer.setText("下单客户：");
         contentAdapter.setNewData(null);
         priceTv.setText("订单金额：");

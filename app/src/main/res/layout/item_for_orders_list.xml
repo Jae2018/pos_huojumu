@@ -26,7 +26,6 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:textSize="@dimen/f_16"
-            android:layout_marginTop="@dimen/d_8"
             android:layout_height="wrap_content" />
 
     </LinearLayout>

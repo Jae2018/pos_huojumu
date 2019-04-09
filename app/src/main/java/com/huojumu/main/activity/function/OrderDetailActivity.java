@@ -59,8 +59,8 @@ public class OrderDetailActivity extends BaseActivity {
         NetTool.getOrderInfo(orderId, new GsonResponseHandler<BaseBean<OrderDetails>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrderDetails> response) {
-                if (response.getData().getMember() != null) {
-                    buyer.setText(String.format("下单客户：%s", response.getData().getMember().getNickname()));
+                if (response.getData().getOperator() != null) {
+                    buyer.setText(String.format("操作人员：%s", response.getData().getOperator().getNickname()));
                 }
                 if (response.getData().getOrderdetail() != null) {
                     contentAdapter.setNewData(response.getData().getOrderdetail().getPros());

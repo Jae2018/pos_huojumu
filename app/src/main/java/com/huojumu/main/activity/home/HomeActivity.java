@@ -1,5 +1,6 @@
 package com.huojumu.main.activity.home;
 
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks2;
@@ -307,7 +308,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     if (map.get(position) == null) {
                         List<Production> temp = new ArrayList<>();
                         for (Production p : tempProduces) {
-                            if (typeAdapter.getData().get(position).getId() == Integer.valueOf(p.getProType())) {
+                            if (typeAdapter.getData().get(position).getId() == p.getTypeId()) {
                                 temp.add(p);
                             }
                         }
@@ -366,6 +367,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         workName1.setText(SpUtil.getString(Constant.WORKER_NAME));
         order_num1.setText(orderNum + "单");
 
+        ld2 = new LoadingDialog(this);
+        ld2.setLoadingText("加载中,请等待");
     }
 
     private MyHandler mHandler;
@@ -445,6 +448,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 //        getActiveInfo();
 //    }
 
+    private boolean b1, b2, b3, b4;
+
     @Override
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
@@ -458,15 +463,22 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     @Override
     protected void initData() {
+        ld2.show();
         getAdsList();
         getTypeList();
         getProList("0");
         getActiveInfo();
+    }
 
+    private void tryFinish(){
+        if (b1 && b2 && b3 && b4) {
+            ld2.close();
+        }
     }
 
     private void getAdsList() {
         //广告
+        b1 = false;
         NetTool.getAdsList(SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<List<AdsBean>>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<List<AdsBean>> response) {
@@ -475,6 +487,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             .setImageLoader(new MyLoader())
                             .startAutoPlay();
                 }
+                b1 = true;
+                tryFinish();
             }
 
             @Override
@@ -486,6 +500,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     private void getTypeList() {
         //小类
+        b2 = false;
         NetTool.getSmallType(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.ENT_ID),
                 SpUtil.getInt(Constant.PINPAI_ID), new GsonResponseHandler<BaseBean<List<SmallType>>>() {
                     @Override
@@ -494,6 +509,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         list.add(new SmallType("全部", 0, 0, true));
                         list.addAll(response.getData());
                         typeAdapter.setNewData(list);
+                        b2 = true;
+                        tryFinish();
                     }
 
                     @Override
@@ -505,16 +522,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     //商品列表
     private void getProList(String isRecommend) {
+        b3 = false;
         NetTool.getStoreProduces(SpUtil.getInt(Constant.STORE_ID), isRecommend,
                 new GsonResponseHandler<BaseBean<Products>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<Products> response) {
                         tempProduces = response.getData().getProducts();
                         productAdapter.setNewData(response.getData().getProducts());
-//                        if (swipe.isRefreshing()) {
-//                            swipe.setRefreshing(false);
-//                        }
-
+                        b3 = true;
+                        tryFinish();
                     }
 
                     @Override
@@ -526,10 +542,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     //活动列表
     private void getActiveInfo() {
+        b4 = false;
         NetTool.getActiveInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.ENT_ID), SpUtil.getInt(Constant.PINPAI_ID), new GsonResponseHandler<BaseBean<List<VipListBean>>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<List<VipListBean>> response) {
                 activeBeanList = response.getData();
+                b4 = true;
+                tryFinish();
             }
 
             @Override
@@ -855,7 +874,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
     }
 
-    String usbName;
 
     @Override
     public void OnUsbCallBack(String name) {
@@ -924,7 +942,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         String str = orderBack.getTotalPrice().substring(0, orderBack.getTotalPrice().length() - 1);
         String proList = PrinterUtil.toJson(productions);
         Log.e(TAG, "PrintOrder: " + (Double.parseDouble(orderBack.getTotalPrice()) + charge) + "___" + charge + "___" + totalCut + "");
-        initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList, str, totalPrice + "", charge + "", totalCut + "");
+        initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList, totalPrice + "", totalPrice + "", charge + "", totalCut + "");
 
 //        if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] == null ||
 //                !DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getConnState()) {

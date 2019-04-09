@@ -585,7 +585,9 @@ public class PrinterUtil {
             s = "操作人：" + SpUtil.getString(Constant.WORKER_NAME)
                     + "\n" + "下单时间：" + details.getOrderdetail().getCreateTime()
                     + "\n" + "退单时间：" + date
-                    + "\n" + "原订单号：" + details.getOrderdetail().getOrdNo().substring(details.getOrderdetail().getOrdNo().length() - 4);
+                    + "\n" + "原订单号：" + details.getOrderdetail().getOrdNo().substring(details.getOrderdetail().getOrdNo().length() - 4)
+                    + "\n" + "操作员工：" + details.getOperator().getNickname()
+                    + "\n" + "员工入职时间：" + details.getOperator().getJoinTime();
             mPrinter.printString(s, "GB-2312");
 
             s = "------------------------------------------------";

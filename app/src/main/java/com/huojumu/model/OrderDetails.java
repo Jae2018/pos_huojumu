@@ -8,20 +8,21 @@ import java.util.List;
  * Description:
  */
 public class OrderDetails {
+
     /**
-     * member : {"joinTime":"2018-07-12 13:37:10","nickname":"李莉","totalConsumption":0,"memberId":89}
-     * orderdetail : {"pros":[{"price":100,"proId":127,"proCount":5,"proName":"珍珠奶茶","cups":[{"cupId":28,"proId":127,"proName":"珍珠奶茶"},{"cupId":29,"proId":127,"proName":"珍珠奶茶"},{"cupId":30,"proId":127,"proName":"珍珠奶茶"},{"cupId":31,"proId":127,"proName":"珍珠奶茶"},{"cupId":32,"proId":127,"proName":"珍珠奶茶"}],"orderDeailId":14}],"ordNo":"DDMDCN12000100010001201807170004","orderid":"ededf08181ce4ea2b02a8a700ea152cb","totalPrice":100,"createTime":"2018-07-17 14:20:52","ordSource":"2"}
+     * operator : {"joinTime":"2019-02-24 14:01:23","nickname":"孙收银","userId":18}
+     * orderdetail : {"pros":[{"price":14,"proId":215,"proCount":1,"proName":"燕麦牛乳茶","cups":[{"cupId":236,"proId":215,"proName":"燕麦牛乳茶"}],"orderDeailId":167}],"ordNo":"DDMDCN51000100010004201904090051","payType":"900","orderid":"278ab2b9ca4e410cbc0e4491152165c2","totalPrice":17,"createTime":"2019-04-09 17:52:10","ordSource":"3"}
      */
 
-    private MemberBean member;
+    private OperatorBean operator;
     private OrderdetailBean orderdetail;
 
-    public MemberBean getMember() {
-        return member;
+    public OperatorBean getOperator() {
+        return operator;
     }
 
-    public void setMember(MemberBean member) {
-        this.member = member;
+    public void setOperator(OperatorBean operator) {
+        this.operator = operator;
     }
 
     public OrderdetailBean getOrderdetail() {
@@ -32,18 +33,16 @@ public class OrderDetails {
         this.orderdetail = orderdetail;
     }
 
-    public static class MemberBean {
+    public static class OperatorBean {
         /**
-         * joinTime : 2018-07-12 13:37:10
-         * nickname : 李莉
-         * totalConsumption : 0
-         * memberId : 89
+         * joinTime : 2019-02-24 14:01:23
+         * nickname : 孙收银
+         * userId : 18
          */
 
         private String joinTime;
         private String nickname;
-        private int totalConsumption;
-        private int memberId;
+        private int userId;
 
         public String getJoinTime() {
             return joinTime;
@@ -61,48 +60,33 @@ public class OrderDetails {
             this.nickname = nickname;
         }
 
-        public int getTotalConsumption() {
-            return totalConsumption;
+        public int getUserId() {
+            return userId;
         }
 
-        public void setTotalConsumption(int totalConsumption) {
-            this.totalConsumption = totalConsumption;
-        }
-
-        public int getMemberId() {
-            return memberId;
-        }
-
-        public void setMemberId(int memberId) {
-            this.memberId = memberId;
+        public void setUserId(int userId) {
+            this.userId = userId;
         }
     }
 
     public static class OrderdetailBean {
         /**
-         * pros : [{"price":100,"proId":127,"proCount":5,"proName":"珍珠奶茶","cups":[{"cupId":28,"proId":127,"proName":"珍珠奶茶"},{"cupId":29,"proId":127,"proName":"珍珠奶茶"},{"cupId":30,"proId":127,"proName":"珍珠奶茶"},{"cupId":31,"proId":127,"proName":"珍珠奶茶"},{"cupId":32,"proId":127,"proName":"珍珠奶茶"}],"orderDeailId":14}]
-         * ordNo : DDMDCN12000100010001201807170004
-         * orderid : ededf08181ce4ea2b02a8a700ea152cb
-         * totalPrice : 100
-         * createTime : 2018-07-17 14:20:52
-         * ordSource : 2
+         * pros : [{"price":14,"proId":215,"proCount":1,"proName":"燕麦牛乳茶","cups":[{"cupId":236,"proId":215,"proName":"燕麦牛乳茶"}],"orderDeailId":167}]
+         * ordNo : DDMDCN51000100010004201904090051
+         * payType : 900
+         * orderid : 278ab2b9ca4e410cbc0e4491152165c2
+         * totalPrice : 17.0
+         * createTime : 2019-04-09 17:52:10
+         * ordSource : 3
          */
 
         private String ordNo;
+        private String payType;
         private String orderid;
         private double totalPrice;
         private String createTime;
         private String ordSource;
         private List<ProsBean> pros;
-        private String payType;
-
-        public String getPayType() {
-            return payType;
-        }
-
-        public void setPayType(String payType) {
-            this.payType = payType;
-        }
 
         public String getOrdNo() {
             return ordNo;
@@ -110,6 +94,14 @@ public class OrderDetails {
 
         public void setOrdNo(String ordNo) {
             this.ordNo = ordNo;
+        }
+
+        public String getPayType() {
+            return payType;
+        }
+
+        public void setPayType(String payType) {
+            this.payType = payType;
         }
 
         public String getOrderid() {
@@ -154,12 +146,12 @@ public class OrderDetails {
 
         public static class ProsBean {
             /**
-             * price : 100
-             * proId : 127
-             * proCount : 5
-             * proName : 珍珠奶茶
-             * cups : [{"cupId":28,"proId":127,"proName":"珍珠奶茶"},{"cupId":29,"proId":127,"proName":"珍珠奶茶"},{"cupId":30,"proId":127,"proName":"珍珠奶茶"},{"cupId":31,"proId":127,"proName":"珍珠奶茶"},{"cupId":32,"proId":127,"proName":"珍珠奶茶"}]
-             * orderDeailId : 14
+             * price : 14.0
+             * proId : 215
+             * proCount : 1
+             * proName : 燕麦牛乳茶
+             * cups : [{"cupId":236,"proId":215,"proName":"燕麦牛乳茶"}]
+             * orderDeailId : 167
              */
 
             private double price;
@@ -219,9 +211,9 @@ public class OrderDetails {
 
             public static class CupsBean {
                 /**
-                 * cupId : 28
-                 * proId : 127
-                 * proName : 珍珠奶茶
+                 * cupId : 236
+                 * proId : 215
+                 * proName : 燕麦牛乳茶
                  */
 
                 private int cupId;

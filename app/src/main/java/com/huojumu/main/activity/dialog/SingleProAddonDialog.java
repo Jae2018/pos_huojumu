@@ -264,7 +264,6 @@ public class SingleProAddonDialog extends BaseDialog {
         });
     }
 
-
     @OnClick(R.id.btn_home_addon_cancel)
     void Cancel() {
         dismiss();

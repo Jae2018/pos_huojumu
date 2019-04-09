@@ -17,7 +17,7 @@ import butterknife.ButterKnife;
 public abstract class BaseActivity extends AppCompatActivity {
 
     protected CustomerEngine engine;
-    protected LoadingDialog ld;
+    protected LoadingDialog ld,ld2;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

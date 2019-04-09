@@ -12,6 +12,7 @@ public class Production {
     private List<MakesBean> makes;
     private List<TaoCanBean> taocan;
     private String proType;
+    private int typeId;
     private int number = 1;
     private String addon;
     private String tasteStr;
@@ -20,6 +21,14 @@ public class Production {
     private String matStr;
     private double mateP;//加料价格
     private double price;//单品价格
+
+    public int getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(int typeId) {
+        this.typeId = typeId;
+    }
 
     public String getProAlsname() {
         return proAlsname;

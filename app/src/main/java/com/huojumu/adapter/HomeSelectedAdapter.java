@@ -26,7 +26,7 @@ public class HomeSelectedAdapter extends BaseItemDraggableAdapter<Production, Ba
 
     @Override
     protected void convert(BaseViewHolder helper, Production item) {
-
+        ((LinearLayout) helper.getView(R.id.linear_mats)).removeAllViews();
         helper.setText(R.id.tv_home_selected_name, item.getProName() + "   " + item.getScaleStr() + "   * " + item.getNumber() + "   ￥" + item.getPrice());
 
         if (!item.getMats().isEmpty()) {

@@ -16,78 +16,113 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d_48"
+        android:layout_height="@dimen/d_60"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="@dimen/d_128"
-            android:layout_height="@dimen/d_48"
+            android:layout_width="@dimen/d_160"
+            android:layout_height="@dimen/d_60"
             android:contentDescription="@string/des"
             android:src="@drawable/top1" />
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/d_48"
+            android:layout_height="@dimen/d_60"
             android:background="@color/colorPrimary">
-
-            <LinearLayout
-                android:id="@+id/linear2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/d_36"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/worker_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/d_36"
-                    android:text="asda"
-                    android:textColor="@android:color/white" />
-
-                <TextView
-                    android:id="@+id/order_num"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/d_36"
-                    android:layout_marginTop="@dimen/d_8"
-                    android:text="12312312123"
-                    android:textColor="@android:color/white" />
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/linear2"
-                android:layout_marginStart="@dimen/d_30"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/worker_name1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/d_36"
-                    android:text="asda"
-                    android:textColor="@android:color/white" />
-
-                <TextView
-                    android:id="@+id/order_num1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/d_36"
-                    android:layout_marginTop="@dimen/d_8"
-                    android:text="12312312123"
-                    android:textColor="@android:color/white" />
-            </LinearLayout>
-
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/des"
                 android:src="@drawable/top2" />
+
+            <RelativeLayout
+                android:id="@+id/linear2"
+                android:layout_width="@dimen/d_250"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/d_80"
+                android:paddingTop="@dimen/d_4">
+
+                <TextView
+                    android:id="@+id/tv1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="日期："
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/worker_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/tv1"
+                    android:gravity="end"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/tv2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv1"
+                    android:layout_marginTop="@dimen/d_8"
+                    android:text="当前收入："
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/order_num"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv1"
+                    android:layout_marginTop="@dimen/d_8"
+                    android:layout_toEndOf="@+id/tv2"
+                    android:gravity="end"
+                    android:textColor="@android:color/white" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="@dimen/d_250"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/d_30"
+                android:layout_toEndOf="@id/linear2"
+                android:paddingTop="@dimen/d_4">
+
+                <TextView
+                    android:id="@+id/tv3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="当前在班人员："
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/worker_name1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/d_36"
+                    android:layout_toEndOf="@+id/tv3"
+                    android:gravity="end"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/tv4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv3"
+                    android:layout_marginTop="@dimen/d_8"
+                    android:text="当前出单："
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/order_num1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv3"
+                    android:layout_marginTop="@dimen/d_8"
+                    android:layout_toEndOf="@+id/tv4"
+                    android:gravity="end"
+                    android:textColor="@android:color/white" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/btn_home_more_function"
@@ -196,7 +231,7 @@
 
         <TextView
             android:id="@+id/cut_number"
-            android:layout_width="@dimen/d_80"
+            android:layout_width="@dimen/d_120"
             android:layout_height="wrap_content"
             android:layout_below="@id/total_number"
             android:gravity="center_vertical"
@@ -400,8 +435,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="@dimen/d_48"
-                android:layout_height="@dimen/d_48"
+                android:layout_width="@dimen/d_64"
+                android:layout_height="@dimen/d_64"
                 android:contentDescription="@string/des"
                 android:src="@drawable/icon_search" />
 

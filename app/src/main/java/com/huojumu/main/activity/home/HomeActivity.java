@@ -15,6 +15,8 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -94,8 +96,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.lang.ref.WeakReference;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -194,10 +200,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private UsbManager usbManager;
     private int id = 0;
     UsbDeviceList usbDeviceList;
-    /**
-     * 连接状态断开
-     */
-    private static final int CONN_STATE_DISCONN = 0x007;
 
     int count = 0;
     String name, taste;
@@ -209,8 +211,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //是否推荐
     private boolean isRecommend = false;
     private HorizontalPageLayoutManager horizontalPageLayoutManager = null;
-//    private PagingItemDecoration pagingItemDecoration = null;
-
     private List<OrderInfo.DataBean> dataBeans = new ArrayList<>();
 
     @Override
@@ -359,16 +359,47 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
         });
 
-        workName.setText("日期：");
-        order_num.setText("当前收入：");
-        workName1.setText("当前在班人员：" + SpUtil.getString(Constant.WORKER_NAME));
-        order_num1.setText("当前出单：");
+        mHandler = new MyHandler(this);
+        mHandler.sendEmptyMessageDelayed(MSG_UPDATE_CURRENT_TIME, 500);
+
+        order_num.setText(String.valueOf(woeker_p) + "元");
+        workName1.setText(SpUtil.getString(Constant.WORKER_NAME));
+        order_num1.setText(orderNum + "单");
 
     }
 
-
+    private MyHandler mHandler;
+    private static final int MSG_UPDATE_CURRENT_TIME = 1;
     private double woeker_p = 0;
     private int orderNum = 0;
+
+    private static class MyHandler extends Handler {
+        private WeakReference<HomeActivity> mActivity;
+
+        MyHandler(HomeActivity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            HomeActivity activity = mActivity.get();
+            switch (msg.what) {
+                case MSG_UPDATE_CURRENT_TIME:
+                    activity.updateCurrentTime();
+                    sendEmptyMessageDelayed(MSG_UPDATE_CURRENT_TIME, 500);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void updateCurrentTime() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd  hh:mm:ss", Locale.CHINA);
+        Date curDate = new Date(System.currentTimeMillis());
+        String time = simpleDateFormat.format(curDate);
+        workName.setText(time);
+    }
 
     @OnClick(R.id.input_clear_btn)
     void inputClear() {
@@ -574,7 +605,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
         this.totalPrice = totalPrice;
         this.totalCut = totalCut;
-
     }
 
 
@@ -893,7 +923,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         String str = orderBack.getTotalPrice().substring(0, orderBack.getTotalPrice().length() - 1);
         String proList = PrinterUtil.toJson(productions);
-        initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList, str, (Double.parseDouble(orderBack.getTotalPrice()) + charge) + "", charge + "", totalCut + "");
+        Log.e(TAG, "PrintOrder: " + (Double.parseDouble(orderBack.getTotalPrice()) + charge) + "___" + charge + "___" + totalCut + "");
+        initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList, str, totalPrice + "", charge + "", totalCut + "");
 
 //        if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] == null ||
 //                !DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getConnState()) {
@@ -923,6 +954,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
 
         printLabel();
+
+        woeker_p += totalPrice;
+        workName1.setText(String.valueOf(woeker_p));
+        orderNum++;
     }
 
     private void openCash() {
@@ -1056,6 +1091,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        woeker_p = 0;
+        orderNum = 0;
         EventBus.getDefault().unregister(this);
         DeviceConnFactoryManager.closeAllPort();
         if (threadPool != null) {
@@ -1155,7 +1192,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     Log.e(TAG, "onReceive: ACTION_USB_DEVICE_DETACHED");
 //                    MyOkHttp.mHandler.obtainMessage(CONN_STATE_DISCONN).sendToTarget();
 //                    closeport();
-                    PrinterUtil.disconnectPrinter();
+//                    PrinterUtil.disconnectPrinter();
                     break;
                 //Usb连接断开、蓝牙连接广播
                 case ACTION_USB_DEVICE_ATTACHED:

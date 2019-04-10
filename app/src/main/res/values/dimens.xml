@@ -35,9 +35,12 @@
     <dimen name="d_128">128dp</dimen>
     <dimen name="d_140">140dp</dimen>
     <dimen name="d_160">160dp</dimen>
+    <dimen name="d_180">180dp</dimen>
     <dimen name="d_190">190dp</dimen>
     <dimen name="d_200">200dp</dimen>
     <dimen name="d_210">210dp</dimen>
+    <dimen name="d_230">230dp</dimen>
+    <dimen name="d_240">240dp</dimen>
     <dimen name="d_250">250dp</dimen>
     <dimen name="d_260">260dp</dimen>
     <dimen name="d_280">280dp</dimen>
@@ -49,6 +52,7 @@
     <dimen name="d_540">540dp</dimen>
     <dimen name="d_640">560dp</dimen>
     <dimen name="d_700">740dp</dimen>
+    <dimen name="d_860">860dp</dimen>
     <!-- fonts' sp -->
     <dimen name="f_16">16sp</dimen>
     <dimen name="f_18">18sp</dimen>

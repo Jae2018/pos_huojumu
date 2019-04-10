@@ -18,6 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/d_60"
         android:gravity="center_vertical"
+        android:background="@color/colorPrimary"
         android:orientation="horizontal">
 
         <ImageView
@@ -28,22 +29,22 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/d_60"
-            android:background="@color/colorPrimary">
+            android:layout_height="@dimen/d_60">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/d_860"
+                android:layout_height="@dimen/d_60"
                 android:contentDescription="@string/des"
+                android:scaleType="centerInside"
                 android:src="@drawable/top2" />
 
             <RelativeLayout
                 android:id="@+id/linear2"
                 android:layout_width="@dimen/d_250"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/d_80"
-                android:paddingTop="@dimen/d_4">
+                android:layout_marginStart="@dimen/d_120"
+                android:paddingTop="@dimen/d_6">
 
                 <TextView
                     android:id="@+id/tv1"
@@ -81,12 +82,12 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_width="@dimen/d_250"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/d_180"
+                android:layout_height="match_parent"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/d_30"
+                android:layout_marginStart="@dimen/d_80"
                 android:layout_toEndOf="@id/linear2"
-                android:paddingTop="@dimen/d_4">
+                android:paddingTop="@dimen/d_6">
 
                 <TextView
                     android:id="@+id/tv3"
@@ -426,19 +427,12 @@
 
         <LinearLayout
             android:id="@+id/btn_search"
-            android:layout_width="@dimen/d_250"
+            android:layout_width="@dimen/d_240"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_margin="@dimen/d_16"
-            android:gravity="center_horizontal"
             android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="@dimen/d_64"
-                android:layout_height="@dimen/d_64"
-                android:contentDescription="@string/des"
-                android:src="@drawable/icon_search" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/pinyin"
@@ -448,6 +442,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_10"
                 android:background="@drawable/input_border">
 
                 <TextView

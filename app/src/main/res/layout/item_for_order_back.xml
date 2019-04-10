@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tv_order_item_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:layout_margin="@dimen/d_8"
-    android:textSize="@dimen/f_16" />
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_order_item_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/d_2"
+        android:gravity="center_vertical"
+        android:textSize="@dimen/f_16" />
+
+    <TextView
+        android:id="@+id/tv_order_item_adds"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>
+

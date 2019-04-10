@@ -22,6 +22,12 @@ public class OrderBackContentAdapter extends BaseQuickAdapter<OrderDetails.Order
 
     @Override
     protected void convert(BaseViewHolder helper, OrderDetails.OrderdetailBean.ProsBean item) {
-        helper.setText(R.id.tv_order_item_content, item.getProName() + " * " + item.getProCount());
+        String mats = "";
+        for (OrderDetails.OrderdetailBean.ProsBean.MatsBean matsBean : item.getMats()) {
+            mats += "-" + matsBean.getMatName() + " ￥" + matsBean.getIngredientPrice() + "\n";
+        }
+
+        helper.setText(R.id.tv_order_item_content, item.getProName() + " * " + item.getProCount() + "  " + item.getTastes().get(0).getTasteName() + "  " + item.getPrice())
+                .setText(R.id.tv_order_item_adds, mats);
     }
 }

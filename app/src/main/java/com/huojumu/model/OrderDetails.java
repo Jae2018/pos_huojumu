@@ -9,9 +9,10 @@ import java.util.List;
  */
 public class OrderDetails {
 
+
     /**
-     * operator : {"joinTime":"2019-02-24 14:01:23","nickname":"孙收银","userId":18}
-     * orderdetail : {"pros":[{"price":14,"proId":215,"proCount":1,"proName":"燕麦牛乳茶","cups":[{"cupId":236,"proId":215,"proName":"燕麦牛乳茶"}],"orderDeailId":167}],"ordNo":"DDMDCN51000100010004201904090051","payType":"900","orderid":"278ab2b9ca4e410cbc0e4491152165c2","totalPrice":17,"createTime":"2019-04-09 17:52:10","ordSource":"3"}
+     * operator : {"joinTime":"2019-03-19 15:36:30","nickname":"张三","userId":22}
+     * orderdetail : {"pros":[{"mats":[{"proMatId":2187,"ingredientPrice":1,"matName":"芦荟粒"}],"tastes":[{"tasteId":1,"tasteName":"半糖"}],"sumPrice":"15.00","price":14,"proId":133,"proCount":1,"proName":"樱花草莓奶","cups":[{"cupId":125,"proId":133,"proName":"樱花草莓奶"}],"orderDeailId":91}],"ordNo":"DDMDCN51000100010004201904030060","payType":"900","orderid":"02bff9c685484866b0a885f88f7570ea","totalPrice":15,"createTime":"2019-04-03 17:58:02","ordSource":"3"}
      */
 
     private OperatorBean operator;
@@ -35,9 +36,9 @@ public class OrderDetails {
 
     public static class OperatorBean {
         /**
-         * joinTime : 2019-02-24 14:01:23
-         * nickname : 孙收银
-         * userId : 18
+         * joinTime : 2019-03-19 15:36:30
+         * nickname : 张三
+         * userId : 22
          */
 
         private String joinTime;
@@ -71,19 +72,19 @@ public class OrderDetails {
 
     public static class OrderdetailBean {
         /**
-         * pros : [{"price":14,"proId":215,"proCount":1,"proName":"燕麦牛乳茶","cups":[{"cupId":236,"proId":215,"proName":"燕麦牛乳茶"}],"orderDeailId":167}]
-         * ordNo : DDMDCN51000100010004201904090051
+         * pros : [{"mats":[{"proMatId":2187,"ingredientPrice":1,"matName":"芦荟粒"}],"tastes":[{"tasteId":1,"tasteName":"半糖"}],"sumPrice":"15.00","price":14,"proId":133,"proCount":1,"proName":"樱花草莓奶","cups":[{"cupId":125,"proId":133,"proName":"樱花草莓奶"}],"orderDeailId":91}]
+         * ordNo : DDMDCN51000100010004201904030060
          * payType : 900
-         * orderid : 278ab2b9ca4e410cbc0e4491152165c2
-         * totalPrice : 17.0
-         * createTime : 2019-04-09 17:52:10
+         * orderid : 02bff9c685484866b0a885f88f7570ea
+         * totalPrice : 15
+         * createTime : 2019-04-03 17:58:02
          * ordSource : 3
          */
 
         private String ordNo;
         private String payType;
         private String orderid;
-        private double totalPrice;
+        private int totalPrice;
         private String createTime;
         private String ordSource;
         private List<ProsBean> pros;
@@ -112,11 +113,11 @@ public class OrderDetails {
             this.orderid = orderid;
         }
 
-        public double getTotalPrice() {
+        public int getTotalPrice() {
             return totalPrice;
         }
 
-        public void setTotalPrice(double totalPrice) {
+        public void setTotalPrice(int totalPrice) {
             this.totalPrice = totalPrice;
         }
 
@@ -146,26 +147,40 @@ public class OrderDetails {
 
         public static class ProsBean {
             /**
-             * price : 14.0
-             * proId : 215
+             * mats : [{"proMatId":2187,"ingredientPrice":1,"matName":"芦荟粒"}]
+             * tastes : [{"tasteId":1,"tasteName":"半糖"}]
+             * sumPrice : 15.00
+             * price : 14
+             * proId : 133
              * proCount : 1
-             * proName : 燕麦牛乳茶
-             * cups : [{"cupId":236,"proId":215,"proName":"燕麦牛乳茶"}]
-             * orderDeailId : 167
+             * proName : 樱花草莓奶
+             * cups : [{"cupId":125,"proId":133,"proName":"樱花草莓奶"}]
+             * orderDeailId : 91
              */
 
-            private double price;
+            private String sumPrice;
+            private int price;
             private int proId;
             private int proCount;
             private String proName;
             private int orderDeailId;
+            private List<MatsBean> mats;
+            private List<TastesBean> tastes;
             private List<CupsBean> cups;
 
-            public double getPrice() {
+            public String getSumPrice() {
+                return sumPrice;
+            }
+
+            public void setSumPrice(String sumPrice) {
+                this.sumPrice = sumPrice;
+            }
+
+            public int getPrice() {
                 return price;
             }
 
-            public void setPrice(double price) {
+            public void setPrice(int price) {
                 this.price = price;
             }
 
@@ -201,6 +216,22 @@ public class OrderDetails {
                 this.orderDeailId = orderDeailId;
             }
 
+            public List<MatsBean> getMats() {
+                return mats;
+            }
+
+            public void setMats(List<MatsBean> mats) {
+                this.mats = mats;
+            }
+
+            public List<TastesBean> getTastes() {
+                return tastes;
+            }
+
+            public void setTastes(List<TastesBean> tastes) {
+                this.tastes = tastes;
+            }
+
             public List<CupsBean> getCups() {
                 return cups;
             }
@@ -209,11 +240,73 @@ public class OrderDetails {
                 this.cups = cups;
             }
 
+            public static class MatsBean {
+                /**
+                 * proMatId : 2187
+                 * ingredientPrice : 1
+                 * matName : 芦荟粒
+                 */
+
+                private int proMatId;
+                private int ingredientPrice;
+                private String matName;
+
+                public int getProMatId() {
+                    return proMatId;
+                }
+
+                public void setProMatId(int proMatId) {
+                    this.proMatId = proMatId;
+                }
+
+                public int getIngredientPrice() {
+                    return ingredientPrice;
+                }
+
+                public void setIngredientPrice(int ingredientPrice) {
+                    this.ingredientPrice = ingredientPrice;
+                }
+
+                public String getMatName() {
+                    return matName;
+                }
+
+                public void setMatName(String matName) {
+                    this.matName = matName;
+                }
+            }
+
+            public static class TastesBean {
+                /**
+                 * tasteId : 1
+                 * tasteName : 半糖
+                 */
+
+                private int tasteId;
+                private String tasteName;
+
+                public int getTasteId() {
+                    return tasteId;
+                }
+
+                public void setTasteId(int tasteId) {
+                    this.tasteId = tasteId;
+                }
+
+                public String getTasteName() {
+                    return tasteName;
+                }
+
+                public void setTasteName(String tasteName) {
+                    this.tasteName = tasteName;
+                }
+            }
+
             public static class CupsBean {
                 /**
-                 * cupId : 236
-                 * proId : 215
-                 * proName : 燕麦牛乳茶
+                 * cupId : 125
+                 * proId : 133
+                 * proName : 樱花草莓奶
                  */
 
                 private int cupId;

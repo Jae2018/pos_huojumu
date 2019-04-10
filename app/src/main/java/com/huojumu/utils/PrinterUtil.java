@@ -387,8 +387,7 @@ public class PrinterUtil {
         mPrinter.writeIO(bytes, 0, bytes.length, 100);
     }
 
-
-    public static String printFourData80(String leftText, String middleText, String three, String rightText) {
+    private static String printFourData80(String leftText, String middleText, String three, String rightText) {
         StringBuilder sb = new StringBuilder();
         // 左边最多显示 LEFT_TEXT_MAX_LENGTH 个汉字 + 两个点
         if (leftText.length() > 7) {
@@ -407,7 +406,6 @@ public class PrinterUtil {
         for (int i = 0; i < marginBetweenLeftAndMiddle/4; i++) {
             sb.append(" ");
         }
-//        sb.append("&nbsp;").append("&nbsp;");
         sb.append(middleText);
 
         //计算中间文字和第三文字的空格长度
@@ -577,7 +575,7 @@ public class PrinterUtil {
         try {
             set(CLEAR_TEMP);
             String s = "退账单";
-            mPrinter.printString(s, "GB-2312");
+            mPrinter.printString(s, "GBK");
             mPrinter.printAndFeedLine(1);
 
             mPrinter.setAlignMode(0);
@@ -588,10 +586,10 @@ public class PrinterUtil {
                     + "\n" + "原订单号：" + details.getOrderdetail().getOrdNo().substring(details.getOrderdetail().getOrdNo().length() - 4)
                     + "\n" + "操作员工：" + details.getOperator().getNickname()
                     + "\n" + "员工入职时间：" + details.getOperator().getJoinTime();
-            mPrinter.printString(s, "GB-2312");
+            mPrinter.printString(s, "GBK");
 
             s = "------------------------------------------------";
-            mPrinter.printString(s, "GB-2312");
+            mPrinter.printString(s, "GBK");
 
             //商品信息
             StringBuilder sb = new StringBuilder();
@@ -599,15 +597,21 @@ public class PrinterUtil {
 
             mPrinter.setFontStyle(1);
             for (int i = 0; i < details.getOrderdetail().getPros().size(); i++) {
+                int n = details.getOrderdetail().getPros().get(i).getProCount();
                 sb.append(printFourData80(details.getOrderdetail().getPros().get(i).getProName(), String.valueOf(details.getOrderdetail().getPros().get(i).getCups().size()), String.valueOf(details.getOrderdetail().getPros().get(i).getPrice()),
                         String.valueOf(details.getOrderdetail().getPros().get(i).getCups().size() * details.getOrderdetail().getPros().get(i).getPrice()))).append("\n");
+                if (!details.getOrderdetail().getPros().get(i).getMats().isEmpty()) {
+                    for (OrderDetails.OrderdetailBean.ProsBean.MatsBean bean : details.getOrderdetail().getPros().get(i).getMats())
+                    sb.append(printFourData80("-" + bean.getMatName(), String.valueOf(n), String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()))).append("\n");
+                }
             }
-            mPrinter.printString(sb.toString(), "GB-2312");
+            sb.append("\n").append(printTwoData80("订单总金额：", String.valueOf(details.getOrderdetail().getTotalPrice())));
+            mPrinter.printString(sb.toString(), "GBK");
 
             //公司
             mPrinter.setAlignMode(1);
             s = "\n技术支持：火炬木科技";
-            mPrinter.printString(s, "GB-2312");
+            mPrinter.printString(s, "GBK");
             mPrinter.feedToStartPos();
 
             cutPaper();

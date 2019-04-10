@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +22,6 @@ import com.huojumu.model.ScaleBean;
 import com.huojumu.model.Specification;
 import com.huojumu.model.TastesBean;
 import com.huojumu.utils.GlideApp;
-import com.huojumu.utils.PrinterUtil;
 import com.zhy.view.flowlayout.FlowLayout;
 import com.zhy.view.flowlayout.TagAdapter;
 import com.zhy.view.flowlayout.TagFlowLayout;
@@ -69,9 +67,7 @@ public class SingleProAddonDialog extends BaseDialog {
     @BindView(R.id.tv_product_name)
     TextView name;
 
-    private int number = 1;//数量
-
-    private Production productsBean;//单品
+    private Production productsBean,current;//单品
 
     private List<TastesBean> tastesBeans = new ArrayList<>();//口味
     private List<MatsBean> matsBeans = new ArrayList<>();//加料
@@ -80,7 +76,6 @@ public class SingleProAddonDialog extends BaseDialog {
 
     private SingleProCallback callback;//dialog回调
     private int position;
-    private boolean isChange;
 
     private TastesBean tastesBean;
     private MatsBean matsBean;
@@ -88,18 +83,17 @@ public class SingleProAddonDialog extends BaseDialog {
     private ScaleBean scaleBean;
     private double price = 0;
     private int p = -1;
+    private int number = 1;
 
     private Specification specification;
 
     public SingleProAddonDialog(@NonNull Context context, SingleProCallback callback,
                                 Production productsBean,
-                                Specification specification,
-                                boolean isChange, int pos) {
+                                Specification specification, int pos) {
         super(context);
         this.productsBean = productsBean;
         this.callback = callback;
         this.specification = specification;
-        this.isChange = isChange;
         this.position = pos;
     }
 
@@ -110,6 +104,7 @@ public class SingleProAddonDialog extends BaseDialog {
 
     @Override
     public void initView() {
+        current = new Production();
         name.setText(productsBean.getProName());
         if (productsBean.getImgs().size() > 0) {
             GlideApp.with(getContext()).load(productsBean.getImgs().get(0).getPath()).into(image);
@@ -240,11 +235,11 @@ public class SingleProAddonDialog extends BaseDialog {
             }
         }
 
-        if (isChange) {
-            number = productsBean.getNumber();
-            numTV.setText(String.valueOf(number));
-            addOnET.setText(productsBean.getAddon());
-        }
+//        if (isChange) {
+//            number = productsBean.getNumber();
+//            numTV.setText(String.valueOf(number));
+//            addOnET.setText(productsBean.getAddon());
+//        }
 
         numTV.addTextChangedListener(new TextWatcher() {
             @Override
@@ -264,6 +259,22 @@ public class SingleProAddonDialog extends BaseDialog {
         });
     }
 
+    @OnClick(R.id.add)
+    void add(){
+        number++;
+        if (number > 999) {
+            number = 999;
+        }
+    }
+
+    @OnClick(R.id.sub)
+    void sub(){
+        number--;
+        if (number < 1) {
+            number = 1;
+        }
+    }
+
     @OnClick(R.id.btn_home_addon_cancel)
     void Cancel() {
         dismiss();
@@ -271,13 +282,14 @@ public class SingleProAddonDialog extends BaseDialog {
 
     @OnClick(R.id.btn_home_addon_ok)
     void Ok() {
-        if (numTV.getText().length() < 1) {
-            number = 1;
-        } else {
+
+        if (numTV.getText().length() > 0) {
             number = Integer.parseInt(numTV.getText().toString().trim());
         }
-        productsBean.setAddon(addOnET.getText().toString());//备注
-        productsBean.setTasteStr(tastesBean != null ? tastesBean.getTasteName() : "");
+
+        current.setProName(productsBean.getProName());
+        current.setAddon(addOnET.getText().toString());//备注
+        current.setTasteStr(tastesBean != null ? tastesBean.getTasteName() : "");
         OrderInfo.DataBean dataBean = new OrderInfo.DataBean();
         dataBean.setProType(productsBean.getProType());
         dataBean.setProId(productsBean.getProId());
@@ -291,7 +303,7 @@ public class SingleProAddonDialog extends BaseDialog {
             price += scaleBean.getPrice();
             scaleBeans.clear();
             scaleBeans.add(scaleBean);
-            productsBean.setScaleStr(scaleBean.getScaName());
+            current.setScaleStr(scaleBean.getScaName());
         }
 
         if (tastesBean != null) {
@@ -305,22 +317,20 @@ public class SingleProAddonDialog extends BaseDialog {
             matStr += matsBeans.get(i).getMatName() + " ";
             matP += matsBeans.get(i).getIngredientPrice();
         }
-        productsBean.setMatStr(matStr);
-        productsBean.setMateP(matP);
+        current.setMatStr(matStr);
+        current.setMateP(matP);
 
         dataBean.setMakes(makesBeans);
         dataBean.setMats(matsBeans);
         dataBean.setTastes(tastesBeans);
         dataBean.setScales(scaleBeans);
 
-        productsBean.setMakes(makesBeans);
-        productsBean.setMats(matsBeans);
-        productsBean.setTastes(tastesBeans);
+        current.setMakes(makesBeans);
+        current.setMats(matsBeans);
+        current.setTastes(tastesBeans);
 
+        callback.onSingleCallBack(productsBean.getProId(), number, current, dataBean, position, price);
 
-        callback.onSingleCallBack(productsBean.getProId(), number, productsBean, dataBean, position, price);
-
-        number = 1;
         price = 0;
         cancel();
     }

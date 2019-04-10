@@ -27,13 +27,14 @@ public class HomeSelectedAdapter extends BaseItemDraggableAdapter<Production, Ba
     @Override
     protected void convert(BaseViewHolder helper, Production item) {
         ((LinearLayout) helper.getView(R.id.linear_mats)).removeAllViews();
-        helper.setText(R.id.tv_home_selected_name, item.getProName() + "   " + item.getScaleStr() + "   * " + item.getNumber() + "   ￥" + item.getPrice());
+        helper.setText(R.id.tv_home_selected_name, item.getProName() + "   " + item.getScaleStr() + "  * " + item.getNumber() + "  ￥" + item.getPrice());
 
         if (!item.getMats().isEmpty()) {
             for (MatsBean mats : item.getMats()) {
                 TextView t = new TextView(mContext);
                 t.setText(String.format(mContext.getString(R.string.selected_linear_one), mats.getMatName(), item.getNumber(), mats.getIngredientPrice()));
                 t.setPadding(8, 4, 8, 4);
+                t.setTextSize(12);
                 t.setTextColor(Color.WHITE);
                 ((LinearLayout) helper.getView(R.id.linear_mats)).addView(t);
             }

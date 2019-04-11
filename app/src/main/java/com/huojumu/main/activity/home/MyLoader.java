@@ -17,9 +17,11 @@ public class MyLoader extends ImageLoader {
                 .into(imageView);
     }
 
-//    @Override
-//    public ImageView createImageView(Context context) {
-//        //圆角
-//        return new RoundAngleImageView(context);
-//    }
+    @Override
+    public ImageView createImageView(Context context) {
+        //圆角
+        ImageView imageView = new ImageView(context);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        return imageView;
+    }
 }

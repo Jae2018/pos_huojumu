@@ -479,7 +479,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     engine.getBanner().setImages(response.getData())
                             .setImageLoader(new MyLoader())
                             .isAutoPlay(true)
-                            .setDelayTime(2000)
+                            .setDelayTime(30000)
                             .start();
                 }
                 b1 = true;

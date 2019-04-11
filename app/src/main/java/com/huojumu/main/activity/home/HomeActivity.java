@@ -242,7 +242,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         DividerItemDecoration d = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         d.setDrawable(getResources().getDrawable(R.drawable.divider_n, null));
         left.addItemDecoration(d);
-        selectedAdapter.enableSwipeItem();
+
+
         ItemDragAndSwipeCallback mItemDragAndSwipeCallback = new ItemDragAndSwipeCallback(selectedAdapter);
         ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(mItemDragAndSwipeCallback);
         mItemTouchHelper.attachToRecyclerView(left);
@@ -250,9 +251,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         final Paint paint = new Paint();
         paint.setAntiAlias(true);
-        paint.setTextSize(12);
+        paint.setTextSize(16);
         paint.setColor(Color.WHITE);
 
+        selectedAdapter.enableSwipeItem();
         selectedAdapter.setOnItemSwipeListener(new OnItemSwipeListener() {
             @Override
             public void onItemSwipeStart(RecyclerView.ViewHolder viewHolder, int pos) {
@@ -266,14 +268,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
             @Override
             public void onItemSwiped(RecyclerView.ViewHolder viewHolder, int pos) {
-                selectedAdapter.notifyItemRemoved(pos);
                 checkPriceForDisplay();
             }
 
             @Override
             public void onItemSwipeMoving(Canvas canvas, RecyclerView.ViewHolder viewHolder, float dX, float dY, boolean isCurrentlyActive) {
                 canvas.drawColor(ContextCompat.getColor(HomeActivity.this, R.color.red_delete));
-                canvas.drawText("删除", 10, 5, paint);
+                canvas.drawText("删除", 20, 35, paint);
             }
         });
         left.setAdapter(selectedAdapter);

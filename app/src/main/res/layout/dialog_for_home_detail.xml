@@ -65,7 +65,7 @@
                             android:id="@+id/add"
                             android:layout_width="@dimen/d_36"
                             android:layout_height="@dimen/d_36"
-                            android:src="@drawable/icon_sub"
+                            android:src="@mipmap/icon_sub"
                             android:contentDescription="@string/des" />
 
                         <EditText
@@ -83,7 +83,7 @@
                             android:id="@+id/sub"
                             android:layout_width="@dimen/d_36"
                             android:layout_height="@dimen/d_36"
-                            android:src="@drawable/icon_add"
+                            android:src="@mipmap/icon_add"
                             android:contentDescription="@string/des" />
                     </LinearLayout>
 

@@ -60,6 +60,7 @@ import com.huojumu.main.dialogs.MoreFunctionDialog;
 import com.huojumu.main.dialogs.QuickPayDialog;
 import com.huojumu.main.dialogs.SingleProCallback;
 import com.huojumu.main.dialogs.UsbDeviceList;
+import com.huojumu.model.ActivesBean;
 import com.huojumu.model.AdsBean;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.MatsBean;
@@ -70,7 +71,6 @@ import com.huojumu.model.Products;
 import com.huojumu.model.SmallType;
 import com.huojumu.model.Specification;
 import com.huojumu.model.TaskBean;
-import com.huojumu.model.VipListBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
 import com.huojumu.utils.H5Order;
@@ -165,7 +165,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private HomeProductAdapter productAdapter;//商品
 
     private List<Production> tempProduces;//商品列表
-    private List<VipListBean> activeBeanList;//活动列表
+    private List<ActivesBean> activeBeanList;//活动列表
     private SparseArray<List<Production>> map = new SparseArray<>();//分类切换
     private ArrayList<Production> productions = new ArrayList<>();//选择的奶茶
     private ArrayList<Production> printProducts = new ArrayList<>();//标签打印的产品
@@ -480,6 +480,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             .setImageLoader(new MyLoader())
                             .startAutoPlay();
                 }
+                Log.e(TAG, "onSuccess ads: " + PrinterUtil.toJson(response.getData()));
                 b1 = true;
                 tryFinish();
             }
@@ -536,9 +537,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //活动列表
     private void getActiveInfo() {
         b4 = false;
-        NetTool.getActiveInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.ENT_ID), SpUtil.getInt(Constant.PINPAI_ID), new GsonResponseHandler<BaseBean<List<VipListBean>>>() {
+        NetTool.getActiveInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.ENT_ID), SpUtil.getInt(Constant.PINPAI_ID), new GsonResponseHandler<BaseBean<List<ActivesBean>>>() {
             @Override
-            public void onSuccess(int statusCode, BaseBean<List<VipListBean>> response) {
+            public void onSuccess(int statusCode, BaseBean<List<ActivesBean>> response) {
                 activeBeanList = response.getData();
                 b4 = true;
                 tryFinish();
@@ -809,7 +810,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                 engine.getWxIV().setImageBitmap(QrUtil.createQRCodeWithLogo(HomeActivity.this, response.getData().getWxPayQrcode(), BitmapFactory.decodeResource(getResources(), R.drawable.weixin_normal)));
                             }
 
-                            ld.show();
                             payOutTime();
                             SpUtil.save("hasOverOrder", true);
                         }
@@ -894,6 +894,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * 支付超时
      */
     private void payOutTime() {
+        ld = new LoadingDialog(this);
+        ld.setLoadingText("支付中");
+        ld.show();
         CountDownTimer timer = new CountDownTimer(60 * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -903,6 +906,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             @Override
             public void onFinish() {
                 ld.loadFailed();
+                ld.close();
                 clear();
             }
         };
@@ -966,7 +970,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         woeker_p += totalPrice;
         orderNum++;
-        order_num.setText(String.format(Locale.CHINA, "元%.2f", woeker_p));
+        order_num.setText(String.format(Locale.CHINA, "%.2f元", woeker_p));
         order_num1.setText(String.format(Locale.CHINA, "%d单", orderNum));
     }
 
@@ -1066,6 +1070,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             @Override
             public void run() {
                 clear();
+                ld.loadFailed();
             }
         }, 1000);
     }

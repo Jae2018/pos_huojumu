@@ -1,5 +1,6 @@
 package com.huojumu.utils;
 
+import com.huojumu.model.ActivesBean;
 import com.huojumu.model.AdsBean;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.DailyInfo;
@@ -218,7 +219,7 @@ public class NetTool {
     }
 
     //活动信息列表
-    public static void getActiveInfo(int shopID, int enterpriseID, int pinpaiID, GsonResponseHandler<BaseBean<List<VipListBean>>> handler) {
+    public static void getActiveInfo(int shopID, int enterpriseID, int pinpaiID, GsonResponseHandler<BaseBean<List<ActivesBean>>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "salespromotion/getpromotion.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("shopID", "" + shopID)
@@ -242,6 +243,7 @@ public class NetTool {
         okHttp.post()
                 .url(Constant.BASE_URL + "system/advsearch.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("shopID", "" + shopID)
+                .addParam("fileType","3")
                 .enqueue(handler);
     }
 }

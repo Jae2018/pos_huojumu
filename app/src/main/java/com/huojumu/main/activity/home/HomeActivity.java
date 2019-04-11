@@ -478,9 +478,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 if (engine != null && engine.getBanner() != null) {
                     engine.getBanner().setImages(response.getData())
                             .setImageLoader(new MyLoader())
-                            .startAutoPlay();
+                            .isAutoPlay(true)
+                            .setDelayTime(2000)
+                            .start();
                 }
-                Log.e(TAG, "onSuccess ads: " + PrinterUtil.toJson(response.getData()));
                 b1 = true;
                 tryFinish();
             }

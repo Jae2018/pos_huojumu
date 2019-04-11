@@ -203,7 +203,6 @@ public class SingleProAddonDialog extends BaseDialog {
                         return false;
                     }
                 });
-
             }
 
             //做法
@@ -235,12 +234,6 @@ public class SingleProAddonDialog extends BaseDialog {
             }
         }
 
-//        if (isChange) {
-//            number = productsBean.getNumber();
-//            numTV.setText(String.valueOf(number));
-//            addOnET.setText(productsBean.getAddon());
-//        }
-
         numTV.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -261,18 +254,20 @@ public class SingleProAddonDialog extends BaseDialog {
 
     @OnClick(R.id.add)
     void add(){
-        number++;
-        if (number > 999) {
-            number = 999;
-        }
-    }
-
-    @OnClick(R.id.sub)
-    void sub(){
         number--;
         if (number < 1) {
             number = 1;
         }
+        numTV.setText(String.valueOf(number));
+    }
+
+    @OnClick(R.id.sub)
+    void sub(){
+        number++;
+        if (number > 999) {
+            number = 999;
+        }
+        numTV.setText(String.valueOf(number));
     }
 
     @OnClick(R.id.btn_home_addon_cancel)

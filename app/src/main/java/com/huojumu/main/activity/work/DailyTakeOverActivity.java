@@ -161,7 +161,6 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             //交班确认回调
             TakeOver();
         } else {
-//            TakeOver();
             daily();
         }
         PrinterUtil.printDaily(types, String.valueOf(s4), String.valueOf(s2), String.valueOf(s1), num, SpUtil.getString(Constant.WORKER_NAME),lastDate);

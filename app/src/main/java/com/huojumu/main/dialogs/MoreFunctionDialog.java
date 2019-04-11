@@ -59,7 +59,7 @@ public class MoreFunctionDialog extends BaseDialog {
         //退单
         intent.setClass(activity, PayBackActivity.class);
         getContext().startActivity(intent);
-        dismiss();
+        cancel();
     }
 
     @OnClick(R.id.iv_more_fuc4)
@@ -72,6 +72,7 @@ public class MoreFunctionDialog extends BaseDialog {
         Intent intent = new Intent(activity, DailyTakeOverActivity.class);
         intent.putExtra("type", 1);
         activity.startActivityForResult(intent, Constant.WORK_BACK_OVER);
+        cancel();
     }
 
 //    @OnClick(R.id.iv_more_fuc2)
@@ -103,6 +104,7 @@ public class MoreFunctionDialog extends BaseDialog {
             intent.putExtra("type", 2);
             activity.startActivityForResult(intent, Constant.WORK_BACK_DAILY);
         }
+        cancel();
     }
 
     @OnClick(R.id.iv_more_fuc6)
@@ -113,7 +115,7 @@ public class MoreFunctionDialog extends BaseDialog {
                 PrinterUtil.OpenMoneyBox();
             }
         });
-        dismiss();
+        cancel();
     }
 
     @OnClick(R.id.iv_more_fuc7)
@@ -121,7 +123,7 @@ public class MoreFunctionDialog extends BaseDialog {
         // 会员信息
         intent.setClass(getContext(), VipActivity.class);
         getContext().startActivity(intent);
-        dismiss();
+        cancel();
     }
 
     @OnClick(R.id.iv_more_fuc8)
@@ -129,7 +131,7 @@ public class MoreFunctionDialog extends BaseDialog {
         //账单查询
         intent.setClass(getContext(), OrdersListActivity.class);
         getContext().startActivity(intent);
-        dismiss();
+        cancel();
     }
 
 //    @OnClick(R.id.iv_more_fuc9)
@@ -155,7 +157,7 @@ public class MoreFunctionDialog extends BaseDialog {
         intent.setClass(getContext(), MaterialActivity.class);
         intent.putExtra("title", "库存查询");
         getContext().startActivity(intent);
-        dismiss();
+        cancel();
     }
 
     @OnClick(R.id.iv_more_fuc12)
@@ -163,7 +165,7 @@ public class MoreFunctionDialog extends BaseDialog {
         // 盘点
         intent.setClass(getContext(), InventoryActivity.class);
         getContext().startActivity(intent);
-        dismiss();
+        cancel();
     }
 
 }

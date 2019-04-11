@@ -130,6 +130,7 @@ public class DeviceConnFactoryManager {
     public static final int CONN_STATE_FAILED = CONN_STATE_DISCONNECT << 2;
     public static final int CONN_STATE_CONNECTED = CONN_STATE_DISCONNECT << 3;
     public PrinterReader reader;
+    private PosReceiver receiver;
 
     public enum CONN_METHOD {
         //蓝牙连接
@@ -173,10 +174,13 @@ public class DeviceConnFactoryManager {
             case USB:
                 mPort = new UsbPort(mContext, mUsbDevice);
                 isOpenPort = mPort.openPort();
-                if (isOpenPort) {
-                    IntentFilter filter = new IntentFilter(ACTION_USB_DEVICE_DETACHED);
-                    mContext.registerReceiver(new PosReceiver(), filter);
-                }
+//                if (isOpenPort) {
+//                    IntentFilter filter = new IntentFilter(ACTION_USB_DEVICE_DETACHED);
+//                    if (receiver == null) {
+//                        receiver = new PosReceiver();
+//                    }
+//                    mContext.registerReceiver(receiver, filter);
+//                }
                 break;
             case WIFI:
                 mPort = new EthernetPort(ip, port);
@@ -201,6 +205,12 @@ public class DeviceConnFactoryManager {
         }
     }
 
+    public void unregisterReceiver(){
+        if (receiver != null) {
+            mContext.unregisterReceiver(receiver);
+        }
+    }
+
     /**
      * 查询当前连接打印机所使用打印机指令（ESC（EscCommand.java）、TSC（LabelCommand.java））
      */
@@ -222,7 +232,6 @@ public class DeviceConnFactoryManager {
     /**
      * 获取端口打开状态（true 打开，false 未打开）
      *
-     * @return
      */
     public boolean getConnState() {
         return isOpenPort;
@@ -231,7 +240,6 @@ public class DeviceConnFactoryManager {
     /**
      * 获取连接蓝牙的物理地址
      *
-     * @return
      */
     public String getMacAddress() {
         return macAddress;
@@ -240,7 +248,6 @@ public class DeviceConnFactoryManager {
     /**
      * 获取连接网口端口号
      *
-     * @return
      */
     public int getPort() {
         return port;
@@ -249,7 +256,6 @@ public class DeviceConnFactoryManager {
     /**
      * 获取连接网口的IP
      *
-     * @return
      */
     public String getIp() {
         return ip;
@@ -258,7 +264,6 @@ public class DeviceConnFactoryManager {
     /**
      * 获取连接的USB设备信息
      *
-     * @return
      */
     public UsbDevice usbDevice() {
         return mUsbDevice;
@@ -267,7 +272,7 @@ public class DeviceConnFactoryManager {
     /**
      * 关闭端口
      */
-    public void closePort(int id) {
+    private void closePort(int id) {
         if (this.mPort != null) {
             System.out.println("id -> " + id);
             reader.cancel();

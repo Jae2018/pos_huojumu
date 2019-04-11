@@ -59,7 +59,6 @@ import com.huojumu.main.dialogs.DialogInterface;
 import com.huojumu.main.dialogs.MoreFunctionDialog;
 import com.huojumu.main.dialogs.QuickPayDialog;
 import com.huojumu.main.dialogs.SingleProCallback;
-import com.huojumu.main.dialogs.UsbDeviceList;
 import com.huojumu.model.ActivesBean;
 import com.huojumu.model.AdsBean;
 import com.huojumu.model.BaseBean;
@@ -192,7 +191,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     private UsbManager usbManager;
     private int id = 0;
-    UsbDeviceList usbDeviceList;
+//    UsbDeviceList usbDeviceList;
 
     int count = 0;
     String name, taste;
@@ -750,7 +749,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         @Override
                         public void run() {
                             startActivity(new Intent(HomeActivity.this, LoginActivity.class));
-                            finish();
+//                            finish();
                         }
                     }, 1000);
                     break;
@@ -882,10 +881,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //判断USB设备是否有权限
         if (usbDevice != null)
             if (usbManager.hasPermission(usbDevice)) {
-                Log.e(TAG, "getUsb: 1");
                 usbConn(usbDevice);
             } else {//请求权限
-                Log.e(TAG, "getUsb: 2");
                 PendingIntent mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
                 usbManager.requestPermission(usbDevice, mPermissionIntent);
             }
@@ -1078,13 +1075,17 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }, 10000);
     }
 
+    private DeviceConnFactoryManager connFactoryManager;
+
     private void usbConn(UsbDevice usbDevice) {
-        new DeviceConnFactoryManager.Build()
-                .setId(id)
-                .setConnMethod(DeviceConnFactoryManager.CONN_METHOD.USB)
-                .setUsbDevice(usbDevice)
-                .setContext(this)
-                .build();
+        if (connFactoryManager == null) {
+            connFactoryManager = new DeviceConnFactoryManager.Build()
+                    .setId(id)
+                    .setConnMethod(DeviceConnFactoryManager.CONN_METHOD.USB)
+                    .setUsbDevice(usbDevice)
+                    .setContext(this)
+                    .build();
+        }
         DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].openPort();
     }
 
@@ -1189,7 +1190,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private boolean continuityprint = false;
     private int printcount = 0;
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    public BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -1236,19 +1237,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             break;
                         case DeviceConnFactoryManager.CONN_STATE_CONNECTED:
                             ToastUtils.showLong("标签打印机已连接");
-//                            if(DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].connMethod== DeviceConnFactoryManager.CONN_METHOD.WIFI){
-//                                wificonn=true;
-//                                if(keepConn==null) {
-//                                    keepConn = new KeepConn();
-//                                    keepConn.start();
-//                                }
-//                            }
                             break;
                         case CONN_STATE_FAILED:
-//                            Utils.toast(MainActivity.this, getString(R.string.str_conn_fail));
                             ToastUtils.showLong("标签打印机连接失败");
                             getUsb(UsbUtil.getUsbDeviceList(HomeActivity.this));
-                            //wificonn=false;
                             break;
                         default:
                             break;
@@ -1279,6 +1271,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     protected void onStop() {
         super.onStop();
         unregisterReceiver(receiver);
+        if (connFactoryManager != null) {
+            connFactoryManager.unregisterReceiver();
+        }
     }
 
     public static Bitmap stringToBitmap(String string) {
@@ -1319,8 +1314,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         @JavascriptInterface
         public void save(final String string) {
-            Log.e(TAG, "save: " + string);
-
             threadPool.addTask(new Runnable() {
                 @Override
                 public void run() {

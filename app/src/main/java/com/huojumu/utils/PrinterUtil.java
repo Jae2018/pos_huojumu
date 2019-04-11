@@ -528,9 +528,11 @@ public class PrinterUtil {
     public static void printDaily(int type, String total, String mobilePay, String cash, int orderNum, String workerName,String lastDate) {
         try {
             set(CLEAR_TEMP);
+            mPrinter.setAlignMode(1);
             mPrinter.setCharSize(1, 1);
-            String t = type == 1 ? "交班" : "日结";
+            String t = type == 1 ? "交班" : "日结\n";
             mPrinter.printString(t, "GBK");
+            mPrinter.printFeed();
 
             //居左
             mPrinter.setAlignMode(0);
@@ -579,7 +581,7 @@ public class PrinterUtil {
             mPrinter.printAndFeedLine(1);
 
             mPrinter.setAlignMode(0);
-
+            mPrinter.setCharSize(0, 0);
             s = "操作人：" + SpUtil.getString(Constant.WORKER_NAME)
                     + "\n" + "下单时间：" + details.getOrderdetail().getCreateTime()
                     + "\n" + "退单时间：" + date

@@ -13,7 +13,25 @@ public class DailyInfo {
     private OrdersBean orders;
     private PushMoneyDataBean pushMoneyData;
     private SaleDataBean saleData;
+    private String lastEndTime;
+    private String lastStartTime;
     private long timestamp;
+
+    public String getLastEndTime() {
+        return lastEndTime;
+    }
+
+    public void setLastEndTime(String lastEndTime) {
+        this.lastEndTime = lastEndTime;
+    }
+
+    public String getLastStartTime() {
+        return lastStartTime;
+    }
+
+    public void setLastStartTime(String lastStartTime) {
+        this.lastStartTime = lastStartTime;
+    }
 
     public long getTimestamp() {
         return timestamp;

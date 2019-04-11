@@ -525,7 +525,7 @@ public class PrinterUtil {
     /**
      * 打印交班、日结
      */
-    public static void printDaily(int type, String total, String mobilePay, String cash, int orderNum, String workerName) {
+    public static void printDaily(int type, String total, String mobilePay, String cash, int orderNum, String workerName,String lastDate) {
         try {
             set(CLEAR_TEMP);
             mPrinter.setCharSize(1, 1);
@@ -539,7 +539,7 @@ public class PrinterUtil {
 
             mPrinter.setCharSize(0, 0);
             s = "本次" + t + "时间：" + getDate() + "\n"
-                    + "上次" + t + "时间" + SpUtil.getString("dailyTime") + "\n"
+                    + "上次" + t + "时间" + lastDate + "\n"
                     + t + "人员：" + workerName + "\n";
             mPrinter.printString(s, "GBK");
 
@@ -559,11 +559,9 @@ public class PrinterUtil {
             //公司
             s = "\n技术支持 火炬木科技";
             mPrinter.printString(s, "GBK");
-            //保存本次时间
-            SpUtil.save("dailyTime", getDate());
+
             cutPaper();
         } catch (Exception e) {
-            Log.d(TAG, "printDaily: ");
             ToastUtils.showLong("打印机连接出错");
         }
     }
@@ -574,6 +572,8 @@ public class PrinterUtil {
     public static void printPayBack(OrderDetails details, String date) {
         try {
             set(CLEAR_TEMP);
+            mPrinter.setAlignMode(1);
+            mPrinter.setCharSize(1, 1);
             String s = "退账单";
             mPrinter.printString(s, "GBK");
             mPrinter.printAndFeedLine(1);

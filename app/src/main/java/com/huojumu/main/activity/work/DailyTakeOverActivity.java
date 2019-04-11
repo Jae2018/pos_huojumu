@@ -70,6 +70,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     private int types;
     private int num = 0;
     private double s1, s2, s3, s4;
+    private String lastDate;
 
     @Override
     protected int setLayout() {
@@ -160,16 +161,17 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             //交班确认回调
             TakeOver();
         } else {
-            TakeOver();
+//            TakeOver();
             daily();
         }
-        PrinterUtil.printDaily(types, String.valueOf(s4), String.valueOf(s2), String.valueOf(s1), num, SpUtil.getString(Constant.WORKER_NAME));
+        PrinterUtil.printDaily(types, String.valueOf(s4), String.valueOf(s2), String.valueOf(s1), num, SpUtil.getString(Constant.WORKER_NAME),lastDate);
     }
 
     private void getTakeOverInfo(){
         NetTool.getDailyInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.PINPAI_ID), page, 0, new GsonResponseHandler<BaseBean<DailyInfo>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<DailyInfo> response) {
+                lastDate = response.getData().getLastEndTime();
                 num = response.getData().getOrders().getTotal();
                 rowsBeans.addAll(response.getData().getOrders().getRows());
                 dailyAdapter.setNewData(rowsBeans);
@@ -201,6 +203,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
         NetTool.getSettlementInfo(SpUtil.getInt(Constant.STORE_ID), 1, new GsonResponseHandler<BaseBean<DailyInfo>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<DailyInfo> response) {
+                lastDate = response.getData().getLastEndTime();
                 num = response.getData().getOrders().getTotal();
                 rowsBeans.addAll(response.getData().getOrders().getRows());
                 dailyAdapter.setNewData(rowsBeans);

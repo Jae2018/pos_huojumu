@@ -20,6 +20,7 @@ import com.huojumu.main.activity.work.DailyTakeOverActivity;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
+import com.huojumu.utils.ThreadPool;
 
 import butterknife.OnClick;
 
@@ -106,7 +107,12 @@ public class MoreFunctionDialog extends BaseDialog {
 
     @OnClick(R.id.iv_more_fuc6)
     void Fuc6() {
-        PrinterUtil.OpenMoneyBox();
+        ThreadPool.getInstantiation().addTask(new Runnable() {
+            @Override
+            public void run() {
+                PrinterUtil.OpenMoneyBox();
+            }
+        });
         dismiss();
     }
 

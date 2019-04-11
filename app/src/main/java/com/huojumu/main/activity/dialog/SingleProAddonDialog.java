@@ -286,7 +286,7 @@ public class SingleProAddonDialog extends BaseDialog {
         current.setProType(productsBean.getProType());
         current.setProName(productsBean.getProName());
         current.setAddon(addOnET.getText().toString());//备注
-        current.setTasteStr(tastesBean != null ? tastesBean.getTasteName() : "");
+        current.setTasteStr(tastesBean != null ? tastesBean.getTasteName() : "默认口味");
         OrderInfo.DataBean dataBean = new OrderInfo.DataBean();
         dataBean.setProType(productsBean.getProType());
         dataBean.setProId(productsBean.getProId());

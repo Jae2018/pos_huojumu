@@ -343,7 +343,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 searchStr += py[position];
                 edit_search.setText(searchStr);
-                Log.e(TAG, "onItemClick: " + searchStr);
                 search(searchStr);
             }
         });
@@ -351,7 +350,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         MyHandler mHandler = new MyHandler(this);
         mHandler.sendEmptyMessageDelayed(MSG_UPDATE_CURRENT_TIME, 500);
 
-        order_num.setText(String.format(Locale.CHINA, "元%.2f", woeker_p));
+        order_num.setText(String.format(Locale.CHINA, "%.2f元", woeker_p));
         workName1.setText(SpUtil.getString(Constant.WORKER_NAME));
         order_num1.setText(String.format(Locale.CHINA, "%d单", orderNum));
 
@@ -778,6 +777,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         orderInfo.setPinpaiID(SpUtil.getInt(Constant.PINPAI_ID));
         orderInfo.setQuanIds(new ArrayList<Integer>());
         orderInfo.setDiscountsType(SpUtil.getString(Constant.ENT_DIS));
+        Log.e(TAG, "initOrder: " + PrinterUtil.toJson(dataBeans));
         orderInfo.setData(dataBeans);
         orderInfo.setOrdSource("3");
     }
@@ -1073,7 +1073,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 clear();
                 ld.loadFailed();
             }
-        }, 1000);
+        }, 10000);
     }
 
     private void usbConn(UsbDevice usbDevice) {

@@ -350,9 +350,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         MyHandler mHandler = new MyHandler(this);
         mHandler.sendEmptyMessageDelayed(MSG_UPDATE_CURRENT_TIME, 500);
 
-        order_num.setText(String.format(Locale.CHINA, "%.2f元", woeker_p));
+        order_num.setText(String.format(Locale.CHINA, "%.2f元", SpUtil.getFloat("woeker_p")));
         workName1.setText(SpUtil.getString(Constant.WORKER_NAME));
-        order_num1.setText(String.format(Locale.CHINA, "%d单", orderNum));
+        order_num1.setText(String.format(Locale.CHINA, "%d单", SpUtil.getInt("orderNum")));
 
     }
 
@@ -973,6 +973,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         orderNum++;
         order_num.setText(String.format(Locale.CHINA, "%.2f元", woeker_p));
         order_num1.setText(String.format(Locale.CHINA, "%d单", orderNum));
+        SpUtil.save("woeker_p", (float) woeker_p);
+        SpUtil.save("orderNum", orderNum);
     }
 
     private void openCash() {

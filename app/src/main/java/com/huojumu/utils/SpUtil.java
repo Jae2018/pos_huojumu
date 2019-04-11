@@ -20,6 +20,14 @@ public class SpUtil {
         sp.edit().putString(key, value).apply();
     }
 
+    public static void save(String key, float value) {
+        sp.edit().putFloat(key, value).apply();
+    }
+
+    public static float getFloat(String key){
+        return sp.getFloat(key, 0);
+    }
+
     public static void save(String key, int value) {
         sp.edit().putInt(key, value).apply();
     }

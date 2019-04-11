@@ -14,7 +14,7 @@ import java.util.List;
  * Date: 2018/11/29
  * Description: 退单详情
  */
-public class OrderBackContentAdapter extends BaseQuickAdapter<OrderDetails.OrderdetailBean.ProsBean,BaseViewHolder> {
+public class OrderBackContentAdapter extends BaseQuickAdapter<OrderDetails.OrderdetailBean.ProsBean, BaseViewHolder> {
 
     public OrderBackContentAdapter(@Nullable List<OrderDetails.OrderdetailBean.ProsBean> data) {
         super(R.layout.item_for_order_back, data);
@@ -27,7 +27,7 @@ public class OrderBackContentAdapter extends BaseQuickAdapter<OrderDetails.Order
             mats += "-" + matsBean.getMatName() + " ￥" + matsBean.getIngredientPrice() + "\n";
         }
 
-        helper.setText(R.id.tv_order_item_content, item.getProName() + " * " + item.getProCount() + "  " + item.getTastes().get(0).getTasteName() + "  " + item.getPrice())
+        helper.setText(R.id.tv_order_item_content, item.getProName() + " * " + item.getProCount() + "  " + (item.getTastes().isEmpty() ? "" : item.getTastes().get(0).getTasteName()) + "  " + item.getPrice())
                 .setText(R.id.tv_order_item_adds, mats);
     }
 }

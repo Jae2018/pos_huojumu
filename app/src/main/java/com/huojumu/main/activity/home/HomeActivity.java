@@ -250,7 +250,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         final Paint paint = new Paint();
         paint.setAntiAlias(true);
-        paint.setTextSize(20);
+        paint.setTextSize(12);
         paint.setColor(Color.WHITE);
 
         selectedAdapter.setOnItemSwipeListener(new OnItemSwipeListener() {
@@ -273,7 +273,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             @Override
             public void onItemSwipeMoving(Canvas canvas, RecyclerView.ViewHolder viewHolder, float dX, float dY, boolean isCurrentlyActive) {
                 canvas.drawColor(ContextCompat.getColor(HomeActivity.this, R.color.red_delete));
-                canvas.drawText("删除", 10, 10, paint);
+                canvas.drawText("删除", 10, 5, paint);
             }
         });
         left.setAdapter(selectedAdapter);
@@ -629,11 +629,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //左侧点单列表
         productsBean.setNumber(number);
         productsBean.setPrice(price);
-//        Log.e(TAG, "onSingleCallBack: " + PrinterUtil.toJson(productsBean));
-
-
         productions.add(productsBean);
-//        Log.e(TAG, "onSingleCallBack: " + PrinterUtil.toJson(productions));
+
         addonDialog = null;
         //刷新选择列表数据
         selectedAdapter.setNewData(productions);

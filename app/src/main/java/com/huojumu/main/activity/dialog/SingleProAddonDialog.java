@@ -287,6 +287,8 @@ public class SingleProAddonDialog extends BaseDialog {
             number = Integer.parseInt(numTV.getText().toString().trim());
         }
 
+        current.setProId(productsBean.getProId());
+        current.setProType(productsBean.getProType());
         current.setProName(productsBean.getProName());
         current.setAddon(addOnET.getText().toString());//备注
         current.setTasteStr(tastesBean != null ? tastesBean.getTasteName() : "");

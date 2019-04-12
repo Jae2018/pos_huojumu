@@ -913,6 +913,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private void getUsb(String name) {
         //获取USB设备名
         //通过USB设备名找到USB设备
+        IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+        filter.addAction(ACTION_USB_DEVICE_DETACHED);
+        filter.addAction(ACTION_QUERY_PRINTER_STATE);
+        filter.addAction(DeviceConnFactoryManager.ACTION_CONN_STATE);
+        filter.addAction(ACTION_USB_DEVICE_ATTACHED);
+        registerReceiver(receiver, filter);
         UsbDevice usbDevice = PrinterUtil.getUsbDeviceFromName(HomeActivity.this, name);
         //判断USB设备是否有权限
         if (usbDevice != null)
@@ -970,14 +976,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         openCash();
 
         String proList = PrinterUtil.toJson(productions);
-//        Log.e(TAG, "PrintOrder: " + (Double.parseDouble(orderBack.getTotalPrice()) + charge) + "___" + charge + "___" + totalCut + "");
         initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList, totalPrice + "", totalPrice + "", charge + "", totalCut + "");
-
-//        if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] == null ||
-//                !DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getConnState()) {
-//            ToastUtils.showLong("未连接标签打印机");
-//            return;
-//        }
 
         printcount = 0;
         continuityprint = true;
@@ -1215,12 +1214,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     protected void onStart() {
         super.onStart();
-        IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
-        filter.addAction(ACTION_USB_DEVICE_DETACHED);
-        filter.addAction(ACTION_QUERY_PRINTER_STATE);
-        filter.addAction(DeviceConnFactoryManager.ACTION_CONN_STATE);
-        filter.addAction(ACTION_USB_DEVICE_ATTACHED);
-        registerReceiver(receiver, filter);
+
     }
 
 

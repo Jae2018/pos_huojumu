@@ -372,7 +372,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     private static final int MSG_UPDATE_CURRENT_TIME = 1;
-    private double woeker_p = 0;
+    private float woeker_p = 0;
     private int orderNum = 0;
     List<Production> temp = new ArrayList<>();
 
@@ -436,7 +436,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         ld2.setLoadingText("加载中,请等待")
                 .setFailedText("加载失败，请重试");
         ld2.show();
-        Log.e(TAG, "showSpe:  " + m);
         NetTool.getSpecification(SpUtil.getInt(Constant.PINPAI_ID), (m == 0 ? tempProduces.get(position).getProId() : temp.get(position).getProId()), SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<Specification>>() {
             @Override
             public void onSuccess(int statusCode, final BaseBean<Specification> response) {
@@ -1007,7 +1006,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         orderNum++;
         order_num.setText(String.format(Locale.CHINA, "%.2f元", woeker_p));
         order_num1.setText(String.format(Locale.CHINA, "%d单", orderNum));
-        SpUtil.save("woeker_p", (float) woeker_p);
+        SpUtil.save("woeker_p", woeker_p);
         SpUtil.save("orderNum", orderNum);
     }
 
@@ -1231,10 +1230,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+            UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
             switch (action) {
                 case ACTION_USB_PERMISSION:
                     synchronized (this) {
-                        UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                         if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                             if (device != null) {
                                 Log.e(TAG, "permission ok for device " + device);
@@ -1252,13 +1251,16 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 //Usb连接断开、蓝牙连接广播
                 case ACTION_USB_DEVICE_ATTACHED:
                     Log.e(TAG, "onReceive: ACTION_USB_DEVICE_ATTACHED");
-                    getUsb(UsbUtil.getUsbDeviceList(HomeActivity.this));
-                    threadPool.addTask(new Runnable() {
-                        @Override
-                        public void run() {
-                            PrinterUtil.connectPrinter(getApplicationContext());
-                        }
-                    });
+                    if (grantAutomaticPermission(device)) {
+                        getUsb(UsbUtil.getUsbDeviceList(HomeActivity.this));
+                        threadPool.addTask(new Runnable() {
+                            @Override
+                            public void run() {
+                                PrinterUtil.connectPrinter(getApplicationContext());
+                            }
+                        });
+                        Log.e(TAG, "onReceive: >>>>>>" );
+                    }
                     break;
                 case DeviceConnFactoryManager.ACTION_CONN_STATE:
                     int state = intent.getIntExtra(DeviceConnFactoryManager.STATE, -1);

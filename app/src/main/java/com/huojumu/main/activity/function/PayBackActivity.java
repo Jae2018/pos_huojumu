@@ -24,6 +24,7 @@ import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -101,8 +102,9 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
 
     @Override
     protected void initData() {
-
-
+        ld2 = new LoadingDialog(this);
+        ld2.setLoadingText("加载中,请等待")
+                .setFailedText("加载失败，请重试");
     }
 
     @Override
@@ -111,23 +113,28 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
     }
 
     private void getEnableBackOrderList() {
+        ld2.show();
         NetTool.getEnableBackOrderList(SpUtil.getInt(Constant.STORE_ID), editText.getText().toString(), new GsonResponseHandler<BaseBean<OrderEnableBackBean>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrderEnableBackBean> response) {
                 backAdapter.setNewData(response.getData().getOrders());
+                ld2.loadSuccess();
             }
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 ToastUtils.showLong(error_msg);
+                ld2.loadFailed();
             }
         });
     }
 
     private void getOrderDetail(String orderId) {
+        ld2.show();
         NetTool.getOrderInfo(orderId, new GsonResponseHandler<BaseBean<OrderDetails>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrderDetails> response) {
+                ld2.loadSuccess();
                 if (response.getData().getOrderdetail() != null) {
                     details = response.getData();
                     contentAdapter.setNewData(response.getData().getOrderdetail().getPros());
@@ -147,6 +154,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 ToastUtils.showLong(error_msg);
+                ld2.loadFailed();
             }
         });
     }
@@ -187,10 +195,12 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
                     ToastUtils.showLong(response.getMsg());
                 }
                 dialog.cancel();
+                ld2.loadSuccess();
             }
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
+                ld2.loadFailed();
                 if (!code.equals("0")) {
                     ToastUtils.showLong(error_msg);
                 }

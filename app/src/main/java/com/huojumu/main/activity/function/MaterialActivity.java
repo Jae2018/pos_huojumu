@@ -16,6 +16,7 @@ import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -52,13 +53,18 @@ public class MaterialActivity extends BaseActivity {
         recycler_material.addItemDecoration(decoration);
         adapter = new MaterialAdapter(null);
         recycler_material.setAdapter(adapter);
+        ld2 = new LoadingDialog(this);
+        ld2.setLoadingText("加载中,请等待")
+                .setFailedText("加载失败，请重试");
     }
 
     @Override
     protected void initData() {
+        ld2.show();
         NetTool.getMaterial(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.ENT_ID), SpUtil.getInt(Constant.PINPAI_ID), new GsonResponseHandler<BaseBean<Material>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<Material> response) {
+                ld2.loadSuccess();
                 if (response.getData().getRows() == null || response.getData().getRows().isEmpty()) {
                     emptyTv.setText("暂无数据");
                     emptyTv.setVisibility(View.VISIBLE);
@@ -71,6 +77,7 @@ public class MaterialActivity extends BaseActivity {
             @Override
             public void onFailure(int statusCode,String code, String error_msg) {
                 ToastUtils.showLong(error_msg);
+                ld2.loadFailed();
             }
         });
     }

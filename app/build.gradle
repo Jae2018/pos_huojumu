@@ -2,12 +2,6 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
-        config {
-            keyAlias 'key'
-            keyPassword '312108'
-            storeFile file('E:/AndroidSpace/key2.jks')
-            storePassword '312108'
-        }
     }
     compileSdkVersion 28
     defaultConfig {
@@ -17,7 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = ["appid": "aa223", "appse": "s1231", "adsId": ""]
+        manifestPlaceholders = ["appid": "aa223", "appse": "s1231","adsId":""]
         renderscriptSupportModeEnabled true
 
     }
@@ -25,12 +19,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
-        }
-        debug {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
         }
     }
     dataBinding {

@@ -24,6 +24,7 @@ import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,6 +124,10 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                 lastVisibleItem = manager.findLastVisibleItemPosition();
             }
         });
+
+        ld2 = new LoadingDialog(this);
+        ld2.setLoadingText("加载中,请等待")
+                .setFailedText("加载失败，请重试");
     }
 
     @Override
@@ -167,6 +172,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     }
 
     private void getTakeOverInfo(){
+        ld2.show();
         NetTool.getDailyInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.PINPAI_ID), page, 0, new GsonResponseHandler<BaseBean<DailyInfo>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<DailyInfo> response) {
@@ -187,6 +193,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                     page++;
                 }
                 swipeRefreshLayout.setRefreshing(false);
+                ld2.loadSuccess();
             }
 
             @Override
@@ -194,11 +201,13 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                 if (!code.equals("0")) {
                     ToastUtils.showLong(error_msg);
                 }
+                ld2.loadFailed();
             }
         });
     }
 
     private void getDailyInfo(){
+        ld2.show();
         NetTool.getSettlementInfo(SpUtil.getInt(Constant.STORE_ID), 1, new GsonResponseHandler<BaseBean<DailyInfo>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<DailyInfo> response) {
@@ -219,6 +228,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                     page++;
                 }
                 swipeRefreshLayout.setRefreshing(false);
+                ld2.loadSuccess();
             }
 
             @Override
@@ -227,11 +237,13 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                     ToastUtils.showLong(error_msg);
                 }
                 commit.setEnabled(false);
+                ld2.loadFailed();
             }
         });
     }
 
     private void TakeOver() {
+        ld2.show();
         NetTool.takeOver(timestamp, new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
@@ -242,6 +254,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                 } else {
                     ToastUtils.showLong(response.getMsg());
                 }
+                ld2.loadSuccess();
             }
 
             @Override
@@ -257,11 +270,13 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                 }else if (!code.equals("0")) {
                     ToastUtils.showLong(error_msg);
                 }
+                ld2.loadFailed();
             }
         });
     }
 
     private void daily() {
+        ld2.show();
         NetTool.settlement(SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
@@ -273,6 +288,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                 } else {
                     ToastUtils.showLong(response.getMsg());
                 }
+                ld2.loadSuccess();
             }
 
             @Override
@@ -280,6 +296,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                 if (!code.equals("0")) {
                     ToastUtils.showLong(error_msg);
                 }
+                ld2.loadFailed();
             }
         });
     }

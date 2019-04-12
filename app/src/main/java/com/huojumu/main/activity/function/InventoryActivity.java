@@ -17,6 +17,7 @@ import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +78,9 @@ public class InventoryActivity extends BaseActivity {
                 i.putExtra("checkId", rowsBeanList.get(position).getCheckId());
             }
         });
+        ld2 = new LoadingDialog(this);
+        ld2.setLoadingText("加载中,请等待")
+                .setFailedText("加载失败，请重试");
     }
 
     @Override
@@ -85,9 +89,11 @@ public class InventoryActivity extends BaseActivity {
     }
 
     private void getList() {
+        ld2.show();
         NetTool.getInventoryList(SpUtil.getInt(Constant.STORE_ID), pageNum, new GsonResponseHandler<BaseBean<InventoryList>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<InventoryList> response) {
+                ld2.loadSuccess();
                 rowsBeanList.addAll(response.getData().getRows()) ;
                 adapter.setNewData(rowsBeanList);
                 totalPAge = response.getData().getTotal();
@@ -98,6 +104,7 @@ public class InventoryActivity extends BaseActivity {
             @Override
             public void onFailure(int statusCode,String code, String error_msg) {
                 ToastUtils.showLong(error_msg);
+                ld2.loadFailed();
             }
         });
     }

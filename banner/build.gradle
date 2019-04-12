@@ -2,8 +2,6 @@ apply plugin: 'com.android.library'
 
 android {
     signingConfigs {
-        config {
-        }
     }
     compileSdkVersion 28
     defaultConfig {

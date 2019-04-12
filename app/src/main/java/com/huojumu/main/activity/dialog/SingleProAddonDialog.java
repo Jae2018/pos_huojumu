@@ -141,7 +141,7 @@ public class SingleProAddonDialog extends BaseDialog {
             }
 
             //口味
-            if (specification.getTastes() == null || specification.getTasteList().isEmpty()) {
+            if (specification.getTastes() == null || specification.getTastes().isEmpty()) {
                 t4.setVisibility(View.GONE);
                 flowLayout2.setVisibility(View.GONE);
             } else {

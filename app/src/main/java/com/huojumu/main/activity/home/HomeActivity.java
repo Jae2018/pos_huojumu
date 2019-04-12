@@ -24,6 +24,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.util.SparseArray;
@@ -220,7 +222,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         getUsb(UsbUtil.getUsbDeviceList(HomeActivity.this));
 
-        WebView.enableSlowWholeDocumentDraw();
+//        WebView.enableSlowWholeDocumentDraw();
         webView.setWebChromeClient(new WebChromeClient());
         //声明WebSettings子类
         WebSettings webSettings = webView.getSettings();
@@ -239,7 +241,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         left.setLayoutManager(linearLayoutManager);
         DividerItemDecoration d = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        d.setDrawable(getResources().getDrawable(R.drawable.divider_n, null));
+        d.setDrawable(getResources().getDrawable(R.drawable.divider_n));
         left.addItemDecoration(d);
 
 
@@ -353,6 +355,29 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         workName1.setText(SpUtil.getString(Constant.WORKER_NAME));
         order_num1.setText(String.format(Locale.CHINA, "%d单", SpUtil.getInt("orderNum")));
 
+        edit_search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                if (start == 0 && before == 0 && count > 1) {
+//                    // 当扫描一个字符时，会出错
+//                    // 当扫描事件触发的时候,去执行自己的方法.
+//                    edit_search.setText(s);
+//                } else {
+//                    // 为手动输入触发的事件.
+//                    edit_search.setText(s);
+//                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     private static final int MSG_UPDATE_CURRENT_TIME = 1;
@@ -430,12 +455,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         });
     }
 
-//    @OnClick(R.id.button5)
-//    void refresh() {
-//        getTypeList();
-//        getProList("0");
-//        getActiveInfo();
-//    }
+    @OnClick(R.id.button5)
+    void refresh() {
+        //刷新
+        loadData();
+    }
 
     private boolean b1, b2, b3, b4;
 
@@ -452,6 +476,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     @Override
     protected void initData() {
+        loadData();
+    }
+
+    private void loadData(){
         ld2 = new LoadingDialog(this);
         ld2.setLoadingText("加载中,请等待");
         ld2.show();
@@ -749,9 +777,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         @Override
                         public void run() {
                             startActivity(new Intent(HomeActivity.this, LoginActivity.class));
-//                            finish();
                         }
                     }, 1000);
+                    SpUtil.save("woeker_p", 0);
+                    SpUtil.save("orderNum", 0);
                     break;
                 case Constant.WORK_BACK_DAILY:
                     MyOkHttp.mHandler.postDelayed(new Runnable() {
@@ -1247,17 +1276,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     }
                     break;
                 case ACTION_QUERY_PRINTER_STATE:
-                    Log.e(TAG, "onReceive print: 0");
                     if (printcount >= 0) {
-                        if (continuityprint) {
-                            Log.e(TAG, "onReceive print: 1");
-                        }
                         if (printcount != 0) {
                             printLabel();
-                            Log.e(TAG, "onReceive print: 2");
-                        } else {
-                            continuityprint = false;
-                            Log.e(TAG, "onReceive print: 3");
                         }
                     }
                     break;
@@ -1274,6 +1295,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         if (connFactoryManager != null) {
             connFactoryManager.unregisterReceiver();
         }
+        edit_search.setText("");
+        productAdapter.setNewData(tempProduces);
     }
 
     public static Bitmap stringToBitmap(String string) {

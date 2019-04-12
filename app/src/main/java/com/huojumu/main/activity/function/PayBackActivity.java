@@ -184,7 +184,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
                     clearRight();
                     PrinterUtil.printPayBack(details, response.getData());
                 } else {
-                    ToastUtils.showLong("退单失败!");
+                    ToastUtils.showLong(response.getMsg());
                 }
                 dialog.cancel();
             }

@@ -97,13 +97,9 @@ public class MoreFunctionDialog extends BaseDialog {
 //        getContext().startActivity(intent);
 //        dismiss();
         //日结
-        if (SpUtil.getBoolean("hasOverOrder")) {
-            ToastUtils.showLong("还有未提交的交班订单数据");
-        } else {
-            Intent intent = new Intent(activity, DailyTakeOverActivity.class);
-            intent.putExtra("type", 2);
-            activity.startActivityForResult(intent, Constant.WORK_BACK_DAILY);
-        }
+        Intent intent = new Intent(activity, DailyTakeOverActivity.class);
+        intent.putExtra("type", 2);
+        activity.startActivityForResult(intent, Constant.WORK_BACK_DAILY);
         cancel();
     }
 

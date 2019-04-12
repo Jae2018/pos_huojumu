@@ -668,6 +668,7 @@ public class PrinterUtil {
      * @param bitmap 要打印的图片
      */
     public static void printImage(Bitmap bitmap) {
+        set(CLEAR_TEMP);
         mPrinter.setAlignMode(1);
         try {
             if (PrinterAPI.SUCCESS == mPrinter.printRasterBitmap(bitmap)) {
@@ -676,9 +677,7 @@ public class PrinterUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        set(CLEAR_TEMP);
         cutPaper();
-//        bitmap.recycle();
     }
 
     /**

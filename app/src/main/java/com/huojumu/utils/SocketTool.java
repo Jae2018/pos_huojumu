@@ -54,6 +54,7 @@ public class SocketTool extends WebSocketListener {
     }
 
     public void sendHeart() {
+        Log.e(TAG, "sendHeart: ");
         if (webSocket != null) {
             thread = new Thread() {
                 public void run() {

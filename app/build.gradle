@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'key'
+            keyPassword '312108'
+            storeFile file('E:/AndroidSpace/key2.jks')
+            storePassword '312108'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.huojumu"
@@ -9,7 +17,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = ["appid": "aa223", "appse": "s1231","adsId":""]
+        manifestPlaceholders = ["appid": "aa223", "appse": "s1231", "adsId": ""]
         renderscriptSupportModeEnabled true
 
     }
@@ -17,10 +25,12 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
-        debug{
+        debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
     dataBinding {
@@ -87,8 +97,8 @@ dependencies {
     implementation project(':LoadingDialog')
     //    implementation files('libs/gprintersdkv1.jar')
     implementation project(':myokhttp')
-//    implementation 'com.github.promeg:tinypinyin:2.0.3'
+    //    implementation 'com.github.promeg:tinypinyin:2.0.3'
     // TinyPinyin核心包，约80KB
-//    implementation 'com.github.promeg:tinypinyin-lexicons-android-cncity:2.0.3'
+    //    implementation 'com.github.promeg:tinypinyin-lexicons-android-cncity:2.0.3'
     implementation project(':banner')
 }

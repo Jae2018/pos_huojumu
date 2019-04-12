@@ -43,7 +43,11 @@
             android:name="com.huojumu.main.activity.login.ActiveActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.huojumu.main.activity.login.LoginActivity"
@@ -75,13 +79,12 @@
         <activity
             android:name="com.huojumu.main.activity.MainActivity"
             android:screenOrientation="landscape"
-            android:launchMode="singleInstance"
-            android:windowSoftInputMode="stateHidden|stateUnchanged">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:theme="@style/SplashTheme">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
         </activity>
         <activity
             android:name="com.huojumu.main.activity.function.ChangePwdActivity"

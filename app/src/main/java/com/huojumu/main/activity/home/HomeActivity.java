@@ -288,17 +288,16 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         typeAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                temp.clear();
                 if (position != 0) {
-                    if (map.get(position) == null) {
-                        List<Production> temp = new ArrayList<>();
-                        for (Production p : tempProduces) {
-                            if (typeAdapter.getData().get(position).getId() == p.getTypeId()) {
-                                temp.add(p);
-                            }
+                    m = 1;
+                    for (Production p : tempProduces) {
+                        if (typeAdapter.getData().get(position).getId() == p.getTypeId()) {
+                            temp.add(p);
                         }
-                        map.put(position, temp);
                     }
-                    productAdapter.setNewData(map.get(position));
+                    Log.e(TAG, "onItemClick: " + PrinterUtil.toJson(temp));
+                    productAdapter.setNewData(temp);
                 } else {
                     productAdapter.setNewData(tempProduces);
                 }
@@ -307,7 +306,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 }
                 typeAdapter.notifyDataSetChanged();
 
-                Log.e(TAG, "onItemClick: " + map.size());
             }
         });
 
@@ -363,14 +361,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                if (start == 0 && before == 0 && count > 1) {
-//                    // 当扫描一个字符时，会出错
-//                    // 当扫描事件触发的时候,去执行自己的方法.
-//                    edit_search.setText(s);
-//                } else {
-//                    // 为手动输入触发的事件.
-//                    edit_search.setText(s);
-//                }
+
             }
 
             @Override
@@ -383,6 +374,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private static final int MSG_UPDATE_CURRENT_TIME = 1;
     private double woeker_p = 0;
     private int orderNum = 0;
+    List<Production> temp = new ArrayList<>();
 
     private static class MyHandler extends Handler {
         private WeakReference<HomeActivity> mActivity;
@@ -418,18 +410,22 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     void inputClear() {
         edit_search.setText("");
         searchStr = "";
-        searchList.clear();
+        temp.clear();
+        m = 0;
         productAdapter.setNewData(tempProduces);
     }
 
+    int m = 0;
+
     private void search(String searchStr) {
-        searchList.clear();
+        m = 1;
+        temp.clear();
         for (Production p : tempProduces) {
             if (p.getProAlsname() != null && p.getProAlsname().contains(searchStr)) {
-                searchList.add(p);
+                temp.add(p);
             }
         }
-        productAdapter.setNewData(searchList);
+        productAdapter.setNewData(temp);
     }
 
     private String[] py = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
@@ -437,20 +433,23 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     private void showSpe(final int position) {
         ld2 = new LoadingDialog(this);
-        ld2.setLoadingText("加载中,请等待");
+        ld2.setLoadingText("加载中,请等待")
+                .setFailedText("加载失败，请重试");
         ld2.show();
-        NetTool.getSpecification(SpUtil.getInt(Constant.PINPAI_ID), tempProduces.get(position).getProId(), SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<Specification>>() {
+        Log.e(TAG, "showSpe:  " + m);
+        NetTool.getSpecification(SpUtil.getInt(Constant.PINPAI_ID), (m == 0 ? tempProduces.get(position).getProId() : temp.get(position).getProId()), SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<Specification>>() {
             @Override
             public void onSuccess(int statusCode, final BaseBean<Specification> response) {
                 //点菜逻辑
-                addonDialog = new SingleProAddonDialog(HomeActivity.this, HomeActivity.this, tempProduces.get(position), response.getData(), position);
+                addonDialog = new SingleProAddonDialog(HomeActivity.this, HomeActivity.this, m == 0 ? tempProduces.get(position) : temp.get(position), response.getData(), position);
                 addonDialog.show();
                 ld2.close();
             }
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
-
+                ld2.loadFailed();
+                ld2.close();
             }
         });
     }
@@ -479,9 +478,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         loadData();
     }
 
-    private void loadData(){
+    private void loadData() {
         ld2 = new LoadingDialog(this);
-        ld2.setLoadingText("加载中,请等待");
+        ld2.setLoadingText("加载中,请等待")
+                .setFailedText("加载失败，请重试");
         ld2.show();
         getAdsList();
         getTypeList();
@@ -493,6 +493,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         if (b1 && b2 && b3 && b4) {
             ld2.close();
         }
+        MyOkHttp.mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (ld2 != null) {
+                    ld2.loadFailed();
+                    ld2.close();
+                }
+            }
+        }, 5000);
     }
 
     private void getAdsList() {
@@ -610,7 +619,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 }
                 totalPrice += p.getPrice() * p.getNumber() + c * p.getNumber();
                 totalCut = 0;
-
             }
 //            else {
 //                if (p.getIsBargain() != null && p.getIsBargain().equals("1")) {

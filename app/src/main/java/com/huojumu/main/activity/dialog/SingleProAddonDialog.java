@@ -106,6 +106,7 @@ public class SingleProAddonDialog extends BaseDialog {
     public void initView() {
         current = new Production();
         name.setText(productsBean.getProName());
+
         if (productsBean.getImgs().size() > 0) {
             GlideApp.with(getContext()).load(productsBean.getImgs().get(0).getPath()).into(image);
         }

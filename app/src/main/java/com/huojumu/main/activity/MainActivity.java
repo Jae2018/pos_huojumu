@@ -2,6 +2,7 @@ package com.huojumu.main.activity;
 
 
 import android.content.Intent;
+import android.util.Log;
 
 import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
@@ -23,7 +24,9 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initView() {
 
+        Log.e("MainActivity", "initView: " );
         if (SpUtil.getBoolean(Constant.HAS_BAND)) {
+            Log.e("MainActivity", "initView: 1" );
             MyOkHttp.mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -33,6 +36,7 @@ public class MainActivity extends BaseActivity {
                 }
             }, 2000);
         } else {
+            Log.e("MainActivity", "initView: 2" );
             MyOkHttp.mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {

@@ -1,6 +1,7 @@
 package com.huojumu.utils;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -162,9 +163,8 @@ public class DeviceConnFactoryManager {
      * 打开端口
      */
     public void openPort() {
-        SpUtil.save("UsbId", id);
         deviceConnFactoryManagers[id].isOpenPort = false;
-        sendStateBroadcast(CONN_STATE_CONNECTING, id);
+        sendStateBroadcast(CONN_STATE_CONNECTING);
         switch (deviceConnFactoryManagers[id].connMethod) {
             case BLUETOOTH:
                 System.out.println("id -> " + id);
@@ -174,13 +174,10 @@ public class DeviceConnFactoryManager {
             case USB:
                 mPort = new UsbPort(mContext, mUsbDevice);
                 isOpenPort = mPort.openPort();
-//                if (isOpenPort) {
-//                    IntentFilter filter = new IntentFilter(ACTION_USB_DEVICE_DETACHED);
-//                    if (receiver == null) {
-//                        receiver = new PosReceiver();
-//                    }
-//                    mContext.registerReceiver(receiver, filter);
-//                }
+                if (isOpenPort) {
+                    IntentFilter filter = new IntentFilter(ACTION_USB_DEVICE_DETACHED);
+                    mContext.registerReceiver(usbStateReceiver, filter);
+                }
                 break;
             case WIFI:
                 mPort = new EthernetPort(ip, port);
@@ -201,13 +198,7 @@ public class DeviceConnFactoryManager {
             if (this.mPort != null) {
                 this.mPort = null;
             }
-            sendStateBroadcast(CONN_STATE_FAILED, id);
-        }
-    }
-
-    public void unregisterReceiver(){
-        if (receiver != null) {
-            mContext.unregisterReceiver(receiver);
+            sendStateBroadcast(CONN_STATE_FAILED);
         }
     }
 
@@ -272,7 +263,7 @@ public class DeviceConnFactoryManager {
     /**
      * 关闭端口
      */
-    private void closePort(int id) {
+    public void closePort(int id) {
         if (this.mPort != null) {
             System.out.println("id -> " + id);
             reader.cancel();
@@ -283,7 +274,7 @@ public class DeviceConnFactoryManager {
                 currentPrinterCommand = null;
             }
         }
-        sendStateBroadcast(CONN_STATE_DISCONNECT, id);
+        sendStateBroadcast(CONN_STATE_DISCONNECT);
     }
 
     /**
@@ -466,7 +457,7 @@ public class DeviceConnFactoryManager {
                                                         mPort.closePort();
                                                         isOpenPort = false;
                                                         mPort = null;
-                                                        sendStateBroadcast(CONN_STATE_FAILED, id);
+                                                        sendStateBroadcast(CONN_STATE_FAILED);
                                                     }
                                                 }
                                             }
@@ -536,7 +527,7 @@ public class DeviceConnFactoryManager {
                         //设置当前打印机模式为ESC模式
                         if (currentPrinterCommand == null) {
                             currentPrinterCommand = PrinterCommand.ESC;
-                            sendStateBroadcast(CONN_STATE_CONNECTED, id);
+                            sendStateBroadcast(CONN_STATE_CONNECTED);
                         } else {//查询打印机状态
                             if (result == 0) {//打印机状态查询
                                 Intent intent = new Intent(ACTION_QUERY_PRINTER_STATE);
@@ -561,7 +552,7 @@ public class DeviceConnFactoryManager {
                         //设置当前打印机模式为TSC模式
                         if (currentPrinterCommand == null) {
                             currentPrinterCommand = PrinterCommand.TSC;
-                            sendStateBroadcast(CONN_STATE_CONNECTED, id);
+                            sendStateBroadcast(CONN_STATE_CONNECTED);
                         } else {
                             if (cnt == 1) {//查询打印机实时状态
                                 if ((buffer[0] & TSC_STATE_PAPER_ERR) > 0) {//缺纸
@@ -586,7 +577,7 @@ public class DeviceConnFactoryManager {
                     } else if (sendCommand == cpcl) {
                         if (currentPrinterCommand == null) {
                             currentPrinterCommand = PrinterCommand.CPCL;
-                            sendStateBroadcast(CONN_STATE_CONNECTED, id);
+                            sendStateBroadcast(CONN_STATE_CONNECTED);
                         } else {
                             if (cnt == 1) {
                                 System.out.println(MyApplication.getContext().getString(R.string.str_state) + status);
@@ -613,7 +604,7 @@ public class DeviceConnFactoryManager {
         }
     };
 
-    private void sendStateBroadcast(int state, int id) {
+    private void sendStateBroadcast(int state) {
         Intent intent = new Intent(ACTION_CONN_STATE);
         intent.putExtra(STATE, state);
         intent.putExtra(DEVICE_ID, id);
@@ -627,18 +618,18 @@ public class DeviceConnFactoryManager {
         return (byte) ((r & FLAG) >> 4);
     }
 
-//    private BroadcastReceiver usbStateReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            String action = intent.getAction();
-//            switch (action) {
-//                case ACTION_USB_DEVICE_DETACHED:
-//                    sendStateBroadcast(CONN_STATE_DISCONNECT, id);
-//                    break;
-//                default:
-//                    break;
-//            }
-//        }
-//    };
+    private BroadcastReceiver usbStateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            switch (action) {
+                case ACTION_USB_DEVICE_DETACHED:
+                    sendStateBroadcast(CONN_STATE_DISCONNECT);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
 }

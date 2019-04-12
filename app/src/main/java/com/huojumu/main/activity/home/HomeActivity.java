@@ -28,7 +28,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -167,11 +166,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     private List<Production> tempProduces;//商品列表
     private List<ActivesBean> activeBeanList;//活动列表
-    private SparseArray<List<Production>> map = new SparseArray<>();//分类切换
     private ArrayList<Production> productions = new ArrayList<>();//选择的奶茶
     private ArrayList<Production> printProducts = new ArrayList<>();//标签打印的产品
     private double totalPrice = 0, totalCut;//订单总价
-    private List<Production> searchList = new ArrayList<>();//搜索列表
 
     private List<Production> gTemp = new ArrayList<>();//挂单
     private boolean hasHoldOn = false;//是否已有挂单
@@ -786,7 +783,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                         }
                     }, 1000);
-                    SpUtil.save("woeker_p", 0);
+                    SpUtil.save("woeker_p", (float) 0);
                     SpUtil.save("orderNum", 0);
                     break;
                 case Constant.WORK_BACK_DAILY:
@@ -913,12 +910,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private void getUsb(String name) {
         //获取USB设备名
         //通过USB设备名找到USB设备
-        IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
-        filter.addAction(ACTION_USB_DEVICE_DETACHED);
-        filter.addAction(ACTION_QUERY_PRINTER_STATE);
-        filter.addAction(DeviceConnFactoryManager.ACTION_CONN_STATE);
-        filter.addAction(ACTION_USB_DEVICE_ATTACHED);
-        registerReceiver(receiver, filter);
+
         UsbDevice usbDevice = PrinterUtil.getUsbDeviceFromName(HomeActivity.this, name);
         //判断USB设备是否有权限
         if (usbDevice != null)
@@ -979,7 +971,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList, totalPrice + "", totalPrice + "", charge + "", totalCut + "");
 
         printcount = 0;
-        continuityprint = true;
         printProducts.clear();
 
         for (int i = 0; i < productions.size(); i++) {
@@ -1214,11 +1205,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     protected void onStart() {
         super.onStart();
-
+        IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+        filter.addAction(ACTION_USB_DEVICE_DETACHED);
+        filter.addAction(ACTION_QUERY_PRINTER_STATE);
+        filter.addAction(DeviceConnFactoryManager.ACTION_CONN_STATE);
+        filter.addAction(ACTION_USB_DEVICE_ATTACHED);
+        registerReceiver(receiver, filter);
     }
 
 
-    private boolean continuityprint = false;
     private int printcount = 0;
 
     public BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -1235,8 +1230,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                 Log.e(TAG, "permission ok for device " + device);
                                 usbConn(device);
                             }
-                        } else {
-//                            Log.e(TAG, "permission denied for device " + device);
                         }
                     }
                     break;
@@ -1248,7 +1241,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 case ACTION_USB_DEVICE_ATTACHED:
                     Log.e(TAG, "onReceive: ACTION_USB_DEVICE_ATTACHED");
 //                    if (grantAutomaticPermission(device)) {
-                        getUsb(UsbUtil.getUsbDeviceList(HomeActivity.this));
+                    UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                    PendingIntent mPermissionIntent = PendingIntent.getBroadcast(HomeActivity.this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+                    usbManager.requestPermission(device, mPermissionIntent);
                         threadPool.addTask(new Runnable() {
                             @Override
                             public void run() {
@@ -1275,7 +1270,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             break;
                         case CONN_STATE_FAILED:
                             ToastUtils.showLong("标签打印机连接失败");
-                            getUsb(UsbUtil.getUsbDeviceList(HomeActivity.this));
                             break;
                         default:
                             break;
@@ -1298,9 +1292,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     protected void onStop() {
         super.onStop();
         unregisterReceiver(receiver);
-        if (connFactoryManager != null) {
-            connFactoryManager.unregisterReceiver();
-        }
+
         edit_search.setText("");
         productAdapter.setNewData(tempProduces);
     }

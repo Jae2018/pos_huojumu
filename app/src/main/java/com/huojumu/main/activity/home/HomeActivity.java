@@ -217,7 +217,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         threadPool = ThreadPool.getInstantiation();
         //链接标签机
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-        getUsb(UsbUtil.getUsbDeviceList(HomeActivity.this));
+        connectUsb(UsbUtil.getUsbDeviceList(HomeActivity.this));
 
 //        WebView.enableSlowWholeDocumentDraw();
         webView.setWebChromeClient(new WebChromeClient());
@@ -907,19 +907,23 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 //        getUsb(name);
     }
 
-    private void getUsb(String name) {
+    private void connectUsb(String name) {
         //获取USB设备名
         //通过USB设备名找到USB设备
-
-        UsbDevice usbDevice = PrinterUtil.getUsbDeviceFromName(HomeActivity.this, name);
+        UsbDevice usbDevice = PrinterUtil.getUsbDeviceFromName(HomeActivity.this, name);//UsbUtil.getUsbDeviceList(HomeActivity.this)
         //判断USB设备是否有权限
         if (usbDevice != null)
             if (usbManager.hasPermission(usbDevice)) {
                 usbConn(usbDevice);
-            } else {//请求权限
-                PendingIntent mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
-                usbManager.requestPermission(usbDevice, mPermissionIntent);
+            } else {
+                getPermission(usbDevice);
             }
+    }
+
+    protected void getPermission(UsbDevice usbDevice) {
+        //请求权限
+        PendingIntent mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+        usbManager.requestPermission(usbDevice, mPermissionIntent);
     }
 
     /**
@@ -1101,21 +1105,17 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }, 10000);
     }
 
-    private DeviceConnFactoryManager connFactoryManager;
-
     private void usbConn(UsbDevice usbDevice) {
-        if (connFactoryManager == null) {
-            connFactoryManager = new DeviceConnFactoryManager.Build()
-                    .setId(id)
-                    .setConnMethod(DeviceConnFactoryManager.CONN_METHOD.USB)
-                    .setUsbDevice(usbDevice)
-                    .setContext(this)
-                    .build();
-        }
+        new DeviceConnFactoryManager.Build()
+                .setId(id)
+                .setConnMethod(DeviceConnFactoryManager.CONN_METHOD.USB)
+                .setUsbDevice(usbDevice)
+                .setContext(this)
+                .build();
         DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].openPort();
     }
 
-//    public void btnUsbConn(View view) {
+    //    public void btnUsbConn(View view) {
 //        if (usbDeviceList == null) {
 //            usbDeviceList = new UsbDeviceList(this, this);
 //        }
@@ -1124,13 +1124,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 //        }
 //    }
 //
-//    private void closeport() {
-//        if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] != null && DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].mPort != null) {
-//            DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].reader.cancel();
-//            DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].mPort.closePort();
-//            DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].mPort = null;
-//        }
-//    }
+    private void closeport() {
+        if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] != null && DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].mPort != null) {
+            DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].reader.cancel();
+            DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].mPort.closePort();
+            DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].mPort = null;
+        }
+    }
 
     @Override
     protected void onDestroy() {
@@ -1240,18 +1240,16 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 //Usb连接断开、蓝牙连接广播
                 case ACTION_USB_DEVICE_ATTACHED:
                     Log.e(TAG, "onReceive: ACTION_USB_DEVICE_ATTACHED");
-//                    if (grantAutomaticPermission(device)) {
-                    UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                    PendingIntent mPermissionIntent = PendingIntent.getBroadcast(HomeActivity.this, 0, new Intent(ACTION_USB_PERMISSION), 0);
-                    usbManager.requestPermission(device, mPermissionIntent);
+                    UsbDevice usbDevice = PrinterUtil.getUsbDeviceFromName(HomeActivity.this, UsbUtil.getUsbDeviceList(HomeActivity.this));
+                    getPermission(usbDevice);
+                    if (PrinterUtil.getmPrinter() == null) {
                         threadPool.addTask(new Runnable() {
                             @Override
                             public void run() {
                                 PrinterUtil.connectPrinter(getApplicationContext());
                             }
                         });
-                        Log.e(TAG, "onReceive: >>>>>>" );
-//                    }
+                    }
                     break;
                 case DeviceConnFactoryManager.ACTION_CONN_STATE:
                     int state = intent.getIntExtra(DeviceConnFactoryManager.STATE, -1);

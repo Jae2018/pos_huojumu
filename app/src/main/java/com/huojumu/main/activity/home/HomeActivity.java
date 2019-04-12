@@ -1223,6 +1223,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         registerReceiver(receiver, filter);
     }
 
+
     private boolean continuityprint = false;
     private int printcount = 0;
 
@@ -1230,17 +1231,18 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+//            UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
             switch (action) {
                 case ACTION_USB_PERMISSION:
                     synchronized (this) {
                         if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                            UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                             if (device != null) {
                                 Log.e(TAG, "permission ok for device " + device);
                                 usbConn(device);
                             }
                         } else {
-                            Log.e(TAG, "permission denied for device " + device);
+//                            Log.e(TAG, "permission denied for device " + device);
                         }
                     }
                     break;
@@ -1251,7 +1253,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 //Usb连接断开、蓝牙连接广播
                 case ACTION_USB_DEVICE_ATTACHED:
                     Log.e(TAG, "onReceive: ACTION_USB_DEVICE_ATTACHED");
-                    if (grantAutomaticPermission(device)) {
+//                    if (grantAutomaticPermission(device)) {
                         getUsb(UsbUtil.getUsbDeviceList(HomeActivity.this));
                         threadPool.addTask(new Runnable() {
                             @Override
@@ -1260,7 +1262,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             }
                         });
                         Log.e(TAG, "onReceive: >>>>>>" );
-                    }
+//                    }
                     break;
                 case DeviceConnFactoryManager.ACTION_CONN_STATE:
                     int state = intent.getIntExtra(DeviceConnFactoryManager.STATE, -1);

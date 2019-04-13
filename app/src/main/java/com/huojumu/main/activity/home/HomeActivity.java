@@ -911,13 +911,17 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //获取USB设备名
         //通过USB设备名找到USB设备
         UsbDevice usbDevice = PrinterUtil.getUsbDeviceFromName(HomeActivity.this, name);//UsbUtil.getUsbDeviceList(HomeActivity.this)
+
+
         //判断USB设备是否有权限
-        if (usbDevice != null)
+        if (usbDevice != null) {
+            Log.e("connectUsb", "dddd");
             if (usbManager.hasPermission(usbDevice)) {
                 usbConn(usbDevice);
             } else {
                 getPermission(usbDevice);
             }
+        }
     }
 
     protected void getPermission(UsbDevice usbDevice) {
@@ -969,10 +973,22 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * 打印订单小票
      */
     private void PrintOrder(final OrderBack orderBack, final double charge) {
-        openCash();
+        threadPool.addTask(new Runnable() {
+            @Override
+            public void run() {
+//                if (isCash) {
+//                    isCash = false;
+//                    PrinterUtil.OpenMoneyBox();
+//                }
+                PrinterUtil.printString80(HomeActivity.this, productions, orderBack.getOrderNo(),
+                        SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
+                        "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "",
+                        totalCut + "", orderBack.getCreatTime());
+            }
+        });
 
-        String proList = PrinterUtil.toJson(productions);
-        initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList, totalPrice + "", totalPrice + "", charge + "", totalCut + "");
+//        String proList = PrinterUtil.toJson(productions);
+//        initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList, totalPrice + "", totalPrice + "", charge + "", totalCut + "");
 
         printcount = 0;
         printProducts.clear();
@@ -1220,14 +1236,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-//            UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
             switch (action) {
                 case ACTION_USB_PERMISSION:
                     synchronized (this) {
                         if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                             UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                             if (device != null) {
-                                Log.e(TAG, "permission ok for device " + device);
                                 usbConn(device);
                             }
                         }
@@ -1240,8 +1254,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 //Usb连接断开、蓝牙连接广播
                 case ACTION_USB_DEVICE_ATTACHED:
                     Log.e(TAG, "onReceive: ACTION_USB_DEVICE_ATTACHED");
-                    UsbDevice usbDevice = PrinterUtil.getUsbDeviceFromName(HomeActivity.this, UsbUtil.getUsbDeviceList(HomeActivity.this));
-                    getPermission(usbDevice);
+                    try {
+                        Thread.sleep(5000);
+                    } catch (Exception e) {
+
+                    }
+                    connectUsb(UsbUtil.getUsbDeviceList(HomeActivity.this));
+
                     if (PrinterUtil.getmPrinter() == null) {
                         threadPool.addTask(new Runnable() {
                             @Override

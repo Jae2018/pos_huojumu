@@ -216,7 +216,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         EventBus.getDefault().register(this);
 
 
-
         threadPool = ThreadPool.getInstantiation();
         //链接标签机
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
@@ -799,7 +798,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case Constant.WORK_BACK_OVER:
-                    SpUtil.save("hasOverOrder", false);
+                    SpUtil.save("woeker_p", (float) 0);
+                    SpUtil.save("orderNum", 0);
                     ToastUtils.showLong("已完成交班！即将退出登录！");
                     MyOkHttp.mHandler.postDelayed(new Runnable() {
                         @Override
@@ -807,10 +807,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                         }
                     }, 1000);
-                    SpUtil.save("woeker_p", (float) 0);
-                    SpUtil.save("orderNum", 0);
                     break;
                 case Constant.WORK_BACK_DAILY:
+                    SpUtil.save("woeker_p", (float) 0);
+                    SpUtil.save("orderNum", 0);
                     MyOkHttp.mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -998,19 +998,19 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * 打印订单小票
      */
     private void PrintOrder(final OrderBack orderBack, final double charge) {
-//        threadPool.addTask(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (isCash) {
-//                    isCash = false;
-//                    PrinterUtil.OpenMoneyBox();
-//                }
+        threadPool.addTask(new Runnable() {
+            @Override
+            public void run() {
+                if (isCash) {
+                    isCash = false;
+                    PrinterUtil.OpenMoneyBox();
+                }
                 PrinterUtil.printString80(HomeActivity.this, productions, orderBack.getOrderNo(),
                         SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
                         "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "",
                         totalCut + "", orderBack.getCreatTime());
-//            }
-//        });
+            }
+        });
 
 //        String proList = PrinterUtil.toJson(productions);
 //        initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList, totalPrice + "", totalPrice + "", charge + "", totalCut + "");
@@ -1280,21 +1280,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 case ACTION_USB_DEVICE_ATTACHED:
                     Log.e(TAG, "onReceive: ACTION_USB_DEVICE_ATTACHED");
                     try {
+                        ld3 = new LoadingDialog(HomeActivity.this);
+                        ld3.setLoadingText("正在连接打印机，请等待");
                         Thread.sleep(5000);
+                        ld3.close();
                     } catch (Exception e) {
-
+                        Log.e(TAG, "onReceive: " + e);
                     }
                     connectUsb(UsbUtil.getUsbDeviceList(HomeActivity.this));
-
-//                    if (PrinterUtil.getmPrinter() == null) {
-//                        threadPool.addTask(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                Log.e("fff","fff");
-//                                PrinterUtil.connectPrinter(getApplicationContext());
-//                            }
-//                        });
-//                    }
                     break;
                 case DeviceConnFactoryManager.ACTION_CONN_STATE:
                     int state = intent.getIntExtra(DeviceConnFactoryManager.STATE, -1);

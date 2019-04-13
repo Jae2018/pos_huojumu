@@ -102,9 +102,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
 
     @Override
     protected void initData() {
-        ld2 = new LoadingDialog(this);
-        ld2.setLoadingText("加载中,请等待")
-                .setFailedText("加载失败，请重试");
+
     }
 
     @Override
@@ -113,12 +111,15 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
     }
 
     private void getEnableBackOrderList() {
+        ld2 = new LoadingDialog(this);
+        ld2.setLoadingText("加载中,请等待")
+                .setFailedText("加载失败，请重试");
         ld2.show();
         NetTool.getEnableBackOrderList(SpUtil.getInt(Constant.STORE_ID), editText.getText().toString(), new GsonResponseHandler<BaseBean<OrderEnableBackBean>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrderEnableBackBean> response) {
                 backAdapter.setNewData(response.getData().getOrders());
-                ld2.loadSuccess();
+                ld2.close();
             }
 
             @Override
@@ -130,6 +131,9 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
     }
 
     private void getOrderDetail(String orderId) {
+        ld2 = new LoadingDialog(this);
+        ld2.setLoadingText("加载中,请等待")
+                .setFailedText("加载失败，请重试");
         ld2.show();
         NetTool.getOrderInfo(orderId, new GsonResponseHandler<BaseBean<OrderDetails>>() {
             @Override
@@ -184,11 +188,15 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
 
     @Override
     public void OnDialogOkClick(int type, double earn, double cost, double charge, String name) {
+        ld2 = new LoadingDialog(this);
+        ld2.setLoadingText("加载中,请等待")
+                .setSuccessText("退单成功")
+                .setFailedText("加载失败，请重试");
+        ld2.show();
         NetTool.getPayBack(SpUtil.getInt(Constant.STORE_ID), id, payType, new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
                 if (response.getMsg().equals("yes")) {
-                    ToastUtils.showLong("退单成功!");
                     clearRight();
                     PrinterUtil.printPayBack(details, response.getData());
                 } else {

@@ -193,7 +193,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                     page++;
                 }
                 swipeRefreshLayout.setRefreshing(false);
-                ld2.loadSuccess();
+                ld2.close();
             }
 
             @Override
@@ -231,7 +231,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                     page++;
                 }
                 swipeRefreshLayout.setRefreshing(false);
-                ld2.loadSuccess();
+                ld2.close();
             }
 
             @Override
@@ -260,7 +260,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                 } else {
                     ToastUtils.showLong(response.getMsg());
                 }
-                ld2.loadSuccess();
+                ld2.close();
             }
 
             @Override
@@ -297,7 +297,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                 } else {
                     ToastUtils.showLong(response.getMsg());
                 }
-                ld2.loadSuccess();
+                ld2.close();
             }
 
             @Override

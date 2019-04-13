@@ -535,7 +535,6 @@ public class PrinterUtil {
      */
     public static void printDaily(int type, String total, String mobilePay, String cash, int orderNum, String workerName, String lastDate) {
         try {
-            set(CLEAR_TEMP);
             mPrinter.setAlignMode(1);
             mPrinter.setCharSize(1, 1);
             String t = type == 1 ? "交班" : "日结\n";
@@ -581,7 +580,6 @@ public class PrinterUtil {
      */
     public static void printPayBack(OrderDetails details, String date) {
         try {
-            set(CLEAR_TEMP);
             mPrinter.setAlignMode(1);
             mPrinter.setCharSize(1, 1);
             String s = "退账单";

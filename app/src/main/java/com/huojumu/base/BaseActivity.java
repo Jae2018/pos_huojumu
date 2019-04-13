@@ -30,7 +30,7 @@ import butterknife.ButterKnife;
 public abstract class BaseActivity extends AppCompatActivity {
 
     protected CustomerEngine engine;
-    protected LoadingDialog ld, ld2;
+    protected LoadingDialog ld, ld2, ld3;
     public static ArrayList<String> per = new ArrayList<>();
     private String[] permissions = {
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -81,40 +81,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-    }
-
-    public boolean grantAutomaticPermission(UsbDevice usbDevice) {
-        try {
-            Log.e(">>>", "grantAutomaticPermission: " );
-            Context context = MyApplication.getContext();
-            PackageManager pkgManager = context.getPackageManager();
-            ApplicationInfo appInfo = pkgManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-
-            Class serviceManagerClass = Class.forName("android.os.ServiceManager");
-            Method getServiceMethod = serviceManagerClass.getDeclaredMethod("getService", String.class);
-            getServiceMethod.setAccessible(true);
-            android.os.IBinder binder = (android.os.IBinder) getServiceMethod.invoke(null, Context.USB_SERVICE);
-
-            Class iUsbManagerClass = Class.forName("android.hardware.usb.IUsbManager");
-            Class stubClass = Class.forName("android.hardware.usb.IUsbManager$Stub");
-            Method asInterfaceMethod = stubClass.getDeclaredMethod("asInterface", android.os.IBinder.class);
-            asInterfaceMethod.setAccessible(true);
-            Object iUsbManager = asInterfaceMethod.invoke(null, binder);
-
-
-            System.out.println("UID : " + appInfo.uid + " " + appInfo.processName + " " + appInfo.permission);
-            final Method grantDevicePermissionMethod = iUsbManagerClass.getDeclaredMethod("grantDevicePermission", UsbDevice.class, int.class);
-            grantDevicePermissionMethod.setAccessible(true);
-            grantDevicePermissionMethod.invoke(iUsbManager, usbDevice, appInfo.uid);
-
-
-            System.out.println("Method OK : " + binder + "  " + iUsbManager);
-            return true;
-        } catch (Exception e) {
-            System.err.println("Error trying to assing automatic usb permission : ");
-            e.printStackTrace();
-            return false;
-        }
     }
 
 }

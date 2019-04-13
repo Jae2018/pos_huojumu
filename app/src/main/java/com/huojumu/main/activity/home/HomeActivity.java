@@ -204,6 +204,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private HorizontalPageLayoutManager horizontalPageLayoutManager = null;
     private List<OrderInfo.DataBean> dataBeans = new ArrayList<>();
 
+
     @Override
     protected int setLayout() {
         return R.layout.activity_home;
@@ -213,6 +214,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     protected void initView() {
         MyApplication.getSocketTool().sendHeart();
         EventBus.getDefault().register(this);
+
+
 
         threadPool = ThreadPool.getInstantiation();
         //链接标签机
@@ -366,6 +369,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
             }
         });
+
+//        threadPool.addTask(new Runnable() {
+//            @Override
+//            public void run() {
+//                Log.e("print", "aaaa");
+//                PrinterUtil.connectPrinter(HomeActivity.this);
+//                Log.e("print", "bbbb");
+//            }
+//        });
     }
 
     private static final int MSG_UPDATE_CURRENT_TIME = 1;
@@ -448,6 +460,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 ld2.close();
             }
         });
+//        MyOkHttp.mHandler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                ld2.close();
+//            }
+//        }, 2000);
     }
 
     @OnClick(R.id.button5)
@@ -598,6 +616,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     @Override
     public void callback(String s) {
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
     }
 
@@ -819,6 +843,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     @Override
     public void OnDialogOkClick(final int type, final double earn, final double cost, final double charge, String name) {
+        PrinterUtil.connectPrinter(HomeActivity.this);
         change = charge;
         switch (name) {
             case "QuickPayDialog":
@@ -973,9 +998,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * 打印订单小票
      */
     private void PrintOrder(final OrderBack orderBack, final double charge) {
-        threadPool.addTask(new Runnable() {
-            @Override
-            public void run() {
+//        threadPool.addTask(new Runnable() {
+//            @Override
+//            public void run() {
 //                if (isCash) {
 //                    isCash = false;
 //                    PrinterUtil.OpenMoneyBox();
@@ -984,8 +1009,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
                         "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "",
                         totalCut + "", orderBack.getCreatTime());
-            }
-        });
+//            }
+//        });
 
 //        String proList = PrinterUtil.toJson(productions);
 //        initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList, totalPrice + "", totalPrice + "", charge + "", totalCut + "");
@@ -1261,14 +1286,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     }
                     connectUsb(UsbUtil.getUsbDeviceList(HomeActivity.this));
 
-                    if (PrinterUtil.getmPrinter() == null) {
-                        threadPool.addTask(new Runnable() {
-                            @Override
-                            public void run() {
-                                PrinterUtil.connectPrinter(getApplicationContext());
-                            }
-                        });
-                    }
+//                    if (PrinterUtil.getmPrinter() == null) {
+//                        threadPool.addTask(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Log.e("fff","fff");
+//                                PrinterUtil.connectPrinter(getApplicationContext());
+//                            }
+//                        });
+//                    }
                     break;
                 case DeviceConnFactoryManager.ACTION_CONN_STATE:
                     int state = intent.getIntExtra(DeviceConnFactoryManager.STATE, -1);

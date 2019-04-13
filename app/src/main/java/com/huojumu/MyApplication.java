@@ -37,9 +37,8 @@ public class MyApplication extends Application {
         CrashReport.initCrashReport(mContext, "551785ca95", true);
         SpUtil.Instance(this);
         SpUtil.save(Constant.UUID, UUID.randomUUID().toString());
-        PrinterUtil.connectPrinter(mContext);
         socketTool = SocketTool.getInstance(this);
-
+//
         line1 = drawable2Bitmap(getResources().getDrawable(R.drawable.line11));
         line2 = drawable2Bitmap(getResources().getDrawable(R.drawable.line2));
         line3 = drawable2Bitmap(getResources().getDrawable(R.drawable.line3));

@@ -125,9 +125,6 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             }
         });
 
-        ld2 = new LoadingDialog(this);
-        ld2.setLoadingText("加载中,请等待")
-                .setFailedText("加载失败，请重试");
     }
 
     @Override
@@ -172,6 +169,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     }
 
     private void getTakeOverInfo(){
+        ld2 = new LoadingDialog(this);
+        ld2.setLoadingText("加载中,请等待")
+                .setFailedText("加载失败，请重试");
         ld2.show();
         NetTool.getDailyInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.PINPAI_ID), page, 0, new GsonResponseHandler<BaseBean<DailyInfo>>() {
             @Override
@@ -207,6 +207,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     }
 
     private void getDailyInfo(){
+        ld2 = new LoadingDialog(this);
+        ld2.setLoadingText("加载中,请等待")
+                .setFailedText("加载失败，请重试");
         ld2.show();
         NetTool.getSettlementInfo(SpUtil.getInt(Constant.STORE_ID), 1, new GsonResponseHandler<BaseBean<DailyInfo>>() {
             @Override
@@ -243,6 +246,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     }
 
     private void TakeOver() {
+        ld2 = new LoadingDialog(this);
+        ld2.setLoadingText("加载中,请等待")
+                .setFailedText("加载失败，请重试");
         ld2.show();
         NetTool.takeOver(timestamp, new GsonResponseHandler<BaseBean<String>>() {
             @Override
@@ -276,6 +282,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     }
 
     private void daily() {
+        ld2 = new LoadingDialog(this);
+        ld2.setLoadingText("加载中,请等待")
+                .setFailedText("加载失败，请重试");
         ld2.show();
         NetTool.settlement(SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<String>>() {
             @Override

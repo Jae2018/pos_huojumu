@@ -9,6 +9,7 @@ import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.login.ActiveActivity;
 import com.huojumu.main.activity.login.LoginActivity;
 import com.huojumu.utils.Constant;
+import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 

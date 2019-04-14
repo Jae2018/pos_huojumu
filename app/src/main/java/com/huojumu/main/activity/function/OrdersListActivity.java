@@ -76,9 +76,7 @@ public class OrdersListActivity extends BaseActivity {
                 startActivity(i);
             }
         });
-        ld2 = new LoadingDialog(this);
-        ld2.setLoadingText("加载中,请等待")
-                .setFailedText("加载失败，请重试");
+
     }
 
     @Override
@@ -87,11 +85,15 @@ public class OrdersListActivity extends BaseActivity {
     }
 
     private void getList() {
+        ld2 = new LoadingDialog(this);
+        ld2.setLoadingText("加载中,请等待")
+                .setFailedText("加载失败，请重试");
         ld2.show();
         NetTool.getStoreOrderList(pageNum, new GsonResponseHandler<BaseBean<OrdersList>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrdersList> response) {
                 ld2.loadSuccess();
+                ld2.close();
                 rowsBeanList.addAll(response.getData().getRows());
                 listAdapter.setNewData(rowsBeanList);
                 totalPAge = response.getData().getTotal();
@@ -103,6 +105,7 @@ public class OrdersListActivity extends BaseActivity {
             public void onFailure(int statusCode,String code, String error_msg) {
                 ToastUtils.showLong(error_msg);
                 ld2.loadFailed();
+                ld2.close();
             }
         });
     }

@@ -328,11 +328,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         scrollHelper.setUpRecycleView(rBottom);
 
-        ld = new LoadingDialog(this);
-        ld.setLoadingText("支付中")
-                .setSuccessText("支付成功")//显示加载成功时的文字
-                .setFailedText("支付失败");
-
 //        webView.addJavascriptInterface(new JsInterface(), "JSInterface");
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
@@ -358,23 +353,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         order_num.setText(String.format(Locale.CHINA, "%.2f元", SpUtil.getFloat("woeker_p")));
         workName1.setText(SpUtil.getString(Constant.WORKER_NAME));
         order_num1.setText(String.format(Locale.CHINA, "%d单", SpUtil.getInt("orderNum")));
-
-        edit_search.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
 
     }
 
@@ -456,13 +434,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         productAdapter.setNewData(tempProduces);
     }
 
-    int m = 0;
+    int m = 0;//是否过滤状态
 
     private void search(String searchStr) {
         m = 1;
         temp.clear();
         for (Production p : tempProduces) {
-            if (p.getProAlsname() != null && p.getProAlsname().contains(searchStr)) {
+            if (!p.getProAlsname().isEmpty() && p.getProAlsname().contains(searchStr)) {
                 temp.add(p);
             }
         }
@@ -605,6 +583,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     public void onSuccess(int statusCode, BaseBean<Products> response) {
                         tempProduces = response.getData().getProducts();
                         productAdapter.setNewData(response.getData().getProducts());
+                        for (Production p : tempProduces) {
+                            Log.e(TAG, p.getProAlsname());
+                        }
                         b3 = true;
                         tryFinish();
                     }

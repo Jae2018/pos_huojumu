@@ -962,6 +962,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 }
             });
         }
+        MyOkHttp.mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (ld != null) {
+                    ld.close();
+                    ToastUtils.showLong("支付超时，请重试");
+                }
+            }
+        }, 20 * 1000);
     }
 
 

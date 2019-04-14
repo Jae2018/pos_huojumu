@@ -216,7 +216,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     protected void initView() {
         MyApplication.getSocketTool().sendHeart();
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
 
         //链接标签机
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
@@ -875,6 +875,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
                             orderBack = response.getData();
                             orderNo = response.getData().getOrderNo();
+                            ld = new LoadingDialog(HomeActivity.this);
+                            ld.setSuccessText("支付完毕").setLoadingText("支付失败").setLoadingText("支付中");
+                            ld.show();
 //                            if (type == 2) {
 //                                engine.getAliIV().setImageBitmap(QrUtil.createQRCodeWithLogo(HomeActivity.this, response.getData().getAliPayQrcode(), BitmapFactory.decodeResource(getResources(), R.drawable.zhifubao_normal)));
 //                            } else if (type == 3) {
@@ -936,9 +939,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     private void payByBox() {
-        final LoadingDialog ld = new LoadingDialog(this);
-        ld.setSuccessText("支付完毕").setLoadingText("支付失败").setLoadingText("支付中");
-        ld.show();
         if (orderInfo != null) {
             NetTool.payByBox(orderNo, orderInfo.getPayType(), authNo, new GsonResponseHandler<BaseBean<BoxPay>>() {
                 @Override
@@ -946,9 +946,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     authNo = "";
                     if (response.getMsg().equals("yes")) {
                         ld.loadSuccess();
+                        ld.close();
                         clear();
                     } else {
                         ld.loadFailed();
+                        ld.close();
                         ToastUtils.showLong(response.getMsg());
                     }
                 }
@@ -956,6 +958,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 @Override
                 public void onFailure(int statusCode, String code, String error_msg) {
                     ld.loadFailed();
+                    ld.close();
                 }
             });
         }
@@ -992,30 +995,30 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         usbManager.requestPermission(usbDevice, mPermissionIntent);
     }
 
-    /**
-     * 支付超时
-     */
-    private void payOutTime() {
-        ld = new LoadingDialog(this);
-        ld.setLoadingText("支付中");
-        ld.show();
-        CountDownTimer timer = new CountDownTimer(60 * 1000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            @Override
-            public void onFinish() {
-                if (ld != null) {
-                    ld.loadFailed();
-                    ld.close();
-                }
-                clear();
-            }
-        };
-        timer.start();
-    }
+//    /**
+//     * 支付超时
+//     */
+//    private void payOutTime() {
+//        ld = new LoadingDialog(this);
+//        ld.setLoadingText("支付中");
+//        ld.show();
+//        CountDownTimer timer = new CountDownTimer(60 * 1000, 1000) {
+//            @Override
+//            public void onTick(long millisUntilFinished) {
+//
+//            }
+//
+//            @Override
+//            public void onFinish() {
+//                if (ld != null) {
+//                    ld.loadFailed();
+//                    ld.close();
+//                }
+//                clear();
+//            }
+//        };
+//        timer.start();
+//    }
 
 //    private void initWebOrder(String OrderNo, String date, String proList, String totalMoney,
 //                              String cost, String charge, String cut) {
@@ -1166,24 +1169,24 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     public void surfaceDestroyed(SurfaceHolder holder) {
 
     }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void GetPayBack(TaskBean taskBean) {
-        //socket支付回调
-        if (taskBean.getData().getState().equals("01")) {//用户支付完成
-            ld.loadSuccess();
-            PrintOrder(orderBack, change);
-        } else {
-            ld.loadFailed();
-        }
-        MyOkHttp.mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                clear();
-                ld.loadFailed();
-            }
-        }, 10000);
-    }
+//
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void GetPayBack(TaskBean taskBean) {
+//        //socket支付回调
+//        if (taskBean.getData().getState().equals("01")) {//用户支付完成
+//            ld.loadSuccess();
+//            PrintOrder(orderBack, change);
+//        } else {
+//            ld.loadFailed();
+//        }
+//        MyOkHttp.mHandler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                clear();
+//                ld.loadFailed();
+//            }
+//        }, 10000);
+//    }
 
     private void usbConn(UsbDevice usbDevice) {
         new DeviceConnFactoryManager.Build()
@@ -1217,7 +1220,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         super.onDestroy();
         woeker_p = 0;
         orderNum = 0;
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
         DeviceConnFactoryManager.closeAllPort();
         if (ThreadPool.getInstantiation() != null) {
             ThreadPool.getInstantiation().stopThreadPool();

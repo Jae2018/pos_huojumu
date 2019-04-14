@@ -978,21 +978,21 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         timer.start();
     }
 
-    private void initWebOrder(String OrderNo, String date, String proList, String totalMoney,
-                              String cost, String charge, String cut) {
-        String html = H5Order.html;
-        html = html.replace("{1}", "N" + OrderNo.substring(OrderNo.length() - 4))
-                .replace("{2}", SpUtil.getString(Constant.WORKER_NAME))
-                .replace("{3}", date)
-                .replace("{data}", proList)
-                .replace("{4}", totalMoney)
-                .replace("{5}", cost)
-                .replace("{6}", cut)
-                .replace("{7}", charge)
-                .replace("{8}", SpUtil.getString(Constant.STORE_NAME));
-
-        webView.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
-    }
+//    private void initWebOrder(String OrderNo, String date, String proList, String totalMoney,
+//                              String cost, String charge, String cut) {
+//        String html = H5Order.html;
+//        html = html.replace("{1}", "N" + OrderNo.substring(OrderNo.length() - 4))
+//                .replace("{2}", SpUtil.getString(Constant.WORKER_NAME))
+//                .replace("{3}", date)
+//                .replace("{data}", proList)
+//                .replace("{4}", totalMoney)
+//                .replace("{5}", cost)
+//                .replace("{6}", cut)
+//                .replace("{7}", charge)
+//                .replace("{8}", SpUtil.getString(Constant.STORE_NAME));
+//
+//        webView.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+//    }
 
     /**
      * 打印订单小票
@@ -1282,6 +1282,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     try {
                         ld3 = new LoadingDialog(HomeActivity.this);
                         ld3.setLoadingText("正在连接打印机，请等待");
+                        ld3.show();
                         Thread.sleep(5000);
                         ld3.close();
                     } catch (Exception e) {

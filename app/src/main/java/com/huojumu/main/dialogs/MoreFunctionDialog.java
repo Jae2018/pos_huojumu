@@ -108,6 +108,7 @@ public class MoreFunctionDialog extends BaseDialog {
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
             public void run() {
+                PrinterUtil.connectPrinter(getContext());
                 PrinterUtil.OpenMoneyBox();
             }
         });

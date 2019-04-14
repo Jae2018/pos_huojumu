@@ -198,6 +198,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
             public void onSuccess(int statusCode, BaseBean<String> response) {
                 if (response.getMsg().equals("yes")) {
                     clearRight();
+                    PrinterUtil.connectPrinter(PayBackActivity.this);
                     PrinterUtil.printPayBack(details, response.getData());
                 } else {
                     ToastUtils.showLong(response.getMsg());

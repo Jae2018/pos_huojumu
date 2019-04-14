@@ -118,6 +118,16 @@ public class NetTool {
                 .enqueue(handler);
     }
 
+    //小白盒支付
+    public static void payByBox(String orderNo, String payType,String authNo, GsonResponseHandler<BaseBean<String>> handler){
+        okHttp.post().url(Constant.BASE_URL + "pay/barcodepay.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .addParam("orderNo", orderNo)
+                .addParam("payType", payType)
+                .addParam("authNo", authNo)
+                .enqueue(handler);
+    }
+
+
     //盘点原料
     public static void getMaterial(int shopId, int enterpriseID, int pinpaiID, GsonResponseHandler<BaseBean<Material>> handler) {
         okHttp.post().url(Constant.BASE_URL + "store/wareall.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
@@ -246,4 +256,6 @@ public class NetTool {
                 .addParam("fileType","3")
                 .enqueue(handler);
     }
+
+
 }

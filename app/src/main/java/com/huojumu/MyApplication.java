@@ -39,7 +39,7 @@ public class MyApplication extends Application {
         SpUtil.save(Constant.UUID, UUID.randomUUID().toString());
         socketTool = SocketTool.getInstance(this);
 //
-        line1 = drawable2Bitmap(getResources().getDrawable(R.drawable.line11));
+        line1 = drawable2Bitmap(getResources().getDrawable(R.drawable.line1));
         line2 = drawable2Bitmap(getResources().getDrawable(R.drawable.line2));
         line3 = drawable2Bitmap(getResources().getDrawable(R.drawable.line3));
         logo = drawable2Bitmap(getResources().getDrawable(R.drawable.logo));

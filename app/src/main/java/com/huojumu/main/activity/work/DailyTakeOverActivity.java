@@ -22,6 +22,7 @@ import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
+import com.huojumu.utils.ThreadPool;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
@@ -165,7 +166,13 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
         } else {
             daily();
         }
-        PrinterUtil.printDaily(types, String.valueOf(s4), String.valueOf(s2), String.valueOf(s1), num, SpUtil.getString(Constant.WORKER_NAME),lastDate);
+        PrinterUtil.connectPrinter(this);
+        ThreadPool.getInstantiation().addTask(new Runnable() {
+            @Override
+            public void run() {
+                PrinterUtil.printDaily(types, String.valueOf(s4), String.valueOf(s2), String.valueOf(s1), num, SpUtil.getString(Constant.WORKER_NAME),lastDate);
+            }
+        });
     }
 
     private void getTakeOverInfo(){

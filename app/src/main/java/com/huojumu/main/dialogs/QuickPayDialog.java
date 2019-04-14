@@ -3,6 +3,7 @@ package com.huojumu.main.dialogs;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.huojumu.R;
@@ -25,6 +26,8 @@ public class QuickPayDialog extends BaseDialog {
     TextView tv_quick_type_ali;
     @BindView(R.id.tv_quick_type_wx)
     TextView tv_quick_type_wx;
+//    @BindView(R.id.tv_quick_type_box)
+//    ImageView boxImage;
 
     private int type = 1;
     private DialogInterface anInterface;
@@ -52,19 +55,29 @@ public class QuickPayDialog extends BaseDialog {
                 tv_quick_type_cash.setSelected(true);
                 tv_quick_type_ali.setSelected(false);
                 tv_quick_type_wx.setSelected(false);
+//                boxImage.setSelected(false);
                 break;
             case R.id.tv_quick_type_ali:
                 tv_quick_type_cash.setSelected(false);
                 tv_quick_type_ali.setSelected(true);
                 tv_quick_type_wx.setSelected(false);
+//                boxImage.setSelected(false);
                 type = 2;
                 break;
             case R.id.tv_quick_type_wx:
                 tv_quick_type_cash.setSelected(false);
                 tv_quick_type_ali.setSelected(false);
                 tv_quick_type_wx.setSelected(true);
+//                boxImage.setSelected(false);
                 type = 3;
                 break;
+//            case R.id.tv_quick_type_box:
+//                tv_quick_type_cash.setSelected(false);
+//                tv_quick_type_ali.setSelected(false);
+//                tv_quick_type_wx.setSelected(false);
+//                boxImage.setSelected(true);
+//                type = 4;
+//                break;
         }
     }
 

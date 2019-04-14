@@ -3,6 +3,7 @@ package com.huojumu.utils;
 import com.huojumu.model.ActivesBean;
 import com.huojumu.model.AdsBean;
 import com.huojumu.model.BaseBean;
+import com.huojumu.model.BoxPay;
 import com.huojumu.model.DailyInfo;
 import com.huojumu.model.InventoryDetail;
 import com.huojumu.model.InventoryList;
@@ -119,7 +120,7 @@ public class NetTool {
     }
 
     //小白盒支付
-    public static void payByBox(String orderNo, String payType,String authNo, GsonResponseHandler<BaseBean<String>> handler){
+    public static void payByBox(String orderNo, String payType,String authNo, GsonResponseHandler<BaseBean<BoxPay>> handler){
         okHttp.post().url(Constant.BASE_URL + "pay/barcodepay.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("orderNo", orderNo)
                 .addParam("payType", payType)

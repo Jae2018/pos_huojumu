@@ -166,11 +166,11 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
         } else {
             daily();
         }
-        PrinterUtil.connectPrinter(this);
+
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
             public void run() {
-                PrinterUtil.printDaily(types, String.valueOf(s4), String.valueOf(s2), String.valueOf(s1), num, SpUtil.getString(Constant.WORKER_NAME),lastDate);
+                PrinterUtil.printDaily(DailyTakeOverActivity.this, types, ""+s4, s2+"", s1+"", num, SpUtil.getString(Constant.WORKER_NAME), lastDate);
             }
         });
     }

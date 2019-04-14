@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/d_350"
+    android:layout_width="@dimen/d_420"
     android:layout_height="@dimen/d_280"
     android:orientation="vertical">
 
@@ -13,13 +13,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
-        android:paddingTop="@dimen/d_32"
-        android:paddingBottom="@dimen/d_32">
+        android:paddingTop="@dimen/d_30"
+        android:paddingBottom="@dimen/d_30">
 
         <TextView
             android:id="@+id/tv_quick_type_cash"
             android:layout_width="0dp"
-            android:layout_height="@dimen/d_101"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableTop="@drawable/xianjin"
             android:drawablePadding="@dimen/d_8"
@@ -30,7 +30,7 @@
         <TextView
             android:id="@+id/tv_quick_type_ali"
             android:layout_width="0dp"
-            android:layout_height="@dimen/d_101"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableTop="@drawable/zhifubaozhifu"
             android:gravity="center_horizontal"
@@ -41,13 +41,40 @@
         <TextView
             android:id="@+id/tv_quick_type_wx"
             android:layout_width="0dp"
-            android:layout_height="@dimen/d_101"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawablePadding="@dimen/d_8"
             android:drawableTop="@drawable/weizhifu"
             android:gravity="center_horizontal"
             android:text="微信"
             android:textSize="@dimen/f_18" />
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="vertical"-->
+            <!--android:gravity="center_horizontal"-->
+            <!--android:layout_weight="1">-->
+
+            <!--<ImageView-->
+                <!--android:id="@+id/tv_quick_type_box"-->
+                <!--android:layout_width="@dimen/d_90"-->
+                <!--android:layout_height="@dimen/d_90"-->
+                <!--android:padding="@dimen/d_20"-->
+                <!--android:contentDescription="@string/des"-->
+                <!--android:background="@drawable/box_shape"-->
+                <!--android:src="@drawable/boxzhifu"/>-->
+
+            <!--<TextView-->
+
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:gravity="center_horizontal"-->
+                <!--android:layout_marginTop="@dimen/d_8"-->
+                <!--android:text="小白盒"-->
+                <!--android:textSize="@dimen/f_18" />-->
+        <!--</LinearLayout>-->
+
 
     </LinearLayout>
 

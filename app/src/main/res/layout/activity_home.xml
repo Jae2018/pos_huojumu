@@ -4,14 +4,22 @@
     android:id="@+id/parent_relative"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".main.activity.home.HomeActivity">
 
-    <WebView
-        android:id="@+id/web_order"
-        android:layout_width="@dimen/d_540"
-        android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:visibility="invisible" />
+    <!--<WebView-->
+        <!--android:id="@+id/web_order"-->
+        <!--android:layout_width="@dimen/d_540"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:visibility="invisible" />-->
+
+    <EditText
+        android:id="@+id/box_input"
+        android:layout_width="@dimen/d_90"
+        android:layout_height="@dimen/d_30"
+        />
 
     <LinearLayout
         android:id="@+id/linearLayout"

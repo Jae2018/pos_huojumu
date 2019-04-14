@@ -4,10 +4,14 @@ import android.content.Context;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 public class UsbUtil {
+
+    private static List<String> usbList = new ArrayList<>();
 
     private static boolean checkUsbDevicePidVid(UsbDevice dev) {
         int pid = dev.getProductId();
@@ -19,7 +23,13 @@ public class UsbUtil {
                 || (vid == 26728 && pid == 1536));
     }
 
-    public static String getUsbDeviceList(Context context) {
+    private static boolean checkUsbDevicePidVid2(UsbDevice dev) {
+        int pid = dev.getProductId();
+        int vid = dev.getVendorId();
+        return ((vid == 1155 && pid == 30016));
+    }
+
+    public static String getBQName(Context context) {
         String devicename = "";
         UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         // Get the list of attached devices
@@ -32,6 +42,27 @@ public class UsbUtil {
                 UsbDevice device = deviceIterator.next();
 
                 if (device != null && checkUsbDevicePidVid(device)) {
+                    devicename = device.getDeviceName();
+                }
+            }
+        }
+
+        return devicename;
+    }
+
+    public static String getXPName(Context context) {
+        String devicename = "";
+        UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        // Get the list of attached devices
+        HashMap<String, UsbDevice> devices = manager.getDeviceList();
+        Iterator<UsbDevice> deviceIterator = devices.values().iterator();
+        int count = devices.size();
+
+        if (count > 0) {
+            while (deviceIterator.hasNext()) {
+                UsbDevice device = deviceIterator.next();
+
+                if (device != null && checkUsbDevicePidVid2(device)) {
                     devicename = device.getDeviceName();
                 }
             }

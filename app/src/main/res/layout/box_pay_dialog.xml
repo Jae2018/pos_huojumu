@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/d_300"
+    android:layout_height="@dimen/d_200">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_30"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:textSize="@dimen/f_16"
+        android:text="小白盒扫码支付" />
+
+    <EditText
+        android:id="@+id/input_edit"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_40"
+        android:layout_below="@+id/title"
+        android:layout_marginStart="@dimen/d_8"
+        android:paddingLeft="@dimen/d_4"
+        android:paddingRight="@dimen/d_4"
+        android:layout_marginTop="@dimen/d_30"
+        android:layout_marginEnd="@dimen/d_8"
+        android:background="@drawable/input_border"
+        android:hint="扫码内容" />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="8dp"
+        android:text="取消"
+        android:textColor="@android:color/white"
+        android:background="@drawable/green_cancel"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/blue_ok"
+        android:layout_alignParentBottom="true"
+        android:textColor="@android:color/white"
+        android:text="确定"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="44dp"
+        android:layout_marginBottom="8dp" />
+
+</RelativeLayout>

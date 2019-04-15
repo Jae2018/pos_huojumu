@@ -457,11 +457,11 @@ public class PrinterUtil {
                 if (PrinterAPI.SUCCESS == mPrinter.connect(io)) {
                     try {
                         //居左
-                        mPrinter.setAlignMode(0);
+//                        mPrinter.setAlignMode(0);
                         //字体变大
                         mPrinter.setCharSize(1, 1);
                         //订单流水号
-                        String s = orderNo.substring(orderNo.length() - 4);
+                        String s = "N" + orderNo;
                         mPrinter.printString(s, "GBK");
 
                         //实线

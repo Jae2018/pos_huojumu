@@ -14,7 +14,7 @@ import android.graphics.Paint;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.media.MediaPlayer;
-import android.os.CountDownTimer;
+//import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -24,18 +24,18 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Base64;
+//import android.text.Editable;
+//import android.text.TextWatcher;
+//import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.widget.EditText;
+//import android.webkit.JavascriptInterface;
+//import android.webkit.WebChromeClient;
+//import android.webkit.WebSettings;
+//import android.webkit.WebView;
+//import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -74,7 +74,7 @@ import com.huojumu.model.Production;
 import com.huojumu.model.Products;
 import com.huojumu.model.SmallType;
 import com.huojumu.model.Specification;
-import com.huojumu.model.TaskBean;
+//import com.huojumu.model.TaskBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
 import com.huojumu.utils.MyDividerDecoration;
@@ -82,7 +82,7 @@ import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
 import com.huojumu.utils.PrinterCommand;
 import com.huojumu.utils.PrinterUtil;
-import com.huojumu.utils.QrUtil;
+//import com.huojumu.utils.QrUtil;
 import com.huojumu.utils.SocketBack;
 import com.huojumu.utils.SpUtil;
 import com.huojumu.utils.ThreadFactoryBuilder;
@@ -94,9 +94,9 @@ import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+//import org.greenrobot.eventbus.EventBus;
+//import org.greenrobot.eventbus.Subscribe;
+//import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
@@ -1032,7 +1032,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         PrinterUtil.OpenMoneyBox(this);
 
-        PrinterUtil.printString80(HomeActivity.this, productions, orderBack.getOrderNo(),
+        PrinterUtil.printString80(HomeActivity.this, productions, orderBack.getOrderNo().substring(orderBack.getOrderNo().length()-4),
                 SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
                 "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "",
                 totalCut + "", orderBack.getCreatTime());

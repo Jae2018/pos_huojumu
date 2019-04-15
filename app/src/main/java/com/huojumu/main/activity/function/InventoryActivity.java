@@ -97,16 +97,18 @@ public class InventoryActivity extends BaseActivity {
             @Override
             public void onSuccess(int statusCode, BaseBean<InventoryList> response) {
                 ld2.close();
-                rowsBeanList.addAll(response.getData().getRows()) ;
-                adapter.setNewData(rowsBeanList);
-                totalPAge = response.getData().getTotal();
-                pageNum++;
-                adapter.setUpFetchEnable(false);
+                if (response.getData().getTotal() > 0) {
+                    rowsBeanList.addAll(response.getData().getRows()) ;
+                    adapter.setNewData(rowsBeanList);
+                    totalPAge = response.getData().getTotal();
+                    pageNum++;
+                    adapter.setUpFetchEnable(false);
+                }
             }
 
             @Override
             public void onFailure(int statusCode,String code, String error_msg) {
-                ToastUtils.showLong(error_msg);
+                ToastUtils.showLong("暂无数据");
                 ld2.loadFailed();
                 ld2.close();
             }

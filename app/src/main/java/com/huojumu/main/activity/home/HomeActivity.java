@@ -64,6 +64,7 @@ import com.huojumu.model.Production;
 import com.huojumu.model.Products;
 import com.huojumu.model.SmallType;
 import com.huojumu.model.Specification;
+import com.huojumu.model.Takeover;
 import com.huojumu.model.WorkBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
@@ -203,6 +204,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         return R.layout.activity_home;
     }
 
+
     @Override
     protected void initView() {
         MyApplication.getSocketTool().sendHeart();
@@ -211,24 +213,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //链接标签机
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         connectUsb(UsbUtil.getBQName(HomeActivity.this));
-//        ThreadPool.getInstantiation().addTask(new Runnable() {
-//            @Override
-//            public void run() {
-//                PrinterUtil.connectPrinter(HomeActivity.this);
-//            }
-//        });
-//
-////        WebView.enableSlowWholeDocumentDraw();
-//        webView.setWebChromeClient(new WebChromeClient());
-//        //声明WebSettings子类
-//        WebSettings webSettings = webView.getSettings();
-//
-//        //如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
-//        webSettings.setJavaScriptEnabled(true);
-//
-//        //设置自适应屏幕，两者合用
-//        webSettings.setUseWideViewPort(true);
-//        webSettings.setLoadWithOverviewMode(true);
 
         horizontalPageLayoutManager = new HorizontalPageLayoutManager(3, 4);
 
@@ -292,9 +276,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             temp.add(p);
                         }
                     }
-//                    Log.e(TAG, "onItemClick: " + PrinterUtil.toJson(temp));
                     productAdapter.setNewData(temp);
                 } else {
+                    m = 0;
                     productAdapter.setNewData(tempProduces);
                 }
                 for (int i = 0; i < typeAdapter.getData().size(); i++) {
@@ -309,6 +293,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         productAdapter = new HomeProductAdapter(null);
         rBottom.setLayoutManager(horizontalPageLayoutManager);
         rBottom.setAdapter(productAdapter);
+
         productAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -317,8 +302,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         });
 
         scrollHelper.setUpRecycleView(rBottom);
-
-//        webView.addJavascriptInterface(new JsInterface(), "JSInterface");
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
         pinyin.setLayoutManager(gridLayoutManager);
@@ -339,9 +322,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         MyHandler mHandler = new MyHandler(this);
         mHandler.sendEmptyMessageDelayed(MSG_UPDATE_CURRENT_TIME, 500);
-
-        order_num.setText(String.format(Locale.CHINA, "%.2f元", 0.0));
         workName1.setText(SpUtil.getString(Constant.WORKER_NAME));
+        order_num.setText(String.format(Locale.CHINA, "%.2f元", 0.0));
         order_num1.setText(String.format(Locale.CHINA, "%d单", 0));
 
     }
@@ -364,7 +346,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             int code = event.getKeyCode();
             if (code >= KeyEvent.KEYCODE_0 && code <= KeyEvent.KEYCODE_9) {
                 authNo += String.valueOf(code - KeyEvent.KEYCODE_0);
-
             }
 //            Log.e(TAG, authNo);
             //识别到结束，当下使用的设备是  是还会有个KEYCODE_DPAD_DOWN 事件，不知道其它设备有没有  先忽略
@@ -377,13 +358,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
 
         }
-//        MyOkHttp.mHandler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                authNo = "";
-//                time = 0;
-//            }
-//        }, 200);
         //都是扫码枪来的事件，选择消费掉
         return super.dispatchKeyEvent(event);
     }
@@ -454,8 +428,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         ld2.setLoadingText("加载中,请等待")
                 .setFailedText("加载失败，请重试");
         ld2.show();
-        NetTool.getSpecification(SpUtil.getInt(Constant.PINPAI_ID), (m == 0 ? tempProduces.get(position).getProId() : temp.get(position).getProId()), SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<Specification>>() {
-            @Override
+        int id ;
+        if (m == 0) {
+            id = tempProduces.get(position).getProId();
+        } else {
+            id = temp.get(position).getProId();
+        }
+        NetTool.getSpecification(SpUtil.getInt(Constant.PINPAI_ID), id, SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<Specification>>() {
+                @Override
             public void onSuccess(int statusCode, final BaseBean<Specification> response) {
                 //点菜逻辑
                 addonDialog = new SingleProAddonDialog(HomeActivity.this, HomeActivity.this, m == 0 ? tempProduces.get(position) : temp.get(position), response.getData(), position);
@@ -469,12 +449,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 ld2.close();
             }
         });
-//        MyOkHttp.mHandler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                ld2.close();
-//            }
-//        }, 2000);
     }
 
     @OnClick(R.id.button5)
@@ -550,15 +524,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
         });
     }
-
+    List<SmallType> list = new ArrayList<>();
     private void getTypeList() {
         //小类
         b2 = false;
+        list.clear();
         NetTool.getSmallType(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.ENT_ID),
                 SpUtil.getInt(Constant.PINPAI_ID), new GsonResponseHandler<BaseBean<List<SmallType>>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<List<SmallType>> response) {
-                        List<SmallType> list = new ArrayList<>();
                         list.add(new SmallType("全部", 0, 0, true));
                         list.addAll(response.getData());
                         typeAdapter.setNewData(list);
@@ -646,28 +620,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 totalPrice += p.getPrice() * p.getNumber() + c * p.getNumber();
                 totalCut = 0;
             }
-//            else {
-//                if (p.getIsBargain() != null && p.getIsBargain().equals("1")) {
-//                    double c = 0;
-//                    if (!p.getMats().isEmpty()) {
-//                        for (MatsBean m : p.getMats()) {
-//                            c += m.getIngredientPrice();
-//                        }
-//                    }
-//                    totalPrice += p.getPrice() * p.getNumber() + c * p.getNumber();
-//                    totalCut += (p.getOrigionPrice() - p.getPrice()) * p.getNumber();
-//
-//                } else if (p.getIsPresented() != null && p.getIsPresented().equals("1")) {
-//                    double c = 0;
-//                    if (!p.getMats().isEmpty()) {
-//                        for (MatsBean m : p.getMats()) {
-//                            c += m.getIngredientPrice();
-//                        }
-//                    }
-//                    totalPrice += p.getPrice() * (p.getNumber() > 1 ? p.getNumber() - 1 : 1) + c * (p.getNumber() > 1 ? p.getNumber() - 1 : 1);
-//                    totalCut += p.getPrice() * (p.getNumber() > 1 ? 1 : 0);
-//                }
-//            }
         }
         total_number.setText(String.format(Locale.CHINA, "数量：%d 份", totalCount));
         total_price.setText(String.format(Locale.CHINA, "总价：%.1f 元", totalPrice));
@@ -807,11 +759,17 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 case Constant.WORK_BACK_OVER:
                     SpUtil.save(Constant.WORK_P, (float) 0);
                     SpUtil.save(Constant.ORDER_NUM, 0);
+                    clear();
+                    productAdapter.setNewData(tempProduces);
+                    typeAdapter.setNewData(list);
+                    order_num.setText(String.format(Locale.CHINA, "%.2f元", 0.0));
+                    order_num1.setText(String.format(Locale.CHINA, "%d单", 0));
                     ToastUtils.showLong("已完成交班！即将退出登录！");
                     MyOkHttp.mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+//                            finish();
                         }
                     }, 1000);
                     break;
@@ -923,6 +881,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 MyOkHttp.mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        System.exit(0);
                         PowerUtil.shutdown();
                     }
                 }, 2000);
@@ -1136,6 +1095,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         orderInfo = null;
         //左侧置空
         selectedAdapter.setNewData(null);
+        edit_search.setText("");
+        searchStr = "";
+        m = 0;
     }
 
     @Override
@@ -1157,7 +1119,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     public void surfaceDestroyed(SurfaceHolder holder) {
 
     }
-//
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void GetPayBack(WorkBean workBean) {
         order_num.setText(String.format(Locale.CHINA, "%.2f元", workBean.getPrice()));
@@ -1177,6 +1139,19 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 //            }
 //        }, 10000);
     }
+
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void TakeVoer(Takeover takeover) {
+//        if (takeover.getType() == 1) {
+//            //交班
+//            order_num.setText(String.format(Locale.CHINA, "%.2f元", 0.0));
+//            order_num1.setText(String.format(Locale.CHINA, "%d单", 0));
+//        } else {
+//            //日结
+//            order_num.setText(String.format(Locale.CHINA, "%.2f元", 0.0));
+//            order_num1.setText(String.format(Locale.CHINA, "%d单", 0));
+//        }
+//    }
 
     private void usbConn(UsbDevice usbDevice) {
         new DeviceConnFactoryManager.Build()

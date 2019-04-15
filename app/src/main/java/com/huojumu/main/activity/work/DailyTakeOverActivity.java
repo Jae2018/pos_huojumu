@@ -18,6 +18,7 @@ import com.huojumu.main.dialogs.CertainDialog;
 import com.huojumu.main.dialogs.DialogInterface;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.DailyInfo;
+import com.huojumu.model.Takeover;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PrinterUtil;
@@ -25,6 +26,8 @@ import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -257,6 +260,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                 if (response.getMsg().equals("yes")) {
                     certainDialog.cancel();
                     setResult(RESULT_OK);
+//                    EventBus.getDefault().post(new Takeover(1));
                     finish();
                 } else {
                     ToastUtils.showLong(response.getMsg());
@@ -292,6 +296,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             public void onSuccess(int statusCode, BaseBean<String> response) {
                 if (response.getMsg().equals("yes")) {
                     certainDialog.cancel();
+//                    EventBus.getDefault().post(new Takeover(2));
                     ToastUtils.showLong("已完成日结！30秒后系统将关闭");
                     setResult(RESULT_OK);
                     finish();

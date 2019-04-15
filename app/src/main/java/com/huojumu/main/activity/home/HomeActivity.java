@@ -268,15 +268,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         typeAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                temp.clear();
+                typeList.clear();
                 if (position != 0) {
                     m = 1;
                     for (Production p : tempProduces) {
                         if (typeAdapter.getData().get(position).getId() == p.getTypeId()) {
-                            temp.add(p);
+                            typeList.add(p);
                         }
                     }
-                    productAdapter.setNewData(temp);
+                    productAdapter.setNewData(typeList);
                 } else {
                     m = 0;
                     productAdapter.setNewData(tempProduces);
@@ -365,7 +365,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private static final int MSG_UPDATE_CURRENT_TIME = 1;
     private float woeker_p = 0;
     private int orderNum = 0;
-    List<Production> temp = new ArrayList<>();
+    List<Production> typeList = new ArrayList<>();//x小类
+    private List<Production> searchList = new ArrayList<>();//搜索
     String authNo = "";
 
     private static class MyHandler extends Handler {
@@ -402,22 +403,27 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     void inputClear() {
         edit_search.setText("");
         searchStr = "";
-        temp.clear();
+        searchList.clear();
         m = 0;
-        productAdapter.setNewData(tempProduces);
+        if (typeList.isEmpty()) {
+            productAdapter.setNewData(tempProduces);
+        } else {
+            productAdapter.setNewData(typeList);
+        }
+
     }
 
     int m = 0;//是否过滤状态
 
     private void search(String searchStr) {
-        m = 1;
-        temp.clear();
+        m = 2;
+        searchList.clear();
         for (Production p : tempProduces) {
             if (!p.getProAlsname().isEmpty() && p.getProAlsname().contains(searchStr)) {
-                temp.add(p);
+                searchList.add(p);
             }
         }
-        productAdapter.setNewData(temp);
+        productAdapter.setNewData(searchList);
     }
 
     private String[] py = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
@@ -428,17 +434,23 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         ld2.setLoadingText("加载中,请等待")
                 .setFailedText("加载失败，请重试");
         ld2.show();
-        int id ;
+        int id;
+        final Production production;
         if (m == 0) {
+            production = tempProduces.get(position);
             id = tempProduces.get(position).getProId();
+        } else if (m == 1) {
+            production = typeList.get(position);
+            id = typeList.get(position).getProId();
         } else {
-            id = temp.get(position).getProId();
+            production = searchList.get(position);
+            id = searchList.get(position).getProId();
         }
         NetTool.getSpecification(SpUtil.getInt(Constant.PINPAI_ID), id, SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<Specification>>() {
-                @Override
+            @Override
             public void onSuccess(int statusCode, final BaseBean<Specification> response) {
                 //点菜逻辑
-                addonDialog = new SingleProAddonDialog(HomeActivity.this, HomeActivity.this, m == 0 ? tempProduces.get(position) : temp.get(position), response.getData(), position);
+                addonDialog = new SingleProAddonDialog(HomeActivity.this, HomeActivity.this, production, response.getData(), position);
                 addonDialog.show();
                 ld2.close();
             }
@@ -524,7 +536,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
         });
     }
+
     List<SmallType> list = new ArrayList<>();
+
     private void getTypeList() {
         //小类
         b2 = false;
@@ -805,6 +819,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     OrderBack orderBack;
     double change;
+
     /**
      * 结账 dialog 按钮回调
      */
@@ -860,7 +875,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
 //                        orderBack = response.getData();
                         orderNo = response.getData().getOrderNo();
-                        PrintOrder(response.getData(), charge < 0 ? 0 : charge,"现金支付");
+                        PrintOrder(response.getData(), charge < 0 ? 0 : charge, "现金支付");
                         MyOkHttp.mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -898,7 +913,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     authNo = "";
                     layer.setVisibility(View.GONE);
                     if (response.getCode().equals("0")) {
-                        PrintOrder(orderBack, change < 0 ? 0 : change,orderInfo.getPayType().equals("010")?"微信支付":"支付宝支付");
+                        PrintOrder(orderBack, change < 0 ? 0 : change, orderInfo.getPayType().equals("010") ? "微信支付" : "支付宝支付");
                     } else {
                         ToastUtils.showLong(response.getMsg());
                     }
@@ -987,14 +1002,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     /**
      * 打印订单小票
      */
-    private void PrintOrder(final OrderBack orderBack, final double charge,String type) {
+    private void PrintOrder(final OrderBack orderBack, final double charge, String type) {
 
         PrinterUtil.OpenMoneyBox(this);
 
-        PrinterUtil.printString80(HomeActivity.this, productions, orderBack.getOrderNo().substring(orderBack.getOrderNo().length()-4),
+        PrinterUtil.printString80(HomeActivity.this, productions, orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4),
                 SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
                 "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "",
-                totalCut + "", orderBack.getCreatTime(),type);
+                totalCut + "", orderBack.getCreatTime(), type);
 
         printcount = 0;
         printProducts.clear();

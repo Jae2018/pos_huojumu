@@ -50,11 +50,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         initView();
         initData();
 
-        checkPermission();
-        requestPermission();
     }
 
-    private void checkPermission() {
+    protected void checkPermission() {
         for (String permission : permissions) {
             if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(this, permission)) {
                 per.add(permission);
@@ -62,7 +60,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public void requestPermission() {
+    protected void requestPermission() {
         if (per.size() > 0) {
             String[] p = new String[per.size()];
             ActivityCompat.requestPermissions(this, per.toArray(p), REQUEST_CODE);

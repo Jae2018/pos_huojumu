@@ -23,7 +23,6 @@ import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
-import com.huojumu.utils.ThreadPool;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
@@ -127,6 +126,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
             public void onFailure(int statusCode, String code, String error_msg) {
                 ToastUtils.showLong(error_msg);
                 ld2.loadFailed();
+                ld2.close();
             }
         });
     }
@@ -139,7 +139,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
         NetTool.getOrderInfo(orderId, new GsonResponseHandler<BaseBean<OrderDetails>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrderDetails> response) {
-                ld2.loadSuccess();
+                ld2.close();
                 if (response.getData().getOrderdetail() != null) {
                     details = response.getData();
                     contentAdapter.setNewData(response.getData().getOrderdetail().getPros());
@@ -160,6 +160,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
             public void onFailure(int statusCode, String code, String error_msg) {
                 ToastUtils.showLong(error_msg);
                 ld2.loadFailed();
+                ld2.close();
             }
         });
     }
@@ -196,25 +197,22 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
         ld2.show();
         NetTool.getPayBack(SpUtil.getInt(Constant.STORE_ID), id, payType, new GsonResponseHandler<BaseBean<String>>() {
             @Override
-            public void onSuccess(int statusCode,final BaseBean<String> response) {
-                if (response.getMsg().equals("yes")) {
+            public void onSuccess(int statusCode, final BaseBean<String> response) {
+                if (response.getCode().equals("0")) {
                     clearRight();
-                    ThreadPool.getInstantiation().addTask(new Runnable() {
-                        @Override
-                        public void run() {
-                            PrinterUtil.printPayBack(PayBackActivity.this, details, response.getData());
-                        }
-                    });
+                    PrinterUtil.printPayBack(PayBackActivity.this, details, response.getData());
                 } else {
                     ToastUtils.showLong(response.getMsg());
                 }
                 dialog.cancel();
                 ld2.loadSuccess();
+                ld2.close();
             }
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 ld2.loadFailed();
+                ld2.close();
                 if (!code.equals("0")) {
                     ToastUtils.showLong(error_msg);
                 }

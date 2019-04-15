@@ -22,7 +22,6 @@ import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
-import com.huojumu.utils.ThreadPool;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
@@ -167,15 +166,10 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             daily();
         }
 
-        ThreadPool.getInstantiation().addTask(new Runnable() {
-            @Override
-            public void run() {
-                PrinterUtil.printDaily(DailyTakeOverActivity.this, types, commissionTv.getText().toString(), earn2.getText().toString(), earn1.getText().toString(), num, SpUtil.getString(Constant.WORKER_NAME), lastDate);
-            }
-        });
+        PrinterUtil.printDaily(DailyTakeOverActivity.this, types, commissionTv.getText().toString(), earn2.getText().toString(), earn1.getText().toString(), num, SpUtil.getString(Constant.WORKER_NAME), lastDate);
     }
 
-    private void getTakeOverInfo(){
+    private void getTakeOverInfo() {
         ld2 = new LoadingDialog(this);
         ld2.setLoadingText("加载中,请等待")
                 .setFailedText("加载失败，请重试");
@@ -204,7 +198,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             }
 
             @Override
-            public void onFailure(int statusCode,String code, String error_msg) {
+            public void onFailure(int statusCode, String code, String error_msg) {
                 if (!code.equals("0")) {
                     ToastUtils.showLong(error_msg);
                 }
@@ -213,7 +207,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
         });
     }
 
-    private void getDailyInfo(){
+    private void getDailyInfo() {
         ld2 = new LoadingDialog(this);
         ld2.setLoadingText("加载中,请等待")
                 .setFailedText("加载失败，请重试");
@@ -242,7 +236,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             }
 
             @Override
-            public void onFailure(int statusCode,String code, String error_msg) {
+            public void onFailure(int statusCode, String code, String error_msg) {
                 if (!code.equals("0")) {
                     ToastUtils.showLong(error_msg);
                 }
@@ -271,7 +265,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             }
 
             @Override
-            public void onFailure(int statusCode,String code, String error_msg) {
+            public void onFailure(int statusCode, String code, String error_msg) {
                 if (code.equals("1220")) {
                     MyOkHttp.mHandler.postDelayed(new Runnable() {
                         @Override
@@ -280,7 +274,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                             finish();
                         }
                     }, 5000);
-                }else if (!code.equals("0")) {
+                } else if (!code.equals("0")) {
                     ToastUtils.showLong(error_msg);
                 }
                 ld2.loadFailed();
@@ -308,7 +302,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             }
 
             @Override
-            public void onFailure(int statusCode,String code, String error_msg) {
+            public void onFailure(int statusCode, String code, String error_msg) {
                 if (!code.equals("0")) {
                     ToastUtils.showLong(error_msg);
                 }

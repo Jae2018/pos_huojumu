@@ -52,6 +52,8 @@ public class LoginActivity extends BaseActivity {
     protected void initView() {
         EventBus.getDefault().register(this);
 
+        checkPermission();
+        requestPermission();
     }
 
     @Override

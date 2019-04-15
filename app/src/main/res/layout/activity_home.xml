@@ -8,19 +8,6 @@
     android:focusableInTouchMode="true"
     tools:context=".main.activity.home.HomeActivity">
 
-    <!--<WebView-->
-        <!--android:id="@+id/web_order"-->
-        <!--android:layout_width="@dimen/d_540"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--android:visibility="invisible" />-->
-
-    <EditText
-        android:id="@+id/box_input"
-        android:layout_width="@dimen/d_90"
-        android:layout_height="@dimen/d_30"
-        />
-
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
@@ -542,5 +529,21 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:gravity="center"
+        android:background="@color/black_overlay">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="支付中..."
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/f_30"/>
+
+    </LinearLayout>
 
 </RelativeLayout>

@@ -64,10 +64,6 @@ public class MoreFunctionDialog extends BaseDialog {
 
     @OnClick(R.id.iv_more_fuc4)
     void Fuc2() {
-        //系统设置
-//        intent.setClass(getContext(), SettingActivity.class);
-//        getContext().startActivity(intent);
-//        dismiss();
         //交班
         Intent intent = new Intent(activity, DailyTakeOverActivity.class);
         intent.putExtra("type", 1);
@@ -93,9 +89,6 @@ public class MoreFunctionDialog extends BaseDialog {
 
     @OnClick(R.id.iv_more_fuc5)
     void Fuc5() {
-//        intent.setClass(getContext(), ChangePwdActivity.class);
-//        getContext().startActivity(intent);
-//        dismiss();
         //日结
         Intent intent = new Intent(activity, DailyTakeOverActivity.class);
         intent.putExtra("type", 2);
@@ -105,13 +98,7 @@ public class MoreFunctionDialog extends BaseDialog {
 
     @OnClick(R.id.iv_more_fuc6)
     void Fuc6() {
-        ThreadPool.getInstantiation().addTask(new Runnable() {
-            @Override
-            public void run() {
-                PrinterUtil.connectPrinter(getContext());
-                PrinterUtil.OpenMoneyBox();
-            }
-        });
+        PrinterUtil.OpenMoneyBox(getContext());
         cancel();
     }
 

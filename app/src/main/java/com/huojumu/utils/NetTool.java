@@ -21,6 +21,7 @@ import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Authenticator;
 import okhttp3.OkHttpClient;
@@ -46,6 +47,7 @@ public class NetTool {
         }
     })
             .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+            .readTimeout(90, TimeUnit.SECONDS)
             .build());
 
     public static MyOkHttp getNetApi() {

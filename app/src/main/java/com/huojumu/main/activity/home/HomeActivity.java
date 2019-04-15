@@ -37,6 +37,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -161,8 +162,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     TextView workName1;
     @BindView(R.id.order_num1)
     TextView order_num1;
-    @BindView(R.id.box_input)
-    EditText box_input;
+    @BindView(R.id.layer)
+    LinearLayout layer;
 
     private HomeSelectedAdapter selectedAdapter;//所选
     private HomeTypeAdapter typeAdapter;//类别
@@ -200,8 +201,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     String name, taste;
 
     String TAG = "home";
-    private OrderBack orderBack;
-    private double change;
+    //    private OrderBack orderBack;
+//    private double change;
     //是否推荐
     private boolean isRecommend = false;
     private HorizontalPageLayoutManager horizontalPageLayoutManager = null;
@@ -221,12 +222,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //链接标签机
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         connectUsb(UsbUtil.getBQName(HomeActivity.this));
-        ThreadPool.getInstantiation().addTask(new Runnable() {
-            @Override
-            public void run() {
-                PrinterUtil.connectPrinter(HomeActivity.this);
-            }
-        });
+//        ThreadPool.getInstantiation().addTask(new Runnable() {
+//            @Override
+//            public void run() {
+//                PrinterUtil.connectPrinter(HomeActivity.this);
+//            }
+//        });
 //
 ////        WebView.enableSlowWholeDocumentDraw();
 //        webView.setWebChromeClient(new WebChromeClient());
@@ -356,10 +357,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     }
 
+    private int time;
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         //系统的软键盘  按下去是 -1, 不管，不拦截
+        time = 0;
         if (event.getDeviceId() == -1) {
             return false;
         }
@@ -367,18 +370,16 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //只要是 扫码枪的事件  都要把他消费掉 不然会被editText 显示出
 //        authNo = "";
         if (event.getAction() == KeyEvent.ACTION_UP) {
-
+            time++;
             //只要数字，一维码里面没有 字母
             int code = event.getKeyCode();
             if (code >= KeyEvent.KEYCODE_0 && code <= KeyEvent.KEYCODE_9) {
                 authNo += String.valueOf(code - KeyEvent.KEYCODE_0);
             }
-            Log.e(TAG, "No : " + authNo);
-
+            Log.e(TAG, authNo);
             //识别到结束，当下使用的设备是  是还会有个KEYCODE_DPAD_DOWN 事件，不知道其它设备有没有  先忽略
             if (orderInfo != null) {
-                Log.e(TAG, "dispatchKeyEvent: "+authNo.length());
-                if (authNo.length() >= 18) {
+                if (time == 19) {
                     Log.e(TAG, "dispatchKeyEvent: 2");
                     payByBox();
                 }
@@ -857,7 +858,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     @Override
     public void OnDialogOkClick(final int type, final double earn, final double cost, final double charge, String name) {
-        change = charge;
+//        change = charge;
         switch (name) {
             case "QuickPayDialog":
                 quickPayDialog.dismiss();
@@ -873,11 +874,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                         @Override
                         public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
-                            orderBack = response.getData();
+//                            orderBack = response.getData();
                             orderNo = response.getData().getOrderNo();
-                            ld = new LoadingDialog(HomeActivity.this);
-                            ld.setSuccessText("支付完毕").setLoadingText("支付失败").setLoadingText("支付中");
-                            ld.show();
+                            layer.setVisibility(View.VISIBLE);
 //                            if (type == 2) {
 //                                engine.getAliIV().setImageBitmap(QrUtil.createQRCodeWithLogo(HomeActivity.this, response.getData().getAliPayQrcode(), BitmapFactory.decodeResource(getResources(), R.drawable.zhifubao_normal)));
 //                            } else if (type == 3) {
@@ -907,10 +906,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
-                        orderBack = response.getData();
+//                        orderBack = response.getData();
                         orderNo = response.getData().getOrderNo();
                         PrintOrder(response.getData(), charge < 0 ? 0 : charge);
-                        SpUtil.save("hasOverOrder", true);
                         MyOkHttp.mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -940,33 +938,30 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     private void payByBox() {
         if (orderInfo != null) {
+            time = 2;
             NetTool.payByBox(orderNo, orderInfo.getPayType(), authNo, new GsonResponseHandler<BaseBean<BoxPay>>() {
                 @Override
                 public void onSuccess(int statusCode, BaseBean<BoxPay> response) {
                     authNo = "";
-                    if (response.getMsg().equals("yes")) {
-                        ld.loadSuccess();
-                        ld.close();
+                    layer.setVisibility(View.GONE);
+                    if (response.getCode().equals("0")) {
                         clear();
                     } else {
-                        ld.loadFailed();
-                        ld.close();
                         ToastUtils.showLong(response.getMsg());
                     }
                 }
 
                 @Override
                 public void onFailure(int statusCode, String code, String error_msg) {
-                    ld.loadFailed();
-                    ld.close();
+                    layer.setVisibility(View.GONE);
                 }
             });
         }
         MyOkHttp.mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (ld != null) {
-                    ld.close();
+                if (layer.isShown()) {
+                    layer.setVisibility(View.GONE);
                     ToastUtils.showLong("支付超时，请重试");
                 }
             }
@@ -1029,42 +1024,18 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 //        timer.start();
 //    }
 
-//    private void initWebOrder(String OrderNo, String date, String proList, String totalMoney,
-//                              String cost, String charge, String cut) {
-//        String html = H5Order.html;
-//        html = html.replace("{1}", "N" + OrderNo.substring(OrderNo.length() - 4))
-//                .replace("{2}", SpUtil.getString(Constant.WORKER_NAME))
-//                .replace("{3}", date)
-//                .replace("{data}", proList)
-//                .replace("{4}", totalMoney)
-//                .replace("{5}", cost)
-//                .replace("{6}", cut)
-//                .replace("{7}", charge)
-//                .replace("{8}", SpUtil.getString(Constant.STORE_NAME));
-//
-//        webView.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
-//    }
 
     /**
      * 打印订单小票
      */
     private void PrintOrder(final OrderBack orderBack, final double charge) {
-        ThreadPool.getInstantiation().addTask(new Runnable() {
-            @Override
-            public void run() {
-                if (isCash) {
-                    isCash = false;
-                    PrinterUtil.OpenMoneyBox();
-                }
-                PrinterUtil.printString80(HomeActivity.this, productions, orderBack.getOrderNo(),
-                        SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
-                        "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "",
-                        totalCut + "", orderBack.getCreatTime());
-            }
-        });
 
-//        String proList = PrinterUtil.toJson(productions);
-//        initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList, totalPrice + "", totalPrice + "", charge + "", totalCut + "");
+        PrinterUtil.OpenMoneyBox(this);
+
+        PrinterUtil.printString80(HomeActivity.this, productions, orderBack.getOrderNo(),
+                SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
+                "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "",
+                totalCut + "", orderBack.getCreatTime());
 
         printcount = 0;
         printProducts.clear();
@@ -1341,7 +1312,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             @Override
                             public void run() {
                                 connectUsb(deviceName);
-                                PrinterUtil.connectPrinter(HomeActivity.this);
+//                                PrinterUtil.connectPrinter(HomeActivity.this);
                                 try {
                                     Thread.sleep(1000);
                                 } catch (Exception e) {

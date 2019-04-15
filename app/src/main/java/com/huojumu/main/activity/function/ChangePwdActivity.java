@@ -33,9 +33,7 @@ public class ChangePwdActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        ld2 = new LoadingDialog(this);
-        ld2.setLoadingText("加载中,请等待")
-                .setFailedText("加载失败，请重试");
+
     }
 
     @Override
@@ -52,11 +50,14 @@ public class ChangePwdActivity extends BaseActivity {
     void commit() {
         String old = oldEt.getText().toString();
         String n = newEt.getText().toString();
+        ld2 = new LoadingDialog(this);
+        ld2.setLoadingText("加载中,请等待")
+                .setFailedText("加载失败，请重试");
         ld2.show();
         NetTool.changePWD(old, n, new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
-                ld2.loadSuccess();
+                ld2.close();
                 Toast.makeText(ChangePwdActivity.this, "修改成功，请牢记新密码", Toast.LENGTH_LONG).show();
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -71,6 +72,7 @@ public class ChangePwdActivity extends BaseActivity {
             public void onFailure(int statusCode,String code, String error_msg) {
                 ToastUtils.showLong(error_msg);
                 ld2.loadFailed();
+                ld2.close();
             }
         });
     }

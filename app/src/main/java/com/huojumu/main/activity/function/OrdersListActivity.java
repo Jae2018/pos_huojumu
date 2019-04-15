@@ -92,7 +92,6 @@ public class OrdersListActivity extends BaseActivity {
         NetTool.getStoreOrderList(pageNum, new GsonResponseHandler<BaseBean<OrdersList>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrdersList> response) {
-                ld2.loadSuccess();
                 ld2.close();
                 rowsBeanList.addAll(response.getData().getRows());
                 listAdapter.setNewData(rowsBeanList);

@@ -80,9 +80,7 @@ public class InventoryActivity extends BaseActivity {
                 i.putExtra("checkId", rowsBeanList.get(position).getCheckId());
             }
         });
-        ld2 = new LoadingDialog(this);
-        ld2.setLoadingText("加载中,请等待")
-                .setFailedText("加载失败，请重试");
+
     }
 
     @Override
@@ -91,13 +89,14 @@ public class InventoryActivity extends BaseActivity {
     }
 
     private void getList() {
+        ld2 = new LoadingDialog(this);
+        ld2.setLoadingText("加载中,请等待")
+                .setFailedText("加载失败，请重试");
         ld2.show();
         NetTool.getInventoryList(SpUtil.getInt(Constant.STORE_ID), pageNum, new GsonResponseHandler<BaseBean<InventoryList>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<InventoryList> response) {
-                Log.e("盘点", PrinterUtil.toJson(response));
-
-                ld2.loadSuccess();
+                ld2.close();
                 rowsBeanList.addAll(response.getData().getRows()) ;
                 adapter.setNewData(rowsBeanList);
                 totalPAge = response.getData().getTotal();
@@ -109,6 +108,7 @@ public class InventoryActivity extends BaseActivity {
             public void onFailure(int statusCode,String code, String error_msg) {
                 ToastUtils.showLong(error_msg);
                 ld2.loadFailed();
+                ld2.close();
             }
         });
     }

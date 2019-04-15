@@ -15,6 +15,7 @@ import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,9 +88,12 @@ public class VipActivity extends BaseActivity {
     }
 
     private void getVipList() {
+        ld2 = new LoadingDialog(this);
+        ld2.show();
         NetTool.getVipList(SpUtil.getInt(Constant.PINPAI_ID), pageNum, new GsonResponseHandler<BaseBean<VipListBean>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<VipListBean> response) {
+                ld2.close();
                 if (!response.getData().getRows().isEmpty()) {
                     vips.addAll(response.getData().getRows());
                     adapter.setNewData(vips);
@@ -100,7 +104,7 @@ public class VipActivity extends BaseActivity {
 
             @Override
             public void onFailure(int statusCode,String code, String error_msg) {
-
+                ld2.close();
             }
         });
     }

@@ -49,9 +49,7 @@ public class OrderDetailActivity extends BaseActivity {
         contentAdapter = new OrderBackContentAdapter(null);
         detailRecycler.setAdapter(contentAdapter);
         id = getIntent().getStringExtra("detailId");
-        ld2 = new LoadingDialog(this);
-        ld2.setLoadingText("加载中,请等待")
-                .setFailedText("加载失败，请重试");
+
     }
 
     @Override
@@ -60,11 +58,14 @@ public class OrderDetailActivity extends BaseActivity {
     }
 
     private void getOrderDetail(String orderId) {
+        ld2 = new LoadingDialog(this);
+        ld2.setLoadingText("加载中,请等待")
+                .setFailedText("加载失败，请重试");
         ld2.show();
         NetTool.getOrderInfo(orderId, new GsonResponseHandler<BaseBean<OrderDetails>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrderDetails> response) {
-                ld2.loadSuccess();
+                ld2.close();
                 if (response.getData().getOperator() != null) {
                     buyer.setText(String.format("操作人员：%s", response.getData().getOperator().getNickname()));
                 }
@@ -83,6 +84,7 @@ public class OrderDetailActivity extends BaseActivity {
             public void onFailure(int statusCode,String code, String error_msg) {
                 ToastUtils.showLong(error_msg);
                 ld2.loadFailed();
+                ld2.close();
             }
         });
     }

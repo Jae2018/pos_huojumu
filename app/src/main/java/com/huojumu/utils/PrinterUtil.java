@@ -539,6 +539,9 @@ public class PrinterUtil {
                         mPrinter.printString(s, "GBK");
 
                         mPrinter.cutPaper(66, 0);
+
+                        byte[] bytes = {0x1B, 0x70, 0x0, 0x3C, (byte) 0xFF};
+                        mPrinter.writeIO(bytes, 0, bytes.length - 1, 1000);
                     } catch (Exception e) {
                         Log.d(TAG, e.getMessage());
                     } finally {

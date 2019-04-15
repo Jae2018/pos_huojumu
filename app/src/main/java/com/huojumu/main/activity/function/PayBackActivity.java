@@ -19,12 +19,15 @@ import com.huojumu.main.dialogs.DialogInterface;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.OrderDetails;
 import com.huojumu.model.OrderEnableBackBean;
+import com.huojumu.model.WorkBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -208,8 +211,11 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
                 if (response.getCode().equals("0")) {
                     clearRight();
                     PrinterUtil.printPayBack(PayBackActivity.this, details, response.getData());
-                    SpUtil.save(Constant.WORK_P, (float) (p - total));
-                    SpUtil.save(Constant.ORDER_NUM, num - 1);
+//                    SpUtil.save(Constant.WORK_P, (float) (p - total));
+                    float price = (float) (p - total);
+                    num = num - 1;
+                    EventBus.getDefault().post(new WorkBean(num, price));
+//                    SpUtil.save(Constant.ORDER_NUM, num);
                 } else {
                     ToastUtils.showLong(response.getMsg());
                 }

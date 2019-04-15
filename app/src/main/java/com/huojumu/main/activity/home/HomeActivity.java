@@ -75,6 +75,8 @@ import com.huojumu.model.Products;
 import com.huojumu.model.SmallType;
 import com.huojumu.model.Specification;
 //import com.huojumu.model.TaskBean;
+import com.huojumu.model.TaskBean;
+import com.huojumu.model.WorkBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
 import com.huojumu.utils.MyDividerDecoration;
@@ -97,6 +99,10 @@ import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 //import org.greenrobot.eventbus.EventBus;
 //import org.greenrobot.eventbus.Subscribe;
 //import org.greenrobot.eventbus.ThreadMode;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
@@ -217,7 +223,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     protected void initView() {
         MyApplication.getSocketTool().sendHeart();
-//        EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this);
 
         //链接标签机
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
@@ -351,9 +357,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         MyHandler mHandler = new MyHandler(this);
         mHandler.sendEmptyMessageDelayed(MSG_UPDATE_CURRENT_TIME, 500);
 
-        order_num.setText(String.format(Locale.CHINA, "%.2f元", SpUtil.getFloat(Constant.WORK_P)));
+//        order_num.setText(String.format(Locale.CHINA, "%.2f元", SpUtil.getFloat(Constant.WORK_P)));
         workName1.setText(SpUtil.getString(Constant.WORKER_NAME));
-        order_num1.setText(String.format(Locale.CHINA, "%d单", SpUtil.getInt(Constant.ORDER_NUM)));
+//        order_num1.setText(String.format(Locale.CHINA, "%d单", SpUtil.getInt(Constant.ORDER_NUM)));
 
     }
 
@@ -640,13 +646,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     public void callback(String s) {
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        order_num.setText(String.format(Locale.CHINA, "%.2f元", SpUtil.getFloat(Constant.WORK_P)));
-        order_num1.setText(String.format(Locale.CHINA, "%d单", SpUtil.getInt(Constant.ORDER_NUM)));
     }
 
     private void checkPriceForDisplay() {
@@ -1176,8 +1175,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     }
 //
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void GetPayBack(TaskBean taskBean) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void GetPayBack(WorkBean workBean) {
+        order_num.setText(String.format(Locale.CHINA, "%.2f元", workBean.getPrice()));
+        order_num1.setText(String.format(Locale.CHINA, "%d单", workBean.getNum()));
 //        //socket支付回调
 //        if (taskBean.getData().getState().equals("01")) {//用户支付完成
 //            ld.loadSuccess();
@@ -1192,7 +1193,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 //                ld.loadFailed();
 //            }
 //        }, 10000);
-//    }
+    }
 
     private void usbConn(UsbDevice usbDevice) {
         new DeviceConnFactoryManager.Build()
@@ -1226,7 +1227,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         super.onDestroy();
         woeker_p = 0;
         orderNum = 0;
-//        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this);
         DeviceConnFactoryManager.closeAllPort();
         if (ThreadPool.getInstantiation() != null) {
             ThreadPool.getInstantiation().stopThreadPool();

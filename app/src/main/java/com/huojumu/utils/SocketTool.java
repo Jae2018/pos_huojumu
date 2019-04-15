@@ -115,7 +115,7 @@ public class SocketTool extends WebSocketListener {
                 break;
             case Constant.PAYCODE:
                 //支付完成回调
-                EventBus.getDefault().post(taskBean);
+//                EventBus.getDefault().post(taskBean);
                 break;
             case Constant.START:
                 //扫码登录回调

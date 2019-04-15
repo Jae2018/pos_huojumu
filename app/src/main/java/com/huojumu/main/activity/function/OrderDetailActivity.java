@@ -73,7 +73,7 @@ public class OrderDetailActivity extends BaseActivity {
                     contentAdapter.setNewData(response.getData().getOrderdetail().getPros());
                     priceTv.setText(String.format("订单金额：%s元", response.getData().getOrderdetail().getTotalPrice()));
                     dateTv.setText(String.format("订单日期：%s", response.getData().getOrderdetail().getCreateTime()));
-                    payTypeTv.setText(String.format("支付方式：%s", response.getData().getOrderdetail().getPayType().equals("010") ? "微信支付" : response.getData().getOrderdetail().getPayType().equals("020") ? "支付宝支付" : "现金支付"));
+                    payTypeTv.setText(String.format("支付方式：%s", response.getData().getOrderdetail().getPayType()==null?"微信支付":response.getData().getOrderdetail().getPayType().equals("010") ? "微信支付" : response.getData().getOrderdetail().getPayType().equals("020") ? "支付宝支付" : "现金支付"));
                 }
                 if (refreshLayout.isRefreshing()) {
                     refreshLayout.setRefreshing(false);

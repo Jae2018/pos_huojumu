@@ -28,10 +28,8 @@ public interface Constant {
     String ENT_NAME = "entName";
     String ENT_DIS = "entDis";
     String HTML = "HTML";
-    String LOGO_PNG = "file:///android_res/drawable/logo.jpg";
-    String QR_CODE = "file:///android_res/drawable/qr_code.jpg";
-    String JS_QUERY = "file:///android_asset/win8_Demo/index.html";
-    String JS_CAPTURE = "file:///android_asset/win8_Demo/index.html";
+    String WORK_P = "woeker_p";
+    String ORDER_NUM = "orderNum";
 
     /* network params */
     int REQUEST_CODE_PICK_IMAGE = 1;

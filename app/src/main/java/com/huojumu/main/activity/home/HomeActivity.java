@@ -27,7 +27,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 //import android.text.Editable;
 //import android.text.TextWatcher;
 //import android.util.Base64;
-import android.util.Log;
+//import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -303,7 +303,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             temp.add(p);
                         }
                     }
-                    Log.e(TAG, "onItemClick: " + PrinterUtil.toJson(temp));
+//                    Log.e(TAG, "onItemClick: " + PrinterUtil.toJson(temp));
                     productAdapter.setNewData(temp);
                 } else {
                     productAdapter.setNewData(tempProduces);
@@ -351,9 +351,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         MyHandler mHandler = new MyHandler(this);
         mHandler.sendEmptyMessageDelayed(MSG_UPDATE_CURRENT_TIME, 500);
 
-        order_num.setText(String.format(Locale.CHINA, "%.2f元", SpUtil.getFloat("woeker_p")));
+        order_num.setText(String.format(Locale.CHINA, "%.2f元", SpUtil.getFloat(Constant.WORK_P)));
         workName1.setText(SpUtil.getString(Constant.WORKER_NAME));
-        order_num1.setText(String.format(Locale.CHINA, "%d单", SpUtil.getInt("orderNum")));
+        order_num1.setText(String.format(Locale.CHINA, "%d单", SpUtil.getInt(Constant.ORDER_NUM)));
 
     }
 
@@ -377,12 +377,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 authNo += String.valueOf(code - KeyEvent.KEYCODE_0);
 
             }
-            Log.e(TAG, authNo);
+//            Log.e(TAG, authNo);
             //识别到结束，当下使用的设备是  是还会有个KEYCODE_DPAD_DOWN 事件，不知道其它设备有没有  先忽略
             if (orderInfo != null) {
-                Log.e(TAG, "dispatchKeyEvent: time  =" + time);
+//                Log.e(TAG, "dispatchKeyEvent: time  =" + time);
                 if (time == 19) {
-                    Log.e(TAG, "dispatchKeyEvent: 2");
+//                    Log.e(TAG, "dispatchKeyEvent: 2");
                     payByBox();
                 }
             }
@@ -593,9 +593,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     public void onSuccess(int statusCode, BaseBean<Products> response) {
                         tempProduces = response.getData().getProducts();
                         productAdapter.setNewData(response.getData().getProducts());
-                        for (Production p : tempProduces) {
-                            Log.e(TAG, p.getProAlsname());
-                        }
+//                        for (Production p : tempProduces) {
+//                            Log.e(TAG, p.getProAlsname());
+//                        }
                         b3 = true;
                         tryFinish();
                     }
@@ -645,7 +645,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     protected void onResume() {
         super.onResume();
-
+        order_num.setText(String.format(Locale.CHINA, "%.2f元", SpUtil.getFloat(Constant.WORK_P)));
+        order_num1.setText(String.format(Locale.CHINA, "%d单", SpUtil.getInt(Constant.ORDER_NUM)));
     }
 
     private void checkPriceForDisplay() {
@@ -822,8 +823,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case Constant.WORK_BACK_OVER:
-                    SpUtil.save("woeker_p", (float) 0);
-                    SpUtil.save("orderNum", 0);
+                    SpUtil.save(Constant.WORK_P, (float) 0);
+                    SpUtil.save(Constant.ORDER_NUM, 0);
                     ToastUtils.showLong("已完成交班！即将退出登录！");
                     MyOkHttp.mHandler.postDelayed(new Runnable() {
                         @Override
@@ -833,8 +834,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     }, 1000);
                     break;
                 case Constant.WORK_BACK_DAILY:
-                    SpUtil.save("woeker_p", (float) 0);
-                    SpUtil.save("orderNum", 0);
+                    SpUtil.save(Constant.WORK_P, (float) 0);
+                    SpUtil.save(Constant.ORDER_NUM, 0);
                     MyOkHttp.mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -857,7 +858,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         orderInfo.setPinpaiID(SpUtil.getInt(Constant.PINPAI_ID));
         orderInfo.setQuanIds(new ArrayList<Integer>());
         orderInfo.setDiscountsType(SpUtil.getString(Constant.ENT_DIS));
-        Log.e(TAG, "initOrder: " + PrinterUtil.toJson(dataBeans));
+//        Log.e(TAG, "initOrder: " + PrinterUtil.toJson(dataBeans));
         orderInfo.setData(dataBeans);
         orderInfo.setOrdSource("3");
     }
@@ -996,7 +997,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         //判断USB设备是否有权限
         if (usbDevice != null) {
-            Log.e("connectUsb", "dddd");
+//            Log.e("connectUsb", "dddd");
             if (usbManager.hasPermission(usbDevice)) {
                 usbConn(usbDevice);
             } else {
@@ -1037,6 +1038,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 //    }
 
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+    }
+
     /**
      * 打印订单小票
      */
@@ -1075,8 +1081,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         orderNum++;
         order_num.setText(String.format(Locale.CHINA, "%.2f元", woeker_p));
         order_num1.setText(String.format(Locale.CHINA, "%d单", orderNum));
-        SpUtil.save("woeker_p", woeker_p);
-        SpUtil.save("orderNum", orderNum);
+        SpUtil.save(Constant.WORK_P, woeker_p);
+        SpUtil.save(Constant.ORDER_NUM, orderNum);
 
         MyOkHttp.mHandler.postDelayed(new Runnable() {
             @Override
@@ -1270,7 +1276,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         // 绘制图片
         Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.logo9);
         tsc.addBitmap(220, 40, LabelCommand.BITMAP_MODE.OVERWRITE, 80, b);
-        Log.e(TAG, "PrintOrder: print 9");
+//        Log.e(TAG, "PrintOrder: print 9");
         // 打印标签
         tsc.addPrint(1, 1);
         // 打印标签后 蜂鸣器响
@@ -1316,11 +1322,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     break;
                 //Usb连接断开、蓝牙连接断开广播
                 case ACTION_USB_DEVICE_DETACHED:
-                    Log.e(TAG, "onReceive: ACTION_USB_DEVICE_DETACHED");
+//                    Log.e(TAG, "onReceive: ACTION_USB_DEVICE_DETACHED");
                     break;
                 //Usb连接断开、蓝牙连接广播
                 case ACTION_USB_DEVICE_ATTACHED:
-                    Log.e(TAG, "onReceive: ACTION_USB_DEVICE_ATTACHED");
+//                    Log.e(TAG, "onReceive: ACTION_USB_DEVICE_ATTACHED");
                     final String deviceName = UsbUtil.getBQName(HomeActivity.this);
                     final String xpName = UsbUtil.getXPName(HomeActivity.this);
 
@@ -1336,7 +1342,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                 try {
                                     Thread.sleep(1000);
                                 } catch (Exception e) {
-                                    Log.e("thread", e.getMessage());
+//                                    Log.e("thread", e.getMessage());
                                 }
                                 ld3.close();
                             }

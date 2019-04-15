@@ -66,6 +66,9 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
     //
     private CertainDialog dialog;
     private OrderDetails details;
+    private float p;
+    private double total;
+    private int num;
 
     @Override
     protected int setLayout() {
@@ -98,6 +101,9 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
                 getOrderDetail(id);
             }
         });
+
+        p = SpUtil.getFloat(Constant.WORK_P);
+        num = SpUtil.getInt(Constant.ORDER_NUM);
     }
 
     @Override
@@ -142,8 +148,9 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
                 ld2.close();
                 if (response.getData().getOrderdetail() != null) {
                     details = response.getData();
+                    total = response.getData().getOrderdetail().getTotalPrice();
                     contentAdapter.setNewData(response.getData().getOrderdetail().getPros());
-                    priceTv.setText(String.format("订单金额：%s元", response.getData().getOrderdetail().getTotalPrice()));
+                    priceTv.setText(String.format("订单金额：%s元",response.getData().getOrderdetail().getTotalPrice()));
                     dateTv.setText(String.format("订单日期：%s", response.getData().getOrderdetail().getCreateTime()));
                     payTypeTv.setText(String.format("支付方式：%s", response.getData().getOrderdetail().getPayType().equals("900") ? "现金支付" : "移动支付"));
                 }
@@ -201,6 +208,8 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
                 if (response.getCode().equals("0")) {
                     clearRight();
                     PrinterUtil.printPayBack(PayBackActivity.this, details, response.getData());
+                    SpUtil.save(Constant.WORK_P, (float) (p - total));
+                    SpUtil.save(Constant.ORDER_NUM, num - 1);
                 } else {
                     ToastUtils.showLong(response.getMsg());
                 }

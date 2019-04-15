@@ -448,7 +448,7 @@ public class PrinterUtil {
      * 打印文本80mm小票样式 48 字节
      */
     public static void printString80(final Context context, final List<Production> pList, final String orderNo, final String name, final String totalMoney,
-                                     final String earn, final String cost, final String charge, final String cut, final String date) {
+                                     final String earn, final String cost, final String charge, final String cut, final String date, final String type) {
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
             public void run() {
@@ -500,7 +500,8 @@ public class PrinterUtil {
                                 + "\n" + printTwoData80("应收金额", earn)
                                 + "\n" + printTwoData80("客户实付", cost)
                                 + "\n" + printTwoData80("优    惠", cut)
-                                + "\n" + printTwoData80("找    零", charge) + "\n";
+                                + "\n" + printTwoData80("找    零", charge)
+                                + "\n" + printTwoData80("支付方式", type) + "\n";
                         mPrinter.printString(s, "GBK");
 
                         //虚实线

@@ -919,13 +919,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
 //                        orderBack = response.getData();
                         orderNo = response.getData().getOrderNo();
-                        PrintOrder(response.getData(), charge < 0 ? 0 : charge);
+                        PrintOrder(response.getData(), charge < 0 ? 0 : charge,"现金支付");
                         MyOkHttp.mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 clear();
                             }
-                        }, 1500);
+                        }, 1000);
                     }
 
                     @Override
@@ -956,8 +956,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     authNo = "";
                     layer.setVisibility(View.GONE);
                     if (response.getCode().equals("0")) {
-                        PrintOrder(orderBack, change < 0 ? 0 : change);
-                        clear();
+                        PrintOrder(orderBack, change < 0 ? 0 : change,orderInfo.getPayType().equals("010")?"微信支付":"支付宝支付");
                     } else {
                         ToastUtils.showLong(response.getMsg());
                     }
@@ -1041,14 +1040,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     /**
      * 打印订单小票
      */
-    private void PrintOrder(final OrderBack orderBack, final double charge) {
+    private void PrintOrder(final OrderBack orderBack, final double charge,String type) {
 
         PrinterUtil.OpenMoneyBox(this);
 
         PrinterUtil.printString80(HomeActivity.this, productions, orderBack.getOrderNo().substring(orderBack.getOrderNo().length()-4),
                 SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
                 "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "",
-                totalCut + "", orderBack.getCreatTime());
+                totalCut + "", orderBack.getCreatTime(),type);
 
         printcount = 0;
         printProducts.clear();
@@ -1078,6 +1077,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         order_num1.setText(String.format(Locale.CHINA, "%d单", orderNum));
         SpUtil.save("woeker_p", woeker_p);
         SpUtil.save("orderNum", orderNum);
+
+        MyOkHttp.mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                clear();
+            }
+        }, 1000);
+
     }
 
 //    private void openCash() {

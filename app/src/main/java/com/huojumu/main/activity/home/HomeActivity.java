@@ -357,12 +357,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     }
 
-    private int time;
+    private int time = 0;
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         //系统的软键盘  按下去是 -1, 不管，不拦截
-        time = 0;
+//        time = 0;
         if (event.getDeviceId() == -1) {
             return false;
         }
@@ -375,10 +375,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             int code = event.getKeyCode();
             if (code >= KeyEvent.KEYCODE_0 && code <= KeyEvent.KEYCODE_9) {
                 authNo += String.valueOf(code - KeyEvent.KEYCODE_0);
+
             }
             Log.e(TAG, authNo);
             //识别到结束，当下使用的设备是  是还会有个KEYCODE_DPAD_DOWN 事件，不知道其它设备有没有  先忽略
             if (orderInfo != null) {
+                Log.e(TAG, "dispatchKeyEvent: time  =" + time);
                 if (time == 19) {
                     Log.e(TAG, "dispatchKeyEvent: 2");
                     payByBox();
@@ -386,6 +388,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
 
         }
+//        MyOkHttp.mHandler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                authNo = "";
+//                time = 0;
+//            }
+//        }, 200);
         //都是扫码枪来的事件，选择消费掉
         return super.dispatchKeyEvent(event);
     }
@@ -853,12 +862,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         orderInfo.setOrdSource("3");
     }
 
+    OrderBack orderBack;
+    double change;
     /**
      * 结账 dialog 按钮回调
      */
     @Override
     public void OnDialogOkClick(final int type, final double earn, final double cost, final double charge, String name) {
-//        change = charge;
+        change = charge;
         switch (name) {
             case "QuickPayDialog":
                 quickPayDialog.dismiss();
@@ -874,7 +885,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                         @Override
                         public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
-//                            orderBack = response.getData();
+                            orderBack = response.getData();
                             orderNo = response.getData().getOrderNo();
                             layer.setVisibility(View.VISIBLE);
 //                            if (type == 2) {
@@ -937,14 +948,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     private void payByBox() {
+        time = 0;
         if (orderInfo != null) {
-            time = 2;
             NetTool.payByBox(orderNo, orderInfo.getPayType(), authNo, new GsonResponseHandler<BaseBean<BoxPay>>() {
                 @Override
                 public void onSuccess(int statusCode, BaseBean<BoxPay> response) {
                     authNo = "";
                     layer.setVisibility(View.GONE);
                     if (response.getCode().equals("0")) {
+                        PrintOrder(orderBack, change < 0 ? 0 : change);
                         clear();
                     } else {
                         ToastUtils.showLong(response.getMsg());
@@ -961,11 +973,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             @Override
             public void run() {
                 if (layer.isShown()) {
+                    authNo = "";
                     layer.setVisibility(View.GONE);
                     ToastUtils.showLong("支付超时，请重试");
                 }
             }
-        }, 20 * 1000);
+        }, 10 * 1000);
     }
 
 
@@ -1306,7 +1319,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
                     if (!deviceName.isEmpty() || !xpName.isEmpty()) {
                         ld3 = new LoadingDialog(HomeActivity.this);
-                        ld3.setLoadingText("正在连接打印机，请等待");
+                        ld3.setLoadingText("正在连接外接设备，请等待");
                         ld3.show();
                         MyOkHttp.mHandler.postDelayed(new Runnable() {
                             @Override

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -15,6 +16,7 @@ import com.huojumu.model.BaseBean;
 import com.huojumu.model.InventoryList;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
+import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
@@ -93,6 +95,8 @@ public class InventoryActivity extends BaseActivity {
         NetTool.getInventoryList(SpUtil.getInt(Constant.STORE_ID), pageNum, new GsonResponseHandler<BaseBean<InventoryList>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<InventoryList> response) {
+                Log.e("盘点", PrinterUtil.toJson(response));
+
                 ld2.loadSuccess();
                 rowsBeanList.addAll(response.getData().getRows()) ;
                 adapter.setNewData(rowsBeanList);

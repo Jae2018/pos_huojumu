@@ -109,7 +109,6 @@ public class InventoryActivity extends BaseActivity {
             @Override
             public void onFailure(int statusCode,String code, String error_msg) {
                 ToastUtils.showLong("暂无数据");
-                ld2.loadFailed();
                 ld2.close();
             }
         });

@@ -23,6 +23,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -333,13 +334,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         //系统的软键盘  按下去是 -1, 不管，不拦截
-//        time = 0;
         if (event.getDeviceId() == -1) {
             return false;
         }
         //按下弹起，识别到弹起的话算一次 有效输入
         //只要是 扫码枪的事件  都要把他消费掉 不然会被editText 显示出
-//        authNo = "";
         if (event.getAction() == KeyEvent.ACTION_UP) {
             time++;
             //只要数字，一维码里面没有 字母
@@ -347,12 +346,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             if (code >= KeyEvent.KEYCODE_0 && code <= KeyEvent.KEYCODE_9) {
                 authNo += String.valueOf(code - KeyEvent.KEYCODE_0);
             }
-//            Log.e(TAG, authNo);
             //识别到结束，当下使用的设备是  是还会有个KEYCODE_DPAD_DOWN 事件，不知道其它设备有没有  先忽略
             if (orderInfo != null) {
-//                Log.e(TAG, "dispatchKeyEvent: time  =" + time);
                 if (time == 19) {
-//                    Log.e(TAG, "dispatchKeyEvent: 2");
                     payByBox();
                 }
             }
@@ -406,8 +402,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         searchList.clear();
         m = 0;
         if (typeList.isEmpty()) {
+            Log.e(TAG, "inputClear: 1");
             productAdapter.setNewData(tempProduces);
         } else {
+            Log.e(TAG, "inputClear: 2");
             productAdapter.setNewData(typeList);
         }
 
@@ -418,11 +416,20 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private void search(String searchStr) {
         m = 2;
         searchList.clear();
-        for (Production p : tempProduces) {
-            if (!p.getProAlsname().isEmpty() && p.getProAlsname().contains(searchStr)) {
-                searchList.add(p);
+        if (!typeList.isEmpty()) {
+            for (Production p : typeList) {
+                if (!p.getProAlsname().isEmpty() && p.getProAlsname().contains(searchStr)) {
+                    searchList.add(p);
+                }
+            }
+        } else {
+            for (Production p : tempProduces) {
+                if (!p.getProAlsname().isEmpty() && p.getProAlsname().contains(searchStr)) {
+                    searchList.add(p);
+                }
             }
         }
+
         productAdapter.setNewData(searchList);
     }
 
@@ -579,7 +586,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
                     @Override
                     public void onFailure(int statusCode, String code, String error_msg) {
-                        ToastUtils.showLong("网络出错，点击刷新");
+//                        ToastUtils.showLong("网络出错，点击刷新");
                     }
                 });
     }
@@ -812,7 +819,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         orderInfo.setPinpaiID(SpUtil.getInt(Constant.PINPAI_ID));
         orderInfo.setQuanIds(new ArrayList<Integer>());
         orderInfo.setDiscountsType(SpUtil.getString(Constant.ENT_DIS));
-//        Log.e(TAG, "initOrder: " + PrinterUtil.toJson(dataBeans));
         orderInfo.setData(dataBeans);
         orderInfo.setOrdSource("3");
     }
@@ -856,7 +862,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
                         @Override
                         public void onFailure(int statusCode, String code, String error_msg) {
-                            ToastUtils.showLong(error_msg);
+//                            ToastUtils.showLong(error_msg);
                         }
                     });
                 }
@@ -870,6 +876,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 cashPayDialog.cancel();
                 cashPayDialog = null;
 
+                ld = new LoadingDialog(this);
+                ld.show();
                 NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
@@ -880,15 +888,27 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             @Override
                             public void run() {
                                 clear();
+                                ld.close();
                             }
                         }, 1000);
                     }
 
                     @Override
                     public void onFailure(int statusCode, String code, String error_msg) {
-                        ToastUtils.showLong(error_msg);
+//                        ToastUtils.showLong(error_msg);
+                        ld.close();
                     }
                 });
+
+                MyOkHttp.mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (ld != null) {
+                            ld.close();
+                        }
+                        ToastUtils.showLong("网络错误，请稍后再试");
+                    }
+                }, 10 * 1000);
                 break;
             case "CertainDialog":
                 //关机确认
@@ -903,6 +923,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 break;
         }
     }
+
+
 
     private void payByBox() {
         time = 0;
@@ -950,10 +972,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //通过USB设备名找到USB设备
         UsbDevice usbDevice = PrinterUtil.getUsbDeviceFromName(HomeActivity.this, name);//UsbUtil.getUsbDeviceList(HomeActivity.this)
 
-
         //判断USB设备是否有权限
         if (usbDevice != null) {
-//            Log.e("connectUsb", "dddd");
             if (usbManager.hasPermission(usbDevice)) {
                 usbConn(usbDevice);
             } else {
@@ -1003,9 +1023,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * 打印订单小票
      */
     private void PrintOrder(final OrderBack orderBack, final double charge, String type) {
-
-        PrinterUtil.OpenMoneyBox(this);
-
         PrinterUtil.printString80(HomeActivity.this, productions, orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4),
                 SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
                 "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "",
@@ -1038,7 +1055,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         order_num.setText(String.format(Locale.CHINA, "%.2f元", woeker_p));
         order_num1.setText(String.format(Locale.CHINA, "%d单", orderNum));
         SpUtil.save(Constant.WORK_P, woeker_p);
-        SpUtil.save(Constant.ORDER_NUM, orderNum);
+        SpUtil.save(Constant.ORDER_NUM, orderNum);//存储工作记录
 
         MyOkHttp.mHandler.postDelayed(new Runnable() {
             @Override
@@ -1137,8 +1154,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void GetPayBack(WorkBean workBean) {
+        //退单回调
         order_num.setText(String.format(Locale.CHINA, "%.2f元", workBean.getPrice()));
         order_num1.setText(String.format(Locale.CHINA, "%d单", workBean.getNum()));
+        SpUtil.save(Constant.WORK_P, workBean.getPrice());
+        SpUtil.save(Constant.ORDER_NUM, workBean.getNum());
 //        //socket支付回调
 //        if (taskBean.getData().getState().equals("01")) {//用户支付完成
 //            ld.loadSuccess();
@@ -1205,6 +1225,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         if (ThreadPool.getInstantiation() != null) {
             ThreadPool.getInstantiation().stopThreadPool();
         }
+        System.exit(0);
     }
 
     /**

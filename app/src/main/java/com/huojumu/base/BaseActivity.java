@@ -52,6 +52,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+
+
     protected void checkPermission() {
         for (String permission : permissions) {
             if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(this, permission)) {

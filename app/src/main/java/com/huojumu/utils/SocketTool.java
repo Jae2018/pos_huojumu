@@ -54,11 +54,13 @@ public class SocketTool extends WebSocketListener {
     }
 
     public void sendHeart() {
-        Log.e(TAG, "sendHeart: ");
+        Log.e(TAG, "sendHeart: 0");
         if (webSocket != null) {
+            Log.e(TAG, "sendHeart: 1");
             thread = new Thread() {
                 public void run() {
                     while (true) {
+                        Log.e(TAG, "sendHeart: 2");
                         webSocket.send("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
                         try {
                             Thread.sleep(600 * 1000);

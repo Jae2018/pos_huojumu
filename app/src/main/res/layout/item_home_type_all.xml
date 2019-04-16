@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/d_40"
+    android:layout_height="@dimen/d_48"
+    android:layout_marginTop="@dimen/d_8"
+    android:layout_marginBottom="@dimen/d_8"
     android:gravity="center">
 
     <TextView

@@ -42,6 +42,9 @@ public class ActiveActivity extends BaseActivity {
     protected void initView() {
         EventBus.getDefault().register(this);
 
+        checkPermission();
+        requestPermission();
+
         if (SpUtil.getBoolean(Constant.HAS_BAND)) {
             Log.e("MainActivity", "initView: 1" );
             MyOkHttp.mHandler.postDelayed(new Runnable() {
@@ -74,7 +77,7 @@ public class ActiveActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        MyApplication.getSocketTool().sendMsg("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
+        MyApplication.getSocketTool().sendHeart();
         MyApplication.getSocketTool().sendMsg(String.format(Constant.BAND, uuid));
     }
 

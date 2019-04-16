@@ -3,7 +3,6 @@ package com.huojumu.main.activity.login;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -41,8 +40,6 @@ public class LoginActivity extends BaseActivity {
 
     private CountDownTimer countDownTimer;
 
-
-
     @Override
     protected int setLayout() {
         return R.layout.activity_login;
@@ -51,9 +48,6 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-
-        checkPermission();
-        requestPermission();
     }
 
     @Override
@@ -69,10 +63,8 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        MyApplication.getSocketTool().sendMsg("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
+        MyApplication.getSocketTool().sendHeart();
     }
-
-
 
     private void getCode() {
         //获取二维码
@@ -97,7 +89,7 @@ public class LoginActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(int statusCode, String code,String error_msg) {
+            public void onFailure(int statusCode, String code, String error_msg) {
                 ToastUtils.showLong(error_msg);
             }
         });
@@ -117,8 +109,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLogin(EventHandler eventHandler){
-        Log.e("Login", "Home: ");
+    public void onLogin(EventHandler eventHandler) {
         if (eventHandler.getType() == 3) {
             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             finish();

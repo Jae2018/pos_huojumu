@@ -41,6 +41,7 @@
 
         <activity
             android:name="com.huojumu.main.activity.login.ActiveActivity"
+            android:configChanges="keyboard|navigation"
             android:launchMode="singleInstance"
             android:screenOrientation="landscape">
             <!--<intent-filter>-->
@@ -52,14 +53,15 @@
         <activity
             android:name="com.huojumu.main.activity.login.LoginActivity"
             android:screenOrientation="landscape"
+            android:configChanges="keyboard|navigation"
             android:launchMode="singleInstance"
             android:windowSoftInputMode="stateHidden|stateUnchanged" >
 
         </activity>
         <activity
             android:name="com.huojumu.main.activity.home.HomeActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleTask"
+            android:configChanges="keyboard|navigation"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme">
             <intent-filter>
@@ -72,19 +74,22 @@
         <activity
             android:name="com.huojumu.main.activity.work.DailyTakeOverActivity"
             android:screenOrientation="landscape"
+            android:configChanges="keyboard|navigation"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name="com.huojumu.main.activity.function.InventoryActivity"
             android:screenOrientation="landscape"
+            android:configChanges="keyboard|navigation"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name="com.huojumu.main.activity.function.InventoryDetailActivity"
             android:screenOrientation="landscape"
+            android:configChanges="keyboard|navigation"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name="com.huojumu.main.activity.MainActivity"
             android:screenOrientation="landscape"
-            >
+            android:configChanges="keyboard|navigation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -94,34 +99,40 @@
         <activity
             android:name="com.huojumu.main.activity.function.ChangePwdActivity"
             android:screenOrientation="landscape"
+            android:configChanges="keyboard|navigation"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name="com.huojumu.main.activity.function.VipActivity"
             android:screenOrientation="landscape"
+            android:configChanges="keyboard|navigation"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name="com.huojumu.main.activity.function.MaterialActivity"
             android:screenOrientation="landscape"
+            android:configChanges="keyboard|navigation"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name="com.huojumu.main.activity.function.PayByBoxActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:configChanges="keyboard|navigation"
             android:screenOrientation="landscape" />
         <activity
             android:name="com.huojumu.main.activity.function.OrdersListActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:configChanges="keyboard|navigation"
             android:screenOrientation="landscape" />
         <activity
             android:name="com.huojumu.main.activity.function.PayBackActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:configChanges="keyboard|navigation"
             android:screenOrientation="landscape" />
         <activity
             android:name="com.huojumu.main.activity.function.SettingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="landscape" />
-        <activity android:name="com.huojumu.main.activity.function.PaymentActivity" />
-        <activity android:name=".main.activity.function.OrderDetailActivity" />
-        <activity android:name=".main.activity.dialog.RegisterVipDialog" />
+        <activity android:name="com.huojumu.main.activity.function.PaymentActivity"
+            android:configChanges="keyboard|navigation"/>
+        <activity android:name=".main.activity.function.OrderDetailActivity"
+            android:configChanges="keyboard|navigation"/>
+        <!--<activity android:name=".main.activity.dialog.RegisterVipDialog"-->
+            <!--android:configChanges="keyboard|navigation"/>-->
 
         <receiver android:name="com.huojumu.receiver.PosReceiver">
             <intent-filter>

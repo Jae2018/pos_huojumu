@@ -4,6 +4,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -69,9 +70,9 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
     //
     private CertainDialog dialog;
     private OrderDetails details;
-    private float p;
-    private double total;
-    private int num;
+    private float p;//当前班次金额
+    private double total;//退单的金额
+    private int num;//当前班次单数
 
     @Override
     protected int setLayout() {
@@ -153,9 +154,9 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
                     details = response.getData();
                     total = response.getData().getOrderdetail().getTotalPrice();
                     contentAdapter.setNewData(response.getData().getOrderdetail().getPros());
-                    priceTv.setText(String.format("订单金额：%s元",response.getData().getOrderdetail().getTotalPrice()));
+                    priceTv.setText(String.format("订单金额：%s元", total));
                     dateTv.setText(String.format("订单日期：%s", response.getData().getOrderdetail().getCreateTime()));
-                    payTypeTv.setText(String.format("支付方式：%s", response.getData().getOrderdetail().getPayType().equals("900") ? "现金支付" : "移动支付"));
+                    payTypeTv.setText(String.format("支付方式：%s", response.getData().getOrderdetail().getPayType().equals("900") ? "现金支付" : response.getData().getOrderdetail().getPayType().equals("010") ? "微信支付" : "支付宝支付"));
                 }
                 if (response.getData().getOperator() != null) {
                     operator.setText(String.format("操作员工：%s", response.getData().getOperator().getNickname()));
@@ -169,7 +170,6 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 ToastUtils.showLong(error_msg);
-                ld2.loadFailed();
                 ld2.close();
             }
         });
@@ -200,10 +200,10 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
 
     @Override
     public void OnDialogOkClick(int type, double earn, double cost, double charge, String name) {
+        dialog.cancel();
         ld2 = new LoadingDialog(this);
         ld2.setLoadingText("加载中,请等待")
-                .setSuccessText("退单成功")
-                .setFailedText("加载失败，请重试");
+                .setSuccessText("退单成功");
         ld2.show();
         NetTool.getPayBack(SpUtil.getInt(Constant.STORE_ID), id, payType, new GsonResponseHandler<BaseBean<String>>() {
             @Override
@@ -211,22 +211,20 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
                 if (response.getCode().equals("0")) {
                     clearRight();
                     PrinterUtil.printPayBack(PayBackActivity.this, details, response.getData());
-//                    SpUtil.save(Constant.WORK_P, (float) (p - total));
                     float price = (float) (p - total);
                     num = num - 1;
+                    Log.e("payback", "onSuccess: " + num + "_______" + price);
                     EventBus.getDefault().post(new WorkBean(num, price));
-//                    SpUtil.save(Constant.ORDER_NUM, num);
                 } else {
                     ToastUtils.showLong(response.getMsg());
                 }
-                dialog.cancel();
+
                 ld2.loadSuccess();
                 ld2.close();
             }
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
-                ld2.loadFailed();
                 ld2.close();
                 if (!code.equals("0")) {
                     ToastUtils.showLong(error_msg);

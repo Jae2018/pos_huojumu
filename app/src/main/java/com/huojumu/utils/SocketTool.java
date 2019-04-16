@@ -36,6 +36,7 @@ public class SocketTool extends WebSocketListener {
         Request request = new Request.Builder()
                 .url(Constant.SOCKET)
                 .build();
+
         OkHttpClient client = new OkHttpClient();
         INSTANCE = new SocketTool(context);
         client.newWebSocket(request, INSTANCE);
@@ -49,18 +50,14 @@ public class SocketTool extends WebSocketListener {
     public void sendMsg(String s) {
         if (webSocket != null) {
             webSocket.send(s);
-            Log.e(TAG, "sendMsg: " + s);
         }
     }
 
     public void sendHeart() {
-        Log.e(TAG, "sendHeart: 0");
         if (webSocket != null) {
-            Log.e(TAG, "sendHeart: 1");
             thread = new Thread() {
                 public void run() {
                     while (true) {
-                        Log.e(TAG, "sendHeart: 2");
                         webSocket.send("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
                         try {
                             Thread.sleep(600 * 1000);
@@ -80,6 +77,7 @@ public class SocketTool extends WebSocketListener {
         super.onOpen(webSocket, response);
         this.webSocket = webSocket;
         Log.e(TAG, "onOpen: ");
+        Log.e("SocketTool", "getInstance: " +Constant.SOCKET);
     }
 
     @Override

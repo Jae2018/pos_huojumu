@@ -5,7 +5,7 @@
     android:layout_height="@dimen/d_50"
     android:gravity="center"
     android:textSize="@dimen/f_20"
-    android:background="@drawable/pro_border">
+    android:background="@drawable/search_btn_selector">
 
 
 

@@ -65,7 +65,6 @@ import com.huojumu.model.Production;
 import com.huojumu.model.Products;
 import com.huojumu.model.SmallType;
 import com.huojumu.model.Specification;
-import com.huojumu.model.Takeover;
 import com.huojumu.model.WorkBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
@@ -240,7 +239,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         selectedAdapter.setOnItemSwipeListener(new OnItemSwipeListener() {
             @Override
             public void onItemSwipeStart(RecyclerView.ViewHolder viewHolder, int pos) {
-
+                Log.e(TAG, "onItemSwipeStart: ");
+                if (!dataBeans.isEmpty()) {
+                    dataBeans.remove(pos);
+                }
             }
 
             @Override
@@ -251,6 +253,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             @Override
             public void onItemSwiped(RecyclerView.ViewHolder viewHolder, int pos) {
                 checkPriceForDisplay();
+
+                Log.e(TAG, "onItemSwiped: " + productions.size());
             }
 
             @Override
@@ -402,10 +406,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         searchList.clear();
         m = 0;
         if (typeList.isEmpty()) {
-            Log.e(TAG, "inputClear: 1");
             productAdapter.setNewData(tempProduces);
         } else {
-            Log.e(TAG, "inputClear: 2");
             productAdapter.setNewData(typeList);
         }
 
@@ -513,7 +515,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             @Override
             public void run() {
                 if (ld2 != null) {
-                    ld2.loadFailed();
                     ld2.close();
                 }
             }
@@ -676,7 +677,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         dataBean.setProId(productsBean.getProId());
         dataBean.setProType(productsBean.getProType());
         dataBeans.add(dataBean);
-
+        Log.e(TAG, PrinterUtil.toJson(dataBeans));
     }
 
     /**
@@ -843,6 +844,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 } else {
                     initOrder();
                     orderInfo.setPayType(type == 2 ? "020" : "010");
+                    Log.e(TAG, PrinterUtil.toJson(orderInfo));
                     //线上支付
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                         @Override
@@ -875,7 +877,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 orderInfo.setPayType("900");
                 cashPayDialog.cancel();
                 cashPayDialog = null;
-
+                Log.e(TAG, PrinterUtil.toJson(orderInfo));
                 ld = new LoadingDialog(this);
                 ld.show();
                 NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
@@ -906,7 +908,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         if (ld != null) {
                             ld.close();
                         }
-                        ToastUtils.showLong("网络错误，请稍后再试");
+//                        ToastUtils.showLong("网络错误，请稍后再试");
                     }
                 }, 10 * 1000);
                 break;
@@ -953,7 +955,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 if (layer.isShown()) {
                     authNo = "";
                     layer.setVisibility(View.GONE);
-                    ToastUtils.showLong("支付超时，请重试");
+//                    ToastUtils.showLong("支付超时，请重试");
                 }
             }
         }, 10 * 1000);

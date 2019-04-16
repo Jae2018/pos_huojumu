@@ -489,6 +489,7 @@ public class PrinterUtil {
                                     sb.append(printThreeData80(" " + bean.getMatName(), String.valueOf(n), String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()))).append("\n");
                                 }
                         }
+                        Log.e(TAG, "print order：" + sb.toString());
                         mPrinter.printString(sb.toString(), "GBK");
 
                         //间隔小的虚线

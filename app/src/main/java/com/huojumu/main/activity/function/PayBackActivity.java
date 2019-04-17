@@ -213,7 +213,6 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
                     PrinterUtil.printPayBack(PayBackActivity.this, details, response.getData());
                     float price = (float) (p - total);
                     num = num - 1;
-                    Log.e("payback", "onSuccess: " + num + "_______" + price);
                     EventBus.getDefault().post(new WorkBean(num, price));
                 } else {
                     ToastUtils.showLong(response.getMsg());

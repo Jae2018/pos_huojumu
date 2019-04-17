@@ -77,10 +77,7 @@ public class UsbDeviceList extends BaseDialog {
             while (deviceIterator.hasNext()) {
                 UsbDevice device = deviceIterator.next();
                 String devicename = device.getDeviceName();
-                String pName = "";
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    pName = device.getProductName();
-                }
+                String pName = device.getProductName();
 
                 if (checkUsbDevicePidVid(device)) {
                     mUsbDeviceArrayAdapter.add(pName + "：" + devicename);

@@ -533,8 +533,9 @@
         android:id="@+id/layer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:gravity="center"
+        android:visibility="gone"
+        android:orientation="vertical"
         android:background="@color/black_overlay">
 
         <TextView
@@ -543,6 +544,18 @@
             android:text="支付中..."
             android:textColor="@android:color/white"
             android:textSize="@dimen/f_30"/>
+
+        <Button
+            android:id="@+id/cancel_qrpay"
+            android:layout_marginTop="@dimen/d_80"
+            android:text="取消支付"
+            android:textSize="@dimen/f_20"
+            android:paddingLeft="@dimen/d_16"
+            android:paddingRight="@dimen/d_16"
+            android:background="@drawable/blue_ok"
+            android:textColor="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

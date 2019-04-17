@@ -1,20 +1,23 @@
 package com.huojumu.model;
 
+import java.util.List;
+
 public class ActivesBean {
+
 
     /**
      * planType : 1
      * endDate : 2019-01-05 00:00:00
      * validWeek : 8
      * planName : 活动1
-     * bargainProIds : null
-     * upToPrice : null
-     * offPrice : null
+     * bargainProIds : [1,2,33,44,55]
+     * upToPrice : 13.0
+     * offPrice : 12.0
      * compId : 1
      * validTime : 1
      * id : 1
-     * upToCount : null
-     * freeCount : null
+     * upToCount : 1
+     * freeCount : 1
      * startDate : 2018-08-20 00:00:00
      * ratio : 90
      */
@@ -23,16 +26,16 @@ public class ActivesBean {
     private String endDate;
     private String validWeek;
     private String planName;
-    private Object bargainProIds;
-    private Object upToPrice;
-    private Object offPrice;
+    private double upToPrice;
+    private double offPrice;
     private int compId;
     private String validTime;
     private int id;
-    private Object upToCount;
-    private Object freeCount;
+    private int upToCount;
+    private int freeCount;
     private String startDate;
     private int ratio;
+    private List<Integer> bargainProIds;
 
     public String getPlanType() {
         return planType;
@@ -66,27 +69,19 @@ public class ActivesBean {
         this.planName = planName;
     }
 
-    public Object getBargainProIds() {
-        return bargainProIds;
-    }
-
-    public void setBargainProIds(Object bargainProIds) {
-        this.bargainProIds = bargainProIds;
-    }
-
-    public Object getUpToPrice() {
+    public double getUpToPrice() {
         return upToPrice;
     }
 
-    public void setUpToPrice(Object upToPrice) {
+    public void setUpToPrice(double upToPrice) {
         this.upToPrice = upToPrice;
     }
 
-    public Object getOffPrice() {
+    public double getOffPrice() {
         return offPrice;
     }
 
-    public void setOffPrice(Object offPrice) {
+    public void setOffPrice(double offPrice) {
         this.offPrice = offPrice;
     }
 
@@ -114,19 +109,19 @@ public class ActivesBean {
         this.id = id;
     }
 
-    public Object getUpToCount() {
+    public int getUpToCount() {
         return upToCount;
     }
 
-    public void setUpToCount(Object upToCount) {
+    public void setUpToCount(int upToCount) {
         this.upToCount = upToCount;
     }
 
-    public Object getFreeCount() {
+    public int getFreeCount() {
         return freeCount;
     }
 
-    public void setFreeCount(Object freeCount) {
+    public void setFreeCount(int freeCount) {
         this.freeCount = freeCount;
     }
 
@@ -144,5 +139,13 @@ public class ActivesBean {
 
     public void setRatio(int ratio) {
         this.ratio = ratio;
+    }
+
+    public List<Integer> getBargainProIds() {
+        return bargainProIds;
+    }
+
+    public void setBargainProIds(List<Integer> bargainProIds) {
+        this.bargainProIds = bargainProIds;
     }
 }

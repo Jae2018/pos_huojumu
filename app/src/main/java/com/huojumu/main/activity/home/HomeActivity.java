@@ -173,8 +173,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private SingleProAddonDialog addonDialog;//单品设置弹窗
     private MoreFunctionDialog functionDialog;//功能弹窗
     private CertainDialog certainDialog;//关机确认弹窗
+    //商品recycler滑动翻页方法类
     PagingScrollHelper scrollHelper = new PagingScrollHelper();
-    int pageNo = 0;
+    int pageNo = 0;//当前页数
 
     //订单数据
     private OrderInfo orderInfo;
@@ -184,37 +185,57 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     boolean isCash = false;
 
     private UsbManager usbManager;
-    private int id = 0;
-//    UsbDeviceList usbDeviceList;
+    private int id = 0;//usb端口id
+    private boolean b1, b2, b3, b4;//结束加载
 
-    int count = 0;
-    String name, taste;
+    int count = 0;//商品数量
+    String name, taste;//名字、口味
 
     String TAG = "home";
-    //    private OrderBack orderBack;
-//    private double change;
+
     //是否推荐
     private boolean isRecommend = false;
-    private HorizontalPageLayoutManager horizontalPageLayoutManager = null;
+    //点单商品信息集合
     private List<OrderInfo.DataBean> dataBeans = new ArrayList<>();
-
+    //商品过滤状态
+    int m = 0;
+    //小类
+    List<SmallType> list = new ArrayList<>();
+    //扫码回调方法次数，19次获取完
+    private int time = 0;
+    //定时更新时间flag
+    private static final int MSG_UPDATE_CURRENT_TIME = 1;
+    private float woeker_p = 0;//员工班次销售金额
+    private int orderNum = 0;//员工班次销售订单数
+    List<Production> typeList = new ArrayList<>();//选择小类后的上品集合
+    private List<Production> searchList = new ArrayList<>();//搜索集合
+    String authNo = "";//扫码后的内容
+    //搜索栏
+    private String[] py = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+    //搜索字符串
+    private String searchStr = "";
+    //提交订单返回
+    OrderBack orderBack;
+    //优惠
+    double change;
+    //标签机连续打印次数
+    private int printcount = 0;
 
     @Override
     protected int setLayout() {
         return R.layout.activity_home;
     }
 
-
     @Override
     protected void initView() {
-        MyApplication.getSocketTool().sendHeart();
         EventBus.getDefault().register(this);
+        MyApplication.getSocketTool().sendHeart();
 
-        //链接标签机
+        //连接标签机
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         connectUsb(UsbUtil.getBQName(HomeActivity.this));
 
-        horizontalPageLayoutManager = new HorizontalPageLayoutManager(3, 4);
+        HorizontalPageLayoutManager horizontalPageLayoutManager = new HorizontalPageLayoutManager(3, 4);
 
         //左侧点单列表
         selectedAdapter = new HomeSelectedAdapter(null);
@@ -239,7 +260,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         selectedAdapter.setOnItemSwipeListener(new OnItemSwipeListener() {
             @Override
             public void onItemSwipeStart(RecyclerView.ViewHolder viewHolder, int pos) {
-                Log.e(TAG, "onItemSwipeStart: ");
                 if (!dataBeans.isEmpty()) {
                     dataBeans.remove(pos);
                 }
@@ -253,8 +273,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             @Override
             public void onItemSwiped(RecyclerView.ViewHolder viewHolder, int pos) {
                 checkPriceForDisplay();
-
-                Log.e(TAG, "onItemSwiped: " + productions.size());
             }
 
             @Override
@@ -266,7 +284,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         left.setAdapter(selectedAdapter);
 
         //分类列表
-        typeAdapter = new HomeTypeAdapter(null);
+        typeAdapter = new HomeTypeAdapter(list);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         rTop.setLayoutManager(manager);
         rTop.setAdapter(typeAdapter);
@@ -286,16 +304,16 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     m = 0;
                     productAdapter.setNewData(tempProduces);
                 }
-                for (int i = 0; i < typeAdapter.getData().size(); i++) {
-                    typeAdapter.getData().get(i).setSelected(position == i);
+                for (int i = 0; i < list.size(); i++) {
+                    list.get(i).setSelected(position == i);
                 }
-                typeAdapter.notifyDataSetChanged();
+                typeAdapter.setNewData(list);
 
             }
         });
 
         //商品列表
-        productAdapter = new HomeProductAdapter(null);
+        productAdapter = new HomeProductAdapter(tempProduces);
         rBottom.setLayoutManager(horizontalPageLayoutManager);
         rBottom.setAdapter(productAdapter);
 
@@ -305,9 +323,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 showSpe(position);
             }
         });
-
         scrollHelper.setUpRecycleView(rBottom);
 
+        //搜索栏
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
         pinyin.setLayoutManager(gridLayoutManager);
 
@@ -325,19 +343,16 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
         });
 
+        //计时
         MyHandler mHandler = new MyHandler(this);
         mHandler.sendEmptyMessageDelayed(MSG_UPDATE_CURRENT_TIME, 500);
-        workName1.setText(SpUtil.getString(Constant.WORKER_NAME));
-        order_num.setText(String.format(Locale.CHINA, "%.2f元", 0.0));
-        order_num1.setText(String.format(Locale.CHINA, "%d单", 0));
+
 
     }
 
-    private int time = 0;
-
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        //系统的软键盘  按下去是 -1, 不管，不拦截
+        //扫码监听，系统的软键盘  按下去是 -1, 不管，不拦截
         if (event.getDeviceId() == -1) {
             return false;
         }
@@ -350,24 +365,22 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             if (code >= KeyEvent.KEYCODE_0 && code <= KeyEvent.KEYCODE_9) {
                 authNo += String.valueOf(code - KeyEvent.KEYCODE_0);
             }
-            //识别到结束，当下使用的设备是  是还会有个KEYCODE_DPAD_DOWN 事件，不知道其它设备有没有  先忽略
+            //无订单不走接口
             if (orderInfo != null) {
                 if (time == 19) {
                     payByBox();
                 }
             }
-
         }
-        //都是扫码枪来的事件，选择消费掉
         return super.dispatchKeyEvent(event);
     }
 
-    private static final int MSG_UPDATE_CURRENT_TIME = 1;
-    private float woeker_p = 0;
-    private int orderNum = 0;
-    List<Production> typeList = new ArrayList<>();//x小类
-    private List<Production> searchList = new ArrayList<>();//搜索
-    String authNo = "";
+    @OnClick(R.id.cancel_qrpay)
+    void OnQrPayCancel() {
+        authNo = "";
+        layer.setVisibility(View.GONE);
+        time = 0;
+    }
 
     private static class MyHandler extends Handler {
         private WeakReference<HomeActivity> mActivity;
@@ -392,6 +405,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
     }
 
+    /**
+     * 更新时间
+     */
     private void updateCurrentTime() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy 年 MM 月 dd 日  hh : mm : ss", Locale.CHINA);
         Date curDate = new Date(System.currentTimeMillis());
@@ -413,8 +429,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     }
 
-    int m = 0;//是否过滤状态
-
+    /**
+     * 搜索商品
+     */
     private void search(String searchStr) {
         m = 2;
         searchList.clear();
@@ -431,13 +448,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 }
             }
         }
-
         productAdapter.setNewData(searchList);
     }
 
-    private String[] py = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
-    private String searchStr = "";
 
+    /**
+     * 显示单品规格
+     */
     private void showSpe(final int position) {
         ld2 = new LoadingDialog(this);
         ld2.setLoadingText("加载中,请等待")
@@ -472,13 +489,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         });
     }
 
+    /**
+     * 刷新页面
+     */
     @OnClick(R.id.button5)
     void refresh() {
-        //刷新
+        resetAllData();
         loadData();
     }
-
-    private boolean b1, b2, b3, b4;
 
     @Override
     public void onTrimMemory(int level) {
@@ -496,6 +514,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         loadData();
     }
 
+    /**
+     * 加载数据
+     */
     private void loadData() {
         ld2 = new LoadingDialog(this);
         ld2.setLoadingText("加载中,请等待")
@@ -507,6 +528,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         getActiveInfo();
     }
 
+    /**
+     * 并发请求结束loading
+     */
     private void tryFinish() {
         if (b1 && b2 && b3 && b4) {
             ld2.close();
@@ -521,8 +545,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }, 5000);
     }
 
+    /**
+     * 获取广告列表
+     */
     private void getAdsList() {
-        //广告
         b1 = false;
         NetTool.getAdsList(SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<List<AdsBean>>>() {
             @Override
@@ -545,10 +571,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         });
     }
 
-    List<SmallType> list = new ArrayList<>();
-
+    /**
+     * 获取小类列表
+     */
     private void getTypeList() {
-        //小类
         b2 = false;
         list.clear();
         NetTool.getSmallType(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.ENT_ID),
@@ -569,7 +595,19 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 });
     }
 
-    //商品列表
+    /**
+     * 重置小类选择为全部
+     * */
+    private void resetTypeData() {
+        for (int i = 0; i < list.size(); i++) {
+            list.get(i).setSelected(i == 0);
+        }
+        typeAdapter.setNewData(list);
+    }
+
+    /**
+     * 获取商品列表
+     */
     private void getProList(String isRecommend) {
         b3 = false;
         NetTool.getStoreProduces(SpUtil.getInt(Constant.STORE_ID), isRecommend,
@@ -577,22 +615,21 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     @Override
                     public void onSuccess(int statusCode, BaseBean<Products> response) {
                         tempProduces = response.getData().getProducts();
-                        productAdapter.setNewData(response.getData().getProducts());
-//                        for (Production p : tempProduces) {
-//                            Log.e(TAG, p.getProAlsname());
-//                        }
+                        productAdapter.setNewData(tempProduces);
                         b3 = true;
                         tryFinish();
                     }
 
                     @Override
                     public void onFailure(int statusCode, String code, String error_msg) {
-//                        ToastUtils.showLong("网络出错，点击刷新");
+
                     }
                 });
     }
 
-    //活动列表
+    /**
+     * 获取活动列表
+     */
     private void getActiveInfo() {
         b4 = false;
         NetTool.getActiveInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.ENT_ID), SpUtil.getInt(Constant.PINPAI_ID), new GsonResponseHandler<BaseBean<List<ActivesBean>>>() {
@@ -613,6 +650,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     @OnClick(R.id.button4)
     void getRecommend() {
+        //是否推荐
         if (isRecommend) {
             getProList("1");
             isRecommend = false;
@@ -627,6 +665,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     }
 
+    /**
+     * 副屏显示、总计显示
+     */
     private void checkPriceForDisplay() {
         double totalPrice = 0.0, totalCut = 0.0;
         int totalCount = 0;
@@ -677,7 +718,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         dataBean.setProId(productsBean.getProId());
         dataBean.setProType(productsBean.getProType());
         dataBeans.add(dataBean);
-        Log.e(TAG, PrinterUtil.toJson(dataBeans));
     }
 
     /**
@@ -729,7 +769,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     /**
-     * 功能
+     * 功能按钮
      */
     @OnClick(R.id.btn_home_more_function)
     void More() {
@@ -774,6 +814,60 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        //顶部工作信息
+        workName1.setText(SpUtil.getString(Constant.WORKER_NAME));
+        order_num.setText(String.format(Locale.CHINA, "%.1f元", 0.0));
+        order_num1.setText(String.format(Locale.CHINA, "%d单", 0));
+        resetAllData();
+    }
+
+    /**
+     * 重置所有数据与UI
+     */
+    private void resetAllData() {
+        typeList.clear();
+        searchList.clear();
+        gTemp.clear();
+        searchStr = "";
+        orderInfo = null;
+        dataBeans.clear();
+        edit_search.setText("");
+        total_number.setText("数量：");
+        cut_number.setText("优惠：");
+        total_price.setText("金额：");
+        productions.clear();
+        m = 0;
+        //左侧置空
+        selectedAdapter.setNewData(null);
+        resetTypeData();
+    }
+
+    /**
+     * 下完单结账后重置订单所有数据、UI显示
+     */
+    private void clear() {
+        //清空当前选择list
+        productions.clear();
+        //副频置空
+        engine.clear();
+        //订单置空
+        dataBeans.clear();
+        //左下角计算置空
+        total_number.setText("数量：");
+        total_price.setText("总价：");
+        cut_number.setText("优惠：");
+        //订单置空
+        orderInfo = null;
+        //左侧置空
+        selectedAdapter.setNewData(null);
+        //下完单还原商品显示状态为全部、清空搜索记录
+        inputClear();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
@@ -782,9 +876,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     SpUtil.save(Constant.WORK_P, (float) 0);
                     SpUtil.save(Constant.ORDER_NUM, 0);
                     clear();
-                    productAdapter.setNewData(tempProduces);
-                    typeAdapter.setNewData(list);
-                    order_num.setText(String.format(Locale.CHINA, "%.2f元", 0.0));
+                    order_num.setText(String.format(Locale.CHINA, "%.1f元", 0.0));
                     order_num1.setText(String.format(Locale.CHINA, "%d单", 0));
                     ToastUtils.showLong("已完成交班！即将退出登录！");
                     MyOkHttp.mHandler.postDelayed(new Runnable() {
@@ -811,6 +903,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
     }
 
+    /**
+     * 初始化订单信息
+     */
     private void initOrder() {
         orderInfo = new OrderInfo();
         orderInfo.setOrderID(UUID.randomUUID().toString().replace("-", ""));
@@ -824,8 +919,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         orderInfo.setOrdSource("3");
     }
 
-    OrderBack orderBack;
-    double change;
 
     /**
      * 结账 dialog 按钮回调
@@ -852,19 +945,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             orderBack = response.getData();
                             orderNo = response.getData().getOrderNo();
                             layer.setVisibility(View.VISIBLE);
-//                            if (type == 2) {
-//                                engine.getAliIV().setImageBitmap(QrUtil.createQRCodeWithLogo(HomeActivity.this, response.getData().getAliPayQrcode(), BitmapFactory.decodeResource(getResources(), R.drawable.zhifubao_normal)));
-//                            } else if (type == 3) {
-//                                engine.getWxIV().setImageBitmap(QrUtil.createQRCodeWithLogo(HomeActivity.this, response.getData().getWxPayQrcode(), BitmapFactory.decodeResource(getResources(), R.drawable.weixin_normal)));
-//                            }
 
-//                            payOutTime();
-//                            SpUtil.save("hasOverOrder", true);
                         }
 
                         @Override
                         public void onFailure(int statusCode, String code, String error_msg) {
-//                            ToastUtils.showLong(error_msg);
+
                         }
                     });
                 }
@@ -877,13 +963,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 orderInfo.setPayType("900");
                 cashPayDialog.cancel();
                 cashPayDialog = null;
-                Log.e(TAG, PrinterUtil.toJson(orderInfo));
                 ld = new LoadingDialog(this);
                 ld.show();
                 NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
-//                        orderBack = response.getData();
                         orderNo = response.getData().getOrderNo();
                         PrintOrder(response.getData(), charge < 0 ? 0 : charge, "现金支付");
                         MyOkHttp.mHandler.postDelayed(new Runnable() {
@@ -897,7 +981,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
                     @Override
                     public void onFailure(int statusCode, String code, String error_msg) {
-//                        ToastUtils.showLong(error_msg);
                         ld.close();
                     }
                 });
@@ -908,7 +991,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         if (ld != null) {
                             ld.close();
                         }
-//                        ToastUtils.showLong("网络错误，请稍后再试");
                     }
                 }, 10 * 1000);
                 break;
@@ -926,8 +1008,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
     }
 
-
-
+    /**
+     * 盒子支付接口
+     */
     private void payByBox() {
         time = 0;
         if (orderInfo != null) {
@@ -946,33 +1029,23 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 @Override
                 public void onFailure(int statusCode, String code, String error_msg) {
                     layer.setVisibility(View.GONE);
+                    authNo = "";
                 }
             });
         }
-        MyOkHttp.mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (layer.isShown()) {
-                    authNo = "";
-                    layer.setVisibility(View.GONE);
-//                    ToastUtils.showLong("支付超时，请重试");
-                }
-            }
-        }, 10 * 1000);
     }
-
 
     @Override
     public void OnUsbCallBack(String name) {
-//        closeport();
-//        usbName = name;
-//        getUsb(name);
+
     }
 
+    /**
+     * 连接USB标签机
+     */
     private void connectUsb(String name) {
-        //获取USB设备名
         //通过USB设备名找到USB设备
-        UsbDevice usbDevice = PrinterUtil.getUsbDeviceFromName(HomeActivity.this, name);//UsbUtil.getUsbDeviceList(HomeActivity.this)
+        UsbDevice usbDevice = PrinterUtil.getUsbDeviceFromName(HomeActivity.this, name);
 
         //判断USB设备是否有权限
         if (usbDevice != null) {
@@ -984,6 +1057,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
     }
 
+    //请求USB权限
     protected void getPermission(UsbDevice usbDevice) {
         //请求权限
         PendingIntent mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
@@ -1015,11 +1089,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 //        timer.start();
 //    }
 
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-    }
 
     /**
      * 打印订单小票
@@ -1054,7 +1123,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         woeker_p += totalPrice;
         orderNum++;
-        order_num.setText(String.format(Locale.CHINA, "%.2f元", woeker_p));
+        order_num.setText(String.format(Locale.CHINA, "%.1f元", woeker_p));
         order_num1.setText(String.format(Locale.CHINA, "%d单", orderNum));
         SpUtil.save(Constant.WORK_P, woeker_p);
         SpUtil.save(Constant.ORDER_NUM, orderNum);//存储工作记录
@@ -1068,18 +1137,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     }
 
-//    private void openCash() {
-//        ThreadPool.getInstantiation().addTask(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (isCash) {
-//                    isCash = false;
-//                    PrinterUtil.OpenMoneyBox();
-//                }
-//            }
-//        });
-//    }
-
+    /**
+     * 打印标签
+     */
     private void printLabel() {
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
@@ -1111,28 +1171,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         });
     }
 
-    /**
-     * 重置所有数据
-     */
-    private void clear() {
-        //清空当前选择list
-        productions.clear();
-        //副频置空
-        engine.clear();
-        //订单置空
-        dataBeans.clear();
-        //左下角计算置空
-        total_number.setText("数量：");
-        total_price.setText("总价：");
-        cut_number.setText("优惠：");
-        //订单置空
-        orderInfo = null;
-        //左侧置空
-        selectedAdapter.setNewData(null);
-        edit_search.setText("");
-        searchStr = "";
-        m = 0;
-    }
 
     @Override
     public void onPrepared(MediaPlayer mp) {
@@ -1157,7 +1195,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void GetPayBack(WorkBean workBean) {
         //退单回调
-        order_num.setText(String.format(Locale.CHINA, "%.2f元", workBean.getPrice()));
+        order_num.setText(String.format(Locale.CHINA, "%.1f元", workBean.getPrice()));
         order_num1.setText(String.format(Locale.CHINA, "%d单", workBean.getNum()));
         SpUtil.save(Constant.WORK_P, workBean.getPrice());
         SpUtil.save(Constant.ORDER_NUM, workBean.getNum());
@@ -1181,11 +1219,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 //    public void TakeVoer(Takeover takeover) {
 //        if (takeover.getType() == 1) {
 //            //交班
-//            order_num.setText(String.format(Locale.CHINA, "%.2f元", 0.0));
+//            order_num.setText(String.format(Locale.CHINA, "%.1f元", 0.0));
 //            order_num1.setText(String.format(Locale.CHINA, "%d单", 0));
 //        } else {
 //            //日结
-//            order_num.setText(String.format(Locale.CHINA, "%.2f元", 0.0));
+//            order_num.setText(String.format(Locale.CHINA, "%.1f元", 0.0));
 //            order_num1.setText(String.format(Locale.CHINA, "%d单", 0));
 //        }
 //    }
@@ -1299,9 +1337,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         registerReceiver(receiver, filter);
     }
 
-
-    private int printcount = 0;
-
     public BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1344,7 +1379,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                 ld3.close();
                             }
                         }, 6000);
-
                     }
                     break;
                 case DeviceConnFactoryManager.ACTION_CONN_STATE:

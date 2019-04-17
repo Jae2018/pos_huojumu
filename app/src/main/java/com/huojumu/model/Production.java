@@ -5,22 +5,61 @@ import java.util.List;
 
 public class Production {
 
-
+    /**
+     * '满减'跟'折扣'可以同时存在，而跟'特价'与'赠送'是互斥的
+     * '满减'与'折扣'的时候要计算两种价格让用户去选择
+     * */
     private List<MatsBean> mats;
     private List<ImgsBean> imgs;
     private List<TastesBean> tastes;
     private List<MakesBean> makes;
     private List<TaoCanBean> taocan;
     private String proType;
-    private int typeId;
-    private int number = 1;
-    private String addon;
-    private String tasteStr;
-    private String scaleStr;
-    private String proAlsname;
-    private String matStr;
+    private int typeId;//小类id
+    private int number = 1;//默认数量
+    private String addon;//备注
+    private String tasteStr;//口味
+    private String scaleStr;//规格
+    private String proAlsname;//首字母
+    private String matStr;//加料字符串
     private double mateP;//加料价格
     private double price;//单品价格
+    private String isDiscount;//打折
+    private String isMoneyOff;//是否满减。满200减50
+    private String isBargain;//是否特价。
+    private String isPresented;//是否赠送。买一赠一
+
+    public String getIsDiscount() {
+        return isDiscount;
+    }
+
+    public void setIsDiscount(String isDiscount) {
+        this.isDiscount = isDiscount;
+    }
+
+    public String getIsMoneyOff() {
+        return isMoneyOff;
+    }
+
+    public void setIsMoneyOff(String isMoneyOff) {
+        this.isMoneyOff = isMoneyOff;
+    }
+
+    public String getIsBargain() {
+        return isBargain;
+    }
+
+    public void setIsBargain(String isBargain) {
+        this.isBargain = isBargain;
+    }
+
+    public String getIsPresented() {
+        return isPresented;
+    }
+
+    public void setIsPresented(String isPresented) {
+        this.isPresented = isPresented;
+    }
 
     public int getTypeId() {
         return typeId;

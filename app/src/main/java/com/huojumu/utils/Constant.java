@@ -16,8 +16,6 @@ public interface Constant {
     int WORK_BACK_OVER = 0x002;
     int WORK_BACK_DAILY = WORK_BACK_OVER << 1;
     /* debug param */
-    boolean IS_DEBUG = true;
-    String NO_DATA_BACK = "无返回值";
     String UUID = "pos_uuid";
     String STORE_ID = "sId";
     String STORE_NAME = "sName";
@@ -32,33 +30,17 @@ public interface Constant {
     String ORDER_NUM = "orderNum";
 
     /* network params */
-    int REQUEST_CODE_PICK_IMAGE = 1;
-    String TOKEN_TIME = "token_time";
-    String TOKEN_LAST_TIME = "token_last_time";
-    int TOKEN_KEEP_ALIVE_TIME = 10 * 60 * 1000;
     String MY_TOKEN = "my_token";
     String TOKEN = "Authorization";
-    String EQP_TYPE = "POS";
 
     /* database params */
-    String ORDER_TEMP = "order_temp";
-    String ORDER_NO = "order_no";
-    String ORDER_INFO = "order_table";
     String SP_NAME = "POS_SP";
 
     /* default string */
     String DEFAULT_STR = "";
     int DEFAULT_INT = 1;
-    int TEST_INT = 10;
-    int PAY = 1;
     int LOGIN = 2;
     int HOME = 3;
-
-    /* pay method */
-    String PAY_BY_ALI = "PayByAli";
-    String PAY_BY_WX = "PayByWX";
-    String PAY_BY_BANK = "PayByBank";
-    String PICK_CODE = "pickUpCode";
 
     /* 是否绑定设备 */
     String HAS_BAND = "has_banded";
@@ -66,9 +48,6 @@ public interface Constant {
 
     /* works' info */
     String WORKER_NAME = "worker_name";
-    String WORKER_TEL = "worker_tel";
-    String TYPE = "type";
-
     /* 小票宽度 */
     String PRINT_WIDTH = "w58or80";
 
@@ -77,6 +56,9 @@ public interface Constant {
     String PAYCODE = "pay";
     String START = "start";
 
-    String STATE = "state";
-    String DEVICE_ID = "id";
+    //活动信息
+    String upToPrice = "upToPrice";
+    String offPrice = "offPrice";
+    String upToCount = "upToCount";
+    String freeCount = "freeCount";
 }

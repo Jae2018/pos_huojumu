@@ -207,7 +207,7 @@
                 android:layout_width="@dimen/d_120"
                 android:layout_height="@dimen/d_56"
                 android:layout_marginBottom="@dimen/d_32"
-                android:background="@android:color/holo_red_light"
+                android:background="@drawable/green_cancel"
                 android:text="取消"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/f_20" />
@@ -221,7 +221,7 @@
                 android:layout_width="@dimen/d_120"
                 android:layout_height="@dimen/d_56"
                 android:layout_marginBottom="@dimen/d_32"
-                android:background="@color/colorPrimary"
+                android:background="@drawable/blue_ok"
                 android:text="确定"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/f_20" />

@@ -10,6 +10,15 @@ public class ScaleBean {
     private int unitId;
     private String type;
     private double capacity;
+    private double origionPrice;
+
+    public double getOrigionPrice() {
+        return origionPrice;
+    }
+
+    public void setOrigionPrice(double origionPrice) {
+        this.origionPrice = origionPrice;
+    }
 
     public int getScaleId() {
         return scaleId;

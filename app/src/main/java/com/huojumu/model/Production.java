@@ -5,113 +5,67 @@ import java.util.List;
 
 public class Production {
 
+
     /**
-     * '满减'跟'折扣'可以同时存在，而跟'特价'与'赠送'是互斥的
-     * '满减'与'折扣'的时候要计算两种价格让用户去选择
-     * */
+     * mats : [{"proMatId":4181,"dosage":1,"ingredientDosage":1,"ingredientPrice":1,"addIndex":1,"matNo":"YL-0106","orgId":106,"matName":"椰果"},{"proMatId":4182,"dosage":1,"ingredientDosage":1,"ingredientPrice":1,"addIndex":2,"matNo":"YL-0105","orgId":105,"matName":"珍珠"}]
+     * imgs : [{"path":"https://www.goodb2b.cn/pos_file/default.png","sourceType":"1"}]
+     * proType : 1
+     * proAlsname : GN
+     * tastes : [{"tasteId":2,"tasteName":"默认口味","groupId":1,"multiple":1},{"tasteId":10,"tasteName":"无糖","groupId":1,"multiple":0},{"tasteId":9,"tasteName":"少糖","groupId":1,"multiple":0.2}]
+     * proSpellname : gangnai
+     * isDiscount : 0
+     * proNo : CP-CN51-0001-0168
+     * isMoneyOff : 0
+     * proId : 325
+     * minPrice : 10
+     * scales : [{"scaleId":5,"scaName":"纸杯（热）","unitName":"ml","price":10,"proId":325,"unitId":20,"type":"2","capacity":500},{"scaleId":6,"scaName":"瓶装（冻）","unitName":"ml","price":10,"proId":326,"unitId":20,"type":"1","capacity":500}]
+     * isBargain : 1
+     * isPresented : 0
+     * typeId : 59
+     * proName : 港奶
+     */
+
+    private String proType;
+    private String proAlsname;
+    private String proSpellname;
+    private String isDiscount;//是否打折:null/0-否;1-是
+    private String proNo;
+    private String isMoneyOff;//是否满减:null/0-否;1-是
+    private int proId;
+    private double minPrice;
+    private String isBargain;//是否特价:null/0-否;1-是
+    private String isPresented;//是否满赠:null/0-否;1-是
+    private int typeId;//小类id
+    private String proName;
     private List<MatsBean> mats;
     private List<ImgsBean> imgs;
     private List<TastesBean> tastes;
-    private List<MakesBean> makes;
-    private List<TaoCanBean> taocan;
-    private String proType;
-    private int typeId;//小类id
+    private List<ScaleBean> scales;
+    //额外增加
     private int number = 1;//默认数量
     private String addon;//备注
     private String tasteStr;//口味
     private String scaleStr;//规格
-    private String proAlsname;//首字母
     private String matStr;//加料字符串
     private double mateP;//加料价格
-    private double price;//单品价格
-    private String isDiscount;//打折
-    private String isMoneyOff;//是否满减。满200减50
-    private String isBargain;//是否特价。
-    private String isPresented;//是否赠送。买一赠一
+    private double scalePrice;//规格价格
+    private double origionPrice;//产品原价
 
-    public String getIsDiscount() {
-        return isDiscount;
+
+    public double getScalePrice() {
+        return scalePrice;
     }
 
-    public void setIsDiscount(String isDiscount) {
-        this.isDiscount = isDiscount;
+    public void setScalePrice(double scalePrice) {
+        this.scalePrice = scalePrice;
     }
 
-    public String getIsMoneyOff() {
-        return isMoneyOff;
+    public double getOrigionPrice() {
+        return origionPrice;
     }
 
-    public void setIsMoneyOff(String isMoneyOff) {
-        this.isMoneyOff = isMoneyOff;
-    }
-
-    public String getIsBargain() {
-        return isBargain;
-    }
-
-    public void setIsBargain(String isBargain) {
-        this.isBargain = isBargain;
-    }
-
-    public String getIsPresented() {
-        return isPresented;
-    }
-
-    public void setIsPresented(String isPresented) {
-        this.isPresented = isPresented;
-    }
-
-    public int getTypeId() {
-        return typeId;
-    }
-
-    public void setTypeId(int typeId) {
-        this.typeId = typeId;
-    }
-
-    public String getProAlsname() {
-        return proAlsname;
-    }
-
-    public void setProAlsname(String proAlsname) {
-        this.proAlsname = proAlsname;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    /**
-     * proNo : CP-CN32-0001-0004
-     * imgs : []
-     * proId : 4
-     * minPrice : 0.01
-     * proName : 什么都有奶绿
-     */
-
-    private String proNo;
-    private int proId;
-    private double minPrice;
-    private String proName;
-
-    public String getProType() {
-        return proType;
-    }
-
-    public void setProType(String proType) {
-        this.proType = proType;
-    }
-
-    public double getMateP() {
-        return mateP;
-    }
-
-    public void setMateP(double mateP) {
-        this.mateP = mateP;
+    public void setOrigionPrice(double origionPrice) {
+        this.origionPrice = origionPrice;
     }
 
     public String getMatStr() {
@@ -122,46 +76,12 @@ public class Production {
         this.matStr = matStr;
     }
 
-
-
-    public List<MatsBean> getMats() {
-        return mats;
+    public double getMateP() {
+        return mateP;
     }
 
-    public void setMats(List<MatsBean> mats) {
-        this.mats = mats;
-    }
-
-    public List<ImgsBean> getImgs() {
-        return imgs;
-    }
-
-    public void setImgs(List<ImgsBean> imgs) {
-        this.imgs = imgs;
-    }
-
-    public List<TastesBean> getTastes() {
-        return tastes;
-    }
-
-    public void setTastes(List<TastesBean> tastes) {
-        this.tastes = tastes;
-    }
-
-    public List<MakesBean> getMakes() {
-        return makes;
-    }
-
-    public void setMakes(List<MakesBean> makes) {
-        this.makes = makes;
-    }
-
-    public List<TaoCanBean> getTaocan() {
-        return taocan;
-    }
-
-    public void setTaocan(List<TaoCanBean> taocan) {
-        this.taocan = taocan;
+    public void setMateP(double mateP) {
+        this.mateP = mateP;
     }
 
     public int getNumber() {
@@ -196,6 +116,37 @@ public class Production {
         this.scaleStr = scaleStr;
     }
 
+    public String getProType() {
+        return proType;
+    }
+
+    public void setProType(String proType) {
+        this.proType = proType;
+    }
+
+    public String getProAlsname() {
+        return proAlsname;
+    }
+
+    public void setProAlsname(String proAlsname) {
+        this.proAlsname = proAlsname;
+    }
+
+    public String getProSpellname() {
+        return proSpellname;
+    }
+
+    public void setProSpellname(String proSpellname) {
+        this.proSpellname = proSpellname;
+    }
+
+    public String getIsDiscount() {
+        return isDiscount;
+    }
+
+    public void setIsDiscount(String isDiscount) {
+        this.isDiscount = isDiscount;
+    }
 
     public String getProNo() {
         return proNo;
@@ -203,6 +154,14 @@ public class Production {
 
     public void setProNo(String proNo) {
         this.proNo = proNo;
+    }
+
+    public String getIsMoneyOff() {
+        return isMoneyOff;
+    }
+
+    public void setIsMoneyOff(String isMoneyOff) {
+        this.isMoneyOff = isMoneyOff;
     }
 
     public int getProId() {
@@ -221,12 +180,68 @@ public class Production {
         this.minPrice = minPrice;
     }
 
+    public String getIsBargain() {
+        return isBargain;
+    }
+
+    public void setIsBargain(String isBargain) {
+        this.isBargain = isBargain;
+    }
+
+    public String getIsPresented() {
+        return isPresented;
+    }
+
+    public void setIsPresented(String isPresented) {
+        this.isPresented = isPresented;
+    }
+
+    public int getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(int typeId) {
+        this.typeId = typeId;
+    }
+
     public String getProName() {
         return proName;
     }
 
     public void setProName(String proName) {
         this.proName = proName;
+    }
+
+    public List<MatsBean> getMats() {
+        return mats;
+    }
+
+    public void setMats(List<MatsBean> mats) {
+        this.mats = mats;
+    }
+
+    public List<ImgsBean> getImgs() {
+        return imgs;
+    }
+
+    public void setImgs(List<ImgsBean> imgs) {
+        this.imgs = imgs;
+    }
+
+    public List<TastesBean> getTastes() {
+        return tastes;
+    }
+
+    public void setTastes(List<TastesBean> tastes) {
+        this.tastes = tastes;
+    }
+
+    public List<ScaleBean> getScales() {
+        return scales;
+    }
+
+    public void setScales(List<ScaleBean> scales) {
+        this.scales = scales;
     }
 
 }

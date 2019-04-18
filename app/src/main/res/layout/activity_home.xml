@@ -12,8 +12,8 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/d_60"
-        android:gravity="center_vertical"
         android:background="@color/colorPrimary"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <ImageView
@@ -261,7 +261,8 @@
         android:layout_below="@+id/line"
         android:layout_toEndOf="@+id/view1"
         android:background="@color/default_bg"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/d_48">
 
         <TextView
             android:layout_width="match_parent"
@@ -460,7 +461,8 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/pinyin"
                 android:layout_width="@dimen/d_250"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:scrollbars="none" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -505,14 +507,14 @@
         <ImageView
             android:id="@+id/btn_home_quick_pay"
             android:layout_width="@dimen/d_96"
-            android:layout_height="@dimen/d_36"
+            android:layout_height="@dimen/d_40"
             android:background="@drawable/quick"
             android:contentDescription="@string/des" />
 
         <ImageView
             android:id="@+id/btn_home_check"
-            android:layout_width="@dimen/d_96"
-            android:layout_height="@dimen/d_40"
+            android:layout_width="@dimen/d_79"
+            android:layout_height="@dimen/d_46"
             android:layout_marginStart="@dimen/d_32"
             android:background="@drawable/check"
             android:contentDescription="@string/des"
@@ -520,8 +522,8 @@
 
         <ImageView
             android:id="@+id/btn_home_take_out"
-            android:layout_width="@dimen/d_96"
-            android:layout_height="@dimen/d_40"
+            android:layout_width="@dimen/d_79"
+            android:layout_height="@dimen/d_46"
             android:layout_marginStart="@dimen/d_32"
             android:background="@drawable/out"
             android:contentDescription="@string/des"
@@ -533,29 +535,29 @@
         android:id="@+id/layer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/black_overlay"
         android:gravity="center"
-        android:visibility="gone"
         android:orientation="vertical"
-        android:background="@color/black_overlay">
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="支付中..."
             android:textColor="@android:color/white"
-            android:textSize="@dimen/f_30"/>
+            android:textSize="@dimen/f_30" />
 
         <Button
             android:id="@+id/cancel_qrpay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/d_80"
-            android:text="取消支付"
-            android:textSize="@dimen/f_20"
+            android:background="@drawable/blue_ok"
             android:paddingLeft="@dimen/d_16"
             android:paddingRight="@dimen/d_16"
-            android:background="@drawable/blue_ok"
+            android:text="取消支付"
             android:textColor="@android:color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:textSize="@dimen/f_20" />
 
     </LinearLayout>
 

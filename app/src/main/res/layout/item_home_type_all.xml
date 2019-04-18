@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/d_48"
-    android:layout_marginTop="@dimen/d_8"
-    android:layout_marginBottom="@dimen/d_8"
+    android:layout_height="@dimen/d_64"
+    android:layout_marginTop="@dimen/d_4"
+    android:layout_marginBottom="@dimen/d_4"
     android:gravity="center">
 
     <TextView
         android:id="@+id/tv_small_type"
         android:layout_width="@dimen/d_80"
-        android:layout_height="@dimen/d_32"
-        android:paddingLeft="@dimen/d_8"
-        android:paddingRight="@dimen/d_8"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/d_48"
+        android:padding="@dimen/d_8"
         android:gravity="center" />
 
 </LinearLayout>

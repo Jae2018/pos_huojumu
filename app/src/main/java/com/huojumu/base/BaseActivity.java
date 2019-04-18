@@ -1,23 +1,17 @@
 package com.huojumu.base;
 
 import android.Manifest;
-import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.WindowManager;
 
-import com.huojumu.MyApplication;
 import com.huojumu.utils.CustomerEngine;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
@@ -52,8 +46,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         initData();
 
     }
-
-
 
     protected void checkPermission() {
         for (String permission : permissions) {

@@ -483,7 +483,7 @@ public class PrinterUtil {
                         mPrinter.setFontStyle(1);
                         for (Production p : pList) {
                             int n = p.getNumber();
-                            sb.append(printThreeData80(p.getProName(), String.valueOf(n), String.valueOf(p.getPrice()), String.valueOf(n * p.getPrice()))).append("\n");
+                            sb.append(printThreeData80(p.getProName(), String.valueOf(n), String.valueOf(p.getMinPrice()), String.valueOf(n * p.getMinPrice()))).append("\n");
                             if (p.getMats().size() > 0)
                                 for (MatsBean bean : p.getMats()) {
                                     sb.append(printThreeData80(" " + bean.getMatName(), String.valueOf(n), String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()))).append("\n");

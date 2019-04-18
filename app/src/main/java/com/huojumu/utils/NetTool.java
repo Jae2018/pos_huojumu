@@ -1,5 +1,7 @@
 package com.huojumu.utils;
 
+import android.support.annotation.NonNull;
+
 import com.huojumu.model.ActivesBean;
 import com.huojumu.model.AdsBean;
 import com.huojumu.model.BaseBean;
@@ -12,6 +14,7 @@ import com.huojumu.model.OrderBack;
 import com.huojumu.model.OrderDetails;
 import com.huojumu.model.OrderEnableBackBean;
 import com.huojumu.model.OrdersList;
+import com.huojumu.model.Production;
 import com.huojumu.model.Products;
 import com.huojumu.model.SmallType;
 import com.huojumu.model.Specification;
@@ -42,7 +45,7 @@ public class NetTool {
     private static MyOkHttp okHttp = new MyOkHttp(new OkHttpClient.Builder().authenticator(new Authenticator() {
 
         @Override
-        public Request authenticate(Route route, Response response) {
+        public Request authenticate(@NonNull Route route, @NonNull Response response) {
             return response.request().newBuilder().header(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN)).build();
         }
     })
@@ -80,10 +83,11 @@ public class NetTool {
     }
 
     //商品列表查询
-    public static void getStoreProduces(int shopID, String isRecommend, GsonResponseHandler<BaseBean<Products>> handler) {
+    public static void getStoreProduces(int shopID, String isRecommend, GsonResponseHandler<BaseBean<List<Production>>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "product/showPros.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("shopID", shopID + "")
+                .addParam("pinpaiID",SpUtil.getInt(Constant.PINPAI_ID)+"")
                 .addParam("isRecommend", isRecommend)
                 .enqueue(handler);
     }

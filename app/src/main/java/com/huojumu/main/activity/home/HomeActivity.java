@@ -62,9 +62,7 @@ import com.huojumu.model.MatsBean;
 import com.huojumu.model.OrderBack;
 import com.huojumu.model.OrderInfo;
 import com.huojumu.model.Production;
-import com.huojumu.model.Products;
 import com.huojumu.model.SmallType;
-import com.huojumu.model.Specification;
 import com.huojumu.model.WorkBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
@@ -163,10 +161,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private List<ActivesBean> activeBeanList;//活动列表
     private ArrayList<Production> productions = new ArrayList<>();//选择的奶茶
     private ArrayList<Production> printProducts = new ArrayList<>();//标签打印的产品
-    private double totalPrice = 0, totalCut;//订单总价
+    private List<Production> typeList = new ArrayList<>();//选择小类后的商品集合
+    private List<Production> searchList = new ArrayList<>();//搜索商品结果集合
+    private List<Production> gTemp = new ArrayList<>();//挂单商品集合
+    //点单商品信息集合
+    private List<OrderInfo.DataBean> dataBeans = new ArrayList<>();
 
-    private List<Production> gTemp = new ArrayList<>();//挂单
     private boolean hasHoldOn = false;//是否已有挂单
+    private double totalPrice = 0, totalCut;//订单总价
 
     private QuickPayDialog quickPayDialog;//快捷支付弹窗
     private CashPayDialog cashPayDialog;//现金支付弹窗
@@ -195,8 +197,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     //是否推荐
     private boolean isRecommend = false;
-    //点单商品信息集合
-    private List<OrderInfo.DataBean> dataBeans = new ArrayList<>();
+
     //商品过滤状态
     int m = 0;
     //小类
@@ -207,8 +208,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private static final int MSG_UPDATE_CURRENT_TIME = 1;
     private float woeker_p = 0;//员工班次销售金额
     private int orderNum = 0;//员工班次销售订单数
-    List<Production> typeList = new ArrayList<>();//选择小类后的上品集合
-    private List<Production> searchList = new ArrayList<>();//搜索集合
+
     String authNo = "";//扫码后的内容
     //搜索栏
     private String[] py = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
@@ -242,7 +242,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         left.setLayoutManager(linearLayoutManager);
         DividerItemDecoration d = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        d.setDrawable(getResources().getDrawable(R.drawable.divider_n));
+        d.setDrawable(getResources().getDrawable(R.drawable.divider_n, null));
         left.addItemDecoration(d);
 
 
@@ -392,25 +392,23 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         @Override
         public void handleMessage(Message msg) {
             HomeActivity activity = mActivity.get();
-            switch (msg.what) {
-                case MSG_UPDATE_CURRENT_TIME:
-                    if (activity != null) {
-                        activity.updateCurrentTime();
-                        sendEmptyMessageDelayed(MSG_UPDATE_CURRENT_TIME, 500);
-                    }
-                    break;
-                default:
-                    break;
+            if (msg.what == MSG_UPDATE_CURRENT_TIME) {
+                if (activity != null) {
+                    activity.updateCurrentTime();
+                    sendEmptyMessageDelayed(MSG_UPDATE_CURRENT_TIME, 500);
+                }
             }
         }
     }
+
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy 年 MM 月 dd 日  hh : mm : ss", Locale.CHINA);
+    Date curDate = new Date();
 
     /**
      * 更新时间
      */
     private void updateCurrentTime() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy 年 MM 月 dd 日  hh : mm : ss", Locale.CHINA);
-        Date curDate = new Date(System.currentTimeMillis());
+        curDate.setTime(System.currentTimeMillis());
         String time = simpleDateFormat.format(curDate);
         workName.setText(time);
     }
@@ -456,37 +454,17 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * 显示单品规格
      */
     private void showSpe(final int position) {
-        ld2 = new LoadingDialog(this);
-        ld2.setLoadingText("加载中,请等待")
-                .setFailedText("加载失败，请重试");
-        ld2.show();
-        int id;
-        final Production production;
+        Production production;
         if (m == 0) {
             production = tempProduces.get(position);
-            id = tempProduces.get(position).getProId();
         } else if (m == 1) {
             production = typeList.get(position);
-            id = typeList.get(position).getProId();
         } else {
             production = searchList.get(position);
-            id = searchList.get(position).getProId();
         }
-        NetTool.getSpecification(SpUtil.getInt(Constant.PINPAI_ID), id, SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<Specification>>() {
-            @Override
-            public void onSuccess(int statusCode, final BaseBean<Specification> response) {
-                //点菜逻辑
-                addonDialog = new SingleProAddonDialog(HomeActivity.this, HomeActivity.this, production, response.getData(), position);
-                addonDialog.show();
-                ld2.close();
-            }
-
-            @Override
-            public void onFailure(int statusCode, String code, String error_msg) {
-                ld2.loadFailed();
-                ld2.close();
-            }
-        });
+        //点菜逻辑
+        addonDialog = new SingleProAddonDialog(HomeActivity.this, HomeActivity.this, production, position);
+        addonDialog.show();
     }
 
     /**
@@ -597,7 +575,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     /**
      * 重置小类选择为全部
-     * */
+     */
     private void resetTypeData() {
         for (int i = 0; i < list.size(); i++) {
             list.get(i).setSelected(i == 0);
@@ -611,10 +589,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private void getProList(String isRecommend) {
         b3 = false;
         NetTool.getStoreProduces(SpUtil.getInt(Constant.STORE_ID), isRecommend,
-                new GsonResponseHandler<BaseBean<Products>>() {
+                new GsonResponseHandler<BaseBean<List<Production>>>() {
                     @Override
-                    public void onSuccess(int statusCode, BaseBean<Products> response) {
-                        tempProduces = response.getData().getProducts();
+                    public void onSuccess(int statusCode, BaseBean<List<Production>> response) {
+                        tempProduces = null;
+                        tempProduces = response.getData();
                         productAdapter.setNewData(tempProduces);
                         b3 = true;
                         tryFinish();
@@ -669,7 +648,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * 副屏显示、总计显示
      */
     private void checkPriceForDisplay() {
-        double totalPrice = 0.0, totalCut = 0.0;
+        totalPrice = 0.0;
+        totalCut = 0.0;
         int totalCount = 0;
         for (Production p : productions) {
             totalCount += p.getNumber();
@@ -680,8 +660,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         c += m.getIngredientPrice();
                     }
                 }
-                totalPrice += p.getPrice() * p.getNumber() + c * p.getNumber();
-                totalCut = 0;
+                totalPrice += p.getScalePrice() * p.getNumber() + c * p.getNumber();
+                totalCut = p.getOrigionPrice() - p.getScalePrice();
             }
         }
         total_number.setText(String.format(Locale.CHINA, "数量：%d 份", totalCount));
@@ -692,8 +672,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             engine.refresh(productions);
             engine.setPrice(totalPrice, totalCut);
         }
-        this.totalPrice = totalPrice;
-        this.totalCut = totalCut;
+//        this.totalPrice = totalPrice;
+//        this.totalCut = totalCut;
     }
 
 
@@ -701,12 +681,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * 单品详情dialog配置回调
      */
     @Override
-    public void onSingleCallBack(int proId, int number, Production productsBean, OrderInfo.DataBean dataBean, int position, double price) {
+    public void onSingleCallBack(int proId, int number, Production productsBean, OrderInfo.DataBean dataBean, double origionPrice, double price) {
         //加入订单数据
         dataBean.setNum(number);
         //左侧点单列表
         productsBean.setNumber(number);
-        productsBean.setPrice(price);
+        productsBean.setScalePrice(price);
+        productsBean.setOrigionPrice(origionPrice);
         productions.add(productsBean);
 
         addonDialog = null;
@@ -842,7 +823,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         m = 0;
         //左侧置空
         selectedAdapter.setNewData(null);
-        resetTypeData();
+        engine.clear();
+        resetTypeData();//todo
+        totalPrice = 0;
+        totalCut = 0;
     }
 
     /**
@@ -859,6 +843,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         total_number.setText("数量：");
         total_price.setText("总价：");
         cut_number.setText("优惠：");
+        totalPrice = 0;
+        totalCut = 0;
         //订单置空
         orderInfo = null;
         //左侧置空
@@ -937,7 +923,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 } else {
                     initOrder();
                     orderInfo.setPayType(type == 2 ? "020" : "010");
-                    Log.e(TAG, PrinterUtil.toJson(orderInfo));
+                    orderBack = null;
                     //线上支付
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                         @Override
@@ -963,8 +949,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 orderInfo.setPayType("900");
                 cashPayDialog.cancel();
                 cashPayDialog = null;
-                ld = new LoadingDialog(this);
-                ld.show();
                 NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
@@ -974,25 +958,16 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             @Override
                             public void run() {
                                 clear();
-                                ld.close();
                             }
                         }, 1000);
                     }
 
                     @Override
                     public void onFailure(int statusCode, String code, String error_msg) {
-                        ld.close();
+
                     }
                 });
 
-                MyOkHttp.mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ld != null) {
-                            ld.close();
-                        }
-                    }
-                }, 10 * 1000);
                 break;
             case "CertainDialog":
                 //关机确认
@@ -1094,9 +1069,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * 打印订单小票
      */
     private void PrintOrder(final OrderBack orderBack, final double charge, String type) {
+        //todo
         PrinterUtil.printString80(HomeActivity.this, productions, orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4),
                 SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
-                "" + (Double.parseDouble(orderBack.getTotalPrice()) + charge), charge + "",
+                "" + total_price, charge + "",
                 totalCut + "", orderBack.getCreatTime(), type);
 
         printcount = 0;
@@ -1110,7 +1086,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 Production p = new Production();
                 p.setProName(name);
                 p.setTasteStr(taste);
-                p.setPrice(productions.get(i).getPrice() + productions.get(i).getMateP());
+                p.setScalePrice(productions.get(i).getScalePrice() + productions.get(i).getMateP());
                 p.setNumber(count);
                 p.setScaleStr(productions.get(i).getScaleStr());
                 p.setMatStr(productions.get(i).getMatStr());
@@ -1133,7 +1109,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             public void run() {
                 clear();
             }
-        }, 1000);
+        }, 500);
 
     }
 
@@ -1162,7 +1138,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                 if (mate.length() > 8) {
                                     mate = mate.substring(0, 8);
                                 }
-                                sendLabel(name, printProducts.get(printcount).getTasteStr(), printProducts.get(printcount).getPrice() + "", printcount, printProducts.size(), mate, printProducts.get(printcount).getScaleStr());
+                                sendLabel(name, printProducts.get(printcount).getTasteStr(), printProducts.get(printcount).getMinPrice() + "", printcount, printProducts.size(), mate, printProducts.get(printcount).getScaleStr());
                             }
                         }
                     }), 1000, TimeUnit.MILLISECONDS);

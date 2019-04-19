@@ -1,6 +1,7 @@
 package com.huojumu.model;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Production {
@@ -41,16 +42,42 @@ public class Production {
     private List<ImgsBean> imgs;
     private List<TastesBean> tastes;
     private List<ScaleBean> scales;
+    private String planFlag;
     //额外增加
     private int number = 1;//默认数量
-    private String addon;//备注
-    private String tasteStr;//口味
-    private String scaleStr;//规格
-    private String matStr;//加料字符串
+    private String addon = "";//备注
+    private String tasteStr = "默认口味";//口味
+    private String scaleStr = "";//规格
+    private String matStr = "不加料";//加料字符串
     private double mateP;//加料价格
-    private double scalePrice;//规格价格
-    private double origionPrice;//产品原价
+    private double scalePrice;//现价
+    private double origionPrice;//原价
+    private String activeStr = "";//活动内容说明
+    private List<ActivesBean> activesBeanList = new ArrayList<>();//商品参与的活动信息集合
 
+    public String getActiveStr() {
+        return activeStr;
+    }
+
+    public void setActiveStr(String activeStr) {
+        this.activeStr = activeStr;
+    }
+
+    public List<ActivesBean> getActivesBeanList() {
+        return activesBeanList;
+    }
+
+    public void setActivesBeanList(List<ActivesBean> activesBeanList) {
+        this.activesBeanList = activesBeanList;
+    }
+
+    public String getPlanFlag() {
+        return planFlag;
+    }
+
+    public void setPlanFlag(String planFlag) {
+        this.planFlag = planFlag;
+    }
 
     public double getScalePrice() {
         return scalePrice;

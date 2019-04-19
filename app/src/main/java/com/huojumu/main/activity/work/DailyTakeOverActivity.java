@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.greendao.gen.NativeOrdersDao;
+import com.huojumu.MyApplication;
 import com.huojumu.R;
 import com.huojumu.adapter.WorkDailyAdapter;
 import com.huojumu.base.BaseActivity;
@@ -18,16 +20,12 @@ import com.huojumu.main.dialogs.CertainDialog;
 import com.huojumu.main.dialogs.DialogInterface;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.DailyInfo;
-import com.huojumu.model.Takeover;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
-import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +73,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     private int num = 0;
     private double s1, s2, s3, s4;
     private String lastDate;
+    private NativeOrdersDao ordersDao;
 
     @Override
     protected int setLayout() {
@@ -83,6 +82,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
     @Override
     protected void initView() {
+        ordersDao = ((MyApplication) getApplication()).getDaoSession().getNativeOrdersDao();
         types = getIntent().getIntExtra("type", 1);
         title.setText(types == 1 ? "交班" : "日结");
         nameTv.setText(String.format("员工：%s", SpUtil.getString(Constant.WORKER_NAME)));
@@ -137,7 +137,6 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
         } else {
             getDailyInfo();
         }
-
     }
 
     @OnClick(R.id.btn_work_daily_cancel)
@@ -162,14 +161,19 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
     @Override
     public void OnDialogOkClick(int type, double earn, double cost, double charge, String name) {
-        if (types == 1) {
-            //交班确认回调
-            TakeOver();
-        } else {
-            daily();
+        if (ordersDao.loadAll().isEmpty()) {
+            if (types == 1) {
+                //交班确认回调
+                TakeOver();
+            } else {
+                daily();
+            }
+            PrinterUtil.printDaily(DailyTakeOverActivity.this, types, commissionTv.getText().toString(), earn2.getText().toString(), earn1.getText().toString(), num, SpUtil.getString(Constant.WORKER_NAME), lastDate);
+        }else{
+            ToastUtils.showLong("有未上传的订单，请等待上传完成后再交班");
+            //todo
         }
 
-        PrinterUtil.printDaily(DailyTakeOverActivity.this, types, commissionTv.getText().toString(), earn2.getText().toString(), earn1.getText().toString(), num, SpUtil.getString(Constant.WORKER_NAME), lastDate);
     }
 
     private void getTakeOverInfo() {
@@ -257,7 +261,6 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                 if (response.getMsg().equals("yes")) {
                     certainDialog.cancel();
                     setResult(RESULT_OK);
-//                    EventBus.getDefault().post(new Takeover(1));
                     finish();
                 } else {
                     ToastUtils.showLong(response.getMsg());
@@ -267,17 +270,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
-                if (code.equals("1220")) {
-                    MyOkHttp.mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            ToastUtils.showLong("即将退出");
-                            finish();
-                        }
-                    }, 5000);
-                } else if (!code.equals("0")) {
-                    ToastUtils.showLong(error_msg);
-                }
+                ToastUtils.showLong("网络错误，请重试");
                 ld2.close();
             }
         });
@@ -292,8 +285,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             public void onSuccess(int statusCode, BaseBean<String> response) {
                 if (response.getMsg().equals("yes")) {
                     certainDialog.cancel();
-//                    EventBus.getDefault().post(new Takeover(2));
-                    ToastUtils.showLong("已完成日结！30秒后系统将关闭");
+                    ToastUtils.showLong("日结成功！30秒后系统将关闭");
                     setResult(RESULT_OK);
                     finish();
                 } else {

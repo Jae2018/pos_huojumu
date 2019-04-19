@@ -3,19 +3,19 @@ package com.huojumu;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.NinePatchDrawable;
 
+import com.greendao.gen.DaoMaster;
+import com.greendao.gen.DaoSession;
 import com.huojumu.utils.Constant;
-import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SocketTool;
 import com.huojumu.utils.SpUtil;
 import com.tencent.bugly.crashreport.CrashReport;
 
+import org.greenrobot.greendao.database.Database;
+
 import java.util.UUID;
+
 
 
 /**
@@ -29,6 +29,7 @@ public class MyApplication extends Application {
     private static Context mContext;
     protected static SocketTool socketTool;
     private static Bitmap line1,line2,line3,logo,qrcode;
+    private DaoSession daoSession;
 
     @Override
     public void onCreate() {
@@ -38,12 +39,16 @@ public class MyApplication extends Application {
         SpUtil.Instance(this);
         SpUtil.save(Constant.UUID, UUID.randomUUID().toString());
         socketTool = SocketTool.getInstance(this);
-//
-        line1 = drawable2Bitmap(getResources().getDrawable(R.drawable.line1));
-        line2 = drawable2Bitmap(getResources().getDrawable(R.drawable.line2));
-        line3 = drawable2Bitmap(getResources().getDrawable(R.drawable.line3));
-        logo = drawable2Bitmap(getResources().getDrawable(R.drawable.logo));
-        qrcode = drawable2Bitmap(getResources().getDrawable(R.drawable.qr_code));
+
+        line1 = ((BitmapDrawable)getResources().getDrawable(R.drawable.line1)).getBitmap();
+        line2 = ((BitmapDrawable)getResources().getDrawable(R.drawable.line2)).getBitmap();
+        line3 = ((BitmapDrawable)getResources().getDrawable(R.drawable.line3)).getBitmap();
+        logo = ((BitmapDrawable)getResources().getDrawable(R.drawable.logo)).getBitmap();
+        qrcode = ((BitmapDrawable)getResources().getDrawable(R.drawable.qr_code)).getBitmap();
+
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "pos-db");
+        Database db = helper.getWritableDb();
+        daoSession = new DaoMaster(db).newSession();
     }
 
     public static Bitmap getQrcode() {
@@ -66,28 +71,6 @@ public class MyApplication extends Application {
         return line3;
     }
 
-    private static Bitmap drawable2Bitmap(Drawable drawable) {
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable) drawable).getBitmap();
-        } else if (drawable instanceof NinePatchDrawable) {
-            Bitmap bitmap = Bitmap
-                    .createBitmap(
-                            drawable.getIntrinsicWidth(),
-                            drawable.getIntrinsicHeight(),
-                            drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
-                                    : Bitmap.Config.RGB_565);
-            Canvas canvas = new Canvas(bitmap);
-            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(),
-                    drawable.getIntrinsicHeight());
-            drawable.draw(canvas);
-            return bitmap;
-        } else {
-            return null;
-        }
-    }
-
-
-
     public static SocketTool getSocketTool() {
         return socketTool;
     }
@@ -96,4 +79,7 @@ public class MyApplication extends Application {
         return mContext;
     }
 
+    public DaoSession getDaoSession() {
+        return daoSession;
+    }
 }

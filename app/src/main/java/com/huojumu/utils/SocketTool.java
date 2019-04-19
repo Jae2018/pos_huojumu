@@ -63,12 +63,19 @@ public class SocketTool extends WebSocketListener {
                             Thread.sleep(600 * 1000);
                         } catch (Exception e) {
                             e.printStackTrace();
-                            new Throwable().printStackTrace();
+                            Thread.currentThread().interrupt();
                         }
                     }
                 }
             };
             thread.start();
+        }
+    }
+
+    public void stopHeartThread(){
+        if (thread.isAlive()) {
+            thread.interrupt();
+            thread = null;
         }
     }
 

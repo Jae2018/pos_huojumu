@@ -1,5 +1,7 @@
 package com.tsy.sdk.myokhttp.response;
 
+import android.widget.Toast;
+
 import com.google.gson.Gson;
 import com.google.gson.internal.$Gson$Types;
 import com.tsy.sdk.myokhttp.MyOkHttp;
@@ -43,13 +45,6 @@ public abstract class GsonResponseHandler<T> implements IResponseHandler {
             responseBodyStr = responseBody.string();
         } catch (IOException e) {
             e.printStackTrace();
-            LogUtils.e("onResponse fail read response body");
-            MyOkHttp.mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    onFailure(response.code(), "","fail read response body");
-                }
-            });
             return;
         }
 
@@ -65,15 +60,6 @@ public abstract class GsonResponseHandler<T> implements IResponseHandler {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            LogUtils.e("onResponse fail parse gson, body=" + finalResponseBodyStr);
-            MyOkHttp.mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    onFailure(response.code(),finalResponseBodyStr.split(":")[1].substring(1, finalResponseBodyStr.split(":")[1].length() - 7),
-                            finalResponseBodyStr.split(":")[2].substring(1, finalResponseBodyStr.split(":")[2].length() - 8));
-                }
-            });
-
         }
     }
 
@@ -81,6 +67,11 @@ public abstract class GsonResponseHandler<T> implements IResponseHandler {
 
     @Override
     public void onProgress(long currentBytes, long totalBytes) {
+
+    }
+
+    @Override
+    public void onFailure(int statusCode, String code, String error_msg) {
 
     }
 }

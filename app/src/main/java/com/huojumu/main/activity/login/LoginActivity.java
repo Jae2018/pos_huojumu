@@ -117,6 +117,12 @@ public class LoginActivity extends BaseActivity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+//        MyApplication.getSocketTool().stopHeartThread();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);

@@ -38,11 +38,11 @@ public class PaymentActivity extends BaseActivity {
     EditText key;
     @BindView(R.id.keyboard_view)
     KeyboardView keyboardView;
-    @BindView(R.id.btn_pay_cash)
+//    @BindView(R.id.btn_pay_cash)
     Button cashBtn;
-    @BindView(R.id.btn_pay_qrcode)
+//    @BindView(R.id.btn_pay_qrcode)
     Button qrBtn;
-    @BindView(R.id.btn_pay_gun)
+//    @BindView(R.id.btn_pay_gun)
     Button gunBtn;
 
 
@@ -56,6 +56,7 @@ public class PaymentActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        payTotal = getIntent().getDoubleExtra("payTotal", 0);
         KeyboardUtil keyboardUtil = new KeyboardUtil(this);
         keyboardUtil.setEd(key);
     }
@@ -67,7 +68,7 @@ public class PaymentActivity extends BaseActivity {
         totalCast.setText(String.format(Locale.CHINA, "¥ %.2f", payTotal));
     }
 
-    @OnClick(R.id.btn_pay_cash)
+//    @OnClick(R.id.btn_pay_cash)
     void payByCash() {
         if (key.getText().length() == 0) {
             ToastUtils.showLong("请输入金额");
@@ -86,7 +87,7 @@ public class PaymentActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.btn_pay_qrcode)
+//    @OnClick(R.id.btn_pay_qrcode)
     void payByQr() {
         if (key.getText().length() == 0) {
             ToastUtils.showLong("请输入金额");
@@ -113,7 +114,7 @@ public class PaymentActivity extends BaseActivity {
 //        searchVip();
 //    }
 
-    @OnClick(R.id.btn_pay_gun)
+//    @OnClick(R.id.btn_pay_gun)
     void payByGun() {
         if (key.getText().length() == 0) {
             ToastUtils.showLong("请输入金额");

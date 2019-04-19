@@ -461,7 +461,7 @@ public class PrinterUtil {
                         //字体变大
                         mPrinter.setCharSize(1, 1);
                         //订单流水号
-                        String s = "N" + orderNo;
+                        String s = orderNo;
                         mPrinter.printString(s, "GBK");
 
                         //实线

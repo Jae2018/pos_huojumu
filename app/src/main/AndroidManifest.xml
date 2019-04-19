@@ -140,6 +140,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".services.MyPosService"/>
     </application>
 
 </manifest>

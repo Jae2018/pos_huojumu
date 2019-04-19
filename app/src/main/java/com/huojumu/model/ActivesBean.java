@@ -6,7 +6,8 @@ public class ActivesBean {
 
 
     /**
-     * planType : 1
+     * 满减、折扣 与 赠送、特价互斥
+     * planType : 1    1-折扣;2-满减;3-特价;4-满赠;
      * endDate : 2019-01-05 00:00:00
      * validWeek : 8
      * planName : 活动1
@@ -36,6 +37,16 @@ public class ActivesBean {
     private String startDate;
     private int ratio;
     private List<Integer> bargainProIds;
+    //本地添加属性
+    private boolean isOpen = true;//是否开启状态、默认开启状态，时间过就关闭
+
+    public boolean isOpen() {
+        return isOpen;
+    }
+
+    public void setOpen(boolean open) {
+        isOpen = open;
+    }
 
     public String getPlanType() {
         return planType;

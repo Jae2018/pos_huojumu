@@ -714,6 +714,85 @@ public class PrinterUtil {
     }
 
     /**
+     * 打印文本80mm小票样式 48 字节
+     */
+    public static void printString80(final Context context,final Bitmap bitmap, final String totalMoney, final String earn, final String cost, final String charge, final String cut, final String type) {
+        ThreadPool.getInstantiation().addTask(new Runnable() {
+            @Override
+            public void run() {
+                PrinterAPI mPrinter = new PrinterAPI();
+                USBAPI io = new USBAPI(context);
+                if (PrinterAPI.SUCCESS == mPrinter.connect(io)) {
+                    try {
+                        printImage(mPrinter, bitmap);
+                        //交易金额明细
+                        mPrinter.setFontStyle(0);
+
+                       String s = "\n" + printTwoData80("消费金额", totalMoney)
+                                + "\n" + printTwoData80("应收金额", earn)
+                                + "\n" + printTwoData80("客户实付", cost)
+                                + "\n" + printTwoData80("优    惠", cut)
+                                + "\n" + printTwoData80("找    零", charge)
+                                + "\n" + printTwoData80("支付方式", type) + "\n";
+                        mPrinter.printString(s, "GBK");
+
+                        //虚实线
+                        mPrinter.printRasterBitmap(MyApplication.getLine3());
+                        mPrinter.printRasterBitmap(MyApplication.getLine1());
+
+                        //居中
+                        mPrinter.setAlignMode(1);
+                        //logo图片9
+                        mPrinter.printRasterBitmap(MyApplication.getLogo());
+                        mPrinter.setCharSize(1, 1);
+
+                        //店铺名
+                        mPrinter.setAlignMode(0);
+                        s = SpUtil.getString(Constant.STORE_NAME) + "\n";
+                        mPrinter.printString(s, "GBK");
+
+                        mPrinter.setAlignMode(0);
+                        mPrinter.setCharSize(0, 0);
+                        //企业文化描述
+                        s = "7港9欢迎您的到来。我们再次从香港出发，希望搜集到各地的特色食品，港印全国。能7(去)香港(港)的(9)九龙喝一杯正宗的港饮是我们对每一位顾客的愿景。几百年来，香港作为东方接触世界的窗口，找寻并创造了一款款独具特色又流传世界的高品饮品。我们在全国超过十年的专业服务与坚持，与97回归共享繁华，秉承独到的调制方法，期许再一次与亲爱的你能擦出下一个十年火花。\n";
+                        mPrinter.printString(s, "GBK");
+
+                        mPrinter.setAlignMode(1);
+
+                        //品牌二维码
+                        mPrinter.printRasterBitmap(MyApplication.getQrcode());
+
+                        //投诉、加盟热线
+                        s = "\n投诉、加盟热线：010-62655878";
+                        mPrinter.printString(s, "GBK");
+
+                        //公司
+                        s = "\n技术支持 火炬木科技";
+                        mPrinter.printString(s, "GBK");
+
+                        mPrinter.cutPaper(66, 0);
+                        //打开钱箱
+                        byte[] bytes = {0x1B, 0x70, 0x0, 0x3C, (byte) 0xFF};
+                        mPrinter.writeIO(bytes, 0, bytes.length - 1, 1000);
+
+                        Log.e(TAG, "web print finish: " + System.currentTimeMillis());
+                    } catch (Exception e) {
+                        Log.d(TAG, e.getMessage());
+                    } finally {
+                        if (PrinterAPI.SUCCESS == mPrinter.disconnect()) {
+                            io.closeDevice();
+                            mPrinter = null;
+                            io = null;
+                            Log.d(TAG, "disconnectPrinter: finish");
+                        }
+                    }
+                }
+            }
+        });
+
+    }
+
+    /**
      * 打印图片
      *
      * @param view 显示图片的view

@@ -22,8 +22,14 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Base64;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -65,6 +71,7 @@ import com.huojumu.model.SmallType;
 import com.huojumu.model.WorkBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
+import com.huojumu.utils.H5Order;
 import com.huojumu.utils.MyDividerDecoration;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
@@ -135,6 +142,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     ImageView hasGua;
     @BindView(R.id.parent_relative)
     RelativeLayout parent_relative;
+    @BindView(R.id.web_order)
+    WebView webView;
     @BindView(R.id.edit_search)
     TextView edit_search;
     @BindView(R.id.pinyin)
@@ -234,6 +243,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //连接标签机
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         connectUsb(UsbUtil.getBQName(HomeActivity.this));
+
+        webView.setWebChromeClient(new WebChromeClient());
+        //声明WebSettings子类
+        WebSettings webSettings = webView.getSettings();
+
+        //如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
+        webSettings.setJavaScriptEnabled(true);
 
         HorizontalPageLayoutManager horizontalPageLayoutManager = new HorizontalPageLayoutManager(3, 4);
 
@@ -377,6 +393,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         authNo = "";
         layer.setVisibility(View.GONE);
         time = 0;
+        orderInfo = null;
     }
 
     private static class MyHandler extends Handler {
@@ -407,15 +424,19 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         workName.setText(time);
     }
 
+    /**
+     * 重置搜索
+     */
     @OnClick(R.id.input_clear_btn)
     void inputClear() {
         edit_search.setText("");
         searchStr = "";
         searchList.clear();
-        m = 0;
         if (typeList.isEmpty()) {
+            m = 0;
             productAdapter.setNewData(tempProduces);
         } else {
+            m = 1;
             productAdapter.setNewData(typeList);
         }
     }
@@ -441,7 +462,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
         productAdapter.setNewData(searchList);
     }
-
 
     /**
      * 显示单品规格
@@ -490,7 +510,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     private void loadData() {
         ld2 = new LoadingDialog(this);
-        ld2.setLoadingText("加载中,请等待")
+        ld2.setLoadingText("加载中...")
                 .setFailedText("加载失败，请重试");
         ld2.show();
         getAdsList();
@@ -974,6 +994,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         orderInfo.setOrdSource("3");
     }
 
+    String payType;
     /**
      * 结账 dialog 按钮回调
      */
@@ -993,6 +1014,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 } else {
                     initOrder();
                     orderInfo.setPayType(type == 2 ? "020" : "010");
+                    payType = type == 2 ? "支付宝支付" : "微信支付";
                     orderBack = null;
                     //线上支付
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
@@ -1018,7 +1040,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 orderInfo.setPayType("900");
                 cashPayDialog.cancel();
                 cashPayDialog = null;
-
+                payType = "现金支付";
                 NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
@@ -1112,25 +1134,45 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     NativeOrdersDao ordersDao;
 
     /**
+     * 网页排版
+     */
+    private void initWebOrder(String OrderNo, String date, String proList) {
+        String html = H5Order.html;
+        html = html.replace("{1}", "N" + OrderNo.substring(OrderNo.length() - 4))
+                .replace("{2}", SpUtil.getString(Constant.WORKER_NAME))
+                .replace("{3}", date)
+                .replace("{data}", proList);
+
+        Log.e("home", "initWebOrder: " + System.currentTimeMillis());
+        webView.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+    }
+
+    /**
      * 打印订单小票，分 连接上服务器 与 未连接上服务器
      * charge:找零
      */
     private void PrintOrder(final OrderBack orderBack, final double charge, String type) {
         woeker_p += totalPrice;
         orderNum++;
+        String no = orderNum < 10 ? "N000" + orderNum : orderNum < 100 ? "N00" + orderNum : orderNum < 1000 ? "N0" + orderNum : "N" + orderNum;
+
+        String proList = PrinterUtil.toJson(productions);
+
+
 
         //小票数据
-        String no = orderNum < 10 ? "N000" + orderNum : orderNum < 100 ? "N00" + orderNum : orderNum < 1000 ? "N0" + orderNum : "N" + orderNum;
         if (orderBack != null) {
-            PrinterUtil.printString80(HomeActivity.this, productions, "C" + orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4),
-                    SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
-                    orderBack.getTotalPrice(), String.valueOf(charge),
-                    String.valueOf(totalCut), orderBack.getCreatTime(), type);
+            initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList);
+//            PrinterUtil.printString80(HomeActivity.this, productions, "C" + orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4),
+//                    SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
+//                    orderBack.getTotalPrice(), String.valueOf(charge),
+//                    String.valueOf(totalCut), orderBack.getCreatTime(), type);
         } else {
-            PrinterUtil.printString80(HomeActivity.this, productions, no,
-                    SpUtil.getString(Constant.WORKER_NAME), String.valueOf(totalPrice), String.valueOf(totalPrice),
-                    earn1 == 0 ? String.valueOf(totalPrice) : String.valueOf(earn1), String.valueOf(charge),
-                    String.valueOf(totalCut), PrinterUtil.getDate(), type);
+            initWebOrder(no, PrinterUtil.getDate(), proList);
+//            PrinterUtil.printString80(HomeActivity.this, productions, no,
+//                    SpUtil.getString(Constant.WORKER_NAME), String.valueOf(totalPrice), String.valueOf(totalPrice),
+//                    earn1 == 0 ? String.valueOf(totalPrice) : String.valueOf(earn1), String.valueOf(charge),
+//                    String.valueOf(totalCut), PrinterUtil.getDate(), type);
             //断网状态下保存订单信息json
             ordersDao = ((MyApplication) getApplication()).getDaoSession().getNativeOrdersDao();
             ordersDao.insert(new NativeOrders(System.currentTimeMillis(), PrinterUtil.toJson(orderInfo)));
@@ -1172,7 +1214,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             public void run() {
                 clear();
             }
-        }, 500);
+        }, 1000);
 
     }
 
@@ -1420,4 +1462,30 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         scrollHelper.scrollToPosition(pageNo);
     }
 
+    public class JsInterface {
+
+        @JavascriptInterface
+        public void save(final String string) {
+            ThreadPool.getInstantiation().addTask(new Runnable() {
+                @Override
+                public void run() {
+                    Bitmap bitmap = stringToBitmap(string);
+                    PrinterUtil.printString80(HomeActivity.this, bitmap, String.valueOf(totalPrice), String.valueOf(totalPrice),
+                            earn1 == 0 ? String.valueOf(totalPrice) : String.valueOf(earn1), String.valueOf(change),
+                            String.valueOf(totalCut), payType);
+                }
+            });
+        }
+    }
+
+    public static Bitmap stringToBitmap(String string) {
+        Bitmap bitmap = null;
+        try {
+            byte[] bitmapArray = Base64.decode(string.split(",")[1], Base64.DEFAULT);
+            bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
 }

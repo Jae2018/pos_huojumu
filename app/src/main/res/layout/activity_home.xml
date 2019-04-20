@@ -8,6 +8,11 @@
     android:focusableInTouchMode="true"
     tools:context=".main.activity.home.HomeActivity">
 
+    <WebView
+        android:id="@+id/web_order"
+        android:layout_width="@dimen/d_540"
+        android:layout_height="match_parent"/>
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"

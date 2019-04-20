@@ -51,6 +51,7 @@ import com.huojumu.adapter.PagingScrollHelper;
 import com.huojumu.adapter.PinYinAdapter;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.dialog.SingleProAddonDialog;
+import com.huojumu.main.activity.function.PaymentActivity;
 import com.huojumu.main.activity.login.LoginActivity;
 import com.huojumu.main.dialogs.CashPayDialog;
 import com.huojumu.main.dialogs.CertainDialog;
@@ -863,26 +864,26 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
 
-//    /**
-//     * 结账
-//     */
-//    @OnClick(R.id.btn_home_check_out)
-//    void goCheckOut() {
-//        if (productions.isEmpty()) {
-//            ToastUtils.showLong("还未点餐！");
-//            return;
-//        }
-//        Intent i = new Intent(HomeActivity.this, PaymentActivity.class);
-//        if (orderInfo != null) {//
-//            i.putExtra("orderJson", PrinterUtil.toJson(orderInfo));
-//        }
-//        i.putExtra("orderTotal", totalPrice);
-//        startActivity(i);
-//        if (quickPayDialog == null) {
-//            quickPayDialog = new QuickPayDialog(this, this);
-//        }
-//        quickPayDialog.show();
-//    }
+    /**
+     * 结算
+     */
+    @OnClick(R.id.btn_home_check)
+    void goCheckOut() {
+        if (productions.isEmpty()) {
+            ToastUtils.showLong("还未点餐！");
+            return;
+        }
+        Intent i = new Intent(HomeActivity.this, PaymentActivity.class);
+        if (orderInfo != null) {//
+            i.putExtra("orderJson", PrinterUtil.toJson(orderInfo));
+        }
+        i.putExtra("orderTotal", totalPrice);
+        startActivity(i);
+        if (quickPayDialog == null) {
+            quickPayDialog = new QuickPayDialog(this, this);
+        }
+        quickPayDialog.show();
+    }
 
 
     @Override
@@ -897,7 +898,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     /**
-     * 重置所有数据与UI
+     * 重置所有数据与UI、刷新或者重新登陆的情况
      */
     private void resetAllData() {
         typeList.clear();
@@ -918,6 +919,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         resetTypeData();
         totalPrice = 0;
         totalCut = 0;
+        edit_search.setText("");
+        productAdapter.setNewData(tempProduces);
     }
 
     /**
@@ -1131,8 +1134,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         usbManager.requestPermission(usbDevice, mPermissionIntent);
     }
 
-    NativeOrdersDao ordersDao;
-
     /**
      * 网页排版
      */
@@ -1158,8 +1159,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         String proList = PrinterUtil.toJson(productions);
 
-
-
         //小票数据
         if (orderBack != null) {
             initWebOrder(orderBack.getOrderNo(), orderBack.getCreatTime(), proList);
@@ -1173,9 +1172,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 //                    SpUtil.getString(Constant.WORKER_NAME), String.valueOf(totalPrice), String.valueOf(totalPrice),
 //                    earn1 == 0 ? String.valueOf(totalPrice) : String.valueOf(earn1), String.valueOf(charge),
 //                    String.valueOf(totalCut), PrinterUtil.getDate(), type);
+
             //断网状态下保存订单信息json
-            ordersDao = ((MyApplication) getApplication()).getDaoSession().getNativeOrdersDao();
-            ordersDao.insert(new NativeOrders(System.currentTimeMillis(), PrinterUtil.toJson(orderInfo)));
+            ((MyApplication) getApplication()).getDaoSession().getNativeOrdersDao().insert(new NativeOrders(System.currentTimeMillis(), PrinterUtil.toJson(orderInfo)));
         }
         //订单置空
         orderInfo = null;
@@ -1434,9 +1433,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     protected void onStop() {
         super.onStop();
         unregisterReceiver(receiver);
-
-        edit_search.setText("");
-        productAdapter.setNewData(tempProduces);
     }
 
     @Override
@@ -1488,4 +1484,5 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
         return bitmap;
     }
+
 }

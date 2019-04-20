@@ -171,7 +171,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             PrinterUtil.printDaily(DailyTakeOverActivity.this, types, commissionTv.getText().toString(), earn2.getText().toString(), earn1.getText().toString(), num, SpUtil.getString(Constant.WORKER_NAME), lastDate);
         }else{
             ToastUtils.showLong("有未上传的订单，请等待上传完成后再交班");
-            //todo
+            //todo  submit接口
         }
 
     }
@@ -205,9 +205,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
-                if (!code.equals("0")) {
-                    ToastUtils.showLong(error_msg);
-                }
+                ToastUtils.showLong("网络错误，请重试");
                 ld2.close();
             }
         });
@@ -242,9 +240,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
-                if (!code.equals("0")) {
-                    ToastUtils.showLong(error_msg);
-                }
+                ToastUtils.showLong("网络错误，请重试");
                 commit.setEnabled(false);
                 ld2.close();
             }
@@ -296,9 +292,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
-                if (!code.equals("0")) {
-                    ToastUtils.showLong(error_msg);
-                }
+                ToastUtils.showLong("网络错误，请重试");
                 ld2.close();
             }
         });

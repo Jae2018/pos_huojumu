@@ -1,6 +1,9 @@
 package com.huojumu.model;
 
-public class TastesBean {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class TastesBean implements Parcelable {
     /**
      * tasteId : 2
      * tasteName : 默认口味
@@ -44,4 +47,39 @@ public class TastesBean {
     public void setMultiple(double multiple) {
         this.multiple = multiple;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.tasteId);
+        dest.writeString(this.tasteName);
+        dest.writeInt(this.groupId);
+        dest.writeDouble(this.multiple);
+    }
+
+    public TastesBean() {
+    }
+
+    protected TastesBean(Parcel in) {
+        this.tasteId = in.readInt();
+        this.tasteName = in.readString();
+        this.groupId = in.readInt();
+        this.multiple = in.readDouble();
+    }
+
+    public static final Parcelable.Creator<TastesBean> CREATOR = new Parcelable.Creator<TastesBean>() {
+        @Override
+        public TastesBean createFromParcel(Parcel source) {
+            return new TastesBean(source);
+        }
+
+        @Override
+        public TastesBean[] newArray(int size) {
+            return new TastesBean[size];
+        }
+    };
 }

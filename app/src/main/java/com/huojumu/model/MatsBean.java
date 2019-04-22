@@ -1,6 +1,9 @@
 package com.huojumu.model;
 
-public class MatsBean {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class MatsBean implements Parcelable {
 
     /**
      * proMatId : 3285
@@ -85,4 +88,47 @@ public class MatsBean {
     public void setMatName(String matName) {
         this.matName = matName;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.proMatId);
+        dest.writeDouble(this.dosage);
+        dest.writeDouble(this.ingredientDosage);
+        dest.writeDouble(this.ingredientPrice);
+        dest.writeInt(this.addIndex);
+        dest.writeString(this.matNo);
+        dest.writeInt(this.orgId);
+        dest.writeString(this.matName);
+    }
+
+    public MatsBean() {
+    }
+
+    protected MatsBean(Parcel in) {
+        this.proMatId = in.readInt();
+        this.dosage = in.readDouble();
+        this.ingredientDosage = in.readDouble();
+        this.ingredientPrice = in.readDouble();
+        this.addIndex = in.readInt();
+        this.matNo = in.readString();
+        this.orgId = in.readInt();
+        this.matName = in.readString();
+    }
+
+    public static final Parcelable.Creator<MatsBean> CREATOR = new Parcelable.Creator<MatsBean>() {
+        @Override
+        public MatsBean createFromParcel(Parcel source) {
+            return new MatsBean(source);
+        }
+
+        @Override
+        public MatsBean[] newArray(int size) {
+            return new MatsBean[size];
+        }
+    };
 }

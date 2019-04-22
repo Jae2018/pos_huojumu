@@ -28,6 +28,43 @@ public class OrderBack {
     private String chinaUnionQrcode;
     private String origionTotalPrice;
     private String creatTime;
+    //本地添加
+    private String payType;
+    private double charge;
+    private double total;
+    private double cut;
+
+    public double getCut() {
+        return cut;
+    }
+
+    public void setCut(double cut) {
+        this.cut = cut;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+
+    public String getPayType() {
+        return payType;
+    }
+
+    public void setPayType(String payType) {
+        this.payType = payType;
+    }
+
+    public double getCharge() {
+        return charge;
+    }
+
+    public void setCharge(double charge) {
+        this.charge = charge;
+    }
 
     public String getCreatTime() {
         return creatTime;

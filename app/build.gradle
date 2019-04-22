@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao'
+apply plugin: 'android-aspectjx'
 
 android {
     signingConfigs {
@@ -95,4 +96,5 @@ dependencies {
     //    implementation 'com.github.promeg:tinypinyin-lexicons-android-cncity:2.0.3'
     implementation project(':banner')
     implementation 'org.greenrobot:greendao:3.2.2'
+    api 'org.aspectj:aspectjrt:1.8.9'
 }

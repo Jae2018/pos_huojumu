@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:focusableInTouchMode="true"
+    android:padding="@dimen/d_60">
+
+    <LinearLayout
+        android:layout_width="@dimen/d_300"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/d_40"
+            android:gravity="center_vertical"
+            android:text="订单金额："
+            android:textSize="@dimen/f_20" />
+
+        <TextView
+            android:id="@+id/tv_pay_cash_total"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/f_20" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="@dimen/d_300"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/d_40"
+            android:gravity="center_vertical"
+            android:text="客户实付："
+            android:textSize="@dimen/f_20" />
+
+        <EditText
+            android:id="@+id/et_input1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:imeOptions="actionNext"
+            android:gravity="center"
+            android:textSize="@dimen/f_20" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="@dimen/d_300"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/d_40"
+            android:gravity="center_vertical"
+            android:text="手动折扣率："
+            android:textSize="@dimen/f_20" />
+
+        <EditText
+            android:id="@+id/et_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:gravity="center"
+            android:textSize="@dimen/f_20" />
+    </LinearLayout>
+
+    <android.inputmethodservice.KeyboardView
+        android:id="@+id/keyboard_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

@@ -1,5 +1,9 @@
 package com.huojumu.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -7,7 +11,7 @@ import java.util.List;
  * Date: 2018/10/16
  * Description: 扫描枪支付上传
  */
-public class OrderInfo {
+public class OrderInfo implements Parcelable {
 
 
     /**
@@ -39,8 +43,26 @@ public class OrderInfo {
     private String payType;
     private String discountsType;
     private String discountsActivity;
+    private int manualDiscount;
+    private String manualDiscountReason;
     private List<Integer> quanIds;
     private List<DataBean> data;
+
+    public int getManualDiscount() {
+        return manualDiscount;
+    }
+
+    public void setManualDiscount(int manualDiscount) {
+        this.manualDiscount = manualDiscount;
+    }
+
+    public String getManualDiscountReason() {
+        return manualDiscountReason;
+    }
+
+    public void setManualDiscountReason(String manualDiscountReason) {
+        this.manualDiscountReason = manualDiscountReason;
+    }
 
     public String getOrderID() {
         return orderID;
@@ -154,7 +176,7 @@ public class OrderInfo {
         this.data = data;
     }
 
-    public static class DataBean {
+    public static class DataBean implements Parcelable {
         /**
          * proId : 2
          * num : 3
@@ -228,5 +250,107 @@ public class OrderInfo {
             this.mats = mats;
         }
 
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(this.proId);
+            dest.writeInt(this.num);
+            dest.writeString(this.proType);
+            dest.writeTypedList(this.tastes);
+            dest.writeList(this.makes);
+            dest.writeTypedList(this.mats);
+            dest.writeTypedList(this.scales);
+        }
+
+        public DataBean() {
+        }
+
+        protected DataBean(Parcel in) {
+            this.proId = in.readInt();
+            this.num = in.readInt();
+            this.proType = in.readString();
+            this.tastes = in.createTypedArrayList(TastesBean.CREATOR);
+            this.makes = new ArrayList<MakesBean>();
+            in.readList(this.makes, MakesBean.class.getClassLoader());
+            this.mats = in.createTypedArrayList(MatsBean.CREATOR);
+            this.scales = in.createTypedArrayList(ScaleBean.CREATOR);
+        }
+
+        public static final Creator<DataBean> CREATOR = new Creator<DataBean>() {
+            @Override
+            public DataBean createFromParcel(Parcel source) {
+                return new DataBean(source);
+            }
+
+            @Override
+            public DataBean[] newArray(int size) {
+                return new DataBean[size];
+            }
+        };
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.orderID);
+        dest.writeString(this.createTime);
+        dest.writeInt(this.shopID);
+        dest.writeString(this.ordSource);
+        dest.writeInt(this.enterpriseID);
+        dest.writeInt(this.pinpaiID);
+        dest.writeString(this.orderType);
+        dest.writeString(this.startTime);
+        dest.writeString(this.endTime);
+        dest.writeString(this.payType);
+        dest.writeString(this.discountsType);
+        dest.writeString(this.discountsActivity);
+        dest.writeInt(this.manualDiscount);
+        dest.writeString(this.manualDiscountReason);
+        dest.writeList(this.quanIds);
+        dest.writeList(this.data);
+    }
+
+    public OrderInfo() {
+    }
+
+    protected OrderInfo(Parcel in) {
+        this.orderID = in.readString();
+        this.createTime = in.readString();
+        this.shopID = in.readInt();
+        this.ordSource = in.readString();
+        this.enterpriseID = in.readInt();
+        this.pinpaiID = in.readInt();
+        this.orderType = in.readString();
+        this.startTime = in.readString();
+        this.endTime = in.readString();
+        this.payType = in.readString();
+        this.discountsType = in.readString();
+        this.discountsActivity = in.readString();
+        this.manualDiscount = in.readInt();
+        this.manualDiscountReason = in.readString();
+        this.quanIds = new ArrayList<Integer>();
+        in.readList(this.quanIds, Integer.class.getClassLoader());
+        this.data = new ArrayList<DataBean>();
+        in.readList(this.data, DataBean.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<OrderInfo> CREATOR = new Parcelable.Creator<OrderInfo>() {
+        @Override
+        public OrderInfo createFromParcel(Parcel source) {
+            return new OrderInfo(source);
+        }
+
+        @Override
+        public OrderInfo[] newArray(int size) {
+            return new OrderInfo[size];
+        }
+    };
 }

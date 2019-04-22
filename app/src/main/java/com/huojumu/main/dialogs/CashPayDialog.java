@@ -36,12 +36,11 @@ public class CashPayDialog extends BaseDialog {
 
     private DialogInterface anInterface;
 
-    private double cost;//订单金额
-    private int cash;//收取金额
+    private double totalPrice = 0;//订单金额
+    private int earnMoney = 0;//收取金额
 
-    public CashPayDialog(@NonNull Context context, double cost, DialogInterface anInterface) {
+    public CashPayDialog(@NonNull Context context, DialogInterface anInterface) {
         super(context);
-        this.cost = cost;
         this.anInterface = anInterface;
     }
 
@@ -52,7 +51,7 @@ public class CashPayDialog extends BaseDialog {
 
     @Override
     public void initView() {
-        earn1.setText(String.valueOf(cost));
+        earn1.setText(String.valueOf(totalPrice));
         earn2.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -67,13 +66,13 @@ public class CashPayDialog extends BaseDialog {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() > 0) {
-                    cash = Integer.valueOf(s.toString().trim());
+                    earnMoney = Integer.valueOf(s.toString().trim());
                 }
-                if (cash < cost) {
+                if (earnMoney < totalPrice) {
                     okBtn.setEnabled(false);
                     errorTv.setVisibility(View.VISIBLE);
                 } else {
-                    change.setText(String.valueOf(cash - cost));
+                    change.setText(String.valueOf(earnMoney - totalPrice));
                     okBtn.setEnabled(true);
                     errorTv.setVisibility(View.GONE);
                 }
@@ -85,24 +84,24 @@ public class CashPayDialog extends BaseDialog {
     void OnCashClick(View view) {
         switch (view.getId()) {
             case R.id.dialog_cash_pay_ten:
-                cash = 10;
+                earnMoney = 10;
                 break;
             case R.id.dialog_cash_pay_twenty:
-                cash = 20;
+                earnMoney = 20;
                 break;
             case R.id.dialog_cash_pay_fifty:
-                cash = 50;
+                earnMoney = 50;
                 break;
             case R.id.dialog_cash_pay_hundred:
-                cash = 100;
+                earnMoney = 100;
                 break;
         }
-        if (cash < cost) {
+        if (earnMoney < totalPrice) {
             ToastUtils.showLong("所选金额不对");
             return;
         }
-        earn2.setText(String.valueOf(cash));
-        change.setText(String.valueOf(cash - cost));
+        earn2.setText(String.valueOf(earnMoney));
+        change.setText(String.valueOf(earnMoney - totalPrice));
     }
 
     @OnClick(R.id.cash_dialog_cancel)
@@ -113,13 +112,23 @@ public class CashPayDialog extends BaseDialog {
 
     @OnClick(R.id.cash_dialog_ok)
     void OnOk() {
+        anInterface.OnDialogOkClick(0, earnMoney, totalPrice, earnMoney - totalPrice, "CashPayDialog");
         clear();
-        anInterface.OnDialogOkClick(0, cash, cost, cash - cost, "CashPayDialog");
     }
 
     private void clear(){
         earn1.setText("");
         earn2.setText("");
         change.setText("");
+        earnMoney = 0;
+    }
+
+    public void setTotalMoney(double totalPrice){
+        this.totalPrice = totalPrice;
+        earn1.setText(String.valueOf(totalPrice));
+    }
+
+    public double getEarnMoney(){
+        return earnMoney;
     }
 }

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="@dimen/d_350"
+        android:layout_height="@dimen/d_420"
+        android:background="@color/home_left"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_online_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/holo_red_light"
+            android:textSize="@dimen/f_26"
+            android:contentDescription="@string/des"
+            android:layout_centerInParent="true" />
+
+        <TextView
+            android:id="@+id/tv_payment_code_msg"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_40"
+            android:text="等待客户扫码中..."
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/f_20"
+            android:visibility="invisible"
+            android:gravity="center_horizontal"
+            android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btn_pay_by_code"
+        android:layout_width="@dimen/d_350"
+        android:layout_height="wrap_content"
+        android:background="@color/btn_selected_tow"
+        android:text="开始扫码"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/f_20" />
+
+</LinearLayout>

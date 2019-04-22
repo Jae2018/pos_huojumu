@@ -716,17 +716,17 @@ public class PrinterUtil {
     /**
      * 打印文本80mm小票样式 48 字节
      */
-    public static void printString80(final Context context,final Bitmap bitmap, final String totalMoney, final String earn, final String cost, final String charge, final String cut, final String type) {
+    public static void printString80(final Context context,final String totalMoney, final String earn, final String cost, final String charge, final String cut, final String type) {
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
             public void run() {
-                PrinterAPI mPrinter = new PrinterAPI();
-                USBAPI io = new USBAPI(context);
-                if (PrinterAPI.SUCCESS == mPrinter.connect(io)) {
+//                PrinterAPI mPrinter = new PrinterAPI();
+//                USBAPI io = new USBAPI(context);
+//                if (PrinterAPI.SUCCESS == mPrinter.connect(io)) {
                     try {
-                        printImage(mPrinter, bitmap);
-                        //交易金额明细
-                        mPrinter.setFontStyle(0);
+//                        mPrinter.printRasterBitmap(bitmap);
+//                        //交易金额明细
+//                        mPrinter.setFontStyle(0);
 
                        String s = "\n" + printTwoData80("消费金额", totalMoney)
                                 + "\n" + printTwoData80("应收金额", earn)
@@ -778,15 +778,16 @@ public class PrinterUtil {
                         Log.e(TAG, "web print finish: " + System.currentTimeMillis());
                     } catch (Exception e) {
                         Log.d(TAG, e.getMessage());
-                    } finally {
-                        if (PrinterAPI.SUCCESS == mPrinter.disconnect()) {
-                            io.closeDevice();
-                            mPrinter = null;
-                            io = null;
-                            Log.d(TAG, "disconnectPrinter: finish");
-                        }
                     }
-                }
+//                    finally {
+//                        if (PrinterAPI.SUCCESS == mPrinter.disconnect()) {
+//                            io.closeDevice();
+//                            mPrinter = null;
+//                            io = null;
+//                            Log.d(TAG, "disconnectPrinter: finish");
+//                        }
+//                    }
+//                }
             }
         });
 
@@ -815,8 +816,6 @@ public class PrinterUtil {
      * @param bitmap 要打印的图片
      */
     public static void printImage(PrinterAPI mPrinter, Bitmap bitmap) {
-        set(CLEAR_TEMP);
-        mPrinter.setAlignMode(1);
         try {
             if (PrinterAPI.SUCCESS == mPrinter.printRasterBitmap(bitmap)) {
                 Log.d(TAG, "printImage: finish");
@@ -826,10 +825,27 @@ public class PrinterUtil {
         }
     }
 
+    public static void printImage(Bitmap bitmap) {
+        try {
+            if (PrinterAPI.SUCCESS == mPrinter.printRasterBitmap(bitmap)) {
+                Log.d(TAG, "printImage: finish");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        cutPaper();
+    }
+
     /**
      * 切纸
      */
     private static void cutPaper(PrinterAPI mPrinter) {
+        if (PrinterAPI.SUCCESS == mPrinter.cutPaper(66, 0)) {
+            Log.d(TAG, "cutPaper: finish");
+        }
+    }
+
+    private static void cutPaper() {
         if (PrinterAPI.SUCCESS == mPrinter.cutPaper(66, 0)) {
             Log.d(TAG, "cutPaper: finish");
         }

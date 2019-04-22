@@ -111,6 +111,7 @@ public class LoginActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLogin(EventHandler eventHandler) {
         if (eventHandler.getType() == 3) {
+            SpUtil.save("from_Login", true);
             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             finish();
         }

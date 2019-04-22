@@ -188,30 +188,36 @@
         android:layout_below="@+id/linearLayout"
         android:background="@android:color/white" />
 
-    <TextView
-        android:id="@+id/text1"
-        android:layout_width="@dimen/d_250"
-        android:layout_height="@dimen/d_40"
-        android:layout_below="@+id/line"
-        android:gravity="center"
-        android:text="小票"
-        android:textColor="@android:color/white" />
-
-    <View
-        android:id="@+id/view2"
-        android:layout_width="@dimen/d_250"
-        android:layout_height="@dimen/d_8"
-        android:layout_below="@+id/text1"
-        android:background="@android:color/white" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <LinearLayout
+        android:id="@+id/linearLayout4"
         android:layout_width="@dimen/d_250"
         android:layout_height="match_parent"
-        android:layout_above="@+id/relativeLayout"
-        android:layout_below="@+id/view2"
-        android:background="@color/home_left"
-        android:overScrollMode="never" />
+        android:layout_below="@+id/line"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="@dimen/d_250"
+            android:layout_height="@dimen/d_40"
+            android:gravity="center"
+            android:background="@color/home_left_bottom"
+            android:text="小票"
+            android:textColor="@android:color/white" />
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="@dimen/d_250"
+            android:layout_height="@dimen/d_8"
+            android:background="@android:color/white" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="@dimen/d_250"
+            android:layout_height="match_parent"
+            android:background="@color/home_left"
+            android:overScrollMode="never" />
+    </LinearLayout>
+
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
@@ -256,7 +262,7 @@
         android:layout_width="@dimen/dp_10"
         android:layout_height="match_parent"
         android:layout_below="@id/linearLayout"
-        android:layout_toEndOf="@id/recyclerView"
+        android:layout_toEndOf="@id/linearLayout4"
         android:background="@android:color/white" />
 
     <LinearLayout
@@ -504,7 +510,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/d_50"
         android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@id/recyclerView"
+        android:layout_toEndOf="@id/linearLayout4"
         android:background="@color/home_bottom"
         android:gravity="center"
         android:orientation="horizontal">
@@ -536,34 +542,5 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/layer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/black_overlay"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="支付中..."
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/f_30" />
-
-        <Button
-            android:id="@+id/cancel_qrpay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/d_80"
-            android:background="@drawable/blue_ok"
-            android:paddingLeft="@dimen/d_16"
-            android:paddingRight="@dimen/d_16"
-            android:text="取消支付"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/f_20" />
-
-    </LinearLayout>
 
 </RelativeLayout>

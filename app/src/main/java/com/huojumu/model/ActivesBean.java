@@ -1,8 +1,12 @@
 package com.huojumu.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
 import java.util.List;
 
-public class ActivesBean {
+public class ActivesBean implements Parcelable {
 
 
     /**
@@ -159,4 +163,62 @@ public class ActivesBean {
     public void setBargainProIds(List<Integer> bargainProIds) {
         this.bargainProIds = bargainProIds;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.planType);
+        dest.writeString(this.endDate);
+        dest.writeString(this.validWeek);
+        dest.writeString(this.planName);
+        dest.writeDouble(this.upToPrice);
+        dest.writeDouble(this.offPrice);
+        dest.writeInt(this.compId);
+        dest.writeString(this.validTime);
+        dest.writeInt(this.id);
+        dest.writeInt(this.upToCount);
+        dest.writeInt(this.freeCount);
+        dest.writeString(this.startDate);
+        dest.writeInt(this.ratio);
+        dest.writeList(this.bargainProIds);
+        dest.writeByte(this.isOpen ? (byte) 1 : (byte) 0);
+    }
+
+    public ActivesBean() {
+    }
+
+    protected ActivesBean(Parcel in) {
+        this.planType = in.readString();
+        this.endDate = in.readString();
+        this.validWeek = in.readString();
+        this.planName = in.readString();
+        this.upToPrice = in.readDouble();
+        this.offPrice = in.readDouble();
+        this.compId = in.readInt();
+        this.validTime = in.readString();
+        this.id = in.readInt();
+        this.upToCount = in.readInt();
+        this.freeCount = in.readInt();
+        this.startDate = in.readString();
+        this.ratio = in.readInt();
+        this.bargainProIds = new ArrayList<Integer>();
+        in.readList(this.bargainProIds, Integer.class.getClassLoader());
+        this.isOpen = in.readByte() != 0;
+    }
+
+    public static final Parcelable.Creator<ActivesBean> CREATOR = new Parcelable.Creator<ActivesBean>() {
+        @Override
+        public ActivesBean createFromParcel(Parcel source) {
+            return new ActivesBean(source);
+        }
+
+        @Override
+        public ActivesBean[] newArray(int size) {
+            return new ActivesBean[size];
+        }
+    };
 }

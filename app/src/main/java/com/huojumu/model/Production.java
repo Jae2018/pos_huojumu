@@ -1,10 +1,13 @@
 package com.huojumu.model;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Production {
+public class Production implements Parcelable {
 
 
     /**
@@ -271,4 +274,88 @@ public class Production {
         this.scales = scales;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.proType);
+        dest.writeString(this.proAlsname);
+        dest.writeString(this.proSpellname);
+        dest.writeString(this.isDiscount);
+        dest.writeString(this.proNo);
+        dest.writeString(this.isMoneyOff);
+        dest.writeInt(this.proId);
+        dest.writeDouble(this.minPrice);
+        dest.writeString(this.isBargain);
+        dest.writeString(this.isPresented);
+        dest.writeInt(this.typeId);
+        dest.writeString(this.proName);
+        dest.writeList(this.mats);
+        dest.writeList(this.imgs);
+        dest.writeList(this.tastes);
+        dest.writeList(this.scales);
+        dest.writeString(this.planFlag);
+        dest.writeInt(this.number);
+        dest.writeString(this.addon);
+        dest.writeString(this.tasteStr);
+        dest.writeString(this.scaleStr);
+        dest.writeString(this.matStr);
+        dest.writeDouble(this.mateP);
+        dest.writeDouble(this.scalePrice);
+        dest.writeDouble(this.origionPrice);
+        dest.writeString(this.activeStr);
+        dest.writeTypedList(this.activesBeanList);
+    }
+
+    public Production() {
+    }
+
+    protected Production(Parcel in) {
+        this.proType = in.readString();
+        this.proAlsname = in.readString();
+        this.proSpellname = in.readString();
+        this.isDiscount = in.readString();
+        this.proNo = in.readString();
+        this.isMoneyOff = in.readString();
+        this.proId = in.readInt();
+        this.minPrice = in.readDouble();
+        this.isBargain = in.readString();
+        this.isPresented = in.readString();
+        this.typeId = in.readInt();
+        this.proName = in.readString();
+        this.mats = new ArrayList<MatsBean>();
+        in.readList(this.mats, MatsBean.class.getClassLoader());
+        this.imgs = new ArrayList<ImgsBean>();
+        in.readList(this.imgs, ImgsBean.class.getClassLoader());
+        this.tastes = new ArrayList<TastesBean>();
+        in.readList(this.tastes, TastesBean.class.getClassLoader());
+        this.scales = new ArrayList<ScaleBean>();
+        in.readList(this.scales, ScaleBean.class.getClassLoader());
+        this.planFlag = in.readString();
+        this.number = in.readInt();
+        this.addon = in.readString();
+        this.tasteStr = in.readString();
+        this.scaleStr = in.readString();
+        this.matStr = in.readString();
+        this.mateP = in.readDouble();
+        this.scalePrice = in.readDouble();
+        this.origionPrice = in.readDouble();
+        this.activeStr = in.readString();
+        this.activesBeanList = in.createTypedArrayList(ActivesBean.CREATOR);
+    }
+
+    public static final Parcelable.Creator<Production> CREATOR = new Parcelable.Creator<Production>() {
+        @Override
+        public Production createFromParcel(Parcel source) {
+            return new Production(source);
+        }
+
+        @Override
+        public Production[] newArray(int size) {
+            return new Production[size];
+        }
+    };
 }

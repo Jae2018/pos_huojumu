@@ -50,7 +50,9 @@ public class NetTool {
         }
     })
             .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-            .readTimeout(90, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
             .build());
 
     public static MyOkHttp getNetApi() {
@@ -87,7 +89,7 @@ public class NetTool {
         okHttp.post()
                 .url(Constant.BASE_URL + "product/showPros.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("shopID", shopID + "")
-                .addParam("pinpaiID",SpUtil.getInt(Constant.PINPAI_ID)+"")
+                .addParam("pinpaiID", SpUtil.getInt(Constant.PINPAI_ID) + "")
                 .addParam("isRecommend", isRecommend)
                 .enqueue(handler);
     }
@@ -126,7 +128,7 @@ public class NetTool {
     }
 
     //小白盒支付
-    public static void payByBox(String orderNo, String payType,String authNo, GsonResponseHandler<BaseBean<BoxPay>> handler){
+    public static void payByBox(String orderNo, String payType, String authNo, GsonResponseHandler<BaseBean<BoxPay>> handler) {
         okHttp.post().url(Constant.BASE_URL + "pay/barcodepay.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("orderNo", orderNo)
                 .addParam("payType", payType)
@@ -227,7 +229,7 @@ public class NetTool {
     }
 
     //查询单品规格信息
-    public static void getSpecification(int pinpaiID, int proId, int shopId,GsonResponseHandler<BaseBean<Specification>> handler) {
+    public static void getSpecification(int pinpaiID, int proId, int shopId, GsonResponseHandler<BaseBean<Specification>> handler) {
         okHttp.post().url(Constant.BASE_URL + "product/tasteChoose.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("pinpaiID", pinpaiID + "")
                 .addParam("proId", proId + "")
@@ -260,7 +262,7 @@ public class NetTool {
         okHttp.post()
                 .url(Constant.BASE_URL + "system/advsearch.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("shopID", "" + shopID)
-                .addParam("fileType","3")
+                .addParam("fileType", "3")
                 .enqueue(handler);
     }
 
@@ -268,7 +270,7 @@ public class NetTool {
      * 更新版本查询
      * https://www.goodb2b.cn/filever/filemanager/queryLastVersion?projectName=pos
      */
-    public static void updateApk(GsonResponseHandler<UpdateBean> handler){
+    public static void updateApk(GsonResponseHandler<UpdateBean> handler) {
         okHttp.get().url("https://www.goodb2b.cn/filever/filemanager/queryLastVersion?projectName=pos")
                 .enqueue(handler);
     }

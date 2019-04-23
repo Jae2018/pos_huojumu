@@ -1,6 +1,8 @@
 package com.huojumu.utils;
 
 import android.content.Context;
+import android.os.CountDownTimer;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -16,6 +18,10 @@ import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -29,15 +35,21 @@ public class SocketTool extends WebSocketListener {
     private Gson gson = new Gson();
     private WebSocket webSocket;
     private Context context;
-    private static Thread thread;
+    private static OkHttpClient client;
+    private static SocketTool INSTANCE;
+    private static Request request;
 
     public static SocketTool getInstance(Context context) {
-        Request request = new Request.Builder()
+        request = new Request.Builder()
                 .url(Constant.SOCKET)
                 .build();
 
-        OkHttpClient client = new OkHttpClient();
-        SocketTool INSTANCE = new SocketTool(context);
+        client = new OkHttpClient.Builder()
+                .connectTimeout(0, TimeUnit.SECONDS)
+                .readTimeout(0, TimeUnit.SECONDS)
+                .writeTimeout(0, TimeUnit.SECONDS)
+                .build();
+        INSTANCE = new SocketTool(context);
         client.newWebSocket(request, INSTANCE);
         return INSTANCE;
     }
@@ -48,26 +60,26 @@ public class SocketTool extends WebSocketListener {
 
     public void sendMsg(String s) {
         if (webSocket != null) {
+            Log.e(TAG, "sendMsg: " + s);
             webSocket.send(s);
         }
     }
 
     public void sendHeart() {
         if (webSocket != null) {
-            thread = new Thread() {
+            new Thread() {
                 public void run() {
                     while (true) {
                         webSocket.send("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
                         try {
-                            Thread.sleep(600 * 1000);
+                            Thread.sleep(6 * 1000);
                         } catch (Exception e) {
                             e.printStackTrace();
                             Thread.currentThread().interrupt();
                         }
                     }
                 }
-            };
-            thread.start();
+            }.start();
         }
     }
 
@@ -100,13 +112,13 @@ public class SocketTool extends WebSocketListener {
                             SpUtil.save(Constant.PINPAI_ID, response.getData().getParentEnterPrise().getId());
                             SpUtil.save(Constant.ENT_NAME, response.getData().getParentEnterPrise().getEntName());
                             SpUtil.save(Constant.ENT_DIS, response.getData().getParentEnterPrise().getDiscountsType());
-                            SpUtil.save(Constant.HTML,response.getData().getParentEnterPrise().getReceiptTemplate());
+                            SpUtil.save(Constant.HTML, response.getData().getParentEnterPrise().getReceiptTemplate());
                         }
                         EventBus.getDefault().post(new EventHandler(Constant.LOGIN));
                     }
 
                     @Override
-                    public void onFailure(int statusCode,String code, String error_msg) {
+                    public void onFailure(int statusCode, String code, String error_msg) {
                         ToastUtils.showLong(error_msg);
                     }
                 });
@@ -146,6 +158,6 @@ public class SocketTool extends WebSocketListener {
     public void onFailure(WebSocket webSocket, Throwable t, @Nullable Response response) {
         super.onFailure(webSocket, t, response);
         EventBus.getDefault().post(new NetErrorHandler(false));
-        Log.e(TAG, "response:   " + response + "      t:  " + t);
     }
+
 }

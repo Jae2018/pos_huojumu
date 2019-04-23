@@ -82,6 +82,7 @@ import com.huojumu.utils.PrinterCommand;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SingleClick;
 import com.huojumu.utils.SocketBack;
+import com.huojumu.utils.SocketTool;
 import com.huojumu.utils.SpUtil;
 import com.huojumu.utils.ThreadFactoryBuilder;
 import com.huojumu.utils.ThreadPool;
@@ -1256,6 +1257,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             new AlertDialog.Builder(this).setMessage("网络连接中断").setNegativeButton("确定", new android.content.DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(android.content.DialogInterface dialog, int which) {
+                    MyApplication.getSocketTool().sendMsg("123");
                     dialog.cancel();
                     dialog = null;
                 }

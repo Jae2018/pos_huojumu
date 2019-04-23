@@ -11,6 +11,7 @@ import com.huojumu.utils.Constant;
 import com.huojumu.utils.SocketTool;
 import com.huojumu.utils.SpUtil;
 import com.tencent.bugly.crashreport.CrashReport;
+import com.xuexiang.xaop.XAOP;
 
 import org.greenrobot.greendao.database.Database;
 
@@ -49,6 +50,7 @@ public class MyApplication extends Application {
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "pos-db");
         Database db = helper.getWritableDb();
         daoSession = new DaoMaster(db).newSession();
+        XAOP.init(this);
     }
 
     public static Bitmap getQrcode() {

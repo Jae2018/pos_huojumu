@@ -15,10 +15,10 @@ import com.huojumu.model.OrderDetails;
 import com.huojumu.model.OrderEnableBackBean;
 import com.huojumu.model.OrdersList;
 import com.huojumu.model.Production;
-import com.huojumu.model.Products;
 import com.huojumu.model.SmallType;
 import com.huojumu.model.Specification;
 import com.huojumu.model.StoreInfo;
+import com.huojumu.model.UpdateBean;
 import com.huojumu.model.VipListBean;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
@@ -264,5 +264,13 @@ public class NetTool {
                 .enqueue(handler);
     }
 
+    /**
+     * 更新版本查询
+     * https://www.goodb2b.cn/filever/filemanager/queryLastVersion?projectName=pos
+     */
+    public static void updateApk(GsonResponseHandler<UpdateBean> handler){
+        okHttp.get().url("https://www.goodb2b.cn/filever/filemanager/queryLastVersion?projectName=pos")
+                .enqueue(handler);
+    }
 
 }

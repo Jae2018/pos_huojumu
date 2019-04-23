@@ -62,6 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
+            android:hint="请输入1-99的数字"
             android:gravity="center"
             android:textSize="@dimen/f_20" />
     </LinearLayout>

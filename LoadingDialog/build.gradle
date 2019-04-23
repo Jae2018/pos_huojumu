@@ -1,6 +1,14 @@
 apply plugin: 'com.android.library'
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('E:\\AndroidSpace\\key2.jks')
+            storePassword '312108'
+            keyAlias = 'key'
+            keyPassword '312108'
+        }
+    }
     compileSdkVersion 28
 
     defaultConfig {

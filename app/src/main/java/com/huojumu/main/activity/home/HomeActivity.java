@@ -1,5 +1,6 @@
 package com.huojumu.main.activity.home;
 
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -63,6 +64,7 @@ import com.huojumu.model.BaseBean;
 import com.huojumu.model.BoxPay;
 import com.huojumu.model.MatsBean;
 import com.huojumu.model.NativeOrders;
+import com.huojumu.model.NetErrorHandler;
 import com.huojumu.model.NoNetPayBack;
 import com.huojumu.model.OrderBack;
 import com.huojumu.model.OrderInfo;
@@ -984,7 +986,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
                         @Override
                         public void onFailure(int statusCode, String code, String error_msg) {
-
+                            ToastUtils.showLong("网络连接已断开");
                         }
                     });
                 }
@@ -1007,6 +1009,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
                     @Override
                     public void onFailure(int statusCode, String code, String error_msg) {
+                        ToastUtils.showLong("网络连接已断开");
                         PrintOrder(orderBack, charge < 0 ? 0 : charge, "现金支付", totalPrice, totalCut);
                     }
                 });
@@ -1242,6 +1245,22 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //结算回调，无网
         LogUtil.E(PrinterUtil.toJson(noNetPayBack));
         PrintOrder(null, noNetPayBack.getCharge(), noNetPayBack.getType(), noNetPayBack.getTotalPrice(), noNetPayBack.getCut());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void netState(NetErrorHandler netErrorHandler) {
+        if (netErrorHandler.isConnected()) {
+            Log.e("home", "netState: 1");
+            ToastUtils.showLong("网络连接正常");
+        } else {
+            new AlertDialog.Builder(this).setMessage("网络连接中断").setNegativeButton("确定", new android.content.DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(android.content.DialogInterface dialog, int which) {
+                    dialog.cancel();
+                    dialog = null;
+                }
+            }).create().show();
+        }
     }
 
     private void usbConn(UsbDevice usbDevice) {

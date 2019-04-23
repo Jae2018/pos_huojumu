@@ -4,6 +4,12 @@ apply plugin: 'android-aspectjx'
 
 android {
     signingConfigs {
+    release {
+        storeFile file('E:\\AndroidSpace\\key2.jks')
+        storePassword '312108'
+        keyAlias = 'key'
+        keyPassword '312108'
+    }
     }
     compileSdkVersion 28
     defaultConfig {
@@ -11,7 +17,7 @@ android {
         minSdkVersion 22
         targetSdkVersion 28
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = ["appid": "aa223", "appse": "s1231","adsId":""]
         renderscriptSupportModeEnabled true
@@ -97,4 +103,6 @@ dependencies {
     implementation project(':banner')
     implementation 'org.greenrobot:greendao:3.2.2'
     api 'org.aspectj:aspectjrt:1.8.9'
+    implementation 'com.qianwen:update-app:3.5.2'
+    implementation 'com.github.xuexiangjys.XAOP:xaop-runtime:1.0.1'
 }

@@ -12,13 +12,16 @@ import com.huojumu.MyApplication;
 import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.home.HomeActivity;
+import com.huojumu.down.DownProgressDialog;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.EventHandler;
+import com.huojumu.model.UpdateBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
 import com.huojumu.utils.QrUtil;
 import com.huojumu.utils.SpUtil;
+import com.huojumu.utils.UpdateTool;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
@@ -39,6 +42,7 @@ public class LoginActivity extends BaseActivity {
     TextView out_of_date;
 
     private CountDownTimer countDownTimer;
+    private DownProgressDialog downProgressDialog;
 
     @Override
     protected int setLayout() {
@@ -48,7 +52,23 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
+        NetTool.updateApk(new GsonResponseHandler<UpdateBean>() {
+            @Override
+            public void onSuccess(int statusCode, UpdateBean response) {
+                if (!UpdateTool.getLocalVersionName(LoginActivity.this).equals(response.getVersionNum())) {
+                    MyOkHttp.mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            downProgressDialog = new DownProgressDialog(LoginActivity.this);
+                            downProgressDialog.setCancelable(false);
+                            downProgressDialog.show();
+                        }
+                    }, 500);
+                }
+            }
+        });
     }
+
 
     @Override
     protected void initData() {
@@ -64,6 +84,7 @@ public class LoginActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         MyApplication.getSocketTool().sendHeart();
+
     }
 
     private void getCode() {
@@ -118,15 +139,13 @@ public class LoginActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-//        MyApplication.getSocketTool().stopHeartThread();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        if (downProgressDialog != null) {
+            downProgressDialog.cancel();
+            downProgressDialog = null;
+        }
     }
 
 }

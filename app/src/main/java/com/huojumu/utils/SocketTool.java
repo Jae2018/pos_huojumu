@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.huojumu.main.dialogs.CertainDialog;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.EventHandler;
+import com.huojumu.model.NetErrorHandler;
 import com.huojumu.model.StoreInfo;
 import com.huojumu.model.TaskBean;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
@@ -26,9 +27,7 @@ public class SocketTool extends WebSocketListener {
 
     private String TAG = SocketTool.class.getSimpleName();
     private Gson gson = new Gson();
-//    private BaseActivity activity;
     private WebSocket webSocket;
-    private static SocketTool INSTANCE;
     private Context context;
     private static Thread thread;
 
@@ -38,7 +37,7 @@ public class SocketTool extends WebSocketListener {
                 .build();
 
         OkHttpClient client = new OkHttpClient();
-        INSTANCE = new SocketTool(context);
+        SocketTool INSTANCE = new SocketTool(context);
         client.newWebSocket(request, INSTANCE);
         return INSTANCE;
     }
@@ -72,25 +71,17 @@ public class SocketTool extends WebSocketListener {
         }
     }
 
-    public void stopHeartThread(){
-        if (thread.isAlive()) {
-            thread.interrupt();
-            thread = null;
-        }
-    }
-
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
         super.onOpen(webSocket, response);
         this.webSocket = webSocket;
-        Log.e(TAG, "onOpen: ");
-        Log.e("SocketTool", "getInstance: " +Constant.SOCKET);
     }
 
     @Override
     public void onMessage(final WebSocket webSocket, String text) {
         super.onMessage(webSocket, text);
-        Log.e(TAG, "onMessage: " + text);
+        EventBus.getDefault().post(new NetErrorHandler(true));
+
         TaskBean taskBean = gson.fromJson(text, TaskBean.class);
         switch (taskBean.getTask()) {
             case Constant.BIND:
@@ -154,6 +145,7 @@ public class SocketTool extends WebSocketListener {
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, @Nullable Response response) {
         super.onFailure(webSocket, t, response);
+        EventBus.getDefault().post(new NetErrorHandler(false));
         Log.e(TAG, "response:   " + response + "      t:  " + t);
     }
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.huojumu" >
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.huojumu">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -9,25 +10,34 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEM"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEM" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- 显示系统窗口权限 -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <!-- 在 屏幕最顶部显示addview-->
+    <!-- 在 屏幕最顶部显示-->
     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.READ_LOGS"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+    <!-- 更新重启 -->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name= "android.permission.RESTART_PACKAGES" />
+    <uses-permission android:name="android.permission.INSTALL_PACKAGES"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:name="com.huojumu.MyApplication"
         android:allowBackup="true"
         android:fullBackupContent="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:hardwareAccelerated="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <!--<meta-data-->
@@ -46,23 +56,23 @@
             android:launchMode="singleInstance"
             android:screenOrientation="landscape">
             <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-                <!--&lt;!&ndash;<category android:name="android.intent.category.DEFAULT" />&ndash;&gt;-->
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--<action android:name="android.intent.action.MAIN" />-->
+            <!--&lt;!&ndash;<category android:name="android.intent.category.DEFAULT" />&ndash;&gt;-->
+            <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
         </activity>
         <activity
             android:name="com.huojumu.main.activity.login.LoginActivity"
-            android:screenOrientation="landscape"
             android:configChanges="keyboard|navigation"
             android:launchMode="singleInstance"
-            android:windowSoftInputMode="stateHidden|stateUnchanged" >
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden|stateUnchanged">
 
         </activity>
         <activity
             android:name="com.huojumu.main.activity.home.HomeActivity"
-            android:launchMode="singleTask"
             android:configChanges="keyboard|navigation"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme">
             <intent-filter>
@@ -74,23 +84,23 @@
         </activity>
         <activity
             android:name="com.huojumu.main.activity.work.DailyTakeOverActivity"
-            android:screenOrientation="landscape"
             android:configChanges="keyboard|navigation"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name="com.huojumu.main.activity.function.InventoryActivity"
-            android:screenOrientation="landscape"
             android:configChanges="keyboard|navigation"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name="com.huojumu.main.activity.function.InventoryDetailActivity"
-            android:screenOrientation="landscape"
             android:configChanges="keyboard|navigation"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name="com.huojumu.main.activity.MainActivity"
-            android:screenOrientation="landscape"
-            android:configChanges="keyboard|navigation">
+            android:configChanges="keyboard|navigation"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -99,18 +109,18 @@
         </activity>
         <activity
             android:name="com.huojumu.main.activity.function.ChangePwdActivity"
-            android:screenOrientation="landscape"
             android:configChanges="keyboard|navigation"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name="com.huojumu.main.activity.function.VipActivity"
-            android:screenOrientation="landscape"
             android:configChanges="keyboard|navigation"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name="com.huojumu.main.activity.function.MaterialActivity"
-            android:screenOrientation="landscape"
             android:configChanges="keyboard|navigation"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
             android:name="com.huojumu.main.activity.function.PayByBoxActivity"
@@ -128,12 +138,14 @@
             android:name="com.huojumu.main.activity.function.SettingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="landscape" />
-        <activity android:name="com.huojumu.main.activity.function.PaymentActivity"
-            android:configChanges="keyboard|navigation"/>
-        <activity android:name=".main.activity.function.OrderDetailActivity"
-            android:configChanges="keyboard|navigation"/>
+        <activity
+            android:name="com.huojumu.main.activity.function.PaymentActivity"
+            android:configChanges="keyboard|navigation" />
+        <activity
+            android:name=".main.activity.function.OrderDetailActivity"
+            android:configChanges="keyboard|navigation" />
         <!--<activity android:name=".main.activity.dialog.RegisterVipDialog"-->
-            <!--android:configChanges="keyboard|navigation"/>-->
+        <!--android:configChanges="keyboard|navigation"/>-->
 
         <receiver android:name="com.huojumu.receiver.PosReceiver">
             <intent-filter>
@@ -142,7 +154,14 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".services.MyPosService"/>
+        <service android:name=".services.MyPosService" />
+
+        <receiver android:name=".receiver.UpdateRestartReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

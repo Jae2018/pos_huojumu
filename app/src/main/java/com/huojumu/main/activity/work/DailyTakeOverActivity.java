@@ -205,8 +205,8 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
-                ToastUtils.showLong("网络错误，请重试");
                 ld2.close();
+                ToastUtils.showLong("网络已断开，请检查联网状态");
             }
         });
     }
@@ -240,9 +240,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
-                ToastUtils.showLong("网络错误，请重试");
-                commit.setEnabled(false);
                 ld2.close();
+                commit.setEnabled(false);
+                ToastUtils.showLong("网络已断开，请检查联网状态");
             }
         });
     }
@@ -266,8 +266,8 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
-                ToastUtils.showLong("网络错误，请重试");
                 ld2.close();
+                ToastUtils.showLong("网络连接错误，请重试");
             }
         });
     }
@@ -281,8 +281,8 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             public void onSuccess(int statusCode, BaseBean<String> response) {
                 if (response.getMsg().equals("yes")) {
                     certainDialog.cancel();
-                    ToastUtils.showLong("日结成功！30秒后系统将关闭");
                     setResult(RESULT_OK);
+                    ToastUtils.showLong("日结成功！30秒后系统将自动关闭");
                     finish();
                 } else {
                     ToastUtils.showLong(response.getMsg());
@@ -292,8 +292,8 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
-                ToastUtils.showLong("网络错误，请重试");
                 ld2.close();
+                ToastUtils.showLong("网络错误，请重试");
             }
         });
     }

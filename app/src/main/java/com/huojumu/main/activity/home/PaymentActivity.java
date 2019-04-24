@@ -346,7 +346,7 @@ public class PaymentActivity extends BaseActivity {
         }
 
         //手动折扣
-        int manualDiscount = cashPayInput.getText().toString().isEmpty() ? 0 : Integer.parseInt(cashPayInput.getText().toString());
+        final int manualDiscount = cashPayInput.getText().toString().isEmpty() ? 0 : Integer.parseInt(cashPayInput.getText().toString());
         if (manualDiscount != 0) {
             orderInfo.setManualDiscount(manualDiscount);
         }
@@ -358,19 +358,7 @@ public class PaymentActivity extends BaseActivity {
 
         //客户支付的金额
         final double earn = earnEdit.getText().toString().isEmpty() ? 0 : Double.parseDouble(earnEdit.getText().toString());
-        if (commitPrice == 0) {
-            //没有活动
-            if (earn > origionalPrice) {
-                //找零，收款 - 总价 + 手动折扣金额
-                orderBack.setCharge(earn - origionalPrice + manualDiscount);
-            }
-        } else {
-            //有活动优惠
-            if (earn > commitPrice) {
-                //找零，收款 - 总价 + 手动折扣金额
-                orderBack.setCharge(earn - commitPrice + manualDiscount);
-            }
-        }
+
 
         ld2 = new LoadingDialog(this);
         ld2.show();
@@ -381,6 +369,19 @@ public class PaymentActivity extends BaseActivity {
                 orderNo = response.getData().getOrderNo();
                 orderBack = response.getData();
                 orderBack.setPayType(payType);
+                if (commitPrice == 0) {
+                    //没有活动
+                    if (earn > origionalPrice) {
+                        //找零，收款 - 总价 + 手动折扣金额
+                        orderBack.setCharge(earn - origionalPrice + manualDiscount);
+                    }
+                } else {
+                    //有活动优惠
+                    if (earn > commitPrice) {
+                        //找零，收款 - 总价 + 手动折扣金额
+                        orderBack.setCharge(earn - commitPrice + manualDiscount);
+                    }
+                }
                 orderBack.setCharge(earn - origionalPrice);
                 orderBack.setCut(Double.parseDouble(orderBack.getOrigionTotalPrice()) - Double.parseDouble(orderBack.getTotalPrice()));
                 if (payType.equals("900")) {

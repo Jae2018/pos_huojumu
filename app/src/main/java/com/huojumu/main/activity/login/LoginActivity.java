@@ -225,10 +225,8 @@ public class LoginActivity extends BaseActivity {
         if (netErrorHandler.isConnected()) {
             //网络正常
             RECONNECT_TIME = 1;
-            ToastUtils.showLong("网络已恢复正常，可以正常登陆了");
         } else {
             //无法正常连接到服务器
-            ToastUtils.showLong("网络错误，正在尝试重连" + RECONNECT_SOCKET + "次");
             MyApplication.getSocketTool().stopSocket();
             //关闭心跳，不继续发送，轮询时间段重启websocket，首次延迟10秒
             if (timer != null) {

@@ -33,6 +33,7 @@ import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SingleClick;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -371,9 +372,12 @@ public class PaymentActivity extends BaseActivity {
             }
         }
 
+        ld2 = new LoadingDialog(this);
+        ld2.show();
         NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
+                ld2.close();
                 orderNo = response.getData().getOrderNo();
                 orderBack = response.getData();
                 orderBack.setPayType(payType);
@@ -388,6 +392,7 @@ public class PaymentActivity extends BaseActivity {
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
+                ld2.close();
                 EventBus.getDefault().post(new NoNetPayBack(commitPrice, Double.parseDouble(earnEdit.getText().toString()), cutPrice, "现金支付"));
                 finish();
             }

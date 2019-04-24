@@ -69,6 +69,7 @@ import com.huojumu.model.OrderInfo;
 import com.huojumu.model.Production;
 import com.huojumu.model.SmallType;
 import com.huojumu.model.WorkBean;
+import com.huojumu.services.MyPosService;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
 import com.huojumu.utils.H5Order;
@@ -244,6 +245,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private ScanWarnDialog warnDialog;
     //轮询handler
     MyHandler mHandler;
+    //
+    private Intent intent;
 
     @Override
     protected int setLayout() {
@@ -268,6 +271,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
         });
 
+        intent = new Intent(this, MyPosService.class);
+        startService(intent);
         webView.setWebChromeClient(new WebChromeClient());
 
         //声明WebSettings子类
@@ -1321,6 +1326,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             timer.purge();
             timer = null;
         }
+        stopService(intent);
         EventBus.getDefault().unregister(this);
         DeviceConnFactoryManager.closeAllPort();
         if (ThreadPool.getInstantiation() != null) {

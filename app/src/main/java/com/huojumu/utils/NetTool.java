@@ -275,4 +275,16 @@ public class NetTool {
                 .enqueue(handler);
     }
 
+    /**
+     * 批量上传本地存储订单
+     * @param data json string
+     * @param handler callback
+     */
+    public static void orderBatch(String data,GsonResponseHandler<BaseBean<String>> handler){
+        okHttp.post()
+                .url(Constant.BASE_URL + "order/orderBatchAdd.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .addParam("data", data)
+                .enqueue(handler);
+    }
+
 }

@@ -28,6 +28,7 @@ import com.huojumu.utils.SpUtil;
 import com.huojumu.utils.UpdateTool;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -103,6 +104,8 @@ public class LoginActivity extends BaseActivity {
 
     private void getCode() {
         //获取二维码
+        ld2 = new LoadingDialog(this);
+        ld2.show();
         NetTool.getLoginQRCode(SpUtil.getString(Constant.EQP_NO), new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
@@ -123,11 +126,13 @@ public class LoginActivity extends BaseActivity {
                     };
                     countDownTimer.start();
                 }
+                ld2.close();
             }
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
-                ToastUtils.showLong(error_msg);
+                ToastUtils.showLong("网络错误");
+                ld2.close();
             }
         });
     }

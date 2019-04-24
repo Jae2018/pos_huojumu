@@ -1206,8 +1206,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 printcount++;
             }
         }
-
-        printLabel();
+        if (orderBack != null) {
+            printLabel(orderBack.getOrderNo());
+        } else {
+            printLabel(no);
+        }
 
         //工作信息更新
         order_num.setText(String.format(Locale.CHINA, "%.1f元", woeker_p));
@@ -1228,7 +1231,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     /**
      * 打印标签
      */
-    private void printLabel() {
+    private void printLabel(final String orderNo) {
         Log.d(TAG, "printLabel: start");
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
@@ -1256,7 +1259,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                 }
                                 Log.e(TAG, "printLabel run: 4");
                                 sendLabel(name, printProducts.get(printcount).getTasteStr(), printProducts.get(printcount).getMinPrice() + "",
-                                        printcount, printProducts.size(), mate, printProducts.get(printcount).getScaleStr());
+                                        printcount, printProducts.size(), mate, printProducts.get(printcount).getScaleStr(),orderNo);
                             }
                         }
                     }), 1000, TimeUnit.MILLISECONDS);
@@ -1277,7 +1280,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void paymentBack(OrderBack orderBack) {
-        LogUtil.E(PrinterUtil.toJson(orderBack));
+        this.orderBack = orderBack;
         //结算回调，有网
         PrintOrder(orderBack, orderBack.getCharge(), orderBack.getPayType().equals("900") ? "现金支付" : orderBack.getPayType().equals("010") ? "微信支付" : "支付宝支付", orderBack.getTotal(), orderBack.getCut());
     }
@@ -1285,7 +1288,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void paymentNativeBack(NoNetPayBack noNetPayBack) {
         //结算回调，无网
-        LogUtil.E(PrinterUtil.toJson(noNetPayBack));
         PrintOrder(null, noNetPayBack.getCharge(), noNetPayBack.getType(), noNetPayBack.getTotalPrice(), noNetPayBack.getCut());
     }
 
@@ -1342,7 +1344,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     /**
      * 发送标签
      */
-    void sendLabel(String pName, String pContent, String price, int i, int number, String matStr, String scale) {
+    void sendLabel(String pName, String pContent, String price, int i, int number, String matStr, String scale,String orderNo) {
         Log.e(TAG, "sendLabel: 0");
         i = i + 1;
         LabelCommand tsc = new LabelCommand();
@@ -1490,7 +1492,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     case ACTION_QUERY_PRINTER_STATE:
                         if (printcount >= 0) {
                             if (printcount != 0) {
-                                printLabel();
+                                printLabel(orderBack.getOrderNo());
                             }
                         }
                         break;

@@ -77,8 +77,12 @@ public class PaymentActivity extends BaseActivity {
     Button btn;
     @BindView(R.id.tv_online_price)
     TextView onlineTv;
+    @BindView(R.id.tv_input_error1)
+    TextView inputErrorTv1;
     @BindView(R.id.tv_input_error)
     TextView inputErrorTv;
+    @BindView(R.id.pay_commit)
+    Button commitBtn;
 
     //支付方式
     private List<PayMenuBean> menuBeans = new ArrayList<>();
@@ -107,6 +111,10 @@ public class PaymentActivity extends BaseActivity {
     private OrderInfo orderInfo;
     //
     private String orderNo;
+    //折扣金额
+    private double zkPrice = 0;
+    //实收金额
+    private double ssPrice = 0;
 
     @Override
     protected int setLayout() {
@@ -141,6 +149,7 @@ public class PaymentActivity extends BaseActivity {
             }
         });
 
+        //折扣金额
         cashPayInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -155,10 +164,36 @@ public class PaymentActivity extends BaseActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() > 0) {
-                    if (Integer.parseInt(s.toString().trim()) <= origionalPrice) {
+                    zkPrice = Integer.parseInt(s.toString().trim());
+                    if (zkPrice <= origionalPrice) {
                         inputErrorTv.setVisibility(View.INVISIBLE);
                     } else {
                         inputErrorTv.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
+
+        //实收金额
+        earnEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 0) {
+                    ssPrice = Integer.parseInt(s.toString().trim());
+                    if (ssPrice <= origionalPrice) {
+                        inputErrorTv1.setVisibility(View.VISIBLE);
+                    } else {
+                        inputErrorTv1.setVisibility(View.INVISIBLE);
                     }
                 }
             }
@@ -338,6 +373,12 @@ public class PaymentActivity extends BaseActivity {
     @SingleClick
     @OnClick(R.id.pay_commit)
     void commitOrder() {
+        //非实收金额大于原价减去折扣的金额
+        if (!(ssPrice > (origionalPrice - zkPrice))) {
+            ToastUtils.showLong("金额输入有误");
+            return;
+        }
+
         //提交订单结算，主页面刷新UI
         orderInfo.setPayType(payType);
         if (activesBean != null) {

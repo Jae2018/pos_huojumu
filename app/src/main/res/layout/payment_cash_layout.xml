@@ -4,72 +4,94 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:focusableInTouchMode="true"
     android:padding="@dimen/d_60">
 
     <LinearLayout
-        android:layout_width="@dimen/d_300"
-        android:layout_height="wrap_content">
+        android:layout_width="@dimen/d_360"
+        android:layout_height="@dimen/d_420"
+        android:padding="@dimen/d_5"
+        android:gravity="center_vertical"
+        android:background="@color/home_left"
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/d_40"
-            android:gravity="center_vertical"
-            android:text="订单金额："
-            android:textSize="@dimen/f_20" />
+        <LinearLayout
+            android:layout_width="@dimen/d_350"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/tv_pay_cash_total"
-            android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/d_40"
+                android:gravity="center_vertical"
+                android:textColor="@android:color/white"
+                android:text="订单金额："
+                android:textSize="@dimen/f_20" />
+
+            <TextView
+                android:id="@+id/tv_pay_cash_total"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/holo_red_light"
+                android:textSize="@dimen/f_20" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/d_350"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/d_40"
+                android:textColor="@android:color/white"
+                android:gravity="center_vertical"
+                android:text="客户实付："
+                android:textSize="@dimen/f_20" />
+
+            <EditText
+                android:id="@+id/et_input1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textColor="@android:color/white"
+                android:imeOptions="actionNext"
+                android:gravity="start"
+                android:textSize="@dimen/f_20" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="@dimen/d_350"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/f_20" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="@dimen/d_100"
+                android:layout_height="@dimen/d_40"
+                android:gravity="center_vertical"
+                android:textColor="@android:color/white"
+                android:text="手动减额："
+                android:textSize="@dimen/f_20" />
+
+            <EditText
+                android:id="@+id/et_input"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_40"
+                android:inputType="number"
+                android:layout_marginStart="@dimen/d_100"
+                android:hint="请输入优惠多少元"
+                android:textColorHint="@android:color/white"
+                android:textColor="@android:color/white"
+                android:gravity="start"
+                android:textSize="@dimen/f_16" />
+
+            <TextView
+                android:id="@+id/tv_input_error"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/d_40"
+                android:text="（请输入正确的数字）"
+                android:gravity="center"
+                android:layout_alignParentEnd="true"
+                android:visibility="invisible"
+                android:textColor="@android:color/holo_red_light"/>
+        </RelativeLayout>
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="@dimen/d_300"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/d_40"
-            android:gravity="center_vertical"
-            android:text="客户实付："
-            android:textSize="@dimen/f_20" />
-
-        <EditText
-            android:id="@+id/et_input1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:imeOptions="actionNext"
-            android:gravity="center"
-            android:textSize="@dimen/f_20" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="@dimen/d_300"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/d_40"
-            android:gravity="center_vertical"
-            android:text="手动折扣率："
-            android:textSize="@dimen/f_20" />
-
-        <EditText
-            android:id="@+id/et_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:hint="请输入1-99的数字"
-            android:gravity="center"
-            android:textSize="@dimen/f_20" />
-    </LinearLayout>
-
-    <android.inputmethodservice.KeyboardView
-        android:id="@+id/keyboard_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
 </LinearLayout>

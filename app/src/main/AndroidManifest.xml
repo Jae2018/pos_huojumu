@@ -40,9 +40,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <!--<meta-data-->
-        <!--android:name="com.google.android.gms.ads.APPLICATION_ID"-->
-        <!--android:value="${adsId}"/>-->
+
         <meta-data
             android:name="pid"
             android:value="${appid}" />
@@ -55,11 +53,6 @@
             android:configChanges="keyboard|navigation"
             android:launchMode="singleInstance"
             android:screenOrientation="landscape">
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN" />-->
-            <!--&lt;!&ndash;<category android:name="android.intent.category.DEFAULT" />&ndash;&gt;-->
-            <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
         </activity>
         <activity
             android:name="com.huojumu.main.activity.login.LoginActivity"
@@ -139,14 +132,11 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="landscape" />
         <activity
-            android:name="com.huojumu.main.activity.function.PaymentActivity"
+            android:name="com.huojumu.main.activity.home.PaymentActivity"
             android:configChanges="keyboard|navigation" />
         <activity
             android:name=".main.activity.function.OrderDetailActivity"
             android:configChanges="keyboard|navigation" />
-        <!--<activity android:name=".main.activity.dialog.RegisterVipDialog"-->
-        <!--android:configChanges="keyboard|navigation"/>-->
-
         <receiver android:name="com.huojumu.receiver.PosReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

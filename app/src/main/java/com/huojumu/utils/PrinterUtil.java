@@ -312,7 +312,6 @@ public class PrinterUtil {
         io = new USBAPI(context);
         if (PrinterAPI.SUCCESS == mPrinter.connect(io)) {
             Log.e("SUCCESS", "SUCCESS");
-            ToastUtils.showLong("打印机连接成功");
         } else {
             Log.e("SUCCESS1", "SUCCESS1");
         }

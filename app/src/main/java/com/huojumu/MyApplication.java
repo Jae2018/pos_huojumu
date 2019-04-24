@@ -3,7 +3,7 @@ package com.huojumu;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
+//import android.graphics.drawable.BitmapDrawable;
 
 import com.greendao.gen.DaoMaster;
 import com.greendao.gen.DaoSession;
@@ -36,21 +36,37 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = getApplicationContext();
+
+        //bugly 测试版本时候用
         CrashReport.initCrashReport(mContext, "551785ca95", true);
+
+        //初始化sp
         SpUtil.Instance(this);
+        //产生唯一uuid
         SpUtil.save(Constant.UUID, UUID.randomUUID().toString());
-        socketTool = SocketTool.getInstance(this);
 
-        line1 = ((BitmapDrawable)getResources().getDrawable(R.drawable.line1)).getBitmap();
-        line2 = ((BitmapDrawable)getResources().getDrawable(R.drawable.line2)).getBitmap();
-        line3 = ((BitmapDrawable)getResources().getDrawable(R.drawable.line3)).getBitmap();
-        logo = ((BitmapDrawable)getResources().getDrawable(R.drawable.logo)).getBitmap();
-        qrcode = ((BitmapDrawable)getResources().getDrawable(R.drawable.qr_code)).getBitmap();
+        //初始化websocket
+        startSocket();
 
+        //小票所用图片，需提前加载。暂时不用
+//        line1 = ((BitmapDrawable)getResources().getDrawable(R.drawable.line1)).getBitmap();
+//        line2 = ((BitmapDrawable)getResources().getDrawable(R.drawable.line2)).getBitmap();
+//        line3 = ((BitmapDrawable)getResources().getDrawable(R.drawable.line3)).getBitmap();
+//        logo = ((BitmapDrawable)getResources().getDrawable(R.drawable.logo)).getBitmap();
+//        qrcode = ((BitmapDrawable)getResources().getDrawable(R.drawable.qr_code)).getBitmap();
+
+        //初始化数据库
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "pos-db");
         Database db = helper.getWritableDb();
         daoSession = new DaoMaster(db).newSession();
+
+        //初始化切面编程脚本
         XAOP.init(this);
+    }
+
+    public static void startSocket(){
+        socketTool = SocketTool.getInstance();
+        socketTool.init();
     }
 
     public static Bitmap getQrcode() {

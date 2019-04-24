@@ -13,6 +13,7 @@ import com.huojumu.utils.CustomerEngine;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.util.ArrayList;
+import java.util.Timer;
 
 import butterknife.ButterKnife;
 
@@ -32,11 +33,11 @@ public abstract class BaseActivity extends AppCompatActivity {
             Manifest.permission.BLUETOOTH
     };
     private static final int REQUEST_CODE = 0x004;
+    protected Timer timer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(setLayout());
         ButterKnife.bind(this);

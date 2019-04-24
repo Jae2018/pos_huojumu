@@ -13,6 +13,7 @@ import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.down.DownProgressDialog;
+import com.huojumu.main.dialogs.CertainDialog;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.EventHandler;
 import com.huojumu.model.UpdateBean;
@@ -30,6 +31,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -43,6 +47,7 @@ public class LoginActivity extends BaseActivity {
 
     private CountDownTimer countDownTimer;
     private DownProgressDialog downProgressDialog;
+    private CertainDialog dialog;
 
     @Override
     protected int setLayout() {
@@ -83,8 +88,15 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        MyApplication.getSocketTool().sendHeart();
-
+        if (timer == null) {
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    MyApplication.getSocketTool().sendHeart();
+                }
+            }, 200, 60 * 1000);
+        }
     }
 
     private void getCode() {
@@ -92,21 +104,23 @@ public class LoginActivity extends BaseActivity {
         NetTool.getLoginQRCode(SpUtil.getString(Constant.EQP_NO), new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
-                Bitmap b = QrUtil.createQRCode(LoginActivity.this, response.getData());
-                imageCode.setImageBitmap(b);
-                countDownTimer = new CountDownTimer(60 * 1000, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                        out_of_date.setVisibility(View.INVISIBLE);
-                    }
+                if (!response.getData().isEmpty()) {
+                    Bitmap b = QrUtil.createQRCode(LoginActivity.this, response.getData());
+                    imageCode.setImageBitmap(b);
+                    countDownTimer = new CountDownTimer(60 * 1000, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            out_of_date.setVisibility(View.INVISIBLE);
+                        }
 
-                    @Override
-                    public void onFinish() {
-                        out_of_date.setVisibility(View.VISIBLE);
-                        countDownTimer.cancel();
-                    }
-                };
-                countDownTimer.start();
+                        @Override
+                        public void onFinish() {
+                            out_of_date.setVisibility(View.VISIBLE);
+                            countDownTimer.cancel();
+                        }
+                    };
+                    countDownTimer.start();
+                }
             }
 
             @Override
@@ -135,7 +149,21 @@ public class LoginActivity extends BaseActivity {
             SpUtil.save("from_Login", true);
             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             finish();
+        } else {
+            if (dialog == null) {
+                dialog = new CertainDialog(this);
+            }
+            dialog.show();
+            dialog.setText("注意！", "您当前无法登陆，上一班次未正常交班\n请联系 "
+                    + eventHandler.getUserName() + " 完成交班\n联系电话：" + eventHandler.getMobile());
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        timer.cancel();
+        timer = null;
     }
 
     @Override

@@ -25,8 +25,12 @@ public class CertainDialog extends BaseDialog {
     private DialogInterface anInterface;
     private String titleStr, conStr;
 
+    public CertainDialog(@NonNull Context context) {
+        super(context);
+    }
+
     public CertainDialog(@NonNull Context context, DialogInterface anInterface,
-                         String titleStr,String conStr) {
+                         String titleStr, String conStr) {
         super(context);
         this.anInterface = anInterface;
         this.titleStr = titleStr;
@@ -40,6 +44,11 @@ public class CertainDialog extends BaseDialog {
 
     @Override
     public void initView() {
+        title.setText(titleStr);
+        content.setText(conStr);
+    }
+
+    public void setText(String titleStr, String conStr) {
         title.setText(titleStr);
         content.setText(conStr);
     }

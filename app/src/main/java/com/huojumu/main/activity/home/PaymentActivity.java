@@ -1,4 +1,4 @@
-package com.huojumu.main.activity.function;
+package com.huojumu.main.activity.home;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -74,10 +76,12 @@ public class PaymentActivity extends BaseActivity {
     Button btn;
     @BindView(R.id.tv_online_price)
     TextView onlineTv;
+    @BindView(R.id.tv_input_error)
+    TextView inputErrorTv;
 
     //支付方式
     private List<PayMenuBean> menuBeans = new ArrayList<>();
-    private String[] menuStr = {"现金支付", "微信扫码支付", "支付宝扫码支付", "半折特价", "会员通道", "刷卡支付"};
+    private String[] menuStr = {"现金支付", "微信扫码支付", "支付宝扫码支付", "会员通道", "刷卡支付"};
     //默认现金支付方式
     private String payType = "900";
     //活动集合
@@ -92,7 +96,6 @@ public class PaymentActivity extends BaseActivity {
     private int number = 0;
     //优惠金额
     private double cutPrice = 0;
-    //    private KeyboardUtil keyboardUtil;
     //是否开始扫码
     private boolean startScan = false;
     //提示信息
@@ -128,37 +131,35 @@ public class PaymentActivity extends BaseActivity {
         activeRecycler.setLayoutManager(new LinearLayoutManager(this));
         activeRecycler.addItemDecoration(d);
 
-//        keyboardUtil = new KeyboardUtil(this);
-//        cashPayInput.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if(cashPayInput.hasFocus()){
-//                    //用来初始化我们的软键盘
-//                    keyboardUtil.setEd(cashPayInput);
-//                    keyboardUtil.showKeyboard();
-//                }
-//                return false;
-//            }
-//        });
-//
-//        earnEdit.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if(earnEdit.hasFocus()){
-//                    //用来初始化我们的软键盘
-//                    keyboardUtil.setEd(earnEdit);
-//                    keyboardUtil.showKeyboard();
-//                }
-//                return false;
-//            }
-//        });
-
         dialog = new AlertDialog.Builder(this).create();
         dialog.setMessage("暂未开通，敬请期待");
         dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
+            }
+        });
+
+        cashPayInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 0) {
+                    if (Integer.parseInt(s.toString().trim()) <= origionalPrice) {
+                        inputErrorTv.setVisibility(View.INVISIBLE);
+                    } else {
+                        inputErrorTv.setVisibility(View.VISIBLE);
+                    }
+                }
             }
         });
     }
@@ -172,6 +173,14 @@ public class PaymentActivity extends BaseActivity {
             menuBeans.add(bean);
         }
 
+        if (activesBeans == null) {
+            activesBeans = new ArrayList<>();
+        }
+        ActivesBean bean = new ActivesBean();
+        bean.setPlanType("0");
+        bean.setPlanName("半价销售");
+        activesBeans.add(bean);
+
         Collections.sort(productions, new Comparator<Production>() {
             @Override
             public int compare(Production o1, Production o2) {
@@ -179,6 +188,8 @@ public class PaymentActivity extends BaseActivity {
             }
         });
 
+        //初始默认显示现金支付页面
+        cashTotalTv.setText(String.valueOf(origionalPrice));
         final MenuRecyclerAdapter menuRecyclerAdapter = new MenuRecyclerAdapter(menuBeans);
         menuRecyclerAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @SingleClick
@@ -197,42 +208,40 @@ public class PaymentActivity extends BaseActivity {
                     case 1:
                         //扫码支付页面
                         payType = "010";
+                        calculatePrice();
                         onlineTv.setText(String.valueOf(origionalPrice));
                         break;
                     case 2:
+                        //扫码支付页面
                         payType = "020";
                         calculatePrice();
                         onlineTv.setText(String.valueOf(origionalPrice));
                         break;
                     case 3:
                         //会员支付页面
+                        payType = "0";
                     case 4:
                         //银行卡支付页面
                         dialog.show();
-                        break;
                 }
                 refreshPayUI(position);
             }
         });
         menuRecycler.setAdapter(menuRecyclerAdapter);
 
-        if (activesBeans != null && !activesBeans.isEmpty()) {
-            PaymentActivityAdapter activityAdapter = new PaymentActivityAdapter(activesBeans);
-            activityAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-                @SingleClick(1500)
-                @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                    //选择活动优惠套餐
-                    activesBean = activesBeans.get(position);
-                    calculatePrice();
-                    cashTotalTv.setText(String.valueOf(commitPrice));
-                    onlineTv.setText(String.valueOf(commitPrice));
-                }
-            });
-            activeRecycler.setAdapter(activityAdapter);
-        } else {
-            activeRecycler.setVisibility(View.GONE);
-        }
+        PaymentActivityAdapter activityAdapter = new PaymentActivityAdapter(activesBeans);
+        activityAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @SingleClick(1500)
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                //选择活动优惠套餐
+                activesBean = activesBeans.get(position);
+                calculatePrice();
+                cashTotalTv.setText(String.valueOf(commitPrice));
+                onlineTv.setText(String.valueOf(commitPrice));
+            }
+        });
+        activeRecycler.setAdapter(activityAdapter);
 
     }
 
@@ -242,6 +251,10 @@ public class PaymentActivity extends BaseActivity {
     private void calculatePrice() {
         if (activesBean != null) {
             switch (activesBean.getPlanType()) {
+                case "0":
+                    commitPrice = origionalPrice / 2;
+                    cutPrice = origionalPrice - commitPrice;
+                    break;
                 case "1":
                     commitPrice = origionalPrice * activesBean.getRatio() / 100;
                     cutPrice = origionalPrice - commitPrice;
@@ -313,9 +326,9 @@ public class PaymentActivity extends BaseActivity {
      */
     private void refreshPayUI(int position) {
         layoutCash.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
-        layoutOnline.setVisibility(position == 1 ? View.VISIBLE : View.GONE);
-        layoutVip.setVisibility(position == 2 ? View.VISIBLE : View.GONE);
-        layoutBank.setVisibility(position == 3 ? View.VISIBLE : View.GONE);
+        layoutOnline.setVisibility((position == 1 || position == 2) ? View.VISIBLE : View.GONE);
+        layoutVip.setVisibility(position == 3 ? View.VISIBLE : View.GONE);
+        layoutBank.setVisibility(position == 4 ? View.VISIBLE : View.GONE);
     }
 
     OrderBack orderBack;
@@ -332,12 +345,30 @@ public class PaymentActivity extends BaseActivity {
         }
 
         //手动折扣
-        int manualDiscount = cashPayInput.getText() == null ? 0 : Integer.parseInt(cashPayInput.getText().toString());
+        int manualDiscount = cashPayInput.getText().toString().isEmpty() ? 0 : Integer.parseInt(cashPayInput.getText().toString());
         if (manualDiscount != 0) {
             orderInfo.setManualDiscount(manualDiscount);
         }
+
+        //特殊人群、一律半价
         if (payType.equals("0")) {
-            orderInfo.setManualDiscount(50);
+            orderInfo.setManualDiscount((int) (commitPrice == 0 ? (origionalPrice / 2) : (commitPrice / 2)));
+        }
+
+        //客户支付的金额
+        final double earn = earnEdit.getText().toString().isEmpty() ? 0 : Double.parseDouble(earnEdit.getText().toString());
+        if (commitPrice == 0) {
+            //没有活动
+            if (earn > origionalPrice) {
+                //找零，收款 - 总价 + 手动折扣金额
+                orderBack.setCharge(earn - origionalPrice + manualDiscount);
+            }
+        } else {
+            //有活动优惠
+            if (earn > commitPrice) {
+                //找零，收款 - 总价 + 手动折扣金额
+                orderBack.setCharge(earn - commitPrice + manualDiscount);
+            }
         }
 
         NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
@@ -346,16 +377,19 @@ public class PaymentActivity extends BaseActivity {
                 orderNo = response.getData().getOrderNo();
                 orderBack = response.getData();
                 orderBack.setPayType(payType);
+                orderBack.setCharge(earn - origionalPrice);
                 orderBack.setCut(Double.parseDouble(orderBack.getOrigionTotalPrice()) - Double.parseDouble(orderBack.getTotalPrice()));
                 if (payType.equals("900")) {
                     //现金
                     EventBus.getDefault().post(orderBack);
+                    finish();
                 }
             }
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 EventBus.getDefault().post(new NoNetPayBack(commitPrice, Double.parseDouble(earnEdit.getText().toString()), cutPrice, "现金支付"));
+                finish();
             }
         });
     }
@@ -374,22 +408,21 @@ public class PaymentActivity extends BaseActivity {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         //扫码监听，系统的软键盘  按下去是 -1, 不管，不拦截
-        if (event.getDeviceId() == -1) {
-            return false;
-        }
-        //按下弹起，识别到弹起的话算一次 有效输入
-        //只要是 扫码枪的事件  都要把他消费掉 不然会被editText 显示出
-        if (event.getAction() == KeyEvent.ACTION_UP) {
-            time++;
-            //只要数字，一维码里面没有 字母
-            int code = event.getKeyCode();
-            if (code >= KeyEvent.KEYCODE_0 && code <= KeyEvent.KEYCODE_9) {
-                authNo += String.valueOf(code - KeyEvent.KEYCODE_0);
-            }
-            //无订单不走接口
-            if (orderInfo != null) {
-                if (time == 19) {
-                    payByBox();
+        if (event.getDeviceId() != -1) {
+            //按下弹起，识别到弹起的话算一次 有效输入
+            //只要是 扫码枪的事件  都要把他消费掉 不然会被editText 显示出
+            if (event.getAction() == KeyEvent.ACTION_UP) {
+                time++;
+                //只要数字，一维码里面没有 字母
+                int code = event.getKeyCode();
+                if (code >= KeyEvent.KEYCODE_0 && code <= KeyEvent.KEYCODE_9) {
+                    authNo += String.valueOf(code - KeyEvent.KEYCODE_0);
+                }
+                //无订单不走接口
+                if (orderInfo != null) {
+                    if (time == 19) {
+                        payByBox();
+                    }
                 }
             }
         }

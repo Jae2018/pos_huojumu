@@ -1,14 +1,10 @@
 package com.huojumu.utils;
 
-import android.content.Context;
-import android.os.CountDownTimer;
-import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.gson.Gson;
-import com.huojumu.main.dialogs.CertainDialog;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.EventHandler;
 import com.huojumu.model.NetErrorHandler;
@@ -18,8 +14,6 @@ import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -34,53 +28,51 @@ public class SocketTool extends WebSocketListener {
     private String TAG = SocketTool.class.getSimpleName();
     private Gson gson = new Gson();
     private WebSocket webSocket;
-    private Context context;
     private static OkHttpClient client;
     private static SocketTool INSTANCE;
     private static Request request;
+    private volatile boolean alive = true;
 
-    public static SocketTool getInstance(Context context) {
+    public static SocketTool getInstance() {
+        if (INSTANCE == null) {
+            synchronized (SocketTool.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new SocketTool();
+                }
+            }
+        }
+        return INSTANCE;
+    }
+
+    public void init() {
         request = new Request.Builder()
                 .url(Constant.SOCKET)
                 .build();
-
         client = new OkHttpClient.Builder()
                 .connectTimeout(0, TimeUnit.SECONDS)
                 .readTimeout(0, TimeUnit.SECONDS)
                 .writeTimeout(0, TimeUnit.SECONDS)
                 .build();
-        INSTANCE = new SocketTool(context);
         client.newWebSocket(request, INSTANCE);
-        return INSTANCE;
-    }
-
-    private SocketTool(Context context) {
-        this.context = context;
     }
 
     public void sendMsg(String s) {
         if (webSocket != null) {
-            Log.e(TAG, "sendMsg: " + s);
             webSocket.send(s);
         }
     }
 
     public void sendHeart() {
+        Log.e(TAG, "sendHeart: ");
         if (webSocket != null) {
-            new Thread() {
-                public void run() {
-                    while (true) {
-                        webSocket.send("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
-                        try {
-                            Thread.sleep(6 * 1000);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Thread.currentThread().interrupt();
-                        }
-                    }
-                }
-            }.start();
+            webSocket.send("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
         }
+    }
+
+    public void stopSocket() {
+        webSocket = null;
+        request = null;
+        client = null;
     }
 
     @Override
@@ -92,8 +84,10 @@ public class SocketTool extends WebSocketListener {
     @Override
     public void onMessage(final WebSocket webSocket, String text) {
         super.onMessage(webSocket, text);
+        Log.e(TAG, "onMessage: " + text);
         EventBus.getDefault().post(new NetErrorHandler(true));
 
+        alive = true;
         TaskBean taskBean = gson.fromJson(text, TaskBean.class);
         switch (taskBean.getTask()) {
             case Constant.BIND:
@@ -124,8 +118,8 @@ public class SocketTool extends WebSocketListener {
                 });
                 break;
             case Constant.PAYCODE:
-                //支付完成回调
-//                EventBus.getDefault().post(taskBean);
+                //客户扫副屏码支付完成回调
+
                 break;
             case Constant.START:
                 //扫码登录回调
@@ -134,9 +128,7 @@ public class SocketTool extends WebSocketListener {
                     SpUtil.save(Constant.MY_TOKEN, "Bearer " + taskBean.getData().getToken());
                     EventBus.getDefault().post(new EventHandler(Constant.HOME));
                 } else {
-                    CertainDialog dialog = new CertainDialog(context, null, "注意！", "您当前无法登陆，上一班次未正常交班\n请联系"
-                            + taskBean.getData().getUserName() + "完成交班\n联系电话：" + taskBean.getData().getMobile());
-                    dialog.show();
+                    EventBus.getDefault().post(new EventHandler(Constant.LOGIN_FAILED, taskBean.getData().getMobile(), taskBean.getData().getUserName()));
                 }
                 break;
         }
@@ -157,7 +149,11 @@ public class SocketTool extends WebSocketListener {
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, @Nullable Response response) {
         super.onFailure(webSocket, t, response);
+        alive = false;
         EventBus.getDefault().post(new NetErrorHandler(false));
     }
 
+    public boolean isAlive() {
+        return alive;
+    }
 }

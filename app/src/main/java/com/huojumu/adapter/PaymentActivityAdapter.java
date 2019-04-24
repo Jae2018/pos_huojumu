@@ -17,8 +17,10 @@ public class PaymentActivityAdapter extends BaseQuickAdapter<ActivesBean, BaseVi
 
     @Override
     protected void convert(BaseViewHolder helper, ActivesBean item) {
-        helper.setText(R.id.tv_active_name, item.getPlanName())
-                .setText(R.id.tv_active_start, "活动开始时间：" + item.getStartDate())
-                .setText(R.id.tv_active_end, "活动结束时间：" + item.getEndDate());
+        helper.setText(R.id.tv_active_name, item.getPlanName());
+        if (item.getStartDate() != null) {
+            helper.setText(R.id.tv_active_start, "活动开始时间：" + item.getStartDate())
+                    .setText(R.id.tv_active_end, "活动结束时间：" + item.getEndDate());
+        }
     }
 }

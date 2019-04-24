@@ -41,6 +41,7 @@ public interface Constant {
     int DEFAULT_INT = 1;
     int LOGIN = 2;
     int HOME = 3;
+    int LOGIN_FAILED = 4;
 
     /* 是否绑定设备 */
     String HAS_BAND = "has_banded";

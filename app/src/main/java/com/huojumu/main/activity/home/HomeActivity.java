@@ -1,6 +1,5 @@
 package com.huojumu.main.activity.home;
 
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -50,7 +49,6 @@ import com.huojumu.adapter.PinYinAdapter;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.dialog.ScanWarnDialog;
 import com.huojumu.main.activity.dialog.SingleProAddonDialog;
-import com.huojumu.main.activity.function.PaymentActivity;
 import com.huojumu.main.activity.login.LoginActivity;
 import com.huojumu.main.dialogs.CashPayDialog;
 import com.huojumu.main.dialogs.CertainDialog;
@@ -82,7 +80,6 @@ import com.huojumu.utils.PrinterCommand;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SingleClick;
 import com.huojumu.utils.SocketBack;
-import com.huojumu.utils.SocketTool;
 import com.huojumu.utils.SpUtil;
 import com.huojumu.utils.ThreadFactoryBuilder;
 import com.huojumu.utils.ThreadPool;
@@ -104,6 +101,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.ScheduledExecutorService;
@@ -160,8 +159,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     TextView workName1;
     @BindView(R.id.order_num1)
     TextView order_num1;
-//    @BindView(R.id.layer)
-//    LinearLayout layer;
+    @BindView(R.id.image_net_state)
+    ImageView netStateIv;
 
     private HomeSelectedAdapter selectedAdapter;//所选
     private HomeTypeAdapter typeAdapter;//类别
@@ -214,6 +213,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private int time = 0;
     //定时更新时间flag
     private static final int MSG_UPDATE_CURRENT_TIME = 1;
+    //重连socket消息flag
+    private static final int RECONNECT_SOCKET = 2;
+    //重连次数
+    private static int RECONNECT_TIME = 1;
+
     private float woeker_p = 0;//员工班次销售金额
     private int orderNum = 0;//员工班次销售订单数
 
@@ -238,6 +242,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //支付方式说明
     String payType;
     private ScanWarnDialog warnDialog;
+    //轮询handler
+    MyHandler mHandler;
 
     @Override
     protected int setLayout() {
@@ -248,7 +254,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-        MyApplication.getSocketTool().sendHeart();
+
+        sendSocket();
 
         //连接标签机
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
@@ -380,7 +387,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         });
 
         //计时
-        MyHandler mHandler = new MyHandler(this);
+        mHandler = new MyHandler(this);
         mHandler.sendEmptyMessageDelayed(MSG_UPDATE_CURRENT_TIME, 500);
 
         webView.addJavascriptInterface(new JsInterface(), "JSInterface");
@@ -428,11 +435,47 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         public void handleMessage(Message msg) {
             HomeActivity activity = mActivity.get();
             if (msg.what == MSG_UPDATE_CURRENT_TIME) {
+                //更新时间
                 if (activity != null) {
                     activity.updateCurrentTime();
                     sendEmptyMessageDelayed(MSG_UPDATE_CURRENT_TIME, 500);
                 }
+            } else if (msg.what == RECONNECT_SOCKET) {
+                //尝试重连
+                if (activity != null && !MyApplication.getSocketTool().isAlive()) {
+                    Log.e("HomeActivity", "handleMessage: ");
+                    sendEmptyMessageDelayed(RECONNECT_SOCKET, (10 * 1000) * RECONNECT_TIME);
+                    activity.reconnectSocket();
+                }
             }
+        }
+    }
+
+    String TAG = "HomeActivity";
+
+    /**
+     * 重启socket
+     */
+    private void reconnectSocket() {
+        RECONNECT_TIME++;
+        Log.e(TAG, "reconnectSocket 次数: " + RECONNECT_TIME);
+        MyApplication.startSocket();
+        sendSocket();
+//        if (MyApplication.getSocketTool().isAlive()) {
+//            Log.e(TAG, "reconnectSocket: sendSocket");
+//        }
+    }
+
+    private void sendSocket() {
+        //定时发送心跳
+        if (timer == null) {
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    MyApplication.getSocketTool().sendHeart();
+                }
+            }, 200, 6 * 1000);
         }
     }
 
@@ -836,6 +879,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         super.onResume();
         //重新登录后
         if (SpUtil.getBoolean("from_Login")) {
+            Log.e(TAG, "onResume: ");
             SpUtil.save("from_Login", false);
             workName1.setText(SpUtil.getString(Constant.WORKER_NAME));
             order_num.setText(String.format(Locale.CHINA, "%.1f元", 0.0));
@@ -949,7 +993,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         orderInfo.setEnterpriseID(SpUtil.getInt(Constant.ENT_ID));
         orderInfo.setPinpaiID(SpUtil.getInt(Constant.PINPAI_ID));
         orderInfo.setQuanIds(new ArrayList<Integer>());
-        orderInfo.setDiscountsType(SpUtil.getString(Constant.ENT_DIS));
+        orderInfo.setDiscountsType("2");
         orderInfo.setData(dataBeans);
         orderInfo.setOrdSource("3");
     }
@@ -1132,18 +1176,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             String str = orderBack.getTotalPrice().substring(0, orderBack.getTotalPrice().length() - 1);
             initWebOrder("N" + orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4), orderBack.getCreatTime(), proList, str,
                     (Double.parseDouble(orderBack.getTotalPrice()) + charge) + "", String.valueOf(charge), String.valueOf(totalCut), type);
-
-//            PrinterUtil.printString80(HomeActivity.this, productions, "C" + orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4),
-//                    SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
-//                    orderBack.getTotalPrice(), String.valueOf(charge),
-//                    String.valueOf(totalCut), orderBack.getCreatTime(), type);
         } else {
             initWebOrder(no, PrinterUtil.getDate(), proList, String.valueOf(totalPrice), String.valueOf(totalPrice), String.valueOf(charge), String.valueOf(totalCut), type);
-
-//            PrinterUtil.printString80(HomeActivity.this, productions, no,
-//                    SpUtil.getString(Constant.WORKER_NAME), String.valueOf(totalPrice), String.valueOf(totalPrice),
-//                    earn1 == 0 ? String.valueOf(totalPrice) : String.valueOf(earn1), String.valueOf(charge),
-//                    String.valueOf(totalCut), PrinterUtil.getDate(), type);
 
             //断网状态下保存订单信息json
             ((MyApplication) getApplication()).getDaoSession().getNativeOrdersDao().insert(new NativeOrders(System.currentTimeMillis(), PrinterUtil.toJson(orderInfo)));
@@ -1216,7 +1250,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                 sendLabel(name, printProducts.get(printcount).getTasteStr(), printProducts.get(printcount).getMinPrice() + "",
                                         printcount, printProducts.size(), mate, printProducts.get(printcount).getScaleStr());
                             }
-
                         }
                     }), 1000, TimeUnit.MILLISECONDS);
                 }
@@ -1251,17 +1284,22 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void netState(NetErrorHandler netErrorHandler) {
         if (netErrorHandler.isConnected()) {
-            Log.e("home", "netState: 1");
-            ToastUtils.showLong("网络连接正常");
+            //网络正常
+            netStateIv.setImageResource(R.drawable.wifi_ok);
+            RECONNECT_TIME = 1;
         } else {
-            new AlertDialog.Builder(this).setMessage("网络连接中断").setNegativeButton("确定", new android.content.DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(android.content.DialogInterface dialog, int which) {
-                    MyApplication.getSocketTool().sendMsg("123");
-                    dialog.cancel();
-                    dialog = null;
+            //无法正常连接到服务器
+            netStateIv.setImageResource(R.drawable.wifi_error);
+            MyApplication.getSocketTool().stopSocket();
+            //关闭心跳，不继续发送，轮询时间段重启websocket，首次延迟10秒
+            if (timer != null) {
+                timer.cancel();
+                timer.purge();
+                timer = null;
+                if (RECONNECT_TIME == 1) {
+                    mHandler.sendEmptyMessageDelayed(RECONNECT_SOCKET, 10000);
                 }
-            }).create().show();
+            }
         }
     }
 
@@ -1278,6 +1316,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (timer != null) {
+            timer.cancel();
+            timer.purge();
+            timer = null;
+        }
         EventBus.getDefault().unregister(this);
         DeviceConnFactoryManager.closeAllPort();
         if (ThreadPool.getInstantiation() != null) {
@@ -1359,77 +1402,82 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            switch (action) {
-                case ACTION_USB_PERMISSION:
-                    synchronized (this) {
-                        if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                            UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                            if (device != null) {
-                                usbConn(device);
+            if (action != null) {
+                switch (action) {
+                    case ACTION_USB_PERMISSION:
+                        synchronized (this) {
+                            if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                                UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                                if (device != null) {
+                                    usbConn(device);
+                                }
                             }
                         }
-                    }
-                    break;
-                //Usb连接断开、蓝牙连接断开广播
-                case ACTION_USB_DEVICE_DETACHED:
+                        break;
+                    //Usb连接断开、蓝牙连接断开广播
+                    case ACTION_USB_DEVICE_DETACHED:
 //                    Log.e(TAG, "onReceive: ACTION_USB_DEVICE_DETACHED");
-                    break;
-                //Usb连接断开、蓝牙连接广播
-                case ACTION_USB_DEVICE_ATTACHED:
+                        break;
+                    //Usb连接断开、蓝牙连接广播
+                    case ACTION_USB_DEVICE_ATTACHED:
 //                    Log.e(TAG, "onReceive: ACTION_USB_DEVICE_ATTACHED");
-                    final String deviceName = UsbUtil.getBQName(HomeActivity.this);
-                    final String xpName = UsbUtil.getXPName(HomeActivity.this);
+                        final String deviceName = UsbUtil.getBQName(HomeActivity.this);
+                        final String xpName = UsbUtil.getXPName(HomeActivity.this);
 
-                    if (!deviceName.isEmpty() || !xpName.isEmpty()) {
-                        ld3 = new LoadingDialog(HomeActivity.this);
-                        ld3.setLoadingText("正在连接外接设备，请等待");
-                        ld3.show();
-                        MyOkHttp.mHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                connectUsb(deviceName);
-//                                PrinterUtil.connectPrinter(HomeActivity.this);
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (Exception e) {
+                        if (!deviceName.isEmpty() || !xpName.isEmpty()) {
+                            ld3 = new LoadingDialog(HomeActivity.this);
+                            ld3.setLoadingText("正在连接外接设备，请等待");
+                            ld3.show();
+                            //先主动调用断开连接，释放端口
+                            DeviceConnFactoryManager.closeAllPort();
+                            PrinterUtil.disconnectPrinter();
+                            MyOkHttp.mHandler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    connectUsb(deviceName);
+                                    PrinterUtil.connectPrinter(HomeActivity.this);
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (Exception e) {
 //                                    Log.e("thread", e.getMessage());
+                                    }
+                                    ld3.close();
                                 }
-                                ld3.close();
-                            }
-                        }, 6000);
-                    }
-                    break;
-                case DeviceConnFactoryManager.ACTION_CONN_STATE:
-                    int state = intent.getIntExtra(DeviceConnFactoryManager.STATE, -1);
+                            }, 6000);
+                        }
+                        break;
+                    case DeviceConnFactoryManager.ACTION_CONN_STATE:
+                        int state = intent.getIntExtra(DeviceConnFactoryManager.STATE, -1);
 //                    int deviceId = intent.getIntExtra(DeviceConnFactoryManager.DEVICE_ID, -1);
-                    switch (state) {
-                        case DeviceConnFactoryManager.CONN_STATE_DISCONNECT:
+                        switch (state) {
+                            case DeviceConnFactoryManager.CONN_STATE_DISCONNECT:
 //                            if (id == deviceId) {
 //                                ToastUtils.showLong("标签打印机已断开连接");
 //                            }
-                            break;
-                        case DeviceConnFactoryManager.CONN_STATE_CONNECTING:
+                                break;
+                            case DeviceConnFactoryManager.CONN_STATE_CONNECTING:
 
-                            break;
-                        case DeviceConnFactoryManager.CONN_STATE_CONNECTED:
+                                break;
+                            case DeviceConnFactoryManager.CONN_STATE_CONNECTED:
 //                            ToastUtils.showLong("标签打印机已连接");
-                            break;
-                        case CONN_STATE_FAILED:
+                                break;
+                            case CONN_STATE_FAILED:
 //                            ToastUtils.showLong("标签打印机连接失败");
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case ACTION_QUERY_PRINTER_STATE:
-                    if (printcount >= 0) {
-                        if (printcount != 0) {
-                            printLabel();
+                                break;
+                            default:
+                                break;
                         }
-                    }
-                    break;
-                default:
-                    break;
+                        break;
+                    case ACTION_QUERY_PRINTER_STATE:
+                        if (printcount >= 0) {
+                            if (printcount != 0) {
+                                printLabel();
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     };

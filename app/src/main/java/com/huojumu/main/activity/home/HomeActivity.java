@@ -393,7 +393,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         //计时
         mHandler = new MyHandler(this);
-        mHandler.sendEmptyMessageDelayed(MSG_UPDATE_CURRENT_TIME, 500);
 
         webView.addJavascriptInterface(new JsInterface(), "JSInterface");
 
@@ -466,9 +465,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         Log.e(TAG, "reconnectSocket 次数: " + RECONNECT_TIME);
         MyApplication.startSocket();
         sendSocket();
-//        if (MyApplication.getSocketTool().isAlive()) {
-//            Log.e(TAG, "reconnectSocket: sendSocket");
-//        }
     }
 
     private void sendSocket() {

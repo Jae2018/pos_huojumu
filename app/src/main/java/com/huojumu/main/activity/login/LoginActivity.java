@@ -3,6 +3,8 @@ package com.huojumu.main.activity.login;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,6 +18,7 @@ import com.huojumu.down.DownProgressDialog;
 import com.huojumu.main.dialogs.CertainDialog;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.EventHandler;
+import com.huojumu.model.NetErrorHandler;
 import com.huojumu.model.UpdateBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
@@ -31,6 +34,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 
+import java.lang.ref.WeakReference;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -48,6 +52,11 @@ public class LoginActivity extends BaseActivity {
     private CountDownTimer countDownTimer;
     private DownProgressDialog downProgressDialog;
     private CertainDialog dialog;
+    //重连socket消息flag
+    private static final int RECONNECT_SOCKET = 2;
+    //重连次数
+    private static int RECONNECT_TIME = 1;
+    private MyHandler mHandler;
 
     @Override
     protected int setLayout() {
@@ -72,6 +81,7 @@ public class LoginActivity extends BaseActivity {
                 }
             }
         });
+        mHandler = new MyHandler(this);
     }
 
 
@@ -88,15 +98,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (timer == null) {
-            timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    MyApplication.getSocketTool().sendHeart();
-                }
-            }, 200, 60 * 1000);
-        }
+        sendSocket();
     }
 
     private void getCode() {
@@ -176,4 +178,65 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    private static class MyHandler extends Handler {
+        private WeakReference<LoginActivity> mActivity;
+
+        MyHandler(LoginActivity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            LoginActivity activity = mActivity.get();
+            if (msg.what == RECONNECT_SOCKET) {
+                //尝试重连
+                if (activity != null && !MyApplication.getSocketTool().isAlive()) {
+                    sendEmptyMessageDelayed(RECONNECT_SOCKET, (10 * 1000) * RECONNECT_TIME);
+                    activity.reconnectSocket();
+                }
+            }
+        }
+    }
+
+    /**
+     * 重启socket
+     */
+    private void reconnectSocket() {
+        RECONNECT_TIME++;
+        MyApplication.startSocket();
+        sendSocket();
+    }
+
+    private void sendSocket() {
+        //定时发送心跳
+        if (timer == null) {
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    MyApplication.getSocketTool().sendHeart();
+                }
+            }, 200, 6 * 1000);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void netState(NetErrorHandler netErrorHandler) {
+        if (netErrorHandler.isConnected()) {
+            //网络正常
+            RECONNECT_TIME = 1;
+        } else {
+            //无法正常连接到服务器
+            MyApplication.getSocketTool().stopSocket();
+            //关闭心跳，不继续发送，轮询时间段重启websocket，首次延迟10秒
+            if (timer != null) {
+                timer.cancel();
+                timer.purge();
+                timer = null;
+                if (RECONNECT_TIME == 1) {
+                    mHandler.sendEmptyMessageDelayed(RECONNECT_SOCKET, 10000);
+                }
+            }
+        }
+    }
 }

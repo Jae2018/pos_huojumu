@@ -68,14 +68,14 @@ public class CashPayDialog extends BaseDialog {
                 if (s.length() > 0) {
                     earnMoney = Integer.valueOf(s.toString().trim());
                 }
-                if (earnMoney < totalPrice) {
-                    okBtn.setEnabled(false);
-                    errorTv.setVisibility(View.VISIBLE);
-                } else {
-                    change.setText(String.valueOf(earnMoney - totalPrice));
-                    okBtn.setEnabled(true);
-                    errorTv.setVisibility(View.GONE);
-                }
+//                if (earnMoney < totalPrice) {
+//                    okBtn.setEnabled(false);
+//                    errorTv.setVisibility(View.VISIBLE);
+//                } else {
+//                    change.setText(String.valueOf(earnMoney - totalPrice));
+//                    okBtn.setEnabled(true);
+//                    errorTv.setVisibility(View.GONE);
+//                }
             }
         });
     }
@@ -112,23 +112,20 @@ public class CashPayDialog extends BaseDialog {
 
     @OnClick(R.id.cash_dialog_ok)
     void OnOk() {
-        anInterface.OnDialogOkClick(0, earnMoney, totalPrice, earnMoney - totalPrice, "CashPayDialog");
+        anInterface.OnDialogOkClick(0, earnMoney, totalPrice, (earnMoney == 0) ? 0 : earnMoney - totalPrice, "CashPayDialog");
         clear();
     }
 
-    private void clear(){
+    private void clear() {
         earn1.setText("");
         earn2.setText("");
         change.setText("");
         earnMoney = 0;
     }
 
-    public void setTotalMoney(double totalPrice){
+    public void setTotalMoney(double totalPrice) {
         this.totalPrice = totalPrice;
         earn1.setText(String.valueOf(totalPrice));
     }
 
-    public double getEarnMoney(){
-        return earnMoney;
-    }
 }

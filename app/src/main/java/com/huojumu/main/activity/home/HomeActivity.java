@@ -60,6 +60,7 @@ import com.huojumu.model.ActivesBean;
 import com.huojumu.model.AdsBean;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.BoxPay;
+import com.huojumu.model.H5TaskBean;
 import com.huojumu.model.MatsBean;
 import com.huojumu.model.NativeOrders;
 import com.huojumu.model.NetErrorHandler;
@@ -103,18 +104,13 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.Vector;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -237,8 +233,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     OrderBack orderBack;
     //优惠
     double change;
-    //标签机连续打印次数
-    private int printcount = 0;
     //倒计时
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy 年 MM 月 dd 日  hh : mm : ss", Locale.CHINA);
     Date curDate = new Date();
@@ -406,10 +400,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         webView.addJavascriptInterface(new JsInterface(), "JSInterface");
 
         cashPayDialog = new CashPayDialog(this, this);
-
         warnDialog = new ScanWarnDialog(this, this);
-
         mTts = SpeechSynthesizer.createSynthesizer(this, mTtsInitListener);
+
     }
 
     @Override
@@ -964,14 +957,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     SpUtil.save(Constant.WORK_P, (float) 0);
                     SpUtil.save(Constant.ORDER_NUM, 0);
                     clear();
-                    order_num.setText(String.format(Locale.CHINA, "%.1f元", 0.0));
-                    order_num1.setText(String.format(Locale.CHINA, "%d单", 0));
+                    woeker_p = 0;
+                    orderNum = 0;
                     ToastUtils.showLong("已完成交班！即将退出登录！");
                     MyOkHttp.mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             startActivity(new Intent(HomeActivity.this, LoginActivity.class));
-
                         }
                     }, 1000);
                     break;
@@ -1106,6 +1098,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         //网络正常清空下，播放语音提示
                         if (MyApplication.getSocketTool().isAlive()) {
                             String text = orderInfo.getPayType().equals("010") ? "微信到账" + totalPrice : "支付宝到账" + totalPrice;
+                            setParam();
                             mTts.startSpeaking(text, mTtsListener);
                         }
                         PrintOrder(orderBack, change < 0 ? 0 : change, orderInfo.getPayType().equals("010") ? "微信支付" : "支付宝支付", totalPrice, totalCut);
@@ -1204,8 +1197,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * charge:找零
      */
     private void PrintOrder(final OrderBack orderBack, final double charge, String type, double totalPrice, double totalCut) {
-        Log.e(TAG, "PrintOrder: " + System.currentTimeMillis());
         woeker_p += totalPrice;
+
         orderNum++;
         String proList = PrinterUtil.toJson(productions);
 
@@ -1217,7 +1210,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         } else {
             orderNo = orderNum < 10 ? "N000" + orderNum : orderNum < 100 ? "N00" + orderNum : orderNum < 1000 ? "N0" + orderNum : "N" + orderNum;
             initWebOrder(orderNo, PrinterUtil.getDate(), proList, String.valueOf(totalPrice), String.valueOf(totalPrice), String.valueOf(charge), String.valueOf(totalCut), type);
-
             //断网状态下保存订单信息json
             ((MyApplication) getApplication()).getDaoSession().getNativeOrdersDao().insert(new NativeOrders(System.currentTimeMillis(), PrinterUtil.toJson(orderInfo)));
         }
@@ -1225,6 +1217,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         orderInfo = null;
 
         //工作信息更新
+        Log.e(TAG, "PrintOrder: " + woeker_p);
         order_num.setText(String.format(Locale.CHINA, "%.1f元", woeker_p));
         order_num1.setText(String.format(Locale.CHINA, "%d单", orderNum));
         //存储工作记录
@@ -1238,8 +1231,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             public void run() {
                 clear();
             }
-        }, 1000);
-
+        }, 2000);
     }
 
     /**
@@ -1314,6 +1306,35 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void H5Payment(H5TaskBean h5TaskBean) {
+        //来自小程序点单，加入线程池中
+        mTts.startSpeaking("有来自小程序的订单，请查看", mTtsListener);
+        setLabelDataFromH5(h5TaskBean);
+        PrintOrder(null, 0, "微信支付", h5TaskBean.getData().getOrderdetail().getTotalPrice(), 0);
+    }
+
+    private void setLabelDataFromH5(H5TaskBean h5TaskBean) {
+        Log.e(TAG, "setLabelData: " + System.currentTimeMillis());
+        //标签机数据
+        printProducts.clear();
+        for (int i = 0; i < h5TaskBean.getData().getOrderdetail().getPros().size(); i++) {
+            name = h5TaskBean.getData().getOrderdetail().getPros().get(i).getProName();
+            taste = h5TaskBean.getData().getOrderdetail().getPros().get(i).getTastes().get(0).getTasteName();
+            count = h5TaskBean.getData().getOrderdetail().getPros().get(i).getProCount();
+            for (int j = 0; j < count; j++) {
+                Production p = new Production();
+                p.setProName(name);
+                p.setTasteStr(taste);
+                p.setScalePrice(Double.parseDouble(h5TaskBean.getData().getOrderdetail().getPros().get(i).getSumPrice()));
+                p.setNumber(count);
+                p.setScaleStr(h5TaskBean.getData().getOrderdetail().getPros().get(i).getScaleName());
+                p.setMatStr(h5TaskBean.getData().getOrderdetail().getPros().get(i).getMatStr());
+                printProducts.add(p);
+            }
+        }
+    }
+
     private void usbConn(UsbDevice usbDevice) {
         new DeviceConnFactoryManager.Build()
                 .setId(id)
@@ -1341,7 +1362,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         PrinterUtil.disconnectPrinter();
         System.exit(0);
     }
-
 
     /**
      * 发送标签
@@ -1539,7 +1559,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 public void run() {
                     bitmap.recycle();
                 }
-            }, 500);
+            }, 1500);
         }
     }
 

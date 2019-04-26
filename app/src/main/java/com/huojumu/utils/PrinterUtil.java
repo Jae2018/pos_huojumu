@@ -792,42 +792,12 @@ public class PrinterUtil {
 
     }
 
-    /**
-     * 打印图片
-     *
-     * @param view 显示图片的view
-     */
-    public static void printImage(ImageView view) {
-        view.setDrawingCacheEnabled(true);
-        try {
-            if (PrinterAPI.SUCCESS == mPrinter.printRasterBitmap(view.getDrawingCache())) {
-                view.setDrawingCacheEnabled(false);
-                Log.d(TAG, "printImage: finish");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 打印图片
-     *
-     * @param bitmap 要打印的图片
-     */
-    public static void printImage(PrinterAPI mPrinter, Bitmap bitmap) {
-        try {
-            if (PrinterAPI.SUCCESS == mPrinter.printRasterBitmap(bitmap)) {
-                Log.d(TAG, "printImage: finish");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void printImage(Bitmap bitmap) {
         try {
             if (PrinterAPI.SUCCESS == mPrinter.printRasterBitmap(bitmap)) {
                 Log.d(TAG, "printImage: finish");
+                byte[] bytes = {0x1B, 0x70, 0x0, 0x3C, (byte) 0xFF};
+                mPrinter.writeIO(bytes, 0, bytes.length - 1, 1000);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -838,12 +808,6 @@ public class PrinterUtil {
     /**
      * 切纸
      */
-    private static void cutPaper(PrinterAPI mPrinter) {
-        if (PrinterAPI.SUCCESS == mPrinter.cutPaper(66, 0)) {
-            Log.d(TAG, "cutPaper: finish");
-        }
-    }
-
     private static void cutPaper() {
         if (PrinterAPI.SUCCESS == mPrinter.cutPaper(66, 0)) {
             Log.d(TAG, "cutPaper: finish");
@@ -852,36 +816,6 @@ public class PrinterUtil {
 
     public static void getStatus() {
         mPrinter.getStatus();
-    }
-
-    private static Bitmap drawable2Bitmap(Drawable drawable) {
-        if (drawable instanceof BitmapDrawable) {
-//            try {
-//                Thread.sleep(50L);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-            return ((BitmapDrawable) drawable).getBitmap();
-        } else if (drawable instanceof NinePatchDrawable) {
-            Bitmap bitmap = Bitmap
-                    .createBitmap(
-                            drawable.getIntrinsicWidth(),
-                            drawable.getIntrinsicHeight(),
-                            drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
-                                    : Bitmap.Config.RGB_565);
-            Canvas canvas = new Canvas(bitmap);
-            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(),
-                    drawable.getIntrinsicHeight());
-            drawable.draw(canvas);
-//            try {
-//                Thread.sleep(50L);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-            return bitmap;
-        } else {
-            return null;
-        }
     }
 
 }

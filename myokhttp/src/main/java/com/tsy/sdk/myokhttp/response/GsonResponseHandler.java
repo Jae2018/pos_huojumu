@@ -60,6 +60,12 @@ public abstract class GsonResponseHandler<T> implements IResponseHandler {
             });
         } catch (Exception e) {
             e.printStackTrace();
+            MyOkHttp.mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    onFailure(response.code(), "","反序列化错误");
+                }
+            });
         }
     }
 

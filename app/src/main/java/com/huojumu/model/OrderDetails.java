@@ -164,9 +164,27 @@ public class OrderDetails {
             private int proCount;
             private String proName;
             private int orderDeailId;
+            private String matStr;
+            private String scaleName;
             private List<MatsBean> mats;
             private List<TastesBean> tastes;
             private List<CupsBean> cups;
+
+            public String getMatStr() {
+                return matStr;
+            }
+
+            public void setMatStr(String matStr) {
+                this.matStr = matStr;
+            }
+
+            public String getScaleName() {
+                return scaleName;
+            }
+
+            public void setScaleName(String scaleName) {
+                this.scaleName = scaleName;
+            }
 
             public String getSumPrice() {
                 return sumPrice;

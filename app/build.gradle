@@ -4,12 +4,12 @@ apply plugin: 'android-aspectjx'
 
 android {
     signingConfigs {
-    release {
-        storeFile file('E:\\AndroidSpace\\key2.jks')
-        storePassword '312108'
-        keyAlias = 'key'
-        keyPassword '312108'
-    }
+        release {
+            storeFile file('E:\\AndroidSpace\\key2.jks')
+            storePassword '312108'
+            keyAlias = 'key'
+            keyPassword '312108'
+        }
     }
     compileSdkVersion 28
     defaultConfig {
@@ -17,11 +17,10 @@ android {
         minSdkVersion 22
         targetSdkVersion 28
         versionCode 1
-        versionName "1.0.0.1"
+        versionName "1.0.0.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = ["appid": "aa223", "appse": "s1231","adsId":""]
+        manifestPlaceholders = ["appid": "aa223", "appse": "s1231", "adsId": ""]
         renderscriptSupportModeEnabled true
-
     }
     buildTypes {
         release {

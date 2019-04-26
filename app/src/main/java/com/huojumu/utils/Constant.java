@@ -54,7 +54,7 @@ public interface Constant {
 
     /* socket 字段*/
     String BIND = "machinebind";
-    String PAYCODE = "pay";
+    String PAYCODE = "payAndPrint";
     String START = "start";
 
     //活动信息

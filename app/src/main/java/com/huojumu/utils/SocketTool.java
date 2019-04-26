@@ -6,6 +6,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.google.gson.Gson;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.EventHandler;
+import com.huojumu.model.H5TaskBean;
 import com.huojumu.model.NetErrorHandler;
 import com.huojumu.model.StoreInfo;
 import com.huojumu.model.TaskBean;
@@ -85,50 +86,53 @@ public class SocketTool extends WebSocketListener {
         EventBus.getDefault().post(new NetErrorHandler(true));
 
         alive = true;
-        TaskBean taskBean = gson.fromJson(text, TaskBean.class);
-        switch (taskBean.getTask()) {
-            case Constant.BIND:
-                //绑定设备回调
-                SpUtil.save(Constant.HAS_BAND, true);
-                SpUtil.save(Constant.EQP_NO, taskBean.getData().getEqpNo());
-                NetTool.getMachineInfo(taskBean.getData().getEqpNo(), new GsonResponseHandler<BaseBean<StoreInfo>>() {
-                    @Override
-                    public void onSuccess(int statusCode, BaseBean<StoreInfo> response) {
-                        if (response.getData() != null) {
-                            SpUtil.save(Constant.STORE_ID, response.getData().getShop().getId());
-                            SpUtil.save(Constant.STORE_NAME, response.getData().getShop().getShopName());
-                            SpUtil.save(Constant.STORE_ADDRESS, response.getData().getShop().getAddr());
-                            SpUtil.save(Constant.STORE_TEL, response.getData().getShop().getMobile());
-                            SpUtil.save(Constant.ENT_ID, response.getData().getEnterPrise().getId());
-                            SpUtil.save(Constant.PINPAI_ID, response.getData().getParentEnterPrise().getId());
-                            SpUtil.save(Constant.ENT_NAME, response.getData().getParentEnterPrise().getEntName());
-                            SpUtil.save(Constant.ENT_DIS, response.getData().getParentEnterPrise().getDiscountsType());
-                            SpUtil.save(Constant.HTML, response.getData().getParentEnterPrise().getReceiptTemplate());
+        if (text.contains(Constant.PAYCODE)) {
+            //来自小程序端
+            H5TaskBean taskBean = gson.fromJson(text, H5TaskBean.class);
+            EventBus.getDefault().post(taskBean);
+        } else {
+            TaskBean taskBean = gson.fromJson(text, TaskBean.class);
+            switch (taskBean.getTask()) {
+                case Constant.BIND:
+                    //绑定设备回调
+                    SpUtil.save(Constant.HAS_BAND, true);
+                    SpUtil.save(Constant.EQP_NO, taskBean.getData().getEqpNo());
+                    NetTool.getMachineInfo(taskBean.getData().getEqpNo(), new GsonResponseHandler<BaseBean<StoreInfo>>() {
+                        @Override
+                        public void onSuccess(int statusCode, BaseBean<StoreInfo> response) {
+                            if (response.getData() != null) {
+                                SpUtil.save(Constant.STORE_ID, response.getData().getShop().getId());
+                                SpUtil.save(Constant.STORE_NAME, response.getData().getShop().getShopName());
+                                SpUtil.save(Constant.STORE_ADDRESS, response.getData().getShop().getAddr());
+                                SpUtil.save(Constant.STORE_TEL, response.getData().getShop().getMobile());
+                                SpUtil.save(Constant.ENT_ID, response.getData().getEnterPrise().getId());
+                                SpUtil.save(Constant.PINPAI_ID, response.getData().getParentEnterPrise().getId());
+                                SpUtil.save(Constant.ENT_NAME, response.getData().getParentEnterPrise().getEntName());
+                                SpUtil.save(Constant.ENT_DIS, response.getData().getParentEnterPrise().getDiscountsType());
+                                SpUtil.save(Constant.HTML, response.getData().getParentEnterPrise().getReceiptTemplate());
+                            }
+                            EventBus.getDefault().post(new EventHandler(Constant.LOGIN));
                         }
-                        EventBus.getDefault().post(new EventHandler(Constant.LOGIN));
-                    }
 
-                    @Override
-                    public void onFailure(int statusCode, String code, String error_msg) {
-                        ToastUtils.showLong(error_msg);
+                        @Override
+                        public void onFailure(int statusCode, String code, String error_msg) {
+                            ToastUtils.showLong(error_msg);
+                        }
+                    });
+                    break;
+                case Constant.START:
+                    //扫码登录回调
+                    if (taskBean.getCode().equals("0")) {
+                        SpUtil.save(Constant.WORKER_NAME, taskBean.getData().getUserName());
+                        SpUtil.save(Constant.MY_TOKEN, "Bearer " + taskBean.getData().getToken());
+                        EventBus.getDefault().post(new EventHandler(Constant.HOME));
+                    } else {
+                        EventBus.getDefault().post(new EventHandler(Constant.LOGIN_FAILED, taskBean.getData().getMobile(), taskBean.getData().getUserName()));
                     }
-                });
-                break;
-            case Constant.PAYCODE:
-                //客户扫副屏码支付完成回调
-
-                break;
-            case Constant.START:
-                //扫码登录回调
-                if (taskBean.getCode().equals("0")) {
-                    SpUtil.save(Constant.WORKER_NAME, taskBean.getData().getUserName());
-                    SpUtil.save(Constant.MY_TOKEN, "Bearer " + taskBean.getData().getToken());
-                    EventBus.getDefault().post(new EventHandler(Constant.HOME));
-                } else {
-                    EventBus.getDefault().post(new EventHandler(Constant.LOGIN_FAILED, taskBean.getData().getMobile(), taskBean.getData().getUserName()));
-                }
-                break;
+                    break;
+            }
         }
+
     }
 
     @Override

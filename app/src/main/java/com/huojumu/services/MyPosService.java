@@ -57,7 +57,7 @@ public class MyPosService extends Service {
      */
     private void startLoop(){
         timer = new Timer();
-        //间隔10分钟轮询一次数据库
+        //间隔1小时轮询一次数据库
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -77,7 +77,7 @@ public class MyPosService extends Service {
                     }
                 }
             }
-        }, 10000, 10 * 60 * 1000);
+        }, 10000, 60 * 60 * 1000);
     }
 
 }

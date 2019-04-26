@@ -32,8 +32,8 @@
 
     <application
         android:name="com.huojumu.MyApplication"
-        android:allowBackup="true"
-        android:fullBackupContent="true"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

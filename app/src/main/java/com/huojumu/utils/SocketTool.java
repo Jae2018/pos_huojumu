@@ -1,7 +1,6 @@
 package com.huojumu.utils;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.gson.Gson;
@@ -63,7 +62,6 @@ public class SocketTool extends WebSocketListener {
     }
 
     public void sendHeart() {
-        Log.e(TAG, "sendHeart: ");
         if (webSocket != null) {
             webSocket.send("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
         }
@@ -84,7 +82,6 @@ public class SocketTool extends WebSocketListener {
     @Override
     public void onMessage(final WebSocket webSocket, String text) {
         super.onMessage(webSocket, text);
-        Log.e(TAG, "onMessage: " + text);
         EventBus.getDefault().post(new NetErrorHandler(true));
 
         alive = true;
@@ -137,13 +134,11 @@ public class SocketTool extends WebSocketListener {
     @Override
     public void onMessage(WebSocket webSocket, ByteString bytes) {
         super.onMessage(webSocket, bytes);
-        Log.e(TAG, "bytes:   " + bytes);
     }
 
     @Override
     public void onClosed(WebSocket webSocket, int code, String reason) {
         super.onClosed(webSocket, code, reason);
-        Log.e(TAG, "reason:   " + reason + "      code:  " + code);
     }
 
     @Override

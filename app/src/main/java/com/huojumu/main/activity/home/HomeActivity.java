@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -30,7 +31,6 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,7 +73,6 @@ import com.huojumu.services.MyPosService;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
 import com.huojumu.utils.H5Order;
-import com.huojumu.utils.LogUtil;
 import com.huojumu.utils.MyDividerDecoration;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
@@ -85,6 +84,11 @@ import com.huojumu.utils.SpUtil;
 import com.huojumu.utils.ThreadFactoryBuilder;
 import com.huojumu.utils.ThreadPool;
 import com.huojumu.utils.UsbUtil;
+import com.iflytek.cloud.InitListener;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechError;
+import com.iflytek.cloud.SpeechSynthesizer;
+import com.iflytek.cloud.SynthesizerListener;
 import com.tools.command.EscCommand;
 import com.tools.command.LabelCommand;
 import com.tsy.sdk.myokhttp.MyOkHttp;
@@ -99,13 +103,18 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -144,8 +153,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //有无挂单
     @BindView(R.id.iv_has_gua_dan)
     ImageView hasGua;
-    @BindView(R.id.parent_relative)
-    RelativeLayout parent_relative;
     @BindView(R.id.web_order)
     WebView webView;
     @BindView(R.id.edit_search)
@@ -170,7 +177,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private List<Production> tempProduces = new ArrayList<>();//商品列表
     private ArrayList<ActivesBean> activeBeanList = new ArrayList<>();//活动列表
     private ArrayList<Production> productions = new ArrayList<>();//选择的奶茶
-    private ArrayList<Production> printProducts = new ArrayList<>();//标签打印的产品
+    private Vector<Production> printProducts = new Vector<>();//标签打印的产品
     private List<Production> typeList = new ArrayList<>();//选择小类后的商品集合
     private List<Production> searchList = new ArrayList<>();//搜索商品结果集合
     private List<Production> gTemp = new ArrayList<>();//挂单商品集合
@@ -202,10 +209,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
     int count = 0;//商品数量
     String name, taste;//名字、口味
-
     //是否推荐
     private boolean isRecommend = false;
-
     //商品过滤状态
     int m = 0;
     //小类
@@ -218,11 +223,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private static final int RECONNECT_SOCKET = 2;
     //重连次数
     private static int RECONNECT_TIME = 1;
-
-    private float woeker_p = 0;//员工班次销售金额
-    private int orderNum = 0;//员工班次销售订单数
-
-    String authNo = "";//扫码后的内容
+    //员工班次销售金额
+    private float woeker_p = 0;
+    //员工班次销售订单数
+    private int orderNum = 0;
+    //扫码后的内容
+    String authNo = "";
     //搜索栏
     private String[] py = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
     //搜索字符串
@@ -245,8 +251,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private ScanWarnDialog warnDialog;
     //轮询handler
     MyHandler mHandler;
-    //
+    //服务启动项
     private Intent intent;
+    // 语音合成对象
+    private SpeechSynthesizer mTts;
 
     @Override
     protected int setLayout() {
@@ -393,12 +401,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         //计时
         mHandler = new MyHandler(this);
+        mHandler.sendEmptyMessage(MSG_UPDATE_CURRENT_TIME);
 
         webView.addJavascriptInterface(new JsInterface(), "JSInterface");
 
         cashPayDialog = new CashPayDialog(this, this);
 
         warnDialog = new ScanWarnDialog(this, this);
+
+        mTts = SpeechSynthesizer.createSynthesizer(this, mTtsInitListener);
     }
 
     @Override
@@ -447,7 +458,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             } else if (msg.what == RECONNECT_SOCKET) {
                 //尝试重连
                 if (activity != null && !MyApplication.getSocketTool().isAlive()) {
-                    Log.e("HomeActivity", "handleMessage: ");
                     sendEmptyMessageDelayed(RECONNECT_SOCKET, (10 * 1000) * RECONNECT_TIME);
                     activity.reconnectSocket();
                 }
@@ -462,7 +472,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     private void reconnectSocket() {
         RECONNECT_TIME++;
-        Log.e(TAG, "reconnectSocket 次数: " + RECONNECT_TIME);
         MyApplication.startSocket();
         sendSocket();
     }
@@ -1018,6 +1027,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     orderInfo.setPayType(type == 2 ? "020" : "010");
                     payType = type == 2 ? "支付宝支付" : "微信支付";
                     orderBack = null;
+                    setLabelData();
                     //线上支付
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                         @Override
@@ -1045,6 +1055,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 orderInfo.setPayType("900");
                 cashPayDialog.cancel();
                 payType = "现金支付";
+                setLabelData();
                 NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                     @Override
                     public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
@@ -1092,6 +1103,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     authNo = "";
                     warnDialog.cancel();
                     if (response.getCode().equals("0")) {
+                        //网络正常清空下，播放语音提示
+                        if (MyApplication.getSocketTool().isAlive()) {
+                            String text = orderInfo.getPayType().equals("010") ? "微信到账" + totalPrice : "支付宝到账" + totalPrice;
+                            mTts.startSpeaking(text, mTtsListener);
+                        }
                         PrintOrder(orderBack, change < 0 ? 0 : change, orderInfo.getPayType().equals("010") ? "微信支付" : "支付宝支付", totalPrice, totalCut);
                     } else {
                         ToastUtils.showLong(response.getMsg());
@@ -1161,33 +1177,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         webView.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
     }
 
-    /**
-     * 打印订单小票，分 连接上服务器 与 未连接上服务器
-     * charge:找零
-     */
-    private void PrintOrder(final OrderBack orderBack, final double charge, String type, double totalPrice, double totalCut) {
-        woeker_p += totalPrice;
-        orderNum++;
-        String no = orderNum < 10 ? "N000" + orderNum : orderNum < 100 ? "N00" + orderNum : orderNum < 1000 ? "N0" + orderNum : "N" + orderNum;
-
-        String proList = PrinterUtil.toJson(productions);
-
-        //小票数据
-        if (orderBack != null) {
-            String str = orderBack.getTotalPrice().substring(0, orderBack.getTotalPrice().length() - 1);
-            initWebOrder("N" + orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4), orderBack.getCreatTime(), proList, str,
-                    (Double.parseDouble(orderBack.getTotalPrice()) + charge) + "", String.valueOf(charge), String.valueOf(totalCut), type);
-        } else {
-            initWebOrder(no, PrinterUtil.getDate(), proList, String.valueOf(totalPrice), String.valueOf(totalPrice), String.valueOf(charge), String.valueOf(totalCut), type);
-
-            //断网状态下保存订单信息json
-            ((MyApplication) getApplication()).getDaoSession().getNativeOrdersDao().insert(new NativeOrders(System.currentTimeMillis(), PrinterUtil.toJson(orderInfo)));
-        }
-        //订单置空
-        orderInfo = null;
-
+    private void setLabelData() {
+        Log.e(TAG, "setLabelData: " + System.currentTimeMillis());
         //标签机数据
-        printcount = 0;
         printProducts.clear();
 
         for (int i = 0; i < productions.size(); i++) {
@@ -1203,14 +1195,34 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 p.setScaleStr(productions.get(i).getScaleStr());
                 p.setMatStr(productions.get(i).getMatStr());
                 printProducts.add(p);
-                printcount++;
             }
         }
+    }
+
+    /**
+     * 打印订单小票，分 连接上服务器 与 未连接上服务器
+     * charge:找零
+     */
+    private void PrintOrder(final OrderBack orderBack, final double charge, String type, double totalPrice, double totalCut) {
+        Log.e(TAG, "PrintOrder: " + System.currentTimeMillis());
+        woeker_p += totalPrice;
+        orderNum++;
+        String proList = PrinterUtil.toJson(productions);
+
+        //小票数据
         if (orderBack != null) {
-            printLabel(orderBack.getOrderNo());
+            String str = orderBack.getTotalPrice().substring(0, orderBack.getTotalPrice().length() - 1);
+            initWebOrder("N" + orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4), orderBack.getCreatTime(), proList, str,
+                    (Double.parseDouble(orderBack.getTotalPrice()) + charge) + "", String.valueOf(charge), String.valueOf(totalCut), type);
         } else {
-            printLabel(no);
+            orderNo = orderNum < 10 ? "N000" + orderNum : orderNum < 100 ? "N00" + orderNum : orderNum < 1000 ? "N0" + orderNum : "N" + orderNum;
+            initWebOrder(orderNo, PrinterUtil.getDate(), proList, String.valueOf(totalPrice), String.valueOf(totalPrice), String.valueOf(charge), String.valueOf(totalCut), type);
+
+            //断网状态下保存订单信息json
+            ((MyApplication) getApplication()).getDaoSession().getNativeOrdersDao().insert(new NativeOrders(System.currentTimeMillis(), PrinterUtil.toJson(orderInfo)));
         }
+        //订单置空
+        orderInfo = null;
 
         //工作信息更新
         order_num.setText(String.format(Locale.CHINA, "%.1f元", woeker_p));
@@ -1218,6 +1230,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //存储工作记录
         SpUtil.save(Constant.WORK_P, woeker_p);
         SpUtil.save(Constant.ORDER_NUM, orderNum);
+
+        printLabel();
 
         MyOkHttp.mHandler.postDelayed(new Runnable() {
             @Override
@@ -1231,35 +1245,22 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     /**
      * 打印标签
      */
-    private void printLabel(final String orderNo) {
-        Log.d(TAG, "printLabel: start");
+    private void printLabel() {
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
             public void run() {
-                Log.e(TAG, "printLabel run: ");
                 if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] != null
                         && DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getConnState()) {
-                    Log.e(TAG, "printLabel run: 1");
                     ThreadFactoryBuilder threadFactoryBuilder = new ThreadFactoryBuilder("MainActivity_sendContinuity_Timer");
                     ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(1, threadFactoryBuilder);
                     scheduledExecutorService.schedule(threadFactoryBuilder.newThread(new Runnable() {
                         @Override
                         public void run() {
-                            Log.e(TAG, "printLabel run: 2");
-                            printcount--;
                             if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getCurrentPrinterCommand() == PrinterCommand.TSC) {
-                                String name = printProducts.get(printcount).getProName();
-                                if (name.length() > 6) {
-                                    name = name.substring(0, 6);
+                                for (int i = 0; i < printProducts.size(); i++) {
+                                    sendLabel(name, printProducts.get(i).getTasteStr(), printProducts.get(i).getMinPrice() + "",
+                                            i, printProducts.size(), printProducts.get(i).getMatStr(), printProducts.get(i).getScaleStr());
                                 }
-                                Log.e(TAG, "printLabel run: 3");
-                                String mate = printProducts.get(printcount).getMatStr();
-                                if (mate.length() > 8) {
-                                    mate = mate.substring(0, 8);
-                                }
-                                Log.e(TAG, "printLabel run: 4");
-                                sendLabel(name, printProducts.get(printcount).getTasteStr(), printProducts.get(printcount).getMinPrice() + "",
-                                        printcount, printProducts.size(), mate, printProducts.get(printcount).getScaleStr(),orderNo);
                             }
                         }
                     }), 1000, TimeUnit.MILLISECONDS);
@@ -1267,7 +1268,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
         });
     }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void GetPayBack(WorkBean workBean) {
@@ -1282,6 +1282,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     public void paymentBack(OrderBack orderBack) {
         this.orderBack = orderBack;
         //结算回调，有网
+        setLabelData();
         PrintOrder(orderBack, orderBack.getCharge(), orderBack.getPayType().equals("900") ? "现金支付" : orderBack.getPayType().equals("010") ? "微信支付" : "支付宝支付", orderBack.getTotal(), orderBack.getCut());
     }
 
@@ -1341,15 +1342,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         System.exit(0);
     }
 
+
     /**
      * 发送标签
      */
-    void sendLabel(String pName, String pContent, String price, int i, int number, String matStr, String scale,String orderNo) {
-        Log.e(TAG, "sendLabel: 0");
+    void sendLabel(String pName, String pContent, String price, int i, int number, String matStr, String scale) {
         i = i + 1;
         LabelCommand tsc = new LabelCommand();
         // 设置标签尺寸，按照实际尺寸设置
-        tsc.addSize(45, 30);
+        tsc.addSize(40, 30);
         // 设置标签间隙，按照实际尺寸设置，如果为无间隙纸则设置为0
         tsc.addGap(2);
         // 设置打印方向
@@ -1362,44 +1363,32 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         tsc.addTear(EscCommand.ENABLE.ON);
         // 清除打印缓冲区
         tsc.addCls();
-        Log.e(TAG, "sendLabel: 1");
         // 绘制简体中文
-        tsc.addText(0, 3, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(0, 2, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.STORE_NAME) + "\n");
-        Log.e(TAG, "sendLabel: 2");
         tsc.addText(0, 33, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 pName + "\n");
         if (matStr == null || matStr.isEmpty()) {
             matStr = "不加料";
         }
-        Log.e(TAG, "sendLabel: 3");
         tsc.addText(0, 63, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 matStr);
-        Log.e(TAG, "sendLabel: 4");
         tsc.addText(0, 93, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 scale + "\n");
-        Log.e(TAG, "sendLabel: 5");
         tsc.addText(0, 123, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 pContent + " ￥" + price + " " + "\n");
-        Log.e(TAG, "sendLabel: 6");
         tsc.addText(0, 153, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.WORKER_NAME) + " " + i + "/" + number + "\n");
-        Log.e(TAG, "sendLabel: 7");
         tsc.addText(0, 183, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 PrinterUtil.getTabTime() + orderNo.substring(orderNo.length() - 4) + "-" + PrinterUtil.getTabHour() + "\n");
-        Log.e(TAG, "sendLabel: 8");
-        tsc.addText(0, 213, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
-                SpUtil.getString(Constant.STORE_ADDRESS));
-        Log.e(TAG, "sendLabel: 9");
         // 绘制图片
         Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.logo9);
-        tsc.addBitmap(220, 40, LabelCommand.BITMAP_MODE.OVERWRITE, 80, b);
+        tsc.addBitmap(230, 40, LabelCommand.BITMAP_MODE.OVERWRITE, 80, b);
         // 打印标签
         tsc.addPrint(1, 1);
         // 打印标签后 蜂鸣器响
         tsc.addSound(2, 100);
 
-        tsc.addCashdrwer(LabelCommand.FOOT.F5, 255, 255);
         Vector<Byte> datas = tsc.getCommand();
         // 发送数据
         if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] == null) {
@@ -1489,13 +1478,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                 break;
                         }
                         break;
-                    case ACTION_QUERY_PRINTER_STATE:
-                        if (printcount >= 0) {
-                            if (printcount != 0) {
-                                printLabel(orderBack.getOrderNo());
-                            }
-                        }
-                        break;
+//                    case ACTION_QUERY_PRINTER_STATE:
+//                        if (printcount >= 0) {
+//                            Log.e(TAG, "onReceive: printLabel");
+//                            printLabel();
+//                        }
+//                        break;
                     default:
                         break;
                 }
@@ -1566,4 +1554,69 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         return bitmap;
     }
 
+    /**
+     * 参数设置
+     */
+    private void setParam() {
+        // 清空参数
+        mTts.setParameter(SpeechConstant.PARAMS, null);
+        //设置合成
+        //设置使用云端引擎
+        mTts.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_CLOUD);
+        //设置发音人
+        mTts.setParameter(SpeechConstant.VOICE_NAME, "xiaoqi");
+    }
+
+    /**
+     * 合成回调监听。
+     */
+    private SynthesizerListener mTtsListener = new SynthesizerListener() {
+
+        @Override
+        public void onSpeakBegin() {
+
+        }
+
+        @Override
+        public void onSpeakPaused() {
+
+        }
+
+        @Override
+        public void onSpeakResumed() {
+
+        }
+
+        @Override
+        public void onBufferProgress(int percent, int beginPos, int endPos,
+                                     String info) {
+
+        }
+
+        @Override
+        public void onSpeakProgress(int percent, int beginPos, int endPos) {
+            // 播放进度
+
+        }
+
+        @Override
+        public void onCompleted(SpeechError error) {
+
+        }
+
+        @Override
+        public void onEvent(int eventType, int arg1, int arg2, Bundle obj) {
+
+        }
+    };
+
+    /**
+     * 初始化监听。
+     */
+    private InitListener mTtsInitListener = new InitListener() {
+        @Override
+        public void onInit(int code) {
+
+        }
+    };
 }

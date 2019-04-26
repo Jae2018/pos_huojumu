@@ -1474,6 +1474,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                     ld3.close();
                                 }
                             }, 6000);
+                            MyOkHttp.mHandler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (ld3 != null) {
+                                        ld3.close();
+                                    }
+                                }
+                            }, 10000);
                         }
                         break;
                     case DeviceConnFactoryManager.ACTION_CONN_STATE:

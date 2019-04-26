@@ -79,6 +79,8 @@ public class LoginActivity extends BaseActivity {
                             downProgressDialog.show();
                         }
                     }, 500);
+                } else {
+                    getCode();
                 }
             }
         });
@@ -88,12 +90,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        MyOkHttp.mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                getCode();
-            }
-        }, 1000);
+
     }
 
     @Override

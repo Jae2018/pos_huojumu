@@ -30,8 +30,8 @@ public class Production implements Parcelable {
      */
 
     private String proType;
-    private String proAlsname;
-    private String proSpellname;
+    private String proAlsname="";
+    private String proSpellname="";
     private String isDiscount;//是否打折:null/0-否;1-是
     private String proNo;
     private String isMoneyOff;//是否满减:null/0-否;1-是
@@ -46,6 +46,7 @@ public class Production implements Parcelable {
     private List<TastesBean> tastes;
     private List<ScaleBean> scales;
     private String planFlag;
+    private String proNameEn = "";
     //额外增加
     private int number = 1;//默认数量
     private String addon = "";//备注
@@ -57,6 +58,14 @@ public class Production implements Parcelable {
     private double origionPrice;//原价
     private String activeStr = "";//活动内容说明
     private List<ActivesBean> activesBeanList = new ArrayList<>();//商品参与的活动信息集合
+
+    public String getProNameEn() {
+        return proNameEn;
+    }
+
+    public void setProNameEn(String proNameEn) {
+        this.proNameEn = proNameEn;
+    }
 
     public String getActiveStr() {
         return activeStr;

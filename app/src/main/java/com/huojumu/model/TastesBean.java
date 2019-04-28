@@ -13,6 +13,16 @@ public class TastesBean implements Parcelable {
 
     private int tasteId;
     private String tasteName;
+
+    public String getTasteNameEn() {
+        return tasteNameEn;
+    }
+
+    public void setTasteNameEn(String tasteNameEn) {
+        this.tasteNameEn = tasteNameEn;
+    }
+
+    private String tasteNameEn;
     private int groupId;
     private double multiple;
 

@@ -74,6 +74,7 @@ import com.huojumu.services.MyPosService;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
 import com.huojumu.utils.H5Order;
+import com.huojumu.utils.H5OrderEn;
 import com.huojumu.utils.MyDividerDecoration;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
@@ -804,7 +805,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     /**
      * 删除当前单子列表
      */
-    @SingleClick(500)
+    @SingleClick(1500)
     @OnClick(R.id.button2)
     void DeleteAll() {
         clear();
@@ -973,8 +974,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     MyOkHttp.mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            System.exit(0);
                             PowerUtil.shutdown();
+                            System.exit(0);
                         }
                     }, 30 * 1000);
                     break;
@@ -1058,7 +1059,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
                     @Override
                     public void onFailure(int statusCode, String code, String error_msg) {
-                        ToastUtils.showLong("网络连接已断开");
                         PrintOrder(orderBack, charge < 0 ? 0 : charge, "现金支付", totalPrice, totalCut);
                     }
                 });
@@ -1075,8 +1075,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 MyOkHttp.mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        System.exit(0);
                         PowerUtil.shutdown();
+                        System.exit(0);
                     }
                 }, 2000);
                 break;
@@ -1155,7 +1155,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     private void initWebOrder(String OrderNo, String date, String proList, String totalMoney,
                               String cost, String charge, String cut, String payType) {
-        String html = H5Order.html;
+        String html;
+//        if (SpUtil.getBoolean(Constant.PRINT_LANG)) {
+//            html = H5OrderEn.html;
+//        } else {
+//            html = H5Order.html;
+//        }
+        html = H5OrderEn.html;
         html = html.replace("{1}", OrderNo)
                 .replace("{2}", SpUtil.getString(Constant.WORKER_NAME))
                 .replace("{3}", date)
@@ -1171,7 +1177,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     private void setLabelData() {
-        Log.e(TAG, "setLabelData: " + System.currentTimeMillis());
         //标签机数据
         printProducts.clear();
 
@@ -1250,8 +1255,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         public void run() {
                             if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getCurrentPrinterCommand() == PrinterCommand.TSC) {
                                 for (int i = 0; i < printProducts.size(); i++) {
-                                    sendLabel(name, printProducts.get(i).getTasteStr(), printProducts.get(i).getMinPrice() + "",
-                                            i, printProducts.size(), printProducts.get(i).getMatStr(), printProducts.get(i).getScaleStr());
+                                    sendLabel(name, printProducts.get(i).getTasteStr(), printProducts.get(i).getScalePrice() + "",
+                                            i, printProducts.size(), printProducts.get(i).getMatStr(), printProducts.get(i).getScaleStr(), printProducts.get(i).getProNameEn());
                                 }
                             }
                         }
@@ -1360,13 +1365,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             ThreadPool.getInstantiation().stopThreadPool();
         }
         PrinterUtil.disconnectPrinter();
-        System.exit(0);
     }
 
     /**
      * 发送标签
      */
-    void sendLabel(String pName, String pContent, String price, int i, int number, String matStr, String scale) {
+    void sendLabel(String pName, String pContent, String price, int i, int number, String matStr, String scale,String proNameEn) {
         i = i + 1;
         LabelCommand tsc = new LabelCommand();
         // 设置标签尺寸，按照实际尺寸设置
@@ -1378,32 +1382,34 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         // 开启带Response的打印，用于连续打印
         tsc.addQueryPrinterStatus(LabelCommand.RESPONSE_MODE.ON);
         // 设置原点坐标
-        tsc.addReference(0, 0);
+        tsc.addReference(10, 3);
         // 撕纸模式开启
         tsc.addTear(EscCommand.ENABLE.ON);
         // 清除打印缓冲区
         tsc.addCls();
         // 绘制简体中文
-        tsc.addText(0, 2, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(10, 2, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.STORE_NAME) + "\n");
-        tsc.addText(0, 33, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(90, 32, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 pName + "\n");
+        tsc.addText(90, 62, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+                proNameEn + "\n");
         if (matStr == null || matStr.isEmpty()) {
-            matStr = "不加料";
+            matStr = "默认加料";
         }
-        tsc.addText(0, 63, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(10, 92, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 matStr);
-        tsc.addText(0, 93, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(10, 122, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 scale + "\n");
-        tsc.addText(0, 123, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(10, 152, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 pContent + " ￥" + price + " " + "\n");
-        tsc.addText(0, 153, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(10, 182, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.WORKER_NAME) + " " + i + "/" + number + "\n");
-        tsc.addText(0, 183, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(10, 212, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 PrinterUtil.getTabTime() + orderNo.substring(orderNo.length() - 4) + "-" + PrinterUtil.getTabHour() + "\n");
         // 绘制图片
         Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.logo9);
-        tsc.addBitmap(230, 40, LabelCommand.BITMAP_MODE.OVERWRITE, 80, b);
+        tsc.addBitmap(240, 40, LabelCommand.BITMAP_MODE.OVERWRITE, 80, b);
         // 打印标签
         tsc.addPrint(1, 1);
         // 打印标签后 蜂鸣器响

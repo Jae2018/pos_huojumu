@@ -7,6 +7,7 @@ public class ScaleBean implements Parcelable {
 
     private int scaleId;
     private String scaName;
+    private String scaNameEn;
     private String unitName;
     private double price;
     private int proId;
@@ -14,6 +15,14 @@ public class ScaleBean implements Parcelable {
     private String type;
     private double capacity;
     private double origionPrice;
+
+    public String getScaNameEn() {
+        return scaNameEn;
+    }
+
+    public void setScaNameEn(String scaNameEn) {
+        this.scaNameEn = scaNameEn;
+    }
 
     public double getOrigionPrice() {
         return origionPrice;

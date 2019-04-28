@@ -23,6 +23,8 @@ public class SettingActivity extends BaseActivity {
 
     @BindView(R.id.switch_pos)
     Switch aSwitch;
+    @BindView(R.id.switch_receipt)
+    Switch rSwitch;
 
     @Override
     protected int setLayout() {
@@ -44,6 +46,23 @@ public class SettingActivity extends BaseActivity {
                 } else {
                     //80mm
                     SpUtil.save(Constant.PRINT_WIDTH, false);
+                    aSwitch.setSwitchTextAppearance(SettingActivity.this, R.style.s_false);
+                }
+            }
+        });
+
+        //小票语言种类
+        rSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                //控制开关字体颜色
+                if (b) {
+                    //英语
+                    SpUtil.save(Constant.PRINT_LANG, true);
+                    aSwitch.setSwitchTextAppearance(SettingActivity.this, R.style.s_true);
+                } else {
+                    //汉语
+                    SpUtil.save(Constant.PRINT_LANG, false);
                     aSwitch.setSwitchTextAppearance(SettingActivity.this, R.style.s_false);
                 }
             }
@@ -83,7 +102,7 @@ public class SettingActivity extends BaseActivity {
                 }
             }
         }
-        return dir.delete();
+        return true;
     }
 
     @OnClick(R.id.tv_update)
@@ -110,7 +129,6 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.iv_back)
     void back() {
-//        startActivity(new Intent(SettingActivity.this, HomeActivity.class));
         finish();
     }
 

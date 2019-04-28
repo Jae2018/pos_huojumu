@@ -163,12 +163,21 @@ public class OrderDetails {
             private int proId;
             private int proCount;
             private String proName;
+            private String proNameEn = "";
             private int orderDeailId;
             private String matStr;
             private String scaleName;
             private List<MatsBean> mats;
             private List<TastesBean> tastes;
             private List<CupsBean> cups;
+
+            public String getProNameEn() {
+                return proNameEn;
+            }
+
+            public void setProNameEn(String proNameEn) {
+                this.proNameEn = proNameEn;
+            }
 
             public String getMatStr() {
                 return matStr;
@@ -268,6 +277,15 @@ public class OrderDetails {
                 private int proMatId;
                 private int ingredientPrice;
                 private String matName;
+                private String matNameEn;
+
+                public String getMatNameEn() {
+                    return matNameEn;
+                }
+
+                public void setMatNameEn(String matNameEn) {
+                    this.matNameEn = matNameEn;
+                }
 
                 public int getProMatId() {
                     return proMatId;
@@ -302,6 +320,15 @@ public class OrderDetails {
 
                 private int tasteId;
                 private String tasteName;
+                private String tasteNameEn;
+
+                public String getTasteNameEn() {
+                    return tasteNameEn;
+                }
+
+                public void setTasteNameEn(String tasteNameEn) {
+                    this.tasteNameEn = tasteNameEn;
+                }
 
                 public int getTasteId() {
                     return tasteId;
@@ -330,6 +357,15 @@ public class OrderDetails {
                 private int cupId;
                 private int proId;
                 private String proName;
+                private String proNameEn;
+
+                public String getProNameEn() {
+                    return proNameEn;
+                }
+
+                public void setProNameEn(String proNameEn) {
+                    this.proNameEn = proNameEn;
+                }
 
                 public int getCupId() {
                     return cupId;

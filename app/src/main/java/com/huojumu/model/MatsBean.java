@@ -24,6 +24,15 @@ public class MatsBean implements Parcelable {
     private String matNo;
     private int orgId;
     private String matName;
+    private String matNameEn;
+
+    public String getMatNameEn() {
+        return matNameEn;
+    }
+
+    public void setMatNameEn(String matNameEn) {
+        this.matNameEn = matNameEn;
+    }
 
     public int getProMatId() {
         return proMatId;

@@ -1156,12 +1156,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private void initWebOrder(String OrderNo, String date, String proList, String totalMoney,
                               String cost, String charge, String cut, String payType) {
         String html;
-//        if (SpUtil.getBoolean(Constant.PRINT_LANG)) {
-//            html = H5OrderEn.html;
-//        } else {
-//            html = H5Order.html;
-//        }
-        html = H5OrderEn.html;
+        if (SpUtil.getBoolean(Constant.PRINT_LANG)) {
+            html = H5OrderEn.html;
+        } else {
+            html = H5Order.html;
+        }
+//        html = H5OrderEn.html;
         html = html.replace("{1}", OrderNo)
                 .replace("{2}", SpUtil.getString(Constant.WORKER_NAME))
                 .replace("{3}", date)

@@ -34,7 +34,7 @@ public class H5Order {
             "      var row = document.createElement('div');\n" +
             "      row.style.display = \"flex\";\n" +
             "      var idCell = document.createElement('label');\n" +
-            "      idCell.innerHTML = h.proName;\n" +
+            "      idCell.innerHTML = h.proName +\"<br/>\"+h.matNameEn;\n" +
             "      idCell.style.width = \"40%\";\n" +
             "      idCell.style.fontSize = \"24px\";\n"+
             "      idCell.style.fontWeight = \"bold\";"+
@@ -69,7 +69,7 @@ public class H5Order {
             "          matCell.style.fontSize = 24;\n"+
             "          row.appendChild(matCell);\n" +
             "          var matNameCell = document.createElement('label');\n" +
-            "          matNameCell.innerHTML = \"-\" + h.mats[j].matName;\n" +
+            "          matNameCell.innerHTML = \"-\" + h.mats[j].matName + h.mats[j].matNameEn;\n" +
             "          matNameCell.style.width = \"40%\";\n" +
             "          matNameCell.style.fontSize = \"24px\";\n"+
             "      matNameCell.style.fontWeight = \"bold\";"+

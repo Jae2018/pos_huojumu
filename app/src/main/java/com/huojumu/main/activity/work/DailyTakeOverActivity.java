@@ -6,15 +6,19 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.greendao.gen.NativeOrdersDao;
 import com.huojumu.MyApplication;
 import com.huojumu.R;
 import com.huojumu.adapter.WorkDailyAdapter;
 import com.huojumu.base.BaseActivity;
+import com.huojumu.main.activity.function.OrderDetailActivity;
+import com.huojumu.main.activity.function.OrdersListActivity;
 import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.main.dialogs.CertainDialog;
 import com.huojumu.main.dialogs.DialogInterface;
@@ -128,6 +132,14 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             }
         });
 
+        dailyAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Intent i = new Intent(DailyTakeOverActivity.this, OrderDetailActivity.class);
+                i.putExtra("detailId", dailyAdapter.getData().get(position).getOrderId());
+                startActivity(i);
+            }
+        });
     }
 
     @Override

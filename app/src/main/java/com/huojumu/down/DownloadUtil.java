@@ -86,7 +86,6 @@ public class DownloadUtil {
                         is = response.body().byteStream();
                         File file = getFile();
                         bis = new BufferedInputStream(is);
-                        Log.e(TAG, "file: " + file.getAbsolutePath());
                         randomAccessFile = new RandomAccessFile(file, "rwd");
                         randomAccessFile.seek(0);
 

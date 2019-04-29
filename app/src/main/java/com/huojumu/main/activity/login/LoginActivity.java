@@ -71,7 +71,6 @@ public class LoginActivity extends BaseActivity {
         mHandler = new MyHandler(this);
     }
 
-
     @Override
     protected void initData() {
         getCode();
@@ -83,7 +82,6 @@ public class LoginActivity extends BaseActivity {
                         @Override
                         public void run() {
                             downProgressDialog = new DownProgressDialog(LoginActivity.this);
-                            downProgressDialog.setCancelable(true);
                             downProgressDialog.show();
                         }
                     }, 100);
@@ -125,7 +123,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 ToastUtils.showLong("网络错误");
-                mHandler.sendEmptyMessageDelayed(RECONNECT_SOCKET, (2 * 1000));
+                mHandler.sendEmptyMessageDelayed(RECONNECT_SOCKET,1000);
             }
         });
     }

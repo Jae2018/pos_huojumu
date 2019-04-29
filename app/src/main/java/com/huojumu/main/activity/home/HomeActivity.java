@@ -1255,7 +1255,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         public void run() {
                             if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getCurrentPrinterCommand() == PrinterCommand.TSC) {
                                 for (int i = 0; i < printProducts.size(); i++) {
-                                    sendLabel(name, printProducts.get(i).getTasteStr(), printProducts.get(i).getScalePrice() + "",
+                                    sendLabel(printProducts.get(i).getProName(), printProducts.get(i).getTasteStr(), printProducts.get(i).getScalePrice() + "",
                                             i, printProducts.size(), printProducts.get(i).getMatStr(), printProducts.get(i).getScaleStr(), printProducts.get(i).getProNameEn());
                                 }
                             }
@@ -1320,7 +1320,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     private void setLabelDataFromH5(H5TaskBean h5TaskBean) {
-        Log.e(TAG, "setLabelData: " + System.currentTimeMillis());
         //标签机数据
         printProducts.clear();
         for (int i = 0; i < h5TaskBean.getData().getOrderdetail().getPros().size(); i++) {

@@ -68,7 +68,6 @@ public class DownProgressDialog extends BaseDialog {
         });
     }
 
-
     private void installApk(String path) {
         Intent intent = new Intent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

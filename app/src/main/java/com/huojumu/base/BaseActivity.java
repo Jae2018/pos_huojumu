@@ -1,7 +1,10 @@
 package com.huojumu.base;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -77,4 +80,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+    public boolean isWifiConnected() {
+        ConnectivityManager mConnectivityManager = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWiFiNetworkInfo = mConnectivityManager
+                .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (mWiFiNetworkInfo != null) {
+            return mWiFiNetworkInfo.isAvailable();
+        }
+        return false;
+    }
 }

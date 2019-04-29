@@ -137,9 +137,9 @@ public class MoreFunctionDialog extends BaseDialog {
 
     @OnClick(R.id.iv_more_fuc11)
     void Fuc11() {
-        // 库存查询
-        intent.setClass(getContext(), MaterialActivity.class);
-        intent.putExtra("title", "库存查询");
+        // 设置
+        intent.setClass(getContext(), SettingActivity.class);
+        intent.putExtra("title", "设置");
         getContext().startActivity(intent);
         cancel();
     }

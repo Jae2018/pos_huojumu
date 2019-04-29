@@ -68,15 +68,34 @@
         android:layout_marginEnd="@dimen/d_16"
         android:background="@color/btn_den" />
 
-    <TextView
+    <LinearLayout
         android:id="@+id/tv_update"
         android:layout_width="match_parent"
         android:layout_height="@dimen/d_48"
-        android:gravity="center_vertical"
-        android:paddingLeft="@dimen/d_16"
-        android:paddingRight="@dimen/d_16"
-        android:text="检查更新"
-        android:textSize="@dimen/f_20" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/d_48"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/d_16"
+            android:paddingRight="@dimen/d_16"
+            android:text="检查更新"
+            android:textSize="@dimen/f_20" />
+
+        <TextView
+            android:id="@+id/tv_app_version"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/d_48"
+            android:layout_weight="1"
+            android:gravity="end|center_vertical"
+            android:paddingLeft="@dimen/d_16"
+            android:paddingRight="@dimen/d_16"
+            android:textSize="@dimen/f_20" />
+    </LinearLayout>
+
+
 
     <View
         android:layout_width="match_parent"

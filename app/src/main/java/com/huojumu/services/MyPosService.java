@@ -15,6 +15,7 @@ import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PrinterUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -22,6 +23,7 @@ import java.util.TimerTask;
 public class MyPosService extends Service {
 
     private List<NativeOrders> nativeOrdersList;
+    private List<String> uploadStrs = new ArrayList<>();
     private NativeOrdersDao ordersDao;
     private Timer timer;
 
@@ -29,6 +31,7 @@ public class MyPosService extends Service {
     public void onCreate() {
         super.onCreate();
         ordersDao = ((MyApplication) getApplication()).getDaoSession().getNativeOrdersDao();
+        Log.e("service","start");
     }
 
     @Override
@@ -62,22 +65,26 @@ public class MyPosService extends Service {
             @Override
             public void run() {
                 //联网状态下去轮询数据库
-                if (MyApplication.getSocketTool().isAlive()) {
-                    Log.e("service", "run: ");
+//                if (MyApplication.getSocketTool().isAlive()) {
                     nativeOrdersList = ordersDao.loadAll();
                     if (nativeOrdersList != null && !nativeOrdersList.isEmpty()) {
+
+                        for (int i = 0; i < nativeOrdersList.size(); i++) {
+                            uploadStrs.add(nativeOrdersList.get(i).getOrderJson());
+                        }
+                        Log.e("service", PrinterUtil.toJson(uploadStrs));
                         //如果数据库中有存入的本地订单、则开始上传
-                        NetTool.orderBatch(PrinterUtil.toJson(nativeOrdersList), new GsonResponseHandler<BaseBean<String>>() {
-                            @Override
-                            public void onSuccess(int statusCode, BaseBean<String> response) {
-                                //上传成功后清空数据库
-                                ordersDao.deleteAll();
-                            }
-                        });
+//                        NetTool.orderBatch(PrinterUtil.toJson(nativeOrdersList), new GsonResponseHandler<BaseBean<String>>() {
+//                            @Override
+//                            public void onSuccess(int statusCode, BaseBean<String> response) {
+//                                //上传成功后清空数据库
+//                                ordersDao.deleteAll();
+//                            }
+//                        });
                     }
-                }
+//                }
             }
-        }, 10000, 60 * 60 * 1000);
+        }, 10000, 10000);
     }
 
 }

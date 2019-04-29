@@ -169,11 +169,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                 daily();
             }
             PrinterUtil.printDaily(DailyTakeOverActivity.this, types, commissionTv.getText().toString(), earn2.getText().toString(), earn1.getText().toString(), num, SpUtil.getString(Constant.WORKER_NAME), lastDate);
-        }else{
-            ToastUtils.showLong("有未上传的订单，请等待上传完成后再交班");
-            //todo  submit接口
         }
-
     }
 
     private void getTakeOverInfo() {
@@ -185,6 +181,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             public void onSuccess(int statusCode, BaseBean<DailyInfo> response) {
                 lastDate = response.getData().getLastEndTime();
                 num = response.getData().getOrders().getTotal();
+                if (page == 1) {
+                    rowsBeans.clear();
+                }
                 rowsBeans.addAll(response.getData().getOrders().getRows());
                 dailyAdapter.setNewData(rowsBeans);
                 s1 = response.getData().getSaleData().getReal();
@@ -206,7 +205,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 ld2.close();
-                ToastUtils.showLong("网络已断开，请检查联网状态");
+                if (!code.equals("2")) {
+                    ToastUtils.showLong("网络已断开，请检查联网状态");
+                }
             }
         });
     }
@@ -215,11 +216,14 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
         ld2 = new LoadingDialog(this);
         ld2.setLoadingText("加载中,请等待");
         ld2.show();
-        NetTool.getSettlementInfo(SpUtil.getInt(Constant.STORE_ID), 1, new GsonResponseHandler<BaseBean<DailyInfo>>() {
+        NetTool.getSettlementInfo(SpUtil.getInt(Constant.STORE_ID), page, new GsonResponseHandler<BaseBean<DailyInfo>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<DailyInfo> response) {
                 lastDate = response.getData().getLastEndTime();
                 num = response.getData().getOrders().getTotal();
+                if (page == 1) {
+                    rowsBeans.clear();
+                }
                 rowsBeans.addAll(response.getData().getOrders().getRows());
                 dailyAdapter.setNewData(rowsBeans);
                 s1 = response.getData().getSaleData().getReal();
@@ -242,7 +246,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             public void onFailure(int statusCode, String code, String error_msg) {
                 ld2.close();
                 commit.setEnabled(false);
-                ToastUtils.showLong("网络已断开，请检查联网状态");
+                if (!code.equals("2")) {
+                    ToastUtils.showLong("网络已断开，请检查联网状态");
+                }
             }
         });
     }
@@ -267,7 +273,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 ld2.close();
-                ToastUtils.showLong("网络连接错误，请重试");
+                if (!code.equals("2")) {
+                    ToastUtils.showLong("网络已断开，请检查联网状态");
+                }
             }
         });
     }
@@ -284,8 +292,6 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                     setResult(RESULT_OK);
                     ToastUtils.showLong("日结成功！30秒后系统将自动关闭");
                     finish();
-                } else {
-                    ToastUtils.showLong(response.getMsg());
                 }
                 ld2.close();
             }
@@ -293,7 +299,11 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 ld2.close();
-                ToastUtils.showLong("网络错误，请重试");
+                if (code.equals("2")) {
+                    ToastUtils.showLong("存在未交班订单,不能进行日结");
+                } else {
+                    ToastUtils.showLong("网络错误，请稍后重试");
+                }
             }
         });
     }

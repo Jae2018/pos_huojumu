@@ -72,7 +72,6 @@ public class SingleProAddonDialog extends BaseDialog {
     private List<ScaleBean> scaleBeans = new ArrayList<>();//规格
 
     private SingleProCallback callback;//dialog回调
-    private int position;
 
     private TastesBean tastesBean;
     private MatsBean matsBean;
@@ -85,7 +84,6 @@ public class SingleProAddonDialog extends BaseDialog {
         super(context);
         this.productsBean = productsBean;
         this.callback = callback;
-        this.position = pos;
     }
 
     @Override
@@ -116,7 +114,7 @@ public class SingleProAddonDialog extends BaseDialog {
                 public View getView(FlowLayout parent, int position, ScaleBean o) {
                     TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
                             flowLayout1, false);
-                    tv.setText(o.getScaName());
+                    tv.setText(String.format("%s\n￥ %s", o.getScaName(), o.getPrice()));
                     return tv;
                 }
             };

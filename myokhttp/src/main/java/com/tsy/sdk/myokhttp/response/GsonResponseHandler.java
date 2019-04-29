@@ -63,7 +63,7 @@ public abstract class GsonResponseHandler<T> implements IResponseHandler {
             MyOkHttp.mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    onFailure(response.code(), "","反序列化错误");
+                    onFailure(response.code(), "2","反序列化错误");
                 }
             });
         }

@@ -1,6 +1,7 @@
 package com.huojumu.utils;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.gson.Gson;
@@ -64,6 +65,7 @@ public class SocketTool extends WebSocketListener {
 
     public void sendHeart() {
         if (webSocket != null) {
+            Log.e(TAG, "sendHeart: ");
             webSocket.send("{\"task\": \"heartbeat\",\"machineCode\":\"" + SpUtil.getString(Constant.EQP_NO) + "\",\"shopID\":\"" + SpUtil.getInt(Constant.STORE_ID) + "\",\"eqpType\":\"3\"}");
         }
     }

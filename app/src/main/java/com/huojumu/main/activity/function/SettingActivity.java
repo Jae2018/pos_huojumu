@@ -3,7 +3,9 @@ package com.huojumu.main.activity.function;
 import android.os.Environment;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.down.DownProgressDialog;
@@ -32,6 +34,8 @@ public class SettingActivity extends BaseActivity {
     Switch aSwitch;
     @BindView(R.id.switch_receipt)
     Switch rSwitch;
+    @BindView(R.id.tv_app_version)
+    TextView versionTv;
 
     private DownProgressDialog downProgressDialog;
 
@@ -76,6 +80,8 @@ public class SettingActivity extends BaseActivity {
                 }
             }
         });
+
+        versionTv.setText(UpdateTool.getLocalVersionName(SettingActivity.this));
     }
 
     @Override
@@ -90,7 +96,6 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.tv_logout)
     void logout() {
-//        startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
 
@@ -128,6 +133,8 @@ public class SettingActivity extends BaseActivity {
                             downProgressDialog.show();
                         }
                     }, 500);
+                } else {
+                    ToastUtils.showLong("已是最新版本");
                 }
             }
         });

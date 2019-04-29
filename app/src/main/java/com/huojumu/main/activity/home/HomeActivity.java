@@ -74,7 +74,6 @@ import com.huojumu.services.MyPosService;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
 import com.huojumu.utils.H5Order;
-import com.huojumu.utils.H5OrderEn;
 import com.huojumu.utils.MyDividerDecoration;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
@@ -156,16 +155,18 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     TextView edit_search;
     @BindView(R.id.pinyin)
     RecyclerView pinyin;
-    @BindView(R.id.worker_name)
-    TextView workName;
-    @BindView(R.id.order_num)
-    TextView order_num;
-    @BindView(R.id.worker_name1)
-    TextView workName1;
-    @BindView(R.id.order_num1)
-    TextView order_num1;
+    @BindView(R.id.tv_date)
+    TextView dateTv;
+    @BindView(R.id.tv_earn)
+    TextView earnTv;
+    @BindView(R.id.tv_worker_name)
+    TextView workNameTv;
+    @BindView(R.id.tv_order_num)
+    TextView orderNumTv;
     @BindView(R.id.image_net_state)
     ImageView netStateIv;
+    @BindView(R.id.tv_recommend)
+    TextView recommendTv;
 
     private HomeSelectedAdapter selectedAdapter;//所选
     private HomeTypeAdapter typeAdapter;//类别
@@ -180,8 +181,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private List<Production> gTemp = new ArrayList<>();//挂单商品集合
     //点单商品信息集合
     private List<OrderInfo.DataBean> dataBeans = new ArrayList<>();
-
-    private boolean hasHoldOn = false;//是否已有挂单
+    //是否已有挂单
+    private boolean hasHoldOn = false;
     private double totalPrice = 0, totalCut;
     private int totalCount = 0;//订单总价
     private QuickPayDialog quickPayDialog;//快捷支付弹窗
@@ -489,7 +490,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private void updateCurrentTime() {
         curDate.setTime(System.currentTimeMillis());
         String time = simpleDateFormat.format(curDate);
-        workName.setText(time);
+        dateTv.setText(time);
     }
 
     /**
@@ -498,15 +499,17 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @SingleClick
     @OnClick(R.id.input_clear_btn)
     void inputClear() {
-        edit_search.setText("");
-        searchStr = "";
-        searchList.clear();
-        if (typeList.isEmpty()) {
-            m = 0;
-            productAdapter.setNewData(tempProduces);
-        } else {
-            m = 1;
-            productAdapter.setNewData(typeList);
+        if (!searchStr.isEmpty()) {
+            edit_search.setText("");
+            searchStr = "";
+            searchList.clear();
+            if (typeList.isEmpty()) {
+                m = 0;
+                productAdapter.setNewData(tempProduces);
+            } else {
+                m = 1;
+                productAdapter.setNewData(typeList);
+            }
         }
     }
 
@@ -706,9 +709,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         if (isRecommend) {
             getProList("1");
             isRecommend = false;
+            recommendTv.setText("推荐");
         } else {
             getProList("0");
             isRecommend = true;
+            recommendTv.setText("全部");
         }
     }
 
@@ -774,6 +779,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         dataBean.setProId(productsBean.getProId());
         dataBean.setProType(productsBean.getProType());
         dataBeans.add(dataBean);
+        inputClear();
     }
 
     /**
@@ -868,7 +874,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
         initOrder();
         i.putExtra("orderInfo", orderInfo);
-        Log.e("to payment", "goCheckOut: " + PrinterUtil.toJson(orderInfo));
+
         if (!productions.isEmpty()) {
             i.putParcelableArrayListExtra("proList", productions);
         }
@@ -883,17 +889,16 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         super.onResume();
         //重新登录后
         if (SpUtil.getBoolean("from_Login")) {
-            Log.e(TAG, "onResume: ");
             SpUtil.save("from_Login", false);
-            workName1.setText(SpUtil.getString(Constant.WORKER_NAME));
-            order_num.setText(String.format(Locale.CHINA, "%.1f元", 0.0));
-            order_num1.setText(String.format(Locale.CHINA, "%d单", 0));
+            workNameTv.setText(SpUtil.getString(Constant.WORKER_NAME));
+            earnTv.setText(String.format(Locale.CHINA, "%.1f元", 0.0));
+            orderNumTv.setText(String.format(Locale.CHINA, "%d单", 0));
             resetAllData();
         }
     }
 
     /**
-     * 重置所有数据与UI、刷新或者重新登陆的情况
+     * 重置所有数据与UI，仅限 刷新页面 或者  重新登陆 的情况
      */
     private void resetAllData() {
         //过滤
@@ -997,7 +1002,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         orderInfo.setPinpaiID(SpUtil.getInt(Constant.PINPAI_ID));
         orderInfo.setQuanIds(new ArrayList<Integer>());
         orderInfo.setDiscountsType("2");
-        orderInfo.setData(dataBeans);
+        if (!dataBeans.isEmpty()) {
+            orderInfo.setData(dataBeans);
+        }
         orderInfo.setOrdSource("3");
     }
 
@@ -1049,25 +1056,25 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 cashPayDialog.cancel();
                 payType = "现金支付";
                 setLabelData();
-                NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
-                    @Override
-                    public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
-                        orderNo = response.getData().getOrderNo();
-                        orderBack = response.getData();
-                        PrintOrder(orderBack, charge < 0 ? 0 : charge, "现金支付", totalPrice, totalCut);
-                    }
+                if (MyApplication.getSocketTool().isAlive()) {
+                    //网络正常走接口
+                    NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
+                        @Override
+                        public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
+                            orderNo = response.getData().getOrderNo();
+                            orderBack = response.getData();
+                            PrintOrder(orderBack, charge < 0 ? 0 : charge, "现金支付", totalPrice, totalCut);
+                        }
 
-                    @Override
-                    public void onFailure(int statusCode, String code, String error_msg) {
-                        PrintOrder(orderBack, charge < 0 ? 0 : charge, "现金支付", totalPrice, totalCut);
-                    }
-                });
-                MyOkHttp.mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        clear();
-                    }
-                }, 1000);
+                        @Override
+                        public void onFailure(int statusCode, String code, String error_msg) {
+
+                        }
+                    });
+                } else {
+                    //网络不正常走本地
+                    PrintOrder(orderBack, charge < 0 ? 0 : charge, "现金支付", totalPrice, totalCut);
+                }
                 break;
             case "CertainDialog":
                 //关机确认
@@ -1122,7 +1129,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     public void OnUsbCallBack(String name) {
         authNo = "";
         time = 0;
-        //
         canScan = name.equals("1");
     }
 
@@ -1217,9 +1223,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         orderInfo = null;
 
         //工作信息更新
-        Log.e(TAG, "PrintOrder: " + woeker_p);
-        order_num.setText(String.format(Locale.CHINA, "%.1f元", woeker_p));
-        order_num1.setText(String.format(Locale.CHINA, "%d单", orderNum));
+        earnTv.setText(String.format(Locale.CHINA, "%.1f元", woeker_p));
+        orderNumTv.setText(String.format(Locale.CHINA, "%d单", orderNum));
         //存储工作记录
         SpUtil.save(Constant.WORK_P, woeker_p);
         SpUtil.save(Constant.ORDER_NUM, orderNum);
@@ -1231,7 +1236,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             public void run() {
                 clear();
             }
-        }, 2000);
+        }, 1000);
     }
 
     /**
@@ -1264,8 +1269,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void GetPayBack(WorkBean workBean) {
         //退单回调
-        order_num.setText(String.format(Locale.CHINA, "%.1f元", workBean.getPrice()));
-        order_num1.setText(String.format(Locale.CHINA, "%d单", workBean.getNum()));
+        earnTv.setText(String.format(Locale.CHINA, "%.1f元", workBean.getPrice()));
+        orderNumTv.setText(String.format(Locale.CHINA, "%d单", workBean.getNum()));
         SpUtil.save(Constant.WORK_P, workBean.getPrice());
         SpUtil.save(Constant.ORDER_NUM, workBean.getNum());
     }

@@ -17,7 +17,7 @@ android {
         minSdkVersion 22
         targetSdkVersion 28
         versionCode 1
-        versionName "1.0.1.1"
+        versionName "1.0.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = ["appid": "aa223", "appse": "s1231", "adsId": ""]
         renderscriptSupportModeEnabled true

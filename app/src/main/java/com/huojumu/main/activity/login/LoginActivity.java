@@ -24,11 +24,11 @@ import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
 import com.huojumu.utils.QrUtil;
+import com.huojumu.utils.SingleClick;
 import com.huojumu.utils.SpUtil;
 import com.huojumu.utils.UpdateTool;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
-import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -67,6 +67,14 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
+
+        mHandler = new MyHandler(this);
+    }
+
+
+    @Override
+    protected void initData() {
+        getCode();
         NetTool.updateApk(new GsonResponseHandler<UpdateBean>() {
             @Override
             public void onSuccess(int statusCode, UpdateBean response) {
@@ -75,22 +83,13 @@ public class LoginActivity extends BaseActivity {
                         @Override
                         public void run() {
                             downProgressDialog = new DownProgressDialog(LoginActivity.this);
-                            downProgressDialog.setCancelable(false);
+                            downProgressDialog.setCancelable(true);
                             downProgressDialog.show();
                         }
-                    }, 500);
-                } else {
-                    getCode();
+                    }, 100);
                 }
             }
         });
-        mHandler = new MyHandler(this);
-    }
-
-
-    @Override
-    protected void initData() {
-
     }
 
     @Override
@@ -101,8 +100,6 @@ public class LoginActivity extends BaseActivity {
 
     private void getCode() {
         //获取二维码
-        ld2 = new LoadingDialog(this);
-        ld2.show();
         NetTool.getLoginQRCode(SpUtil.getString(Constant.EQP_NO), new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
@@ -123,17 +120,17 @@ public class LoginActivity extends BaseActivity {
                     };
                     countDownTimer.start();
                 }
-                ld2.close();
             }
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 ToastUtils.showLong("网络错误");
-                ld2.close();
+                mHandler.sendEmptyMessageDelayed(RECONNECT_SOCKET, (10 * 1000));
             }
         });
     }
 
+    @SingleClick(3000)
     @OnClick(R.id.qr_image)
     void refreshCode() {
         if (countDownTimer != null) {
@@ -195,7 +192,7 @@ public class LoginActivity extends BaseActivity {
             if (msg.what == RECONNECT_SOCKET) {
                 //尝试重连
                 if (activity != null && !MyApplication.getSocketTool().isAlive()) {
-                    sendEmptyMessageDelayed(RECONNECT_SOCKET, (10 * 1000) * RECONNECT_TIME);
+                    sendEmptyMessageDelayed(RECONNECT_SOCKET, (5 * 1000) * RECONNECT_TIME);
                     activity.reconnectSocket();
                 }
             }

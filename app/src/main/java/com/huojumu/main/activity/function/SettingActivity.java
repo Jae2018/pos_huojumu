@@ -6,8 +6,15 @@ import android.widget.Switch;
 
 import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
+import com.huojumu.down.DownProgressDialog;
+import com.huojumu.main.activity.login.LoginActivity;
+import com.huojumu.model.UpdateBean;
 import com.huojumu.utils.Constant;
+import com.huojumu.utils.NetTool;
 import com.huojumu.utils.SpUtil;
+import com.huojumu.utils.UpdateTool;
+import com.tsy.sdk.myokhttp.MyOkHttp;
+import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
 import java.io.File;
 
@@ -25,6 +32,8 @@ public class SettingActivity extends BaseActivity {
     Switch aSwitch;
     @BindView(R.id.switch_receipt)
     Switch rSwitch;
+
+    private DownProgressDialog downProgressDialog;
 
     @Override
     protected int setLayout() {
@@ -107,29 +116,36 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.tv_update)
     void update() {
-//        NetTool.update(SpUtil.getString(Constant.UUID), new GsonResponseHandler<BaseBean<UpdateBean>>() {
-//            @Override
-//            public void onSuccess(int statusCode, BaseBean<UpdateBean> response) {
-//                if (VersionCodeUtils.getVersionCode(SettingActivity.this) < response.getData().getVersionCode()) {
-//                    VersionCodeUtils.downApp();
-//                } else {
-//                    Toast t = Toast.makeText(SettingActivity.this,"暂无新版本，敬请期待",Toast.LENGTH_LONG);
-//                    t.setGravity(Gravity.CENTER, 0, 0);
-//                    t.show();
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(int statusCode, String error_msg) {
-//
-//            }
-//        });
+        NetTool.updateApk(new GsonResponseHandler<UpdateBean>() {
+            @Override
+            public void onSuccess(int statusCode, UpdateBean response) {
+                if (!UpdateTool.getLocalVersionName(SettingActivity.this).equals(response.getVersionNum())) {
+                    MyOkHttp.mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            downProgressDialog = new DownProgressDialog(SettingActivity.this);
+                            downProgressDialog.setCancelable(false);
+                            downProgressDialog.show();
+                        }
+                    }, 500);
+                }
+            }
+        });
 
     }
 
     @OnClick(R.id.iv_back)
     void back() {
         finish();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (downProgressDialog != null) {
+            downProgressDialog.cancel();
+            downProgressDialog = null;
+        }
     }
 
 }

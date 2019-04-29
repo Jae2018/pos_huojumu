@@ -9,8 +9,8 @@ public interface Constant {
 
     /* api interface */
     //base url
-    String BASE_URL = "http://192.168.1.177:9873/pos/sale_inte/";//http://47.105.207.183/pos/sale_inte/ ；http://192.168.1.177:9873/pos/sale_inte/      39：https://www.goodb2b.cn/pos/sale_inte
-    String SOCKET = "ws://192.168.1.177:9873/pos/sale_inte/shopws";
+    String BASE_URL = "https://www.goodb2b.cn/pos/sale_inte/";//http://192.168.1.177:9873/pos/sale_inte/      39：https://www.goodb2b.cn/pos/sale_inte
+    String SOCKET = "wss://www.goodb2b.cn/pos/sale_inte/shopws";
     String BAND = "{\"task\": \"heartbeat\",\"machineCode\":\"%s\"}";
     String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
     int WORK_BACK_OVER = 0x002;

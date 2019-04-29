@@ -69,7 +69,7 @@ public class H5Order {
             "          matCell.style.fontSize = 24;\n"+
             "          row.appendChild(matCell);\n" +
             "          var matNameCell = document.createElement('label');\n" +
-            "          matNameCell.innerHTML = \"-\" + h.mats[j].matName + h.mats[j].matNameEn;\n" +
+            "          matNameCell.innerHTML = \"-\" + h.mats[j].matName;\n" +
             "          matNameCell.style.width = \"40%\";\n" +
             "          matNameCell.style.fontSize = \"24px\";\n"+
             "      matNameCell.style.fontWeight = \"bold\";"+

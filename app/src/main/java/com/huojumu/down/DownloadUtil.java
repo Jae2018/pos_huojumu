@@ -118,6 +118,9 @@ public class DownloadUtil {
     private File getFile() {
         String root = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "pos.apk";
         File file = new File(root);
+        if (file.exists()) {
+            file.delete();
+        }
         try {
             file.createNewFile();
         } catch (IOException e) {

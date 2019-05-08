@@ -11,7 +11,7 @@
     <WebView
         android:id="@+id/web_order"
         android:layout_width="@dimen/d_540"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -129,11 +129,11 @@
                 android:id="@+id/image_net_state"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/des"
-                android:src="@drawable/wifi_ok"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/d_20"
-                android:layout_toStartOf="@+id/btn_home_more_function"/>
+                android:layout_toStartOf="@+id/btn_home_more_function"
+                android:contentDescription="@string/des"
+                android:src="@drawable/wifi_ok" />
 
             <LinearLayout
                 android:id="@+id/btn_home_more_function"
@@ -209,8 +209,8 @@
             android:id="@+id/text1"
             android:layout_width="@dimen/d_250"
             android:layout_height="@dimen/d_40"
-            android:gravity="center"
             android:background="@color/home_left_bottom"
+            android:gravity="center"
             android:text="小票"
             android:textColor="@android:color/white" />
 
@@ -553,5 +553,9 @@
 
     </LinearLayout>
 
+    <include
+        android:id="@+id/scan_layer"
+        layout="@layout/scan_warn_dialog"
+        android:visibility="gone" />
 
 </RelativeLayout>

@@ -23,7 +23,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Base64;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -31,6 +30,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,7 +47,6 @@ import com.huojumu.adapter.HorizontalPageLayoutManager;
 import com.huojumu.adapter.PagingScrollHelper;
 import com.huojumu.adapter.PinYinAdapter;
 import com.huojumu.base.BaseActivity;
-import com.huojumu.main.activity.dialog.ScanWarnDialog;
 import com.huojumu.main.activity.dialog.SingleProAddonDialog;
 import com.huojumu.main.activity.login.LoginActivity;
 import com.huojumu.main.dialogs.CashPayDialog;
@@ -167,6 +166,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     ImageView netStateIv;
     @BindView(R.id.tv_recommend)
     TextView recommendTv;
+    @BindView(R.id.scan_layer)
+    LinearLayout scanLayer;
+    @BindView(R.id.textView)
+    TextView pText;
 
     private HomeSelectedAdapter selectedAdapter;//所选
     private HomeTypeAdapter typeAdapter;//类别
@@ -244,7 +247,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     int swipeNo;
     //支付方式说明
     String payType;
-    private ScanWarnDialog warnDialog;
     //轮询handler
     MyHandler mHandler;
     //服务启动项
@@ -402,7 +404,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         webView.addJavascriptInterface(new JsInterface(), "JSInterface");
 
         cashPayDialog = new CashPayDialog(this, this);
-        warnDialog = new ScanWarnDialog(this, this);
         mTts = SpeechSynthesizer.createSynthesizer(this, mTtsInitListener);
 
     }
@@ -413,25 +414,23 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         if (event.getDeviceId() == -1) {
             return false;
         }
-        if (canScan) {
-            //按下弹起，识别到弹起的话算一次 有效输入
-            //只要是 扫码枪的事件  都要把他消费掉 不然会被editText 显示出
-            if (event.getAction() == KeyEvent.ACTION_UP) {
-                time++;
-                //只要数字，一维码里面没有 字母
-                int code = event.getKeyCode();
-                if (code >= KeyEvent.KEYCODE_0 && code <= KeyEvent.KEYCODE_9) {
-                    authNo += String.valueOf(code - KeyEvent.KEYCODE_0);
-                }
-                //无订单不走接口
-                if (orderInfo != null) {
-                    if (time == 19) {
-                        payByBox();
-                    }
+        //按下弹起，识别到弹起的话算一次 有效输入
+        //只要是 扫码枪的事件  都要把他消费掉 不然会被editText 显示出
+        if (event.getAction() == KeyEvent.ACTION_UP) {
+            time++;
+            //只要数字，一维码里面没有 字母
+            int code = event.getKeyCode();
+            if (code >= KeyEvent.KEYCODE_0 && code <= KeyEvent.KEYCODE_9) {
+                authNo += String.valueOf(code - KeyEvent.KEYCODE_0);
+            }
+            //无订单不走接口
+            if (orderInfo != null) {
+                if (time == 19) {
+                    payByBox();
                 }
             }
         }
-        return super.dispatchKeyEvent(event);
+        return true;
     }
 
     private static class MyHandler extends Handler {
@@ -460,8 +459,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         }
     }
 
-    String TAG = "HomeActivity";
-
     /**
      * 重启socket
      */
@@ -480,7 +477,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 public void run() {
                     MyApplication.getSocketTool().sendHeart();
                 }
-            }, 200, 6 * 1000);
+            }, 200, 60 * 10 * 1000);
         }
     }
 
@@ -1035,8 +1032,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             if (response.getCode().equals("0")) {
                                 orderBack = response.getData();
                                 orderNo = response.getData().getOrderNo();
-                                warnDialog.show();
-                                warnDialog.setTextView(totalPrice + "元");
+                                scanLayer.setVisibility(View.VISIBLE);
+                                pText.setText(String.format(Locale.CHINA, "%.2f元", totalPrice));
                             }
                         }
 
@@ -1100,7 +1097,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 @Override
                 public void onSuccess(int statusCode, BaseBean<BoxPay> response) {
                     authNo = "";
-                    warnDialog.cancel();
+                    scanLayer.setVisibility(View.GONE);
                     if (response.getCode().equals("0")) {
                         //网络正常清空下，播放语音提示
                         if (MyApplication.getSocketTool().isAlive()) {
@@ -1116,20 +1113,20 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
                 @Override
                 public void onFailure(int statusCode, String code, String error_msg) {
-                    warnDialog.cancel();
+                    scanLayer.setVisibility(View.GONE);
                     authNo = "";
                 }
             });
         }
     }
 
-    private boolean canScan = false;
 
     @Override
     public void OnUsbCallBack(String name) {
         authNo = "";
         time = 0;
-        canScan = name.equals("1");
+        scanLayer.setVisibility(View.GONE);
+        clear();
     }
 
     /**
@@ -1161,7 +1158,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     private void initWebOrder(String OrderNo, String date, String proList, String totalMoney,
                               String cost, String charge, String cut, String payType) {
-        String  html = H5Order.html;
+        String html = H5Order.html;
 
         html = html.replace("{1}", OrderNo)
                 .replace("{2}", SpUtil.getString(Constant.WORKER_NAME))
@@ -1203,6 +1200,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * charge:找零
      */
     private void PrintOrder(final OrderBack orderBack, final double charge, String type, double totalPrice, double totalCut) {
+
         woeker_p += totalPrice;
 
         orderNum++;
@@ -1228,7 +1226,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //存储工作记录
         SpUtil.save(Constant.WORK_P, woeker_p);
         SpUtil.save(Constant.ORDER_NUM, orderNum);
-
         printLabel();
 
         MyOkHttp.mHandler.postDelayed(new Runnable() {
@@ -1236,7 +1233,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             public void run() {
                 clear();
             }
-        }, 1000);
+        }, 1500);
     }
 
     /**
@@ -1279,14 +1276,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     public void paymentBack(OrderBack orderBack) {
         this.orderBack = orderBack;
         //结算回调，有网
+        orderNo = orderBack.getOrderNo();
         setLabelData();
-        PrintOrder(orderBack, orderBack.getCharge(), orderBack.getPayType().equals("900") ? "现金支付" : orderBack.getPayType().equals("010") ? "微信支付" : "支付宝支付", orderBack.getTotal(), orderBack.getCut());
+        PrintOrder(orderBack, orderBack.getCharge(), orderBack.getPayType().equals("900") ? "现金支付" : orderBack.getPayType().equals("010") ? "微信支付" : "支付宝支付", Double.parseDouble(orderBack.getTotalPrice()), orderBack.getCut() < 0 ? 0 : orderBack.getCut());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void paymentNativeBack(NoNetPayBack noNetPayBack) {
         //结算回调，无网
-        PrintOrder(null, noNetPayBack.getCharge(), noNetPayBack.getType(), noNetPayBack.getTotalPrice(), noNetPayBack.getCut());
+        PrintOrder(null, noNetPayBack.getCharge(), noNetPayBack.getType(), noNetPayBack.getTotalPrice(), noNetPayBack.getCut() < 0 ? 0 : noNetPayBack.getCut());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -1369,7 +1367,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     /**
      * 发送标签
      */
-    void sendLabel(String pName, String pContent, String price, int i, int number, String matStr, String scale,String proNameEn) {
+    void sendLabel(String pName, String pContent, String price, int i, int number, String matStr, String scale, String proNameEn) {
         i = i + 1;
         LabelCommand tsc = new LabelCommand();
         // 设置标签尺寸，按照实际尺寸设置
@@ -1387,7 +1385,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         // 清除打印缓冲区
         tsc.addCls();
         // 绘制简体中文
-        tsc.addText(10, 2, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(0, 0, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.STORE_NAME) + "\n");
         tsc.addText(90, 32, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 pName + "\n");
@@ -1396,19 +1394,19 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         if (matStr == null || matStr.isEmpty()) {
             matStr = "默认加料";
         }
-        tsc.addText(10, 92, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(0, 90, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 matStr);
-        tsc.addText(10, 122, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(0, 120, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 scale + "\n");
-        tsc.addText(10, 152, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(0, 150, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 pContent + " ￥" + price + " " + "\n");
-        tsc.addText(10, 182, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(0, 180, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.WORKER_NAME) + " " + i + "/" + number + "\n");
-        tsc.addText(10, 212, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(0, 210, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 PrinterUtil.getTabTime() + orderNo.substring(orderNo.length() - 4) + "-" + PrinterUtil.getTabHour() + "\n");
         // 绘制图片
         Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.logo9);
-        tsc.addBitmap(240, 40, LabelCommand.BITMAP_MODE.OVERWRITE, 80, b);
+        tsc.addBitmap(235, 40, LabelCommand.BITMAP_MODE.OVERWRITE, 80, b);
         // 打印标签
         tsc.addPrint(1, 1);
         // 打印标签后 蜂鸣器响
@@ -1460,7 +1458,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         final String xpName = UsbUtil.getXPName(HomeActivity.this);
 
                         if (!deviceName.isEmpty() || !xpName.isEmpty()) {
-                            ld3 = new LoadingDialog(HomeActivity.this);
+                            if (ld3 == null) {
+                                ld3 = new LoadingDialog(HomeActivity.this);
+                            }
                             ld3.setLoadingText("正在连接外接设备，请等待");
                             ld3.show();
                             //先主动调用断开连接，释放端口

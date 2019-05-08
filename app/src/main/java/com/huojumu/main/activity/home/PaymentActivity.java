@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -242,16 +243,18 @@ public class PaymentActivity extends BaseActivity {
                         cashTotalTv.setText(String.valueOf(origionalPrice));
                         break;
                     case 1:
-                        //扫码支付页面
+                        //微信扫码支付页面
                         payType = "010";
                         calculatePrice();
                         onlineTv.setText(String.valueOf(origionalPrice));
+                        commitOrder();
                         break;
                     case 2:
-                        //扫码支付页面
+                        //支付宝扫码支付页面
                         payType = "020";
                         calculatePrice();
                         onlineTv.setText(String.valueOf(origionalPrice));
+                        commitOrder();
                         break;
                     case 3:
                         //会员支付页面
@@ -369,12 +372,11 @@ public class PaymentActivity extends BaseActivity {
 
     OrderBack orderBack;
 
-
     @SingleClick
     @OnClick(R.id.pay_commit)
     void commitOrder() {
         //非实收金额大于原价减去折扣的金额
-        if (!(ssPrice > (origionalPrice - zkPrice))) {
+        if (payType.equals("900") && !(ssPrice > (origionalPrice - zkPrice))) {
             ToastUtils.showLong("金额输入有误");
             return;
         }
@@ -451,11 +453,13 @@ public class PaymentActivity extends BaseActivity {
     private int time = 0;
     //扫码内容
     private String authNo;
+    String TAG = PaymentActivity.class.getName();
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         //扫码监听，系统的软键盘  按下去是 -1, 不管，不拦截
         if (event.getDeviceId() != -1) {
+            Log.e(TAG, "dispatchKeyEvent: ");
             //按下弹起，识别到弹起的话算一次 有效输入
             //只要是 扫码枪的事件  都要把他消费掉 不然会被editText 显示出
             if (event.getAction() == KeyEvent.ACTION_UP) {
@@ -467,8 +471,12 @@ public class PaymentActivity extends BaseActivity {
                 }
                 //无订单不走接口
                 if (orderInfo != null) {
+                    Log.e(TAG, "dispatchKeyEvent: orderInfo");
                     if (time == 19) {
+                        Log.e(TAG, "dispatchKeyEvent: time");
                         payByBox();
+//                        Log.e("PaymentActivity", "dispatchKeyEvent: payByBox()");
+//                        EventBus.getDefault().post(orderBack);
                     }
                 }
             }
@@ -482,9 +490,11 @@ public class PaymentActivity extends BaseActivity {
     private void payByBox() {
         time = 0;
         if (orderInfo != null) {
+            Log.e(TAG, "payByBox: orderInfo：" + orderNo + "___" + orderInfo.getPayType() + "___" + authNo);
             NetTool.payByBox(orderNo, orderInfo.getPayType(), authNo, new GsonResponseHandler<BaseBean<BoxPay>>() {
                 @Override
                 public void onSuccess(int statusCode, BaseBean<BoxPay> response) {
+                    Log.e(TAG, "onSuccess: ");
                     authNo = "";
                     if (response.getCode().equals("0")) {
                         EventBus.getDefault().post(orderBack);

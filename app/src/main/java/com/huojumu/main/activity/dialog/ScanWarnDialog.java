@@ -20,10 +20,9 @@ public class ScanWarnDialog extends BaseDialog {
     @BindView(R.id.button)
     Button button;
 
-    private boolean b = true;
     private DialogInterface dialogInterface;
 
-    public ScanWarnDialog(@NonNull Context context,DialogInterface dialogInterface) {
+    public ScanWarnDialog(@NonNull Context context, DialogInterface dialogInterface) {
         super(context);
         this.dialogInterface = dialogInterface;
     }
@@ -45,20 +44,12 @@ public class ScanWarnDialog extends BaseDialog {
     @SingleClick
     @OnClick(R.id.button)
     void click() {
-        if (b) {
-            button.setText("取消扫码");
-            b = false;
-            dialogInterface.OnUsbCallBack("1");
-        } else {
-            button.setText("开始扫码");
-            b = true;
-            dialogInterface.OnUsbCallBack("2");
-        }
+        dialogInterface.OnUsbCallBack("1");
     }
 
     @SingleClick
     @OnClick(R.id.imageView2)
-    void close(){
+    void close() {
         cancel();
     }
 

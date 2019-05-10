@@ -46,7 +46,7 @@ public class Production implements Parcelable {
     private List<TastesBean> tastes;
     private List<ScaleBean> scales;
     private String planFlag;
-    private String proNameEn = "";
+    private String proNameEn;
     //额外增加
     private int number = 1;//默认数量
     private String addon = "";//备注

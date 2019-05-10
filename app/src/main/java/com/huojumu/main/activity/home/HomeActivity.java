@@ -22,13 +22,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.View;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -72,7 +67,6 @@ import com.huojumu.model.WorkBean;
 import com.huojumu.services.MyPosService;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
-import com.huojumu.utils.H5Order;
 import com.huojumu.utils.MyDividerDecoration;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PowerUtil;
@@ -148,8 +142,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //有无挂单
     @BindView(R.id.iv_has_gua_dan)
     ImageView hasGua;
-    @BindView(R.id.web_order)
-    WebView webView;
     @BindView(R.id.edit_search)
     TextView edit_search;
     @BindView(R.id.pinyin)
@@ -259,7 +251,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         return R.layout.activity_home;
     }
 
-    @SuppressWarnings("setJavaScriptEnabled")
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
@@ -279,13 +270,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
         intent = new Intent(this, MyPosService.class);
         startService(intent);
-        webView.setWebChromeClient(new WebChromeClient());
-
-        //声明WebSettings子类
-        WebSettings webSettings = webView.getSettings();
-
-        //如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
-        webSettings.setJavaScriptEnabled(true);
 
         HorizontalPageLayoutManager horizontalPageLayoutManager = new HorizontalPageLayoutManager(3, 4);
 
@@ -370,7 +354,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         rBottom.setAdapter(productAdapter);
 
         productAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @SingleClick(1500)
+
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 showSpe(position);
@@ -400,8 +384,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //计时
         mHandler = new MyHandler(this);
         mHandler.sendEmptyMessage(MSG_UPDATE_CURRENT_TIME);
-
-        webView.addJavascriptInterface(new JsInterface(), "JSInterface");
 
         cashPayDialog = new CashPayDialog(this, this);
         mTts = SpeechSynthesizer.createSynthesizer(this, mTtsInitListener);
@@ -532,6 +514,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         productAdapter.setNewData(searchList);
     }
 
+    private boolean isShow = false;
+
     /**
      * 显示单品规格
      */
@@ -545,8 +529,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             production = searchList.get(position);
         }
         //点菜逻辑
-        addonDialog = new SingleProAddonDialog(HomeActivity.this, HomeActivity.this, production, position);
-        addonDialog.show();
+        if (!isShow) {
+            isShow = true;
+            addonDialog = new SingleProAddonDialog(HomeActivity.this, HomeActivity.this, production);
+            addonDialog.show();
+        }
     }
 
     /**
@@ -766,8 +753,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         productsBean.setScalePrice(price);
         productsBean.setOrigionPrice(origionPrice);
         productions.add(productsBean);
-
+        addonDialog.cancel();
         addonDialog = null;
+        isShow = false;
         //刷新选择列表数据
         selectedAdapter.setNewData(productions);
         //计算副频金额
@@ -777,6 +765,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         dataBean.setProType(productsBean.getProType());
         dataBeans.add(dataBean);
         inputClear();
+    }
+
+    @Override
+    public void onCancelCallBack() {
+        this.isShow = false;
     }
 
     /**
@@ -1153,27 +1146,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         usbManager.requestPermission(usbDevice, mPermissionIntent);
     }
 
-    /**
-     * 网页排版
-     */
-    private void initWebOrder(String OrderNo, String date, String proList, String totalMoney,
-                              String cost, String charge, String cut, String payType) {
-        String html = H5Order.html;
-
-        html = html.replace("{1}", OrderNo)
-                .replace("{2}", SpUtil.getString(Constant.WORKER_NAME))
-                .replace("{3}", date)
-                .replace("{data}", proList)
-                .replace("{4}", totalMoney)
-                .replace("{5}", cost)
-                .replace("{6}", cut)
-                .replace("{7}", charge)
-                .replace("{8}", payType)
-                .replace("{9}", SpUtil.getString(Constant.STORE_NAME));
-
-        webView.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
-    }
-
     private void setLabelData() {
         //标签机数据
         printProducts.clear();
@@ -1202,30 +1174,22 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private void PrintOrder(final OrderBack orderBack, final double charge, String type, double totalPrice, double totalCut) {
         woeker_p += totalPrice;
         orderNum++;
-//        String proList = PrinterUtil.toJson(productions);
 
         //小票数据
         if (orderBack != null) {
-            String str = orderBack.getTotalPrice().substring(0, orderBack.getTotalPrice().length() - 1);
-//            initWebOrder("N" + orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4), orderBack.getCreatTime(), proList, str,
-//                    (Double.parseDouble(orderBack.getTotalPrice()) + charge) + "", String.valueOf(charge), String.valueOf(totalCut), type);
-
             PrinterUtil.printString80(productions, "C" + orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4),
                     SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
                     orderBack.getTotalPrice(), String.valueOf(charge),
                     String.valueOf(totalCut), orderBack.getCreatTime(), type);
-
         } else {
             orderNo = orderNum < 10 ? "N000" + orderNum : orderNum < 100 ? "N00" + orderNum : orderNum < 1000 ? "N0" + orderNum : "N" + orderNum;
-//            initWebOrder(orderNo, PrinterUtil.getDate(), proList, String.valueOf(totalPrice), String.valueOf(totalPrice), String.valueOf(charge), String.valueOf(totalCut), type);
             //断网状态下保存订单信息json
             ((MyApplication) getApplication()).getDaoSession().getNativeOrdersDao().insert(new NativeOrders(System.currentTimeMillis(), PrinterUtil.toJson(orderInfo)));
 
-//            PrinterUtil.printString80(HomeActivity.this, productions, orderNo,
-//                    SpUtil.getString(Constant.WORKER_NAME), String.valueOf(totalPrice), String.valueOf(totalPrice),
-//                    earn1 == 0 ? String.valueOf(totalPrice) : String.valueOf(earn1), String.valueOf(charge),
-//                    String.valueOf(totalCut), PrinterUtil.getDate(), type);
-
+            PrinterUtil.printString80(productions, orderNo,
+                    SpUtil.getString(Constant.WORKER_NAME), String.valueOf(totalPrice), String.valueOf(totalPrice),
+                    earn1 == 0 ? String.valueOf(totalPrice) : String.valueOf(earn1), String.valueOf(charge),
+                    String.valueOf(totalCut), PrinterUtil.getDate(), type);
         }
         //订单置空
         orderInfo = null;
@@ -1557,38 +1521,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             pageNo = scrollHelper.getPageCount();
         }
         scrollHelper.scrollToPosition(pageNo);
-    }
-
-    public class JsInterface {
-        Bitmap bitmap;
-
-        @JavascriptInterface
-        public void save(final String string) {
-            ThreadPool.getInstantiation().addTask(new Runnable() {
-                @Override
-                public void run() {
-                    bitmap = stringToBitmap(string);
-                    PrinterUtil.printImage(bitmap);
-                }
-            });
-            MyOkHttp.mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    bitmap.recycle();
-                }
-            }, 1500);
-        }
-    }
-
-    public static Bitmap stringToBitmap(String string) {
-        Bitmap bitmap = null;
-        try {
-            byte[] bitmapArray = Base64.decode(string.split(",")[1], Base64.DEFAULT);
-            bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return bitmap;
     }
 
     /**

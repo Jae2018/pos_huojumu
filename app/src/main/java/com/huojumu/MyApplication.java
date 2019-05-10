@@ -29,7 +29,7 @@ public class MyApplication extends Application {
 
     private static Context mContext;
     protected static SocketTool socketTool;
-    private static Bitmap line1, line2, line3, logo, qrcode;
+    private static Bitmap line1, line2, line3, line4, logo, qrcode;
     private DaoSession daoSession;
 
     @Override
@@ -52,6 +52,7 @@ public class MyApplication extends Application {
         line1 = ((BitmapDrawable) getResources().getDrawable(R.drawable.line1)).getBitmap();
         line2 = ((BitmapDrawable) getResources().getDrawable(R.drawable.line2)).getBitmap();
         line3 = ((BitmapDrawable) getResources().getDrawable(R.drawable.line3)).getBitmap();
+        line4 = ((BitmapDrawable) getResources().getDrawable(R.drawable.line4)).getBitmap();
         logo = ((BitmapDrawable) getResources().getDrawable(R.drawable.logo)).getBitmap();
         qrcode = ((BitmapDrawable) getResources().getDrawable(R.drawable.qr_code)).getBitmap();
 
@@ -67,6 +68,10 @@ public class MyApplication extends Application {
     public static void initSocket() {
         socketTool = SocketTool.getInstance();
         socketTool.init();
+    }
+
+    public static Bitmap getLine4() {
+        return line4;
     }
 
     public static Bitmap getQrcode() {

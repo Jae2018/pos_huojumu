@@ -40,17 +40,17 @@ public class PrinterUtil {
      * 打印纸一行最大的字节
      */
     private static final int LINE_BYTE_SIZE_58 = 32;
-    private static final int LINE_BYTE_SIZE_80 = 40;
+    private static final int LINE_BYTE_SIZE_80 = 48;
     /**
      * 打印三列时，中间一列的中心线距离打印纸左侧的距离
      */
     private static final int LEFT_LENGTH_58 = 16;
-    private static final int LEFT_LENGTH_80 = 22;
+    private static final int LEFT_LENGTH_80 = 24;
     /**
      * 打印三列时，中间一列的中心线距离打印纸右侧的距离
      */
     private static final int RIGHT_LENGTH_58 = 16;
-    private static final int RIGHT_LENGTH_80 = 22;
+    private static final int RIGHT_LENGTH_80 = 24;
     /**
      * 四列时，第三列的中心线
      */
@@ -212,79 +212,61 @@ public class PrinterUtil {
         return sb.toString();
     }
 
-    private static String printThreeData80(String leftText, String middleText, String three, String rightText) {
+    private static String settSubTitle() {
         StringBuilder sb = new StringBuilder();
-        // 左边最多显示 LEFT_TEXT_MAX_LENGTH 个汉字 + 两个点
-        if (leftText.length() > LEFT_TEXT_MAX_LENGTH_80) {
-            leftText = leftText.substring(0, LEFT_TEXT_MAX_LENGTH_80) + "..";
-        }
-        int leftTextLength = getBytesLength(leftText);
-        int middleTextLength = getBytesLength(middleText);
-        int threeTextLength = getBytesLength(three);
-        int rightTextLength = getBytesLength(rightText);
+        String first = "商品名称";
+        String second = "数量";
+        String third = "单价";
+        String fourth = "金额";
 
-        sb.append(leftText);
-        // 计算左侧文字和中间文字的空格长度
-        int marginBetweenLeftAndMiddle = LEFT_LENGTH_80 - leftTextLength - middleTextLength / 2;
+        sb.append(first);
 
-        for (int i = 0; i < marginBetweenLeftAndMiddle; i++) {
-            sb.append(" ");
+        for (int i = 0; i < 14; i++) {
+            sb.append(" ");//14 bytes
         }
-        sb.append(middleText);
+        sb.append(second);
+
         //计算中间文字和第三文字的空格长度
-        int marginBetweenThreeAndFour = RIGHT_LENGTH_80 - (middleTextLength > 1 ? middleTextLength : 2) / 2 - threeTextLength - rightTextLength;
-
-        for (int i = 0; i < marginBetweenThreeAndFour; i++) {
-            sb.append(" ");
+        for (int i = 0; i < 7; i++) {
+            sb.append(" ");//7 bytes
         }
-        sb.append(three);
-        // 计算第四文字和第三文字的空格长度
-//        int marginBetweenMiddleAndRight = 12 - threeTextLength / 2 - rightTextLength;
-
-        for (int i = 0; i < marginBetweenThreeAndFour + 2; i++) {
-            sb.append(" ");
+        sb.append(third);
+        for (int i = 0; i < 7; i++) {
+            sb.append(" ");//7 bytes
         }
+        sb.append(fourth).append("\n");
 
-        // 打印的时候发现，最右边的文字总是偏右一个字符，所以需要删除一个空格.delete(sb.length() - 1, sb.length())
-        sb.append(rightText);
         return sb.toString();
     }
 
-    private static String printFourData80(String leftText, String middleText, String three, String rightText) {
+    private static String printFourData80(String first, String second, String third, String fourth) {
         StringBuilder sb = new StringBuilder();
-        // 左边最多显示 LEFT_TEXT_MAX_LENGTH 个汉字 + 两个点
-        if (leftText.length() > LEFT_TEXT_MAX_LENGTH_80) {
-            leftText = leftText.substring(0, LEFT_TEXT_MAX_LENGTH_80) + "..";
-        }
-        int leftTextLength = getBytesLength(leftText);
-        int middleTextLength = getBytesLength(middleText);
-        int threeTextLength = getBytesLength(three);
-        int rightTextLength = getBytesLength(rightText);
+        int leftTextLength = getBytesLength(first);
+        int middleTextLength = getBytesLength(second);
+        int threeTextLength = getBytesLength(third);
+        int rightTextLength = getBytesLength(fourth);
 
-        sb.append(leftText);
+        sb.append(first);
         // 计算左侧文字和中间文字的空格长度
         int marginBetweenLeftAndMiddle = LEFT_LENGTH_80 - leftTextLength - middleTextLength / 2;
-
-        for (int i = 0; i < marginBetweenLeftAndMiddle + 4; i++) {
+        for (int i = 0; i < marginBetweenLeftAndMiddle; i++) {
             sb.append(" ");
         }
-        sb.append(middleText);
+        sb.append(second);
+
         //计算中间文字和第三文字的空格长度
-        int marginBetweenThreeAndFour = RIGHT_LENGTH_80 - (middleTextLength > 1 ? middleTextLength : 2) / 2 - threeTextLength - rightTextLength;
-
-        for (int i = 0; i < marginBetweenThreeAndFour + 4; i++) {
+        int marginBetweenMiddleAndThird = (RIGHT_LENGTH_80 - middleTextLength - threeTextLength) / 2;
+        for (int i = 0; i < marginBetweenMiddleAndThird; i++) {
             sb.append(" ");
         }
-        sb.append(three);
+        sb.append(third);
         // 计算第四文字和第三文字的空格长度
-//        int marginBetweenMiddleAndRight = 12 - threeTextLength / 2 - rightTextLength;
-
-        for (int i = 0; i < marginBetweenThreeAndFour + 4; i++) {
+        int marginBetweenThreeAndFour = 12 - threeTextLength / 2 - rightTextLength;
+        for (int i = 0; i < marginBetweenThreeAndFour; i++) {
             sb.append(" ");
         }
+        sb.append(fourth);
 
-        // 打印的时候发现，最右边的文字总是偏右一个字符，所以需要删除一个空格.delete(sb.length() - 1, sb.length())
-        sb.append(rightText);
         return sb.toString();
     }
 
@@ -388,8 +370,7 @@ public class PrinterUtil {
             @Override
             public void run() {
                 try {
-                    //清空缓存命令
-                    set(CLEAR_TEMP);
+                    mPrinter.set80mm();
                     //字体变大
                     mPrinter.setCharSize(1, 1);
                     //订单流水号
@@ -397,6 +378,7 @@ public class PrinterUtil {
                     mPrinter.printString(s);
 
                     //实线
+                    mPrinter.setAlignMode(1);
                     mPrinter.printRasterBitmap(MyApplication.getLine1());
 
                     //员工名 + 时间
@@ -405,30 +387,36 @@ public class PrinterUtil {
                     mPrinter.setCharSize(0, 0);
                     mPrinter.printString(s);
 
-                    mPrinter.setAlignMode(1);
                     // 间隔大的虚线
+                    mPrinter.setAlignMode(1);
                     mPrinter.printRasterBitmap(MyApplication.getLine2());
 
                     //商品信息
+                    mPrinter.setAlignMode(0);
                     StringBuilder sb = new StringBuilder();
-                    sb.append(printThreeData80("商品名称", "数量", "单价", "金额")).append("\n");
-                    mPrinter.setFontStyle(1);
+                    sb.append(settSubTitle());
+                    mPrinter.printString(sb.toString());
+
+                    sb.delete(0, sb.length() - 1);
                     for (Production p : pList) {
                         int n = p.getNumber();
-                        sb.append(printThreeData80(p.getProName(), "x" + n, String.valueOf(p.getMinPrice()), String.valueOf(n * p.getMinPrice()))).append("\n");
-                        sb.append(printThreeData80(p.getProNameEn(), "", "", "")).append("\n");
+                        sb.append(printFourData80(p.getProName(), "x" + n, String.valueOf(p.getScalePrice()), String.valueOf(n * p.getScalePrice()))).append("\n");
+                        if (p.getProNameEn() != null && !p.getProNameEn().isEmpty()) {
+                            sb.append(p.getProNameEn()).append("\n");
+                        }
                         if (p.getMats().size() > 0)
                             for (MatsBean bean : p.getMats()) {
-                                sb.append(printThreeData80("—" + bean.getMatName(), "x" + n, String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()))).append("\n");
+                                sb.append(printFourData80("--" + bean.getMatName(), "x" + n, String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()))).append("\n");
                             }
                     }
                     mPrinter.printString(sb.toString());
 
                     //间隔小的虚线
+                    mPrinter.setAlignMode(1);
                     mPrinter.printRasterBitmap(MyApplication.getLine3());
+
                     //交易金额明细
                     mPrinter.setFontStyle(0);
-
                     s = "\n" + printTwoData80("消费金额", totalMoney)
                             + "\n" + printTwoData80("应收金额", earn)
                             + "\n" + printTwoData80("客户实付", cost)
@@ -438,8 +426,7 @@ public class PrinterUtil {
                     mPrinter.printString(s);
 
                     //虚实线
-                    mPrinter.printRasterBitmap(MyApplication.getLine3());
-                    mPrinter.printRasterBitmap(MyApplication.getLine1());
+                    mPrinter.printRasterBitmap(MyApplication.getLine4());
 
                     //居中
                     mPrinter.setAlignMode(1);
@@ -447,18 +434,20 @@ public class PrinterUtil {
                     mPrinter.printRasterBitmap(MyApplication.getLogo());
 
                     //店铺名
-                    set(DOUBLE_HEIGHT_WIDTH);
-                    mPrinter.setAlignMode(0);
-                    s = SpUtil.getString(Constant.STORE_NAME) + "\n";
+                    mPrinter.setCharSize(1, 1);
+                    mPrinter.setAlignMode(1);
+                    String[] ns = SpUtil.getString(Constant.STORE_NAME).split("：");
+                    s = ns[0] + "\n" + ns[1] + "\n\n";
                     mPrinter.printString(s);
-                    mPrinter.setCharSize(0, 0);
+
                     //企业文化描述
+                    mPrinter.setCharSize(0, 0);
+                    mPrinter.setAlignMode(0);
                     s = "7港9欢迎您的到来。我们再次从香港出发，希望搜集到各地的特色食品，港印全国。能7(去)香港(港)的(9)九龙喝一杯正宗的港饮是我们对每一位顾客的愿景。几百年来，香港作为东方接触世界的窗口，找寻并创造了一款款独具特色又流传世界的高品饮品。我们在全国超过十年的专业服务与坚持，与97回归共享繁华，秉承独到的调制方法，期许再一次与亲爱的你能擦出下一个十年火花。\n";
                     mPrinter.printString(s);
 
-                    mPrinter.setAlignMode(1);
-
                     //品牌二维码
+                    mPrinter.setAlignMode(1);
                     mPrinter.printRasterBitmap(MyApplication.getQrcode());
 
                     //投诉、加盟热线
@@ -469,10 +458,13 @@ public class PrinterUtil {
                     s = "技术支持 火炬木科技";
                     mPrinter.printString(s);
 
+                    mPrinter.cutPaper(66, 0);
+
                     //打开钱箱
                     set(OPEN_BOX);
 
-                    mPrinter.cutPaper(66, 0);
+                    //清空缓存命令
+                    set(CLEAR_TEMP);
                 } catch (Exception e) {
                     Log.d(TAG, e.getMessage());
                 }
@@ -594,37 +586,5 @@ public class PrinterUtil {
         });
     }
 
-
-    /**
-     * 打印二维码
-     *
-     * @param s 二维码内容
-     */
-    private static void printQRCode(String s) {
-        if (PrinterAPI.SUCCESS == mPrinter.printQRCode(s, 1, false)) {
-            Log.d(TAG, "printQRCode: finish");
-        }
-    }
-
-    public static void printImage(Bitmap bitmap) {
-        try {
-            if (PrinterAPI.SUCCESS == mPrinter.printRasterBitmap(bitmap)) {
-                byte[] bytes = {0x1B, 0x70, 0x0, 0x3C, (byte) 0xFF};
-                mPrinter.writeIO(bytes, 0, bytes.length, 1000);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        cutPaper();
-    }
-
-    /**
-     * 切纸
-     */
-    private static void cutPaper() {
-        if (PrinterAPI.SUCCESS == mPrinter.cutPaper(66, 0)) {
-            Log.d(TAG, "cutPaper: finish");
-        }
-    }
 
 }

@@ -80,7 +80,7 @@ public class SingleProAddonDialog extends BaseDialog {
     private int number = 1;
 
     public SingleProAddonDialog(@NonNull Context context, SingleProCallback callback,
-                                Production productsBean, int pos) {
+                                Production productsBean) {
         super(context);
         this.productsBean = productsBean;
         this.callback = callback;
@@ -218,7 +218,8 @@ public class SingleProAddonDialog extends BaseDialog {
 
     @OnClick(R.id.btn_home_addon_cancel)
     void Cancel() {
-        dismiss();
+        callback.onCancelCallBack();
+        cancel();
     }
 
     @OnClick(R.id.btn_home_addon_ok)
@@ -234,6 +235,7 @@ public class SingleProAddonDialog extends BaseDialog {
         current.setProId(productsBean.getProId());
         current.setProType(productsBean.getProType());
         current.setProName(productsBean.getProName());
+        current.setProNameEn(productsBean.getProNameEn());
         current.setAddon(addOnET.getText().toString());//备注
         current.setTasteStr(tastesBean != null ? tastesBean.getTasteName() : "默认口味");
         OrderInfo.DataBean dataBean = new OrderInfo.DataBean();
@@ -271,7 +273,6 @@ public class SingleProAddonDialog extends BaseDialog {
         callback.onSingleCallBack(productsBean.getProId(), number, current, dataBean, origionPrice, price);
 
         current = null;
-        cancel();
     }
 
 }

@@ -13,4 +13,5 @@ public interface SingleProCallback {
 
     void onSingleCallBack(int scaleId, int number, Production productsBean, OrderInfo.DataBean dataBean, double origionPrice, double price);
 
+    void onCancelCallBack();
 }

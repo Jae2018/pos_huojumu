@@ -1,26 +1,19 @@
 package com.huojumu.main.dialogs;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.huojumu.R;
 import com.huojumu.base.BaseDialog;
-import com.huojumu.main.activity.function.ChangePwdActivity;
 import com.huojumu.main.activity.function.InventoryActivity;
-import com.huojumu.main.activity.function.MaterialActivity;
 import com.huojumu.main.activity.function.OrdersListActivity;
 import com.huojumu.main.activity.function.PayBackActivity;
 import com.huojumu.main.activity.function.SettingActivity;
 import com.huojumu.main.activity.function.VipActivity;
-import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.main.activity.work.DailyTakeOverActivity;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.PrinterUtil;
-import com.huojumu.utils.SpUtil;
-import com.huojumu.utils.ThreadPool;
 
 import butterknife.OnClick;
 
@@ -71,22 +64,6 @@ public class MoreFunctionDialog extends BaseDialog {
         cancel();
     }
 
-//    @OnClick(R.id.iv_more_fuc2)
-//    void Fuc3() {
-//        //后台管理
-//
-//        Toast.makeText(getContext(), "暂未开放", Toast.LENGTH_LONG).show();
-////        dismiss();
-//    }
-//
-//    @OnClick(R.id.iv_more_fuc3)
-//    void Fuc4() {
-//        //估清限量
-//        Toast.makeText(getContext(), "暂未开放", Toast.LENGTH_LONG).show();
-////        dismiss();
-//
-//    }
-
     @OnClick(R.id.iv_more_fuc5)
     void Fuc5() {
         //日结
@@ -98,7 +75,7 @@ public class MoreFunctionDialog extends BaseDialog {
 
     @OnClick(R.id.iv_more_fuc6)
     void Fuc6() {
-        PrinterUtil.OpenMoneyBox(getContext());
+        PrinterUtil.OpenMoneyBox();
         cancel();
     }
 
@@ -106,7 +83,7 @@ public class MoreFunctionDialog extends BaseDialog {
     void Fuc7() {
         // 会员信息
         intent.setClass(getContext(), VipActivity.class);
-        getContext().startActivity(intent);
+        activity.startActivity(intent);
         cancel();
     }
 
@@ -114,26 +91,9 @@ public class MoreFunctionDialog extends BaseDialog {
     void Fuc8() {
         //账单查询
         intent.setClass(getContext(), OrdersListActivity.class);
-        getContext().startActivity(intent);
+        activity.startActivity(intent);
         cancel();
     }
-
-//    @OnClick(R.id.iv_more_fuc9)
-//    void Fuc9() {
-//        //白盒子支付
-//        intent.setClass(getContext(), PayByBoxActivity.class);
-//        getContext().startActivity(intent);
-//        dismiss();
-//    }
-//
-//    @OnClick(R.id.iv_more_fuc10)
-//    void Fuc10() {
-//        // 原料统计
-//        intent.setClass(getContext(), MaterialActivity.class);
-//        intent.putExtra("title", "原料统计");
-//        getContext().startActivity(intent);
-//        dismiss();
-//    }
 
     @OnClick(R.id.iv_more_fuc11)
     void Fuc11() {
@@ -148,7 +108,7 @@ public class MoreFunctionDialog extends BaseDialog {
     void Fuc12() {
         // 盘点
         intent.setClass(getContext(), InventoryActivity.class);
-        getContext().startActivity(intent);
+        activity.startActivity(intent);
         cancel();
     }
 

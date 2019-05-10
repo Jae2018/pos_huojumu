@@ -3,6 +3,7 @@ package com.huojumu;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 //import android.graphics.drawable.BitmapDrawable;
 
 import com.greendao.gen.DaoMaster;
@@ -18,7 +19,6 @@ import org.greenrobot.greendao.database.Database;
 import java.util.UUID;
 
 
-
 /**
  * @author : Jie
  * Date: 2018/5/25
@@ -29,7 +29,7 @@ public class MyApplication extends Application {
 
     private static Context mContext;
     protected static SocketTool socketTool;
-    private static Bitmap line1,line2,line3,logo,qrcode;
+    private static Bitmap line1, line2, line3, logo, qrcode;
     private DaoSession daoSession;
 
     @Override
@@ -46,14 +46,14 @@ public class MyApplication extends Application {
         SpUtil.save(Constant.UUID, UUID.randomUUID().toString());
 
         //初始化websocket
-        startSocket();
+        initSocket();
 
         //小票所用图片，需提前加载。暂时不用
-//        line1 = ((BitmapDrawable)getResources().getDrawable(R.drawable.line1)).getBitmap();
-//        line2 = ((BitmapDrawable)getResources().getDrawable(R.drawable.line2)).getBitmap();
-//        line3 = ((BitmapDrawable)getResources().getDrawable(R.drawable.line3)).getBitmap();
-//        logo = ((BitmapDrawable)getResources().getDrawable(R.drawable.logo)).getBitmap();
-//        qrcode = ((BitmapDrawable)getResources().getDrawable(R.drawable.qr_code)).getBitmap();
+        line1 = ((BitmapDrawable) getResources().getDrawable(R.drawable.line1)).getBitmap();
+        line2 = ((BitmapDrawable) getResources().getDrawable(R.drawable.line2)).getBitmap();
+        line3 = ((BitmapDrawable) getResources().getDrawable(R.drawable.line3)).getBitmap();
+        logo = ((BitmapDrawable) getResources().getDrawable(R.drawable.logo)).getBitmap();
+        qrcode = ((BitmapDrawable) getResources().getDrawable(R.drawable.qr_code)).getBitmap();
 
         //初始化数据库
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "pos-db");
@@ -64,7 +64,7 @@ public class MyApplication extends Application {
         XAOP.init(this);
     }
 
-    public static void startSocket(){
+    public static void initSocket() {
         socketTool = SocketTool.getInstance();
         socketTool.init();
     }
@@ -93,7 +93,7 @@ public class MyApplication extends Application {
         return socketTool;
     }
 
-    public static Context getContext(){
+    public static Context getContext() {
         return mContext;
     }
 

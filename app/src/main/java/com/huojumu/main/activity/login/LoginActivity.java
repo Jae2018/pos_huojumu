@@ -123,7 +123,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 ToastUtils.showLong("网络错误");
-                mHandler.sendEmptyMessageDelayed(RECONNECT_SOCKET,1000);
+                mHandler.sendEmptyMessageDelayed(RECONNECT_SOCKET, 1000);
             }
         });
     }
@@ -202,7 +202,7 @@ public class LoginActivity extends BaseActivity {
      */
     private void reconnectSocket() {
         RECONNECT_TIME++;
-        MyApplication.startSocket();
+        MyApplication.initSocket();
         sendSocket();
     }
 
@@ -215,7 +215,7 @@ public class LoginActivity extends BaseActivity {
                 public void run() {
                     MyApplication.getSocketTool().sendHeart();
                 }
-            }, 200, 6 * 1000);
+            }, 200, 5 * 60 * 1000);
         }
     }
 

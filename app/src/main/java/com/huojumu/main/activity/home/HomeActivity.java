@@ -273,7 +273,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
             public void run() {
-                PrinterUtil.connectPrinter(HomeActivity.this);
+                PrinterUtil.connectPrinter();
             }
         });
 
@@ -464,7 +464,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     private void reconnectSocket() {
         RECONNECT_TIME++;
-        MyApplication.startSocket();
+        MyApplication.initSocket();
         sendSocket();
     }
 
@@ -1200,22 +1200,32 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * charge:找零
      */
     private void PrintOrder(final OrderBack orderBack, final double charge, String type, double totalPrice, double totalCut) {
-
         woeker_p += totalPrice;
-
         orderNum++;
-        String proList = PrinterUtil.toJson(productions);
+//        String proList = PrinterUtil.toJson(productions);
 
         //小票数据
         if (orderBack != null) {
             String str = orderBack.getTotalPrice().substring(0, orderBack.getTotalPrice().length() - 1);
-            initWebOrder("N" + orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4), orderBack.getCreatTime(), proList, str,
-                    (Double.parseDouble(orderBack.getTotalPrice()) + charge) + "", String.valueOf(charge), String.valueOf(totalCut), type);
+//            initWebOrder("N" + orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4), orderBack.getCreatTime(), proList, str,
+//                    (Double.parseDouble(orderBack.getTotalPrice()) + charge) + "", String.valueOf(charge), String.valueOf(totalCut), type);
+
+            PrinterUtil.printString80(productions, "C" + orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4),
+                    SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
+                    orderBack.getTotalPrice(), String.valueOf(charge),
+                    String.valueOf(totalCut), orderBack.getCreatTime(), type);
+
         } else {
             orderNo = orderNum < 10 ? "N000" + orderNum : orderNum < 100 ? "N00" + orderNum : orderNum < 1000 ? "N0" + orderNum : "N" + orderNum;
-            initWebOrder(orderNo, PrinterUtil.getDate(), proList, String.valueOf(totalPrice), String.valueOf(totalPrice), String.valueOf(charge), String.valueOf(totalCut), type);
+//            initWebOrder(orderNo, PrinterUtil.getDate(), proList, String.valueOf(totalPrice), String.valueOf(totalPrice), String.valueOf(charge), String.valueOf(totalCut), type);
             //断网状态下保存订单信息json
             ((MyApplication) getApplication()).getDaoSession().getNativeOrdersDao().insert(new NativeOrders(System.currentTimeMillis(), PrinterUtil.toJson(orderInfo)));
+
+//            PrinterUtil.printString80(HomeActivity.this, productions, orderNo,
+//                    SpUtil.getString(Constant.WORKER_NAME), String.valueOf(totalPrice), String.valueOf(totalPrice),
+//                    earn1 == 0 ? String.valueOf(totalPrice) : String.valueOf(earn1), String.valueOf(charge),
+//                    String.valueOf(totalCut), PrinterUtil.getDate(), type);
+
         }
         //订单置空
         orderInfo = null;
@@ -1470,7 +1480,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                 @Override
                                 public void run() {
                                     connectUsb(deviceName);
-                                    PrinterUtil.connectPrinter(HomeActivity.this);
+                                    PrinterUtil.connectPrinter();
                                     try {
                                         Thread.sleep(1000);
                                     } catch (Exception e) {
@@ -1486,7 +1496,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                         ld3.close();
                                     }
                                 }
-                            }, 10000);
+                            }, 7000);
                         }
                         break;
                     case DeviceConnFactoryManager.ACTION_CONN_STATE:
@@ -1511,12 +1521,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                 break;
                         }
                         break;
-//                    case ACTION_QUERY_PRINTER_STATE:
-//                        if (printcount >= 0) {
-//                            Log.e(TAG, "onReceive: printLabel");
-//                            printLabel();
-//                        }
-//                        break;
                     default:
                         break;
                 }

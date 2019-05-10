@@ -4,7 +4,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -209,7 +208,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
             public void onSuccess(int statusCode, final BaseBean<String> response) {
                 if (response.getCode().equals("0")) {
                     clearRight();
-                    PrinterUtil.printPayBack(PayBackActivity.this, details, response.getData());
+                    PrinterUtil.printPayBack(details, response.getData());
                     float price = (float) (p - total);
                     num = num - 1;
                     EventBus.getDefault().post(new WorkBean(num, price));

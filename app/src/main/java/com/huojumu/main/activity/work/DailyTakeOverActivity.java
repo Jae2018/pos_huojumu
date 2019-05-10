@@ -18,7 +18,6 @@ import com.huojumu.R;
 import com.huojumu.adapter.WorkDailyAdapter;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.function.OrderDetailActivity;
-import com.huojumu.main.activity.function.OrdersListActivity;
 import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.main.dialogs.CertainDialog;
 import com.huojumu.main.dialogs.DialogInterface;
@@ -180,7 +179,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             } else {
                 daily();
             }
-            PrinterUtil.printDaily(DailyTakeOverActivity.this, types, commissionTv.getText().toString(), earn2.getText().toString(), earn1.getText().toString(), num, SpUtil.getString(Constant.WORKER_NAME), lastDate);
+            PrinterUtil.printDaily(types, commissionTv.getText().toString(), earn2.getText().toString(), earn1.getText().toString(), num, SpUtil.getString(Constant.WORKER_NAME), lastDate);
         }
     }
 

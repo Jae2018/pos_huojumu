@@ -32,7 +32,7 @@ public class SocketTool extends WebSocketListener {
     private static OkHttpClient client;
     private static SocketTool INSTANCE;
     private static Request request;
-    private volatile boolean alive = true;
+    private volatile boolean alive;
 
     public static SocketTool getInstance() {
         if (INSTANCE == null) {
@@ -82,9 +82,14 @@ public class SocketTool extends WebSocketListener {
         this.webSocket = webSocket;
     }
 
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+
     @Override
     public void onMessage(final WebSocket webSocket, String text) {
         super.onMessage(webSocket, text);
+        Log.e(TAG, "onMessage: " + text);
         EventBus.getDefault().post(new NetErrorHandler(true));
 
         alive = true;

@@ -277,6 +277,7 @@ public class PrinterUtil {
         return gson.toJson(obj);
     }
 
+    private static boolean isConnected = false;
     /**
      * 连接打印机
      */
@@ -284,10 +285,16 @@ public class PrinterUtil {
         mPrinter = PrinterAPI.getInstance();
         io = new USBAPI(MyApplication.getContext());
         if (PrinterAPI.SUCCESS == mPrinter.connect(io)) {
+            isConnected = true;
             Log.e("SUCCESS", "SUCCESS");
         } else {
+            isConnected = false;
             Log.e("SUCCESS1", "SUCCESS1");
         }
+    }
+
+    public static boolean isIsConnected() {
+        return isConnected;
     }
 
     public static UsbDevice getUsbDeviceFromName(Context context, String usbName) {
@@ -301,8 +308,8 @@ public class PrinterUtil {
      */
     public static void disconnectPrinter() {
         if (mPrinter != null && PrinterAPI.SUCCESS == mPrinter.disconnect()) {
-            io.closeDevice();
             mPrinter = null;
+            isConnected = false;
             Log.d(TAG, "disconnectPrinter: finish");
         }
     }
@@ -364,7 +371,7 @@ public class PrinterUtil {
     /**
      * 打印文本80mm小票样式 48 字节
      */
-    public static void printString80(final List<Production> pList, final String orderNo, final String name, final String totalMoney,
+    public static void printString80(final List<Production> pList, final List<OrderDetails.OrderdetailBean.ProsBean> prosBeanList, final String orderNo, final String name, final String totalMoney,
                                      final String earn, final String cost, final String charge, final String cut, final String date, final String type) {
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
@@ -398,16 +405,32 @@ public class PrinterUtil {
                     mPrinter.printString(sb.toString());
 
                     sb.delete(0, sb.length() - 1);
-                    for (Production p : pList) {
-                        int n = p.getNumber();
-                        sb.append(printFourData80(p.getProName(), "x" + n, String.valueOf(p.getScalePrice()), String.valueOf(n * p.getScalePrice()))).append("\n");
-                        if (p.getProNameEn() != null && !p.getProNameEn().isEmpty()) {
-                            sb.append(p.getProNameEn()).append("\n");
-                        }
-                        if (p.getMats().size() > 0)
-                            for (MatsBean bean : p.getMats()) {
-                                sb.append(printFourData80("--" + bean.getMatName(), "x" + n, String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()))).append("\n");
+                    if (pList != null) {
+                        for (Production p : pList) {
+                            int n = p.getNumber();
+                            sb.append(printFourData80(p.getProName(), "x" + n, String.valueOf(p.getScalePrice()), String.valueOf(n * p.getScalePrice()))).append("\n");
+                            if (p.getProNameEn() != null && !p.getProNameEn().isEmpty()) {
+                                sb.append(p.getProNameEn()).append("\n");
                             }
+                            if (p.getMats().size() > 0) {
+                                for (MatsBean bean : p.getMats()) {
+                                    sb.append(printFourData80("--" + bean.getMatName(), "x" + n, String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()))).append("\n");
+                                }
+                            }
+                        }
+                    } else if (prosBeanList != null) {
+                        for (OrderDetails.OrderdetailBean.ProsBean p : prosBeanList) {
+                            int n = p.getProCount();
+                            sb.append(printFourData80(p.getProName(), "x" + n, String.valueOf(p.getPrice()), String.valueOf(n * p.getPrice()))).append("\n");
+                            if (p.getProNameEn() != null && !p.getProNameEn().isEmpty()) {
+                                sb.append(p.getProNameEn()).append("\n");
+                            }
+                            if (p.getMats().size() > 0) {
+                                for (OrderDetails.OrderdetailBean.ProsBean.MatsBean bean : p.getMats()) {
+                                    sb.append(printFourData80("--" + bean.getMatName(), "x" + n, String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()))).append("\n");
+                                }
+                            }
+                        }
                     }
                     mPrinter.printString(sb.toString());
 

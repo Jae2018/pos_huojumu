@@ -163,7 +163,7 @@ public class OrderDetails {
             private int proId;
             private int proCount;
             private String proName;
-            private String proNameEn = "";
+            private String proNameEn;
             private int orderDeailId;
             private String matStr;
             private String scaleName;

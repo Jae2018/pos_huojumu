@@ -65,11 +65,7 @@
             android:launchMode="singleInstance"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|stateUnchanged">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.huojumu.main.activity.home.HomeActivity"
@@ -103,7 +99,11 @@
             android:name="com.huojumu.main.activity.MainActivity"
             android:configChanges="keyboard|navigation"
             android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.huojumu.main.activity.function.ChangePwdActivity"

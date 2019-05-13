@@ -11,6 +11,8 @@ import com.greendao.gen.DaoSession;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.SocketTool;
 import com.huojumu.utils.SpUtil;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechUtility;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.xuexiang.xaop.XAOP;
 
@@ -63,6 +65,9 @@ public class MyApplication extends Application {
 
         //初始化切面编程脚本
         XAOP.init(this);
+
+        String p = "appid=" + getString(R.string.app_id) + "," + SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC;
+        SpeechUtility.createUtility(MyApplication.this, p);
     }
 
     public static void initSocket() {

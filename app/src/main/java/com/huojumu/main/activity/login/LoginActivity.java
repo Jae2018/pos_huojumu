@@ -123,7 +123,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 ToastUtils.showLong("网络错误");
-                mHandler.sendEmptyMessageDelayed(RECONNECT_SOCKET, 1000);
+                mHandler.sendEmptyMessageDelayed(RECONNECT_SOCKET, 100);
             }
         });
     }

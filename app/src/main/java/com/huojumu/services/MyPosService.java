@@ -2,15 +2,15 @@ package com.huojumu.services;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.greendao.gen.NativeOrdersDao;
 import com.huojumu.MyApplication;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.NativeOrders;
-import com.huojumu.model.OrderBack;
+import com.huojumu.model.OrderInfo;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PrinterUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
@@ -23,15 +23,15 @@ import java.util.TimerTask;
 public class MyPosService extends Service {
 
     private List<NativeOrders> nativeOrdersList;
-    private List<String> uploadStrs = new ArrayList<>();
+    private List<OrderInfo> uploadStrs = new ArrayList<>();
     private NativeOrdersDao ordersDao;
     private Timer timer;
+    private Gson gson = new Gson();
 
     @Override
     public void onCreate() {
         super.onCreate();
         ordersDao = ((MyApplication) getApplication()).getDaoSession().getNativeOrdersDao();
-        Log.e("service","start");
     }
 
     @Override
@@ -58,33 +58,34 @@ public class MyPosService extends Service {
     /**
      * 轮询数据库，间隔上传
      */
-    private void startLoop(){
+    private void startLoop() {
         timer = new Timer();
         //间隔1小时轮询一次数据库
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 //联网状态下去轮询数据库
-//                if (MyApplication.getSocketTool().isAlive()) {
+                if (MyApplication.getSocketTool().isAlive()) {
                     nativeOrdersList = ordersDao.loadAll();
-                    if (nativeOrdersList != null && !nativeOrdersList.isEmpty()) {
-
+                    if (nativeOrdersList != null && nativeOrdersList.size() > 0) {
                         for (int i = 0; i < nativeOrdersList.size(); i++) {
-                            uploadStrs.add(nativeOrdersList.get(i).getOrderJson());
+                            uploadStrs.add((OrderInfo) gson.fromJson(nativeOrdersList.get(i).getOrderJson(),new TypeToken<OrderInfo>(){}.getType()));
                         }
-                        Log.e("service", PrinterUtil.toJson(uploadStrs));
                         //如果数据库中有存入的本地订单、则开始上传
-//                        NetTool.orderBatch(PrinterUtil.toJson(nativeOrdersList), new GsonResponseHandler<BaseBean<String>>() {
-//                            @Override
-//                            public void onSuccess(int statusCode, BaseBean<String> response) {
-//                                //上传成功后清空数据库
-//                                ordersDao.deleteAll();
-//                            }
-//                        });
+                        NetTool.orderBatch(PrinterUtil.toJson(uploadStrs), new GsonResponseHandler<BaseBean<String>>() {
+                            @Override
+                            public void onSuccess(int statusCode, BaseBean<String> response) {
+                                //上传成功后清空数据库
+                                if (response.getCode().equals("0")) {
+                                    ordersDao.deleteAll();
+                                }
+                                uploadStrs.clear();
+                            }
+                        });
                     }
-//                }
+                }
             }
-        }, 10000, 10000);
+        }, 10000, 100000);
     }
 
 }

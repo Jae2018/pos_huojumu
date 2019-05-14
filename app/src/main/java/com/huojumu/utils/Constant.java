@@ -29,6 +29,8 @@ public interface Constant {
     String WORK_P = "woeker_p";
     String ORDER_NUM = "orderNum";
 
+    String SERVICE_ACTION = "newServiceAction";
+
     /* network params */
     String MY_TOKEN = "my_token";
     String TOKEN = "Authorization";

@@ -11,6 +11,7 @@ import com.huojumu.MyApplication;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.NativeOrders;
 import com.huojumu.model.OrderInfo;
+import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PrinterUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
@@ -48,6 +49,7 @@ public class MyPosService extends Service {
         timer = null;
         ordersDao = null;
         nativeOrdersList = null;
+        sendBroadcast(new Intent(Constant.SERVICE_ACTION));
     }
 
     @Override
@@ -69,7 +71,8 @@ public class MyPosService extends Service {
                     nativeOrdersList = ordersDao.loadAll();
                     if (nativeOrdersList != null && nativeOrdersList.size() > 0) {
                         for (int i = 0; i < nativeOrdersList.size(); i++) {
-                            uploadStrs.add((OrderInfo) gson.fromJson(nativeOrdersList.get(i).getOrderJson(),new TypeToken<OrderInfo>(){}.getType()));
+                            uploadStrs.add((OrderInfo) gson.fromJson(nativeOrdersList.get(i).getOrderJson(), new TypeToken<OrderInfo>() {
+                            }.getType()));
                         }
                         //如果数据库中有存入的本地订单、则开始上传
                         NetTool.orderBatch(PrinterUtil.toJson(uploadStrs), new GsonResponseHandler<BaseBean<String>>() {
@@ -85,7 +88,7 @@ public class MyPosService extends Service {
                     }
                 }
             }
-        }, 10000, 100000);
+        }, 10000, 60 * 60 * 1000);
     }
 
 }

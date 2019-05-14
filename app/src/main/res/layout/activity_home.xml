@@ -122,65 +122,36 @@
 
             <ImageView
                 android:id="@+id/image_net_state"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/d_40"
+                android:layout_height="@dimen/d_40"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/d_20"
                 android:layout_toStartOf="@+id/btn_home_more_function"
                 android:contentDescription="@string/des"
                 android:src="@drawable/wifi_ok" />
 
-            <LinearLayout
+            <ImageView
                 android:id="@+id/btn_home_more_function"
                 android:layout_width="@dimen/d_84"
-                android:layout_height="@dimen/d_36"
+                android:layout_height="@dimen/d_40"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/d_16"
                 android:layout_toStartOf="@+id/btn_home_shutdown"
-                android:background="@drawable/home_btn_shape"
+                android:background="@drawable/func_btn_selector"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="horizontal" />
 
-                <ImageView
-                    android:layout_width="@dimen/d_20"
-                    android:layout_height="@dimen/d_20"
-                    android:layout_marginEnd="@dimen/d_10"
-                    android:contentDescription="@string/des"
-                    android:src="@drawable/icon_function" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/function"
-                    android:textColor="@color/colorPrimary" />
-            </LinearLayout>
-
-            <LinearLayout
+            <ImageView
                 android:id="@+id/btn_home_shutdown"
                 android:layout_width="@dimen/d_84"
-                android:layout_height="@dimen/d_36"
+                android:layout_height="@dimen/d_40"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/d_16"
-                android:background="@drawable/home_btn_shape"
+                android:background="@drawable/shutdown_btn_selector"
+                android:contentDescription="@string/des"
                 android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="@dimen/d_20"
-                    android:layout_height="@dimen/d_20"
-                    android:layout_marginEnd="@dimen/d_10"
-                    android:contentDescription="@string/des"
-                    android:src="@drawable/icon_shutdown" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/shutdown"
-                    android:textColor="@color/red_delete" />
-            </LinearLayout>
+                android:orientation="horizontal" />
 
         </RelativeLayout>
 
@@ -306,75 +277,40 @@
         android:layout_toEndOf="@+id/linear1"
         android:background="@color/default_bg">
 
-        <LinearLayout
+        <ImageView
             android:id="@+id/button1"
-            android:layout_width="@dimen/d_84"
-            android:layout_height="@dimen/d_40"
-            android:background="@drawable/home_btn_tow"
-            android:orientation="horizontal">
+            android:layout_width="@dimen/d_96"
+            android:layout_height="@dimen/d_48"
+            android:layout_marginStart="@dimen/d_10"
+            android:background="@drawable/gua_btn_selector"
+            android:contentDescription="@string/des" />
 
-            <ImageView
-                android:layout_width="@dimen/d_24"
-                android:layout_height="@dimen/d_24"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/d_8"
-                android:contentDescription="@string/des"
-                android:src="@drawable/icon_g" />
+        <ImageView
+            android:id="@+id/iv_has_gua_dan"
+            android:layout_width="@dimen/d_10"
+            android:layout_height="@dimen/d_10"
+            android:layout_marginTop="@dimen/d_4"
+            android:layout_marginStart="@dimen/d_90"
+            android:contentDescription="@string/des"
+            android:src="@drawable/shape_circle_red"
+            android:visibility="invisible" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/d_8"
-                android:text="挂单"
-                android:textColor="@android:color/white" />
-
-            <ImageView
-                android:id="@+id/iv_has_gua_dan"
-                android:layout_width="@dimen/d_10"
-                android:layout_height="@dimen/d_10"
-                android:layout_marginTop="@dimen/d_4"
-                android:contentDescription="@string/des"
-                android:src="@drawable/shape_circle_red"
-                android:visibility="invisible" />
-
-        </LinearLayout>
-
-        <LinearLayout
+        <ImageView
             android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/d_40"
+            android:layout_width="@dimen/d_96"
+            android:layout_height="@dimen/d_48"
             android:layout_marginStart="@dimen/d_16"
             android:layout_toEndOf="@id/button1"
-            android:background="@drawable/home_btn_tow"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="@dimen/d_24"
-                android:layout_height="@dimen/d_24"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/d_8"
-                android:contentDescription="@string/des"
-                android:src="@drawable/icon_delete" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/d_8"
-                android:layout_marginEnd="@dimen/d_8"
-                android:text="删除全部"
-                android:textColor="@android:color/white" />
-
-        </LinearLayout>
+            android:background="@drawable/clear_btn_selector"
+            android:contentDescription="@string/des" />
 
         <LinearLayout
             android:id="@+id/button4"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/d_40"
+            android:layout_width="@dimen/d_96"
+            android:layout_height="@dimen/d_48"
             android:layout_marginStart="@dimen/d_16"
             android:layout_toEndOf="@id/button2"
-            android:background="@drawable/home_btn_tow"
+            android:background="@drawable/home_btn_refresh"
             android:orientation="horizontal">
 
             <ImageView
@@ -399,18 +335,18 @@
 
         <LinearLayout
             android:id="@+id/button5"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/d_40"
+            android:layout_width="@dimen/d_96"
+            android:layout_height="@dimen/d_48"
             android:layout_marginStart="@dimen/d_16"
             android:layout_toEndOf="@id/button4"
-            android:background="@drawable/home_btn_tow"
+            android:background="@drawable/home_btn_refresh"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="@dimen/d_24"
                 android:layout_height="@dimen/d_24"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/d_8"
                 android:contentDescription="@string/des"
                 android:src="@drawable/refresh" />
 
@@ -419,7 +355,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="@dimen/d_8"
-                android:layout_marginEnd="@dimen/d_8"
                 android:text="刷新"
                 android:textColor="@android:color/white" />
 
@@ -432,7 +367,7 @@
             android:layout_marginTop="@dimen/d_6"
             android:layout_marginEnd="@dimen/d_16"
             android:layout_toStartOf="@+id/btn_next"
-            android:background="@drawable/home_btn_page"
+            android:background="@drawable/page_btn_selector"
             android:gravity="center"
             android:text="@string/up_page"
             android:textColor="@android:color/white" />
@@ -444,16 +379,10 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/d_6"
             android:layout_marginEnd="@dimen/d_40"
-            android:background="@drawable/home_btn_page"
+            android:background="@drawable/page_btn_selector"
             android:gravity="center"
             android:text="@string/next_page"
             android:textColor="@android:color/white" />
-
-        <!--<android.support.v4.widget.SwipeRefreshLayout-->
-        <!--android:id="@+id/swipe"-->
-        <!---->
-        <!--android:layout_width="@dimen/d_700"-->
-        <!--android:layout_height="@dimen/d_640">-->
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView3"
@@ -461,9 +390,6 @@
             android:layout_height="@dimen/d_640"
             android:layout_marginTop="@dimen/d_48"
             android:overScrollMode="never" />
-
-        <!--</android.support.v4.widget.SwipeRefreshLayout>-->
-
 
         <LinearLayout
             android:id="@+id/btn_search"
@@ -513,7 +439,7 @@
     <LinearLayout
         android:id="@+id/linear3"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d_50"
+        android:layout_height="@dimen/d_60"
         android:layout_alignParentBottom="true"
         android:layout_toEndOf="@id/linearLayout4"
         android:background="@color/home_bottom"
@@ -522,26 +448,26 @@
 
         <ImageView
             android:id="@+id/btn_home_quick_pay"
-            android:layout_width="@dimen/d_96"
-            android:layout_height="@dimen/d_40"
-            android:background="@drawable/quick"
+            android:layout_width="@dimen/d_119"
+            android:layout_height="@dimen/d_50"
+            android:background="@drawable/pay_btn_selector"
             android:contentDescription="@string/des" />
 
         <ImageView
             android:id="@+id/btn_home_check"
-            android:layout_width="@dimen/d_79"
-            android:layout_height="@dimen/d_46"
+            android:layout_width="@dimen/d_91"
+            android:layout_height="@dimen/d_50"
             android:layout_marginStart="@dimen/d_32"
-            android:background="@drawable/check"
+            android:background="@drawable/checkout_btn_selector"
             android:contentDescription="@string/des"
             android:enabled="false" />
 
         <ImageView
             android:id="@+id/btn_home_take_out"
-            android:layout_width="@dimen/d_79"
-            android:layout_height="@dimen/d_46"
+            android:layout_width="@dimen/d_91"
+            android:layout_height="@dimen/d_50"
             android:layout_marginStart="@dimen/d_32"
-            android:background="@drawable/out"
+            android:background="@drawable/takeout_btn_selector"
             android:contentDescription="@string/des"
             android:enabled="false" />
 

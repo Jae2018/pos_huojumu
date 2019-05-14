@@ -29,10 +29,12 @@
     <dimen name="d_80">80dp</dimen>
     <dimen name="d_84">84dp</dimen>
     <dimen name="d_90">90dp</dimen>
+    <dimen name="d_91">91dp</dimen>
     <dimen name="d_96">96dp</dimen>
     <dimen name="d_97">97dp</dimen>
     <dimen name="d_100">100dp</dimen>
     <dimen name="d_101">101dp</dimen>
+    <dimen name="d_119">119dp</dimen>
     <dimen name="d_120">120dp</dimen>
     <dimen name="d_121">121dp</dimen>
     <dimen name="d_128">128dp</dimen>

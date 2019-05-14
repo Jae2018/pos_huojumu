@@ -1505,6 +1505,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                 break;
                         }
                         break;
+                    case Constant.SERVICE_ACTION:
+                        //重启service
+                        startService(intent);
+                        break;
                     default:
                         break;
                 }

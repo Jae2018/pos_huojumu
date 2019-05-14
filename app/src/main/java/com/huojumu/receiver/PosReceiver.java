@@ -10,6 +10,7 @@ import android.content.Intent;
 //import com.blankj.utilcode.util.ToastUtils;
 //import com.huojumu.MyApplication;
 import com.huojumu.main.activity.MainActivity;
+import com.huojumu.main.activity.login.LoginActivity;
 //import com.huojumu.main.activity.home.HomeActivity;
 //import com.huojumu.utils.Constant;
 //import com.huojumu.utils.DeviceConnFactoryManager;
@@ -19,6 +20,7 @@ import com.huojumu.main.activity.MainActivity;
 //import com.huojumu.utils.UsbUtil;
 
 import static android.content.Intent.ACTION_BOOT_COMPLETED;
+import static android.content.Intent.ACTION_PACKAGE_REPLACED;
 
 
 /**
@@ -37,6 +39,11 @@ public class PosReceiver extends BroadcastReceiver {
                     Intent i = new Intent(context, MainActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(i);
+                    break;
+                case ACTION_PACKAGE_REPLACED:
+                    Intent intent2 = new Intent(context, LoginActivity.class);
+                    intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent2);
                     break;
                 default:
                     break;

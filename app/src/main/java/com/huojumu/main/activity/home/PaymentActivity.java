@@ -438,7 +438,7 @@ public class PaymentActivity extends BaseActivity {
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 progressDialog.dismiss();
-                EventBus.getDefault().post(new NoNetPayBack(commitPrice, Double.parseDouble(earnEdit.getText().toString()), cutPrice, "现金支付"));
+                EventBus.getDefault().post(new NoNetPayBack(commitPrice, earn, cutPrice, "现金支付"));
                 finish();
             }
         });

@@ -121,10 +121,6 @@
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
-            android:name="com.huojumu.main.activity.function.PayByBoxActivity"
-            android:configChanges="keyboard|navigation"
-            android:screenOrientation="landscape" />
-        <activity
             android:name="com.huojumu.main.activity.function.OrdersListActivity"
             android:configChanges="keyboard|navigation"
             android:screenOrientation="landscape" />

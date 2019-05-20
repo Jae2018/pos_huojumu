@@ -1,5 +1,6 @@
 package com.huojumu.main.activity.login;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.CountDownTimer;
@@ -66,14 +67,14 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-
+        progressDialog = new ProgressDialog(this);
         mHandler = new MyHandler(this);
     }
 
     @Override
     protected void initData() {
+        progressDialog.show();
         getCode();
-//        checkInstallPermission();
         NetTool.updateApk(new GsonResponseHandler<UpdateBean>() {
             @Override
             public void onSuccess(int statusCode, UpdateBean response) {
@@ -86,6 +87,12 @@ public class LoginActivity extends BaseActivity {
                         }
                     }, 100);
                 }
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(int statusCode, String code, String error_msg) {
+                progressDialog.dismiss();
             }
         });
     }

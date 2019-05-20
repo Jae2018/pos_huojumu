@@ -95,6 +95,7 @@ public class DownProgressDialog extends BaseDialog {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 1) {
+                updateTv.setText("下载完毕，点击安装黄新版本");
                 update_btn.setVisibility(View.VISIBLE);
                 cancelBtn.setVisibility(View.VISIBLE);
             }

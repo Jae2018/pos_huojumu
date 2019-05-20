@@ -2,6 +2,7 @@ package com.huojumu.main.activity;
 
 
 import android.content.Intent;
+import android.os.Handler;
 
 import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
@@ -14,6 +15,7 @@ import com.tsy.sdk.myokhttp.MyOkHttp;
 public class MainActivity extends BaseActivity {
 
     Intent intent = new Intent();
+    Handler handler = new Handler();
 
     @Override
     protected int setLayout() {
@@ -24,7 +26,7 @@ public class MainActivity extends BaseActivity {
     protected void initView() {
 
         if (SpUtil.getBoolean(Constant.HAS_BAND)) {
-            MyOkHttp.mHandler.postDelayed(new Runnable() {
+            handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     intent.setClass(MainActivity.this, LoginActivity.class);
@@ -33,7 +35,7 @@ public class MainActivity extends BaseActivity {
                 }
             }, 2000);
         } else {
-            MyOkHttp.mHandler.postDelayed(new Runnable() {
+            handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     intent.setClass(MainActivity.this, ActiveActivity.class);

@@ -2,6 +2,7 @@ package com.huojumu.main.activity.home;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,7 +35,6 @@ import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SingleClick;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
-import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -199,6 +199,8 @@ public class PaymentActivity extends BaseActivity {
                 }
             }
         });
+
+        progressDialog = new ProgressDialog(this);
     }
 
     @Override
@@ -402,13 +404,10 @@ public class PaymentActivity extends BaseActivity {
         //客户支付的金额
         final double earn = earnEdit.getText().toString().isEmpty() ? 0 : Double.parseDouble(earnEdit.getText().toString());
 
-
-        ld2 = new LoadingDialog(this);
-        ld2.show();
+        progressDialog.show();
         NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
-                ld2.close();
                 orderNo = response.getData().getOrderNo();
                 orderBack = response.getData();
                 orderBack.setPayType(payType);
@@ -432,11 +431,13 @@ public class PaymentActivity extends BaseActivity {
                     EventBus.getDefault().post(orderBack);
                     finish();
                 }
+
+                progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
-                ld2.close();
+                progressDialog.dismiss();
                 EventBus.getDefault().post(new NoNetPayBack(commitPrice, Double.parseDouble(earnEdit.getText().toString()), cutPrice, "现金支付"));
                 finish();
             }

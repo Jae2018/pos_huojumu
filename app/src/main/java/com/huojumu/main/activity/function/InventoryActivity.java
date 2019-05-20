@@ -1,10 +1,10 @@
 package com.huojumu.main.activity.function;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -16,10 +16,8 @@ import com.huojumu.model.BaseBean;
 import com.huojumu.model.InventoryList;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
-import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
-import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +78,7 @@ public class InventoryActivity extends BaseActivity {
                 i.putExtra("checkId", rowsBeanList.get(position).getCheckId());
             }
         });
-
+        progressDialog = new ProgressDialog(this);
     }
 
     @Override
@@ -89,14 +87,10 @@ public class InventoryActivity extends BaseActivity {
     }
 
     private void getList() {
-        ld2 = new LoadingDialog(this);
-        ld2.setLoadingText("加载中,请等待")
-                .setFailedText("加载失败，请重试");
-        ld2.show();
+        progressDialog.show();
         NetTool.getInventoryList(SpUtil.getInt(Constant.STORE_ID), pageNum, new GsonResponseHandler<BaseBean<InventoryList>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<InventoryList> response) {
-                ld2.close();
                 if (response.getData().getTotal() > 0) {
                     rowsBeanList.addAll(response.getData().getRows()) ;
                     adapter.setNewData(rowsBeanList);
@@ -104,12 +98,13 @@ public class InventoryActivity extends BaseActivity {
                     pageNum++;
                     adapter.setUpFetchEnable(false);
                 }
+                progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(int statusCode,String code, String error_msg) {
                 ToastUtils.showLong("暂无数据");
-                ld2.close();
+                progressDialog.dismiss();
             }
         });
     }

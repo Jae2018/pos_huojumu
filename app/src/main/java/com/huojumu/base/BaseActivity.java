@@ -1,10 +1,8 @@
 package com.huojumu.base;
 
 import android.Manifest;
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -13,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
 import com.huojumu.utils.CustomerEngine;
-import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -28,7 +25,7 @@ import butterknife.ButterKnife;
 public abstract class BaseActivity extends AppCompatActivity {
 
     protected CustomerEngine engine;
-    protected LoadingDialog ld2, ld3;
+    protected ProgressDialog progressDialog;
     public static ArrayList<String> per = new ArrayList<>();
     private String[] permissions = {
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -48,7 +45,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         engine = CustomerEngine.getInstance(getApplicationContext());
         initView();
         initData();
-
     }
 
     protected void checkPermission() {
@@ -80,14 +76,5 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-    public boolean isWifiConnected() {
-        ConnectivityManager mConnectivityManager = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mWiFiNetworkInfo = mConnectivityManager
-                .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (mWiFiNetworkInfo != null) {
-            return mWiFiNetworkInfo.isAvailable();
-        }
-        return false;
-    }
+
 }

@@ -13,8 +13,8 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.huojumu.MyApplication;
 import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
-import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.down.DownProgressDialog;
+import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.main.dialogs.CertainDialog;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.EventHandler;
@@ -33,7 +33,6 @@ import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 
 import java.lang.ref.WeakReference;
 import java.util.Timer;
@@ -74,6 +73,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initData() {
         getCode();
+//        checkInstallPermission();
         NetTool.updateApk(new GsonResponseHandler<UpdateBean>() {
             @Override
             public void onSuccess(int statusCode, UpdateBean response) {
@@ -89,6 +89,25 @@ public class LoginActivity extends BaseActivity {
             }
         });
     }
+
+//    @TargetApi(Build.VERSION_CODES.O)
+//    private void checkInstallPermission(){
+//        boolean haveInstallPermission = getPackageManager().canRequestPackageInstalls();
+//        if(!haveInstallPermission){
+//            //权限没有打开则提示用户去手动打开
+//            Uri packageURI = Uri.parse("package:"+ getPackageName());
+//            Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,packageURI);
+//            startActivityForResult(intent, Constant.INSTALL_PERMISS_CODE);
+//        }
+//    }
+
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (resultCode == RESULT_OK && requestCode == Constant.INSTALL_PERMISS_CODE) {
+//            downProgressDialog.installApk();
+//        }
+//    }
 
     @Override
     protected void onResume() {

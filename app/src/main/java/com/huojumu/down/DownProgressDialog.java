@@ -1,36 +1,46 @@
 package com.huojumu.down;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.huojumu.R;
 import com.huojumu.base.BaseDialog;
-import com.huojumu.utils.LogUtil;
 import com.xuexiang.xaop.annotation.Permission;
 import com.xuexiang.xaop.consts.PermissionConsts;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 public class DownProgressDialog extends BaseDialog {
 
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
+    @BindView(R.id.update_tv)
+    TextView updateTv;
+    @BindView(R.id.update_btn)
+    Button update_btn;
+    @BindView(R.id.cancel_iv)
+    ImageView cancelBtn;
 
-    private String TAG = "DownProgressDialog";
+    private String apkPath;
 
     public DownProgressDialog(@NonNull Context context) {
         super(context);
@@ -61,8 +71,9 @@ public class DownProgressDialog extends BaseDialog {
 
             @Override
             public void complete(String path) {
-                install(path);
-
+                apkPath = path;
+                installApk(path);
+                handler.sendEmptyMessage(1);
             }
 
             @Override
@@ -78,13 +89,36 @@ public class DownProgressDialog extends BaseDialog {
         });
     }
 
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == 1) {
+                update_btn.setVisibility(View.VISIBLE);
+                cancelBtn.setVisibility(View.VISIBLE);
+            }
+        }
+    };
+
+    @OnClick(R.id.update_btn)
+    void install0() {
+        if (apkPath != null) {
+            installApk(apkPath);
+        }
+    }
+
+    @OnClick(R.id.cancel_iv)
+    void cancelIv() {
+        cancel();
+    }
+
     private void installApk(String path) {
         Intent intent = new Intent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse("file://" + path), "application/vnd.android.package-archive");
         getContext().startActivity(intent);
-//        android.os.Process.killProcess(android.os.Process.myPid());
     }
 
     /**

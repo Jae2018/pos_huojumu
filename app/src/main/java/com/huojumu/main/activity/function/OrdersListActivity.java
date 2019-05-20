@@ -1,5 +1,6 @@
 package com.huojumu.main.activity.function;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +16,6 @@ import com.huojumu.model.BaseBean;
 import com.huojumu.model.OrdersList;
 import com.huojumu.utils.NetTool;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
-import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +76,7 @@ public class OrdersListActivity extends BaseActivity {
                 startActivity(i);
             }
         });
-
+        progressDialog = new ProgressDialog(this);
     }
 
     @Override
@@ -85,24 +85,22 @@ public class OrdersListActivity extends BaseActivity {
     }
 
     private void getList() {
-        ld2 = new LoadingDialog(this);
-        ld2.setLoadingText("加载中,请等待");
-        ld2.show();
+        progressDialog.show();
         NetTool.getStoreOrderList(pageNum, new GsonResponseHandler<BaseBean<OrdersList>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrdersList> response) {
-                ld2.close();
                 rowsBeanList.addAll(response.getData().getRows());
                 listAdapter.setNewData(rowsBeanList);
                 totalPAge = response.getData().getTotal();
                 pageNum++;
                 listAdapter.setUpFetching(false);
+                progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(int statusCode,String code, String error_msg) {
                 ToastUtils.showLong(error_msg);
-                ld2.close();
+                progressDialog.dismiss();
             }
         });
     }

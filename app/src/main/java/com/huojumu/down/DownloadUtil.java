@@ -1,8 +1,8 @@
 package com.huojumu.down;
 
-import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.util.Log;
+
+import com.huojumu.utils.Constant;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -38,8 +38,6 @@ public class DownloadUtil {
         okHttpClient = new OkHttpClient.Builder()
                 .build();
     }
-
-    private String TAG = "down";
 
     /**
      * @param listener 下载监听
@@ -116,8 +114,7 @@ public class DownloadUtil {
     }
 
     private File getFile() {
-        String root = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "pos.apk";
-        File file = new File(root);
+        File file = new File(Constant.APK_PATH);
         if (file.exists()) {
             file.delete();
         }

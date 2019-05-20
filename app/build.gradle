@@ -17,7 +17,7 @@ android {
         minSdkVersion 22
         targetSdkVersion 28
         versionCode 1
-        versionName "1.0.1.8"
+        versionName "1.0.2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = ["appid": "aa223", "appse": "s1231", "adsId": ""]
         renderscriptSupportModeEnabled true
@@ -92,7 +92,6 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
-    implementation project(':LoadingDialog')
     //    implementation files('libs/gprintersdkv1.jar')
     implementation project(':myokhttp')
     //    implementation 'com.github.promeg:tinypinyin:2.0.3'

@@ -1,5 +1,6 @@
 package com.huojumu.main.activity.work;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -28,7 +29,6 @@ import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
-import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,6 +139,8 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                 startActivity(i);
             }
         });
+
+        progressDialog = new ProgressDialog(this);
     }
 
     @Override
@@ -184,9 +186,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     }
 
     private void getTakeOverInfo() {
-        ld2 = new LoadingDialog(this);
-        ld2.setLoadingText("加载中,请等待");
-        ld2.show();
+        progressDialog.show();
         NetTool.getDailyInfo(SpUtil.getInt(Constant.STORE_ID), SpUtil.getInt(Constant.PINPAI_ID), page, 0, new GsonResponseHandler<BaseBean<DailyInfo>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<DailyInfo> response) {
@@ -210,12 +210,12 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                     page++;
                 }
                 swipeRefreshLayout.setRefreshing(false);
-                ld2.close();
+                progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
-                ld2.close();
+                progressDialog.dismiss();
                 if (!code.equals("2")) {
                     ToastUtils.showLong("网络已断开，请检查联网状态");
                 }
@@ -224,9 +224,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     }
 
     private void getDailyInfo() {
-        ld2 = new LoadingDialog(this);
-        ld2.setLoadingText("加载中,请等待");
-        ld2.show();
+        progressDialog.show();
         NetTool.getSettlementInfo(SpUtil.getInt(Constant.STORE_ID), page, new GsonResponseHandler<BaseBean<DailyInfo>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<DailyInfo> response) {
@@ -250,12 +248,12 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                     page++;
                 }
                 swipeRefreshLayout.setRefreshing(false);
-                ld2.close();
+                progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
-                ld2.close();
+                progressDialog.dismiss();
                 commit.setEnabled(false);
                 if (!code.equals("2")) {
                     ToastUtils.showLong("网络已断开，请检查联网状态");
@@ -265,9 +263,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     }
 
     private void TakeOver() {
-        ld2 = new LoadingDialog(this);
-        ld2.setLoadingText("加载中,请等待");
-        ld2.show();
+        progressDialog.show();
         NetTool.takeOver(timestamp, new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
@@ -278,12 +274,12 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                 } else {
                     ToastUtils.showLong(response.getMsg());
                 }
-                ld2.close();
+                progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
-                ld2.close();
+                progressDialog.dismiss();
                 if (!code.equals("2")) {
                     ToastUtils.showLong("网络已断开，请检查联网状态");
                 }
@@ -292,9 +288,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     }
 
     private void daily() {
-        ld2 = new LoadingDialog(this);
-        ld2.setLoadingText("加载中,请等待");
-        ld2.show();
+        progressDialog.show();
         NetTool.settlement(SpUtil.getInt(Constant.STORE_ID), new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {
@@ -304,12 +298,12 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                     ToastUtils.showLong("日结成功！30秒后系统将自动关闭");
                     finish();
                 }
-                ld2.close();
+                progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
-                ld2.close();
+                progressDialog.dismiss();
                 if (code.equals("2")) {
                     ToastUtils.showLong("存在未交班订单,不能进行日结");
                 } else {

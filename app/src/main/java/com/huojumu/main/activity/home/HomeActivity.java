@@ -1,6 +1,7 @@
 package com.huojumu.main.activity.home;
 
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -90,7 +91,6 @@ import com.tools.command.EscCommand;
 import com.tools.command.LabelCommand;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
-import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -389,6 +389,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         cashPayDialog = new CashPayDialog(this, this);
         initSpeaker();
 
+        progressDialog = new ProgressDialog(HomeActivity.this);
+        progressDialog.setTitle("正在连接外接设备，请等待");
     }
 
     @Override
@@ -556,10 +558,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * 加载数据
      */
     private void loadData() {
-        ld2 = new LoadingDialog(this);
-        ld2.setLoadingText("加载中...")
-                .setFailedText("加载失败，请重试");
-        ld2.show();
+        progressDialog.show();
         getAdsList();
         getTypeList();
         getProList("0");
@@ -571,13 +570,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     private void tryFinish() {
         if (b1 && b2 && b3 && b4) {
-            ld2.close();
+            progressDialog.dismiss();
         }
         MyOkHttp.mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (ld2 != null) {
-                    ld2.close();
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
                 }
             }
         }, 5000);
@@ -1443,20 +1442,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         break;
                     //Usb连接断开、蓝牙连接断开广播
                     case ACTION_USB_DEVICE_DETACHED:
-//                    Log.e(TAG, "onReceive: ACTION_USB_DEVICE_DETACHED");
                         break;
                     //Usb连接断开、蓝牙连接广播
                     case ACTION_USB_DEVICE_ATTACHED:
-//                    Log.e(TAG, "onReceive: ACTION_USB_DEVICE_ATTACHED");
                         final String deviceName = UsbUtil.getBQName(HomeActivity.this);
                         final String xpName = UsbUtil.getXPName(HomeActivity.this);
-
                         if (!deviceName.isEmpty() || !xpName.isEmpty()) {
-                            if (ld3 == null) {
-                                ld3 = new LoadingDialog(HomeActivity.this);
-                            }
-                            ld3.setLoadingText("正在连接外接设备，请等待");
-                            ld3.show();
+                            progressDialog.show();
                             //先主动调用断开连接，释放端口
                             DeviceConnFactoryManager.closeAllPort();
                             PrinterUtil.disconnectPrinter();
@@ -1470,14 +1462,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                                     } catch (Exception e) {
 //                                    Log.e("thread", e.getMessage());
                                     }
-                                    ld3.close();
+                                    progressDialog.dismiss();
                                 }
                             }, 6000);
                             MyOkHttp.mHandler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (ld3 != null) {
-                                        ld3.close();
+                                    if (progressDialog != null && progressDialog.isShowing()) {
+                                        progressDialog.dismiss();
                                     }
                                 }
                             }, 7000);

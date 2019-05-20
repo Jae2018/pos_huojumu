@@ -1,7 +1,6 @@
 package com.huojumu.utils;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
@@ -15,7 +14,6 @@ import com.huojumu.model.Production;
 import com.szsicod.print.escpos.PrinterAPI;
 import com.szsicod.print.io.USBAPI;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -385,7 +383,6 @@ public class PrinterUtil {
                     mPrinter.printString(s);
 
                     //实线
-                    mPrinter.setAlignMode(1);
                     mPrinter.printRasterBitmap(MyApplication.getLine1());
 
                     //员工名 + 时间

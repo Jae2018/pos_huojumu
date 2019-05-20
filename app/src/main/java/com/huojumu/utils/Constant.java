@@ -1,5 +1,9 @@
 package com.huojumu.utils;
 
+import android.os.Environment;
+
+import java.io.File;
+
 /**
  * @author : Jie
  * Date: 2018/5/25
@@ -28,7 +32,8 @@ public interface Constant {
     String HTML = "HTML";
     String WORK_P = "woeker_p";
     String ORDER_NUM = "orderNum";
-
+    String APK_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "download" + File.separator + "pos.apk";
+    int INSTALL_PERMISS_CODE = 0x100;
     String SERVICE_ACTION = "newServiceAction";
 
     /* network params */

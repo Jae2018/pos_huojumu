@@ -1,5 +1,6 @@
 package com.huojumu.main.activity.function;
 
+import android.app.ProgressDialog;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +14,6 @@ import com.huojumu.model.BaseBean;
 import com.huojumu.model.OrderDetails;
 import com.huojumu.utils.NetTool;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
-import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -49,7 +49,7 @@ public class OrderDetailActivity extends BaseActivity {
         contentAdapter = new OrderBackContentAdapter(null);
         detailRecycler.setAdapter(contentAdapter);
         id = getIntent().getStringExtra("detailId");
-
+        progressDialog = new ProgressDialog(this);
     }
 
     @Override
@@ -58,13 +58,10 @@ public class OrderDetailActivity extends BaseActivity {
     }
 
     private void getOrderDetail(String orderId) {
-        ld2 = new LoadingDialog(this);
-        ld2.setLoadingText("加载中,请等待");
-        ld2.show();
+        progressDialog.show();
         NetTool.getOrderInfo(orderId, new GsonResponseHandler<BaseBean<OrderDetails>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrderDetails> response) {
-                ld2.close();
                 if (response.getData().getOperator() != null) {
                     buyer.setText(String.format("操作人员：%s", response.getData().getOperator().getNickname()));
                 }
@@ -77,12 +74,13 @@ public class OrderDetailActivity extends BaseActivity {
                 if (refreshLayout.isRefreshing()) {
                     refreshLayout.setRefreshing(false);
                 }
+                progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(int statusCode,String code, String error_msg) {
                 ToastUtils.showLong(error_msg);
-                ld2.close();
+                progressDialog.dismiss();
             }
         });
     }

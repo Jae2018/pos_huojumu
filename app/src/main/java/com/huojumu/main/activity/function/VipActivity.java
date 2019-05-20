@@ -1,5 +1,6 @@
 package com.huojumu.main.activity.function;
 
+import android.app.ProgressDialog;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
@@ -15,7 +16,6 @@ import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
-import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,6 @@ public class VipActivity extends BaseActivity {
 
     private List<VipListBean.RowsBean> vips = new ArrayList<>();
     private VipListAdapter adapter;
-    //
     private int pageNum = 1;
 
     @Override
@@ -52,7 +51,7 @@ public class VipActivity extends BaseActivity {
         DividerItemDecoration decoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         decoration.setDrawable(getResources().getDrawable(R.drawable.divider_v));
         recyclerView.addItemDecoration(decoration);
-
+        progressDialog = new ProgressDialog(this);
         adapter = new VipListAdapter(vips);
         recyclerView.setAdapter(adapter);
 
@@ -61,7 +60,6 @@ public class VipActivity extends BaseActivity {
             public void onRefresh() {
                 pageNum = 1;
                 getVipList();
-
             }
         });
 
@@ -88,30 +86,28 @@ public class VipActivity extends BaseActivity {
     }
 
     private void getVipList() {
-        ld2 = new LoadingDialog(this);
-        ld2.show();
+        progressDialog.show();
         NetTool.getVipList(SpUtil.getInt(Constant.PINPAI_ID), pageNum, new GsonResponseHandler<BaseBean<VipListBean>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<VipListBean> response) {
-                ld2.close();
                 if (!response.getData().getRows().isEmpty()) {
                     vips.addAll(response.getData().getRows());
                     adapter.setNewData(vips);
                 }
                 pageNum++;
                 swipe.setRefreshing(false);
+                progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(int statusCode,String code, String error_msg) {
-                ld2.close();
+                progressDialog.dismiss();
             }
         });
     }
 
     @OnClick(R.id.iv_back)
     void back() {
-//        startActivity(new Intent(VipActivity.this, HomeActivity.class));
         finish();
     }
 

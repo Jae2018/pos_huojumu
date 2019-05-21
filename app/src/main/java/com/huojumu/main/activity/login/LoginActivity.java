@@ -97,10 +97,9 @@ public class LoginActivity extends BaseActivity {
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
+    @OnClick(R.id.tv_back_bind)
+    void backBind(){
+        startActivity(new Intent(this,ActiveActivity.class));
     }
 
     //    @TargetApi(Build.VERSION_CODES.O)

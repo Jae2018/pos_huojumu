@@ -5,18 +5,11 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
-import com.huojumu.down.DownProgressDialog;
-import com.huojumu.main.activity.login.LoginActivity;
-import com.huojumu.model.UpdateBean;
 import com.huojumu.utils.Constant;
-import com.huojumu.utils.NetTool;
 import com.huojumu.utils.SpUtil;
 import com.huojumu.utils.UpdateTool;
-import com.tsy.sdk.myokhttp.MyOkHttp;
-import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
 import java.io.File;
 
@@ -37,7 +30,7 @@ public class SettingActivity extends BaseActivity {
     @BindView(R.id.tv_app_version)
     TextView versionTv;
 
-    private DownProgressDialog downProgressDialog;
+//    private DownProgressDialog downProgressDialog;
 
     @Override
     protected int setLayout() {
@@ -119,27 +112,27 @@ public class SettingActivity extends BaseActivity {
         return true;
     }
 
-    @OnClick(R.id.tv_update)
-    void update() {
-        NetTool.updateApk(new GsonResponseHandler<UpdateBean>() {
-            @Override
-            public void onSuccess(int statusCode, UpdateBean response) {
-                if (!UpdateTool.getLocalVersionName(SettingActivity.this).equals(response.getVersionNum())) {
-                    MyOkHttp.mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            downProgressDialog = new DownProgressDialog(SettingActivity.this);
-                            downProgressDialog.setCancelable(false);
-                            downProgressDialog.show();
-                        }
-                    }, 500);
-                } else {
-                    ToastUtils.showLong("已是最新版本");
-                }
-            }
-        });
-
-    }
+//    @OnClick(R.id.tv_update)
+//    void update() {
+//        NetTool.updateApk(new GsonResponseHandler<UpdateBean>() {
+//            @Override
+//            public void onSuccess(int statusCode, UpdateBean response) {
+//                if (!UpdateTool.getLocalVersionName(SettingActivity.this).equals(response.getVersionNum())) {
+//                    MyOkHttp.mHandler.postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            downProgressDialog = new DownProgressDialog(SettingActivity.this);
+//                            downProgressDialog.setCancelable(false);
+//                            downProgressDialog.show();
+//                        }
+//                    }, 500);
+//                } else {
+//                    ToastUtils.showLong("已是最新版本");
+//                }
+//            }
+//        });
+//
+//    }
 
     @OnClick(R.id.iv_back)
     void back() {
@@ -149,10 +142,10 @@ public class SettingActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (downProgressDialog != null) {
-            downProgressDialog.cancel();
-            downProgressDialog = null;
-        }
+//        if (downProgressDialog != null) {
+//            downProgressDialog.cancel();
+//            downProgressDialog = null;
+//        }
     }
 
 }

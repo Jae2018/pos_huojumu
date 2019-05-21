@@ -390,7 +390,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         initSpeaker();
 
         progressDialog = new ProgressDialog(HomeActivity.this);
-        progressDialog.setTitle("正在连接外接设备，请等待");
+
     }
 
     @Override
@@ -559,6 +559,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     private void loadData() {
         progressDialog.show();
+        progressDialog.setTitle("加载中...");
         getAdsList();
         getTypeList();
         getProList("0");
@@ -881,8 +882,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         if (SpUtil.getBoolean("from_Login")) {
             SpUtil.save("from_Login", false);
             workNameTv.setText(SpUtil.getString(Constant.WORKER_NAME));
-            earnTv.setText(String.format(Locale.CHINA, "%.1f元", 0.0));
-            orderNumTv.setText(String.format(Locale.CHINA, "%d单", 0));
+            earnTv.setText(String.format(Locale.CHINA, "%.1f元", SpUtil.getFloat(Constant.WORK_P)));
+            orderNumTv.setText(String.format(Locale.CHINA, "%d单", SpUtil.getInt(Constant.ORDER_NUM)));
             resetAllData();
         }
     }
@@ -1449,6 +1450,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         final String xpName = UsbUtil.getXPName(HomeActivity.this);
                         if (!deviceName.isEmpty() || !xpName.isEmpty()) {
                             progressDialog.show();
+                            progressDialog.setTitle("正在连接外接设备，请等待");
                             //先主动调用断开连接，释放端口
                             DeviceConnFactoryManager.closeAllPort();
                             PrinterUtil.disconnectPrinter();

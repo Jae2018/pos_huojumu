@@ -26,6 +26,7 @@ public class DownloadUtil {
 
     private static DownloadUtil downloadUtil;
     private final OkHttpClient okHttpClient;
+    private static Call call;
 
     public static DownloadUtil get() {
         if (downloadUtil == null) {
@@ -37,6 +38,10 @@ public class DownloadUtil {
     private DownloadUtil() {
         okHttpClient = new OkHttpClient.Builder()
                 .build();
+    }
+
+    static void cancelRequest(){
+        call.cancel();
     }
 
     /**
@@ -59,7 +64,8 @@ public class DownloadUtil {
         okHttpClient.newBuilder().addNetworkInterceptor(interceptor)
                 .sslSocketFactory(createTrustAllSSLFactory(manager), manager);
 
-        okHttpClient.newCall(request).enqueue(new Callback() {
+        call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 // 下载失败

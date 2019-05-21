@@ -97,7 +97,13 @@ public class LoginActivity extends BaseActivity {
         });
     }
 
-//    @TargetApi(Build.VERSION_CODES.O)
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+    }
+
+    //    @TargetApi(Build.VERSION_CODES.O)
 //    private void checkInstallPermission(){
 //        boolean haveInstallPermission = getPackageManager().canRequestPackageInstalls();
 //        if(!haveInstallPermission){

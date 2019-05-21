@@ -44,14 +44,6 @@ public class SpUtil {
         return sp.getInt(key, Constant.DEFAULT_INT);
     }
 
-    public static int getInt2(String key){
-        return sp.getInt(key, 0);
-    }
-
-    public static int getOrderId(String key){
-        return sp.getInt(key, Constant.DEFAULT_INT);
-    }
-
     public static boolean getBoolean(String key){
         return sp.getBoolean(key, false);
     }

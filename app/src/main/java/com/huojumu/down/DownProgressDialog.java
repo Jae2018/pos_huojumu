@@ -83,10 +83,20 @@ public class DownProgressDialog extends BaseDialog {
 
             @Override
             public void loadFail(String message) {
-                ToastUtils.showLong("下载失败，请稍后再试");
+                if (message.equals("timeout")) {
+                    ToastUtils.showLong("网络超时，请检查网络状态");
+                } else {
+                    ToastUtils.showLong("已取消下载更新");
+                }
                 cancel();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        DownloadUtil.cancelRequest();
     }
 
     @SuppressLint("HandlerLeak")

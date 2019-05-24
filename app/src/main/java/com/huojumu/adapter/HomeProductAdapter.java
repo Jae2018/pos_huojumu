@@ -26,9 +26,7 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
     @Override
     protected void convert(BaseViewHolder helper, Production item) {
         ImageView iv = helper.getView(R.id.iv_product_url);
-        if (!item.getImgs().isEmpty()) {
-            GlideApp.with(mContext).load(item.getImgs().get(0).getPath()).placeholder(R.drawable.placeholder).fallback(R.drawable.placeholder).into(iv);
-        }
+        GlideApp.with(mContext).load(item.getImgs().get(0).getPath()).fallback(R.drawable.placeholder).into(iv);
 
         helper.setText(R.id.tv_product_name, item.getProName())
                 .setText(R.id.tv_product_cut, String.valueOf(item.getMinPrice()));

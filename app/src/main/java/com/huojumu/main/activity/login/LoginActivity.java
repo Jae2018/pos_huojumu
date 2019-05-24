@@ -1,6 +1,5 @@
 package com.huojumu.main.activity.login;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.CountDownTimer;
@@ -16,7 +15,6 @@ import com.huojumu.R;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.down.DownProgressDialog;
 import com.huojumu.main.activity.home.HomeActivity;
-import com.huojumu.main.dialogs.CertainDialog;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.EventHandler;
 import com.huojumu.model.NetErrorHandler;
@@ -52,7 +50,7 @@ public class LoginActivity extends BaseActivity {
 
     private CountDownTimer countDownTimer;
     private DownProgressDialog downProgressDialog;
-    private CertainDialog dialog;
+//    private CertainDialog dialog;
     //重连socket消息flag
     private static final int RECONNECT_SOCKET = 2;
     //重连次数
@@ -67,7 +65,6 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-        progressDialog = new ProgressDialog(this);
         mHandler = new MyHandler(this);
     }
 
@@ -98,8 +95,8 @@ public class LoginActivity extends BaseActivity {
     }
 
     @OnClick(R.id.tv_back_bind)
-    void backBind(){
-        startActivity(new Intent(this,ActiveActivity.class));
+    void backBind() {
+        startActivity(new Intent(this, ActiveActivity.class));
     }
 
     //    @TargetApi(Build.VERSION_CODES.O)
@@ -175,18 +172,18 @@ public class LoginActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLogin(EventHandler eventHandler) {
-        if (eventHandler.getType() == 3) {
-            SpUtil.save("from_Login", true);
-            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-            finish();
-        } else {
-            if (dialog == null) {
-                dialog = new CertainDialog(this);
-            }
-            dialog.show();
-            dialog.setText("注意！", "您当前无法登陆，上一班次未正常交班\n请联系 "
-                    + eventHandler.getUserName() + " 完成交班\n联系电话：" + eventHandler.getMobile());
-        }
+//        if (eventHandler.getType() == 3) {
+        SpUtil.save("from_Login", true);
+        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+        finish();
+//        } else {
+//            if (dialog == null) {
+//                dialog = new CertainDialog(this);
+//            }
+//            dialog.show();
+//            dialog.setText("注意！", "您当前无法登陆，上一班次未正常交班\n请联系 "
+//                    + eventHandler.getUserName() + " 完成交班\n联系电话：" + eventHandler.getMobile());
+//        }
     }
 
     @Override

@@ -289,8 +289,8 @@
             android:id="@+id/iv_has_gua_dan"
             android:layout_width="@dimen/d_10"
             android:layout_height="@dimen/d_10"
-            android:layout_marginTop="@dimen/d_4"
             android:layout_marginStart="@dimen/d_90"
+            android:layout_marginTop="@dimen/d_4"
             android:contentDescription="@string/des"
             android:src="@drawable/shape_circle_red"
             android:visibility="invisible" />
@@ -390,6 +390,13 @@
             android:layout_height="@dimen/d_640"
             android:layout_marginTop="@dimen/d_48"
             android:overScrollMode="never" />
+
+        <!--<android.support.v4.view.ViewPager-->
+            <!--android:id="@+id/viewpager"-->
+            <!--android:layout_width="@dimen/d_700"-->
+            <!--android:layout_height="@dimen/d_640"-->
+            <!--android:layout_marginTop="@dimen/d_48"-->
+            <!--android:overScrollMode="never" />-->
 
         <LinearLayout
             android:id="@+id/btn_search"

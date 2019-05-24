@@ -139,8 +139,6 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                 startActivity(i);
             }
         });
-
-        progressDialog = new ProgressDialog(this);
     }
 
     @Override

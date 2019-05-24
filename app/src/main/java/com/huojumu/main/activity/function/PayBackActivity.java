@@ -1,11 +1,15 @@
 package com.huojumu.main.activity.function;
 
-import android.app.ProgressDialog;
+import android.app.Activity;
+import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -28,6 +32,7 @@ import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.greendao.annotation.NotNull;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -80,7 +85,6 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
 
     @Override
     protected void initView() {
-        progressDialog = new ProgressDialog(this);
         backRecycler.setLayoutManager(new LinearLayoutManager(this));
         detailRecycler.setLayoutManager(new LinearLayoutManager(this));
         backAdapter = new OrderEnableBackAdapter(null);
@@ -108,6 +112,25 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
 
         p = SpUtil.getFloat(Constant.WORK_P);
         num = SpUtil.getInt(Constant.ORDER_NUM);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s != null && s.length() == 4) {
+                    getEnableBackOrderList();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     @Override
@@ -127,14 +150,25 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
             public void onSuccess(int statusCode, BaseBean<OrderEnableBackBean> response) {
                 backAdapter.setNewData(response.getData().getOrders());
                 progressDialog.dismiss();
+                hideSoftKeyboard(PayBackActivity.this, editText);
+                editText.setText("");
             }
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
-                ToastUtils.showLong("订单信息有误");
+                ToastUtils.showLong("订单信息有误！");
                 progressDialog.dismiss();
+                editText.setText("");
             }
         });
+    }
+
+    /**
+     * 隐藏软键盘(可用于Activity，Fragment)
+     */
+    public static void hideSoftKeyboard(Context context, @NotNull View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     private void getOrderDetail(String orderId) {
@@ -169,10 +203,10 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
         });
     }
 
-    @OnClick(R.id.iv_search_order)
-    void search() {
-        getEnableBackOrderList();
-    }
+//    @OnClick(R.id.iv_search_order)
+//    void search() {
+//        getEnableBackOrderList();
+//    }
 
     @OnClick(R.id.iv_back)
     void back() {
@@ -205,6 +239,7 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
                     float price = (float) (p - total);
                     num = num - 1;
                     EventBus.getDefault().post(new WorkBean(num, price));
+                    ToastUtils.showLong("退单成功！");
                 } else {
                     ToastUtils.showLong(response.getMsg());
                 }
@@ -228,6 +263,9 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
         priceTv.setText("订单金额：");
         dateTv.setText("订单日期：");
         payTypeTv.setText("支付方式：");
+        operator.setText(String.format("操作员工：%s", ""));
+        join.setText(String.format("员工入职时间：%s", ""));
+        backAdapter.setNewData(null);
     }
 
 }

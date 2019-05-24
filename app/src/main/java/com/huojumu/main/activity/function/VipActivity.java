@@ -38,6 +38,7 @@ public class VipActivity extends BaseActivity {
     private List<VipListBean.RowsBean> vips = new ArrayList<>();
     private VipListAdapter adapter;
     private int pageNum = 1;
+    private int totalPages = 1;
 
     @Override
     protected int setLayout() {
@@ -51,7 +52,6 @@ public class VipActivity extends BaseActivity {
         DividerItemDecoration decoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         decoration.setDrawable(getResources().getDrawable(R.drawable.divider_v));
         recyclerView.addItemDecoration(decoration);
-        progressDialog = new ProgressDialog(this);
         adapter = new VipListAdapter(vips);
         recyclerView.setAdapter(adapter);
 
@@ -67,7 +67,7 @@ public class VipActivity extends BaseActivity {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (manager.findLastVisibleItemPosition() + 2 >= manager.getChildCount()) {
+                if (manager.findLastVisibleItemPosition() + 2 >= manager.getChildCount() && pageNum <= totalPages) {
                     getVipList();
                 }
             }
@@ -94,6 +94,7 @@ public class VipActivity extends BaseActivity {
                     vips.addAll(response.getData().getRows());
                     adapter.setNewData(vips);
                 }
+                totalPages = response.getData().getPageNum();
                 pageNum++;
                 swipe.setRefreshing(false);
                 progressDialog.dismiss();

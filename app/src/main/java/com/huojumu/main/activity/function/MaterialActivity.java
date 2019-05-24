@@ -53,7 +53,6 @@ public class MaterialActivity extends BaseActivity {
         recycler_material.addItemDecoration(decoration);
         adapter = new MaterialAdapter(null);
         recycler_material.setAdapter(adapter);
-        progressDialog = new ProgressDialog(this);
     }
 
     @Override

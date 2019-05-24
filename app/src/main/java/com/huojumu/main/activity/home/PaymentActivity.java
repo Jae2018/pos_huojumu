@@ -199,8 +199,6 @@ public class PaymentActivity extends BaseActivity {
                 }
             }
         });
-
-        progressDialog = new ProgressDialog(this);
     }
 
     @Override

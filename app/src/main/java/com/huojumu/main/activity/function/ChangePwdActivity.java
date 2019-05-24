@@ -33,7 +33,7 @@ public class ChangePwdActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        progressDialog = new ProgressDialog(this);
+
     }
 
     @Override

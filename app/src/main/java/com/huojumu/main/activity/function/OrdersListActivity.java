@@ -76,7 +76,6 @@ public class OrdersListActivity extends BaseActivity {
                 startActivity(i);
             }
         });
-        progressDialog = new ProgressDialog(this);
     }
 
     @Override

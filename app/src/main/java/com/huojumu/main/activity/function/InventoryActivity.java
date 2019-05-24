@@ -78,7 +78,6 @@ public class InventoryActivity extends BaseActivity {
                 i.putExtra("checkId", rowsBeanList.get(position).getCheckId());
             }
         });
-        progressDialog = new ProgressDialog(this);
     }
 
     @Override

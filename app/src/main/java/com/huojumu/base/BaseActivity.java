@@ -42,6 +42,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(setLayout());
         ButterKnife.bind(this);
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
         engine = CustomerEngine.getInstance(getApplicationContext());
         initView();
         initData();

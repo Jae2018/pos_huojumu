@@ -38,13 +38,13 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/d_10">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_for_vip"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/d_10"
             android:overScrollMode="never"
             android:paddingLeft="@dimen/d_10"
             android:paddingRight="@dimen/d_10" />

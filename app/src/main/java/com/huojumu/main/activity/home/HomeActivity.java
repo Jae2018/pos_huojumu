@@ -122,7 +122,7 @@ import static com.huojumu.utils.DeviceConnFactoryManager.CONN_STATE_FAILED;
 
 
 public class HomeActivity extends BaseActivity implements DialogInterface, SocketBack,
-        SingleProCallback, PagingScrollHelper.onPageChangeListener {
+        SingleProCallback {
 
     //下单列表
     @BindView(R.id.recyclerView)
@@ -133,6 +133,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //商品列表
     @BindView(R.id.recyclerView3)
     RecyclerView rBottom;
+//    @BindView(R.id.viewpager)
+//    ViewPager viewPager;
     //总数量
     @BindView(R.id.total_number)
     TextView total_number;
@@ -389,8 +391,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         cashPayDialog = new CashPayDialog(this, this);
         initSpeaker();
 
-        progressDialog = new ProgressDialog(HomeActivity.this);
-
     }
 
     @Override
@@ -571,7 +571,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     private void tryFinish() {
         if (b1 && b2 && b3 && b4) {
-            progressDialog.dismiss();
+            MyOkHttp.mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                }
+            }, 2000);
         }
         MyOkHttp.mHandler.postDelayed(new Runnable() {
             @Override
@@ -657,6 +664,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         productAdapter.setNewData(tempProduces);
                         b3 = true;
                         tryFinish();
+                        totalPage = response.getData().size() % 12 > 0 ? response.getData().size() / 12 + 1 : response.getData().size() / 12;
                     }
 
                     @Override
@@ -1516,11 +1524,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         unregisterReceiver(receiver);
     }
 
-    @Override
-    public void onPageChange(int index) {
-
-    }
-
     @SingleClick(500)
     @OnClick(R.id.btn_up)
     void btnUp() {
@@ -1529,15 +1532,19 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             pageNo = 0;
         }
         scrollHelper.scrollToPosition(pageNo);
+//        rBottom.scrollToPosition(pageNo * 12);
     }
+
+    int totalPage = 1;
 
     @SingleClick(500)
     @OnClick(R.id.btn_next)
     void btnNext() {
         pageNo++;
-        if (pageNo > scrollHelper.getPageCount()) {
-            pageNo = scrollHelper.getPageCount();
+        if (pageNo > totalPage) {
+            pageNo = totalPage;
         }
+//        rBottom.scrollToPosition(pageNo * 12);
         scrollHelper.scrollToPosition(pageNo);
     }
 

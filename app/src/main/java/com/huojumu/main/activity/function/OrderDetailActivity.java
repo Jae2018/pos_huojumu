@@ -49,7 +49,6 @@ public class OrderDetailActivity extends BaseActivity {
         contentAdapter = new OrderBackContentAdapter(null);
         detailRecycler.setAdapter(contentAdapter);
         id = getIntent().getStringExtra("detailId");
-        progressDialog = new ProgressDialog(this);
     }
 
     @Override

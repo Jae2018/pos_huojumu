@@ -54,6 +54,7 @@
                 android:layout_marginStart="@dimen/d_1"
                 android:layout_marginEnd="@dimen/d_1"
                 android:background="@drawable/input_border"
+                android:maxLength="4"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:gravity="center"

@@ -132,7 +132,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //商品列表
     @BindView(R.id.recyclerView3)
     RecyclerView rBottom;
-//    @BindView(R.id.viewpager)
+    //    @BindView(R.id.viewpager)
 //    ViewPager viewPager;
     //总数量
     @BindView(R.id.total_number)
@@ -336,7 +336,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     m = 1;
                     for (Production p : tempProduces) {
                         if (typeAdapter.getData().get(position).getId() == p.getTypeId()) {
-                            typeList.add(p);
+                            if (searchStr.isEmpty()) {
+                                typeList.add(p);
+                            } else {
+                                if (p.getProAlsname().contains(searchStr)) {
+                                    typeList.add(p);
+                                }
+                            }
                         }
                     }
                     productAdapter.setNewData(typeList);
@@ -481,17 +487,18 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @SingleClick
     @OnClick(R.id.input_clear_btn)
     void inputClear() {
-        if (!searchStr.isEmpty()) {
-            edit_search.setText("");
-            searchStr = "";
-            searchList.clear();
-            if (typeList.isEmpty()) {
-                m = 0;
-                productAdapter.setNewData(tempProduces);
-            } else {
-                m = 1;
-                productAdapter.setNewData(typeList);
-            }
+        if (searchStr.isEmpty()) {
+            return;
+        }
+        edit_search.setText("");
+        searchStr = "";
+        searchList.clear();
+        if (typeList.isEmpty()) {
+            m = 0;
+            productAdapter.setNewData(tempProduces);
+        } else {
+            m = 1;
+            productAdapter.setNewData(typeList);
         }
     }
 
@@ -1392,9 +1399,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         // 绘制简体中文
         tsc.addText(0, 0, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.STORE_NAME) + "\n");
-        tsc.addText(90, 32, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(70, 32, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 pName + "\n");
-        tsc.addText(90, 62, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(70, 62, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 proNameEn + "\n");
         if (matStr == null || matStr.isEmpty()) {
             matStr = "默认加料";

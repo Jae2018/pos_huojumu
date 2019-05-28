@@ -1,12 +1,12 @@
 package com.huojumu.main.activity.work;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -27,6 +27,7 @@ import com.huojumu.model.DailyInfo;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
 import com.huojumu.utils.PrinterUtil;
+import com.huojumu.utils.SocketTool;
 import com.huojumu.utils.SpUtil;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
@@ -139,6 +140,8 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                 startActivity(i);
             }
         });
+
+        ToastUtils.setGravity(Gravity.CENTER, 0, 0);
     }
 
     @Override
@@ -152,7 +155,8 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
     @OnClick(R.id.btn_work_daily_cancel)
     void Cancel() {
-        startActivity(new Intent(DailyTakeOverActivity.this, HomeActivity.class));
+//        startActivity(new Intent(DailyTakeOverActivity.this, HomeActivity.class));
+        finish();
     }
 
     @OnClick(R.id.btn_work_daily_ok)
@@ -214,8 +218,10 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 progressDialog.dismiss();
-                if (!code.equals("2")) {
+                if (!SocketTool.getInstance().isAlive()) {
                     ToastUtils.showLong("网络已断开，请检查联网状态");
+                } else {
+                    ToastUtils.showLong(error_msg);
                 }
             }
         });
@@ -253,7 +259,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             public void onFailure(int statusCode, String code, String error_msg) {
                 progressDialog.dismiss();
                 commit.setEnabled(false);
-                if (!code.equals("2")) {
+                if (SocketTool.getInstance().isAlive()) {
+                    ToastUtils.showLong(error_msg);
+                } else {
                     ToastUtils.showLong("网络已断开，请检查联网状态");
                 }
             }
@@ -278,7 +286,9 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 progressDialog.dismiss();
-                if (!code.equals("2")) {
+                if (SocketTool.getInstance().isAlive()) {
+                    ToastUtils.showLong(error_msg);
+                } else {
                     ToastUtils.showLong("网络已断开，请检查联网状态");
                 }
             }
@@ -302,10 +312,10 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 progressDialog.dismiss();
-                if (code.equals("2")) {
-                    ToastUtils.showLong("存在未交班订单,不能进行日结");
+                if (SocketTool.getInstance().isAlive()) {
+                    ToastUtils.showLong(error_msg);
                 } else {
-                    ToastUtils.showLong("网络错误，请稍后重试");
+                    ToastUtils.showLong("网络已断开，请检查联网状态");
                 }
             }
         });

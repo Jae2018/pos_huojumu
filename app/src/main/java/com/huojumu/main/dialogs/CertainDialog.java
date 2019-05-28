@@ -25,10 +25,6 @@ public class CertainDialog extends BaseDialog {
     private DialogInterface anInterface;
     private String titleStr, conStr;
 
-    public CertainDialog(@NonNull Context context) {
-        super(context);
-    }
-
     public CertainDialog(@NonNull Context context, DialogInterface anInterface,
                          String titleStr, String conStr) {
         super(context);

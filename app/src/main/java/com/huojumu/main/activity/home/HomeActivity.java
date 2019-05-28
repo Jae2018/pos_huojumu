@@ -331,6 +331,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             @SingleClick
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                scrollHelper.scrollToPosition(0);
                 typeList.clear();
                 if (position != 0) {
                     m = 1;
@@ -361,6 +362,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         productAdapter = new HomeProductAdapter(tempProduces);
         rBottom.setLayoutManager(horizontalPageLayoutManager);
         rBottom.setAdapter(productAdapter);
+        rBottom.setOnFlingListener(new RecyclerView.OnFlingListener() {
+            @Override
+            public boolean onFling(int i, int i1) {
+                return false;
+            }
+        });
 
         productAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
 

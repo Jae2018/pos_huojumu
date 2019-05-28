@@ -424,20 +424,22 @@ public class PaymentActivity extends BaseActivity {
                 }
                 orderBack.setCharge(earn - origionalPrice);
                 orderBack.setCut(Double.parseDouble(orderBack.getOrigionTotalPrice()) - Double.parseDouble(orderBack.getTotalPrice()));
+                progressDialog.dismiss();
                 if (payType.equals("900")) {
                     //现金
                     EventBus.getDefault().post(orderBack);
                     finish();
                 }
 
-                progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 progressDialog.dismiss();
-                EventBus.getDefault().post(new NoNetPayBack(commitPrice, earn, cutPrice, "现金支付"));
-                finish();
+                if (payType.equals("900")) {
+                    EventBus.getDefault().post(new NoNetPayBack(commitPrice, earn, cutPrice, "现金支付"));
+                    finish();
+                }
             }
         });
     }

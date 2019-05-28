@@ -108,15 +108,19 @@ public class SocketTool extends WebSocketListener {
                         @Override
                         public void onSuccess(int statusCode, BaseBean<StoreInfo> response) {
                             if (response.getData() != null) {
-                                SpUtil.save(Constant.STORE_ID, response.getData().getShop().getId());
-                                SpUtil.save(Constant.STORE_NAME, response.getData().getShop().getShopName());
-                                SpUtil.save(Constant.STORE_ADDRESS, response.getData().getShop().getAddr());
-                                SpUtil.save(Constant.STORE_TEL, response.getData().getShop().getMobile());
-                                SpUtil.save(Constant.ENT_ID, response.getData().getEnterPrise().getId());
-                                SpUtil.save(Constant.PINPAI_ID, response.getData().getParentEnterPrise().getId());
-                                SpUtil.save(Constant.ENT_NAME, response.getData().getParentEnterPrise().getEntName());
-                                SpUtil.save(Constant.ENT_DIS, response.getData().getParentEnterPrise().getDiscountsType());
-                                SpUtil.save(Constant.HTML, response.getData().getParentEnterPrise().getReceiptTemplate());
+                                try {
+                                    SpUtil.save(Constant.STORE_ID, response.getData().getShop().getId());
+                                    SpUtil.save(Constant.STORE_NAME, response.getData().getShop().getShopName());
+                                    SpUtil.save(Constant.STORE_ADDRESS, response.getData().getShop().getAddr());
+                                    SpUtil.save(Constant.STORE_TEL, response.getData().getShop().getMobile());
+                                    SpUtil.save(Constant.ENT_ID, response.getData().getEnterPrise().getId());
+                                    SpUtil.save(Constant.PINPAI_ID, response.getData().getParentEnterPrise().getId());
+                                    SpUtil.save(Constant.ENT_NAME, response.getData().getParentEnterPrise().getEntName());
+                                    SpUtil.save(Constant.ENT_DIS, response.getData().getParentEnterPrise().getDiscountsType());
+                                    SpUtil.save(Constant.HTML, response.getData().getParentEnterPrise().getReceiptTemplate());
+                                } catch (Exception e) {
+                                    Log.d(TAG, "onSuccess: " + e.getLocalizedMessage());
+                                }
                             }
                             EventBus.getDefault().post(new EventHandler(Constant.LOGIN));
                         }

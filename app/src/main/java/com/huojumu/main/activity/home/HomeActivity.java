@@ -1,7 +1,6 @@
 package com.huojumu.main.activity.home;
 
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -181,6 +180,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private List<Production> gTemp = new ArrayList<>();//挂单商品集合
     //点单商品信息集合
     private List<OrderInfo.DataBean> dataBeans = new ArrayList<>();
+    private List<OrderInfo.DataBean> dataTemp = new ArrayList<>();
     //是否已有挂单
     private boolean hasHoldOn = false;
     private double totalPrice = 0, totalCut;
@@ -794,13 +794,16 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         if (hasHoldOn) {
             Toast.makeText(this, "已显示挂单！", Toast.LENGTH_LONG).show();
             productions.addAll(gTemp);
+            dataBeans.addAll(dataTemp);
             gTemp.clear();
+            dataTemp.clear();
             selectedAdapter.setNewData(productions);//显示挂单数据
             hasHoldOn = false;
             hasGua.setVisibility(View.INVISIBLE);
         } else {
             //将当前数据放入挂单list中
             gTemp.addAll(productions);
+            dataTemp.addAll(dataBeans);
             DeleteAll();
             hasHoldOn = true;
             hasGua.setVisibility(View.VISIBLE);

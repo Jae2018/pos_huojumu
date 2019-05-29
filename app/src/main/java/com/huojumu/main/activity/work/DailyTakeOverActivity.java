@@ -13,13 +13,10 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.greendao.gen.NativeOrdersDao;
-import com.huojumu.MyApplication;
 import com.huojumu.R;
 import com.huojumu.adapter.WorkDailyAdapter;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.function.OrderDetailActivity;
-import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.main.dialogs.CertainDialog;
 import com.huojumu.main.dialogs.DialogInterface;
 import com.huojumu.model.BaseBean;
@@ -77,7 +74,6 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
     private int num = 0;
     private double s1, s2, s3, s4;
     private String lastDate;
-    private NativeOrdersDao ordersDao;
 
     @Override
     protected int setLayout() {
@@ -86,7 +82,6 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
     @Override
     protected void initView() {
-        ordersDao = ((MyApplication) getApplication()).getDaoSession().getNativeOrdersDao();
         types = getIntent().getIntExtra("type", 1);
         title.setText(types == 1 ? "交班" : "日结");
         nameTv.setText(String.format("员工：%s", SpUtil.getString(Constant.WORKER_NAME)));
@@ -155,7 +150,6 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
     @OnClick(R.id.btn_work_daily_cancel)
     void Cancel() {
-//        startActivity(new Intent(DailyTakeOverActivity.this, HomeActivity.class));
         finish();
     }
 
@@ -176,15 +170,13 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
     @Override
     public void OnDialogOkClick(int type, double earn, double cost, double charge, String name) {
-        if (ordersDao.loadAll().isEmpty()) {
-            if (types == 1) {
-                //交班确认回调
-                TakeOver();
-            } else {
-                daily();
-            }
-            PrinterUtil.printDaily(types, commissionTv.getText().toString(), earn2.getText().toString(), earn1.getText().toString(), num, SpUtil.getString(Constant.WORKER_NAME), lastDate);
+        if (types == 1) {
+            //交班确认回调
+            TakeOver();
+        } else {
+            daily();
         }
+        PrinterUtil.printDaily(types, commissionTv.getText().toString(), earn2.getText().toString(), earn1.getText().toString(), num, SpUtil.getString(Constant.WORKER_NAME), lastDate);
     }
 
     private void getTakeOverInfo() {

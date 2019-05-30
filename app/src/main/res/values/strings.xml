@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">ShiTongPOS</string>
+    <string name="app_name" translatable="false">TorchWoodPOS</string>
     <string name="des" translatable="false"> </string>
     <!-- 激活设备页面 -->
     <string name="active_des" translatable="false">请扫面下方二维码绑定设备</string>

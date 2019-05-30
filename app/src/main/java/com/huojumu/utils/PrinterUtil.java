@@ -376,6 +376,7 @@ public class PrinterUtil {
             public void run() {
                 try {
                     mPrinter.set80mm();
+                    mPrinter.setAlignMode(1);
                     //字体变大
                     mPrinter.setCharSize(1, 1);
                     //订单流水号

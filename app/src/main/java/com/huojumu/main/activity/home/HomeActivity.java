@@ -362,12 +362,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         productAdapter = new HomeProductAdapter(tempProduces);
         rBottom.setLayoutManager(horizontalPageLayoutManager);
         rBottom.setAdapter(productAdapter);
-        rBottom.setOnFlingListener(new RecyclerView.OnFlingListener() {
-            @Override
-            public boolean onFling(int i, int i1) {
-                return false;
-            }
-        });
 
         productAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
 
@@ -908,7 +902,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             SpUtil.save("from_Login", false);
             workNameTv.setText(SpUtil.getString(Constant.WORKER_NAME));
             earnTv.setText(String.format(Locale.CHINA, "%.1f元", SpUtil.getFloat(Constant.WORK_P)));
-            orderNumTv.setText(String.format(Locale.CHINA, "%d单", SpUtil.getInt(Constant.ORDER_NUM)));
+            orderNumTv.setText(String.format(Locale.CHINA, "%d单", SpUtil.getInt2(Constant.ORDER_NUM)));
             resetAllData();
         }
     }
@@ -1292,13 +1286,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //结算回调，有网
         orderNo = orderBack.getOrderNo();
         setLabelData();
-        PrintOrder(orderBack, null, orderBack.getCharge(), orderBack.getPayType().equals("900") ? "现金支付" : orderBack.getPayType().equals("010") ? "微信支付" : "支付宝支付", Double.parseDouble(orderBack.getTotalPrice()), orderBack.getCut() < 0 ? 0 : orderBack.getCut());
+        PrintOrder(orderBack, null, orderBack.getCharge() < 0 ? 0 : orderBack.getCharge(), orderBack.getPayType().equals("900") ? "现金支付" : orderBack.getPayType().equals("010") ? "微信支付" : "支付宝支付", Double.parseDouble(orderBack.getTotalPrice()), orderBack.getCut() < 0 ? 0 : orderBack.getCut());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void paymentNativeBack(NoNetPayBack noNetPayBack) {
         //结算回调，无网
-        PrintOrder(null, null, noNetPayBack.getCharge(), noNetPayBack.getType(), noNetPayBack.getTotalPrice(), noNetPayBack.getCut() < 0 ? 0 : noNetPayBack.getCut());
+        PrintOrder(null, null, noNetPayBack.getCharge() < 0 ? 0 : orderBack.getCharge(), noNetPayBack.getType(), noNetPayBack.getTotalPrice(), noNetPayBack.getCut() < 0 ? 0 : noNetPayBack.getCut());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -1406,9 +1400,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         // 绘制简体中文
         tsc.addText(0, 0, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.STORE_NAME) + "\n");
-        tsc.addText(70, 32, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(50, 32, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 pName + "\n");
-        tsc.addText(70, 62, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+        tsc.addText(50, 62, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 proNameEn + "\n");
         if (matStr == null || matStr.isEmpty()) {
             matStr = "默认加料";

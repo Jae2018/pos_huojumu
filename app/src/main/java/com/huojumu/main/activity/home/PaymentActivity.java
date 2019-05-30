@@ -2,7 +2,6 @@ package com.huojumu.main.activity.home;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -376,7 +375,7 @@ public class PaymentActivity extends BaseActivity {
     @OnClick(R.id.pay_commit)
     void commitOrder() {
         //非实收金额大于原价减去折扣的金额
-        if (payType.equals("900") && !(ssPrice > (origionalPrice - zkPrice))) {
+        if (payType.equals("900") && !(ssPrice >= (origionalPrice - zkPrice))) {
             ToastUtils.showLong("金额输入有误");
             return;
         }

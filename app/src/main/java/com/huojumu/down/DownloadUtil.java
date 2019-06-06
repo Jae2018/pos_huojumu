@@ -26,7 +26,7 @@ public class DownloadUtil {
 
     private static DownloadUtil downloadUtil;
     private final OkHttpClient okHttpClient;
-    private static Call call;
+    private Call call;
 
     public static DownloadUtil get() {
         if (downloadUtil == null) {
@@ -40,8 +40,10 @@ public class DownloadUtil {
                 .build();
     }
 
-    static void cancelRequest(){
-        call.cancel();
+    void cancelRequest(){
+        if (call != null) {
+            call.cancel();
+        }
     }
 
     /**

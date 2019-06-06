@@ -1278,6 +1278,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         orderNumTv.setText(String.format(Locale.CHINA, "%d单", workBean.getNum()));
         SpUtil.save(Constant.WORK_P, workBean.getPrice());
         SpUtil.save(Constant.ORDER_NUM, workBean.getNum());
+        orderNum = SpUtil.getInt(Constant.ORDER_NUM);
+        woeker_p = SpUtil.getFloat(Constant.WORK_P);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -1419,7 +1421,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 PrinterUtil.getTabTime() + orderNo.substring(orderNo.length() - 4) + "-" + PrinterUtil.getTabHour() + "\n");
         // 绘制图片
         Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.logo9);
-        tsc.addBitmap(235, 40, LabelCommand.BITMAP_MODE.OVERWRITE, 80, b);
+        tsc.addBitmap(235, 40, LabelCommand.BITMAP_MODE.OVERWRITE, 70, b);
         // 打印标签
         tsc.addPrint(1, 1);
         // 打印标签后 蜂鸣器响

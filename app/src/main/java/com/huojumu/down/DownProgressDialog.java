@@ -41,6 +41,7 @@ public class DownProgressDialog extends BaseDialog {
     ImageView cancelBtn;
 
     private String apkPath;
+    private DownloadUtil downloadUtil;
 
     public DownProgressDialog(@NonNull Context context) {
         super(context);
@@ -58,45 +59,46 @@ public class DownProgressDialog extends BaseDialog {
 
     @Permission(PermissionConsts.STORAGE)
     private void downloadApk() {
-        DownloadUtil.get().download(new DownloadListener() {
-            @Override
-            public void start(long max) {
-                progressBar.setMax((int) max);
-            }
+        downloadUtil = DownloadUtil.get();
+        downloadUtil.download(new DownloadListener() {
+                    @Override
+                    public void start(long max) {
+                        progressBar.setMax((int) max);
+                    }
 
-            @Override
-            public void loading(int progress) {
-                progressBar.setProgress(progress);
-            }
+                    @Override
+                    public void loading(int progress) {
+                        progressBar.setProgress(progress);
+                    }
 
-            @Override
-            public void complete(String path) {
-                apkPath = path;
-                installApk(path);
-                handler.sendEmptyMessage(1);
-            }
+                    @Override
+                    public void complete(String path) {
+                        apkPath = path;
+                        installApk(path);
+                        handler.sendEmptyMessage(1);
+                    }
 
-            @Override
-            public void fail(int code, String message) {
-                ToastUtils.showLong("网络连接出错");
-            }
+                    @Override
+                    public void fail(int code, String message) {
+                        ToastUtils.showLong("网络连接出错");
+                    }
 
-            @Override
-            public void loadFail(String message) {
-                if (message.equals("timeout")) {
-                    ToastUtils.showLong("网络超时，请检查网络状态");
-                } else {
-                    ToastUtils.showLong("已取消下载更新");
-                }
-                cancel();
-            }
-        });
+                    @Override
+                    public void loadFail(String message) {
+                        if (message.equals("timeout")) {
+                            ToastUtils.showLong("网络超时，请检查网络状态");
+                        } else {
+                            ToastUtils.showLong("已取消下载更新");
+                        }
+                        cancel();
+                    }
+                });
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        DownloadUtil.cancelRequest();
+        downloadUtil.cancelRequest();
     }
 
     @SuppressLint("HandlerLeak")
@@ -122,6 +124,7 @@ public class DownProgressDialog extends BaseDialog {
     @OnClick(R.id.cancel_iv)
     void cancelIv() {
         cancel();
+        downloadUtil = null;
     }
 
     private void installApk(String path) {
@@ -131,6 +134,8 @@ public class DownProgressDialog extends BaseDialog {
         intent.setDataAndType(Uri.parse("file://" + path), "application/vnd.android.package-archive");
         getContext().startActivity(intent);
     }
+
+
 
     /**
      * 执行具体的静默安装逻辑，需要手机ROOT。

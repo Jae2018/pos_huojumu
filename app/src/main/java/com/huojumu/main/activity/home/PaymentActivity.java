@@ -8,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -374,10 +373,20 @@ public class PaymentActivity extends BaseActivity {
     @SingleClick
     @OnClick(R.id.pay_commit)
     void commitOrder() {
-        //非实收金额大于原价减去折扣的金额
-        if (payType.equals("900") && !(ssPrice >= (origionalPrice - zkPrice))) {
-            ToastUtils.showLong("金额输入有误");
-            return;
+        //现金支付方式
+        if (payType.equals("900")) {
+            //半价
+            if (activesBean != null && activesBean.getPlanType().equals("0")) {
+                if (ssPrice < origionalPrice / 2) {
+                    ToastUtils.showLong("金额输入有误");
+                    return;
+                }
+            } else {
+                if (ssPrice < (origionalPrice - zkPrice)) {
+                    ToastUtils.showLong("金额输入有误");
+                    return;
+                }
+            }
         }
 
         //提交订单结算，主页面刷新UI
@@ -459,7 +468,6 @@ public class PaymentActivity extends BaseActivity {
     public boolean dispatchKeyEvent(KeyEvent event) {
         //扫码监听，系统的软键盘  按下去是 -1, 不管，不拦截
         if (event.getDeviceId() != -1) {
-            Log.e(TAG, "dispatchKeyEvent: ");
             //按下弹起，识别到弹起的话算一次 有效输入
             //只要是 扫码枪的事件  都要把他消费掉 不然会被editText 显示出
             if (event.getAction() == KeyEvent.ACTION_UP) {
@@ -471,12 +479,8 @@ public class PaymentActivity extends BaseActivity {
                 }
                 //无订单不走接口
                 if (orderInfo != null) {
-                    Log.e(TAG, "dispatchKeyEvent: orderInfo");
                     if (time == 19) {
-                        Log.e(TAG, "dispatchKeyEvent: time");
                         payByBox();
-//                        Log.e("PaymentActivity", "dispatchKeyEvent: payByBox()");
-//                        EventBus.getDefault().post(orderBack);
                     }
                 }
             }
@@ -490,11 +494,9 @@ public class PaymentActivity extends BaseActivity {
     private void payByBox() {
         time = 0;
         if (orderInfo != null) {
-            Log.e(TAG, "payByBox: orderInfo：" + orderNo + "___" + orderInfo.getPayType() + "___" + authNo);
             NetTool.payByBox(orderNo, orderInfo.getPayType(), authNo, new GsonResponseHandler<BaseBean<BoxPay>>() {
                 @Override
                 public void onSuccess(int statusCode, BaseBean<BoxPay> response) {
-                    Log.e(TAG, "onSuccess: ");
                     authNo = "";
                     if (response.getCode().equals("0")) {
                         EventBus.getDefault().post(orderBack);

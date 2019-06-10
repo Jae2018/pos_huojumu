@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.huojumu.R;
 import com.huojumu.base.BaseDialog;
 
@@ -68,14 +67,6 @@ public class CashPayDialog extends BaseDialog {
                 if (s.length() > 0) {
                     earnMoney = Integer.valueOf(s.toString().trim());
                 }
-//                if (earnMoney < totalPrice) {
-//                    okBtn.setEnabled(false);
-//                    errorTv.setVisibility(View.VISIBLE);
-//                } else {
-//                    change.setText(String.valueOf(earnMoney - totalPrice));
-//                    okBtn.setEnabled(true);
-//                    errorTv.setVisibility(View.GONE);
-//                }
             }
         });
     }
@@ -95,10 +86,6 @@ public class CashPayDialog extends BaseDialog {
             case R.id.dialog_cash_pay_hundred:
                 earnMoney = 100;
                 break;
-        }
-        if (earnMoney < totalPrice) {
-            ToastUtils.showLong("所选金额不对");
-            return;
         }
         earn2.setText(String.valueOf(earnMoney));
         change.setText(String.valueOf(earnMoney - totalPrice));

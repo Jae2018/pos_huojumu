@@ -64,7 +64,7 @@ public class ActiveActivity extends BaseActivity {
                 public void run() {
                     MyApplication.getSocketTool().sendHeart();
                 }
-            }, 200, 5 * 60 * 1000);
+            }, 200, 60 * 1000);
         }
         if (uuid != null && !uuid.isEmpty()) {
             MyApplication.getSocketTool().sendMsg(String.format(Constant.BAND, uuid));

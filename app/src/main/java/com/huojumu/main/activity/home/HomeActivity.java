@@ -66,7 +66,6 @@ import com.huojumu.model.OrderInfo;
 import com.huojumu.model.Production;
 import com.huojumu.model.SmallType;
 import com.huojumu.model.WorkBean;
-import com.huojumu.services.MyPosService;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
 import com.huojumu.utils.MyDividerDecoration;
@@ -132,8 +131,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //商品列表
     @BindView(R.id.recyclerView3)
     RecyclerView rBottom;
-    //    @BindView(R.id.viewpager)
-//    ViewPager viewPager;
     //总数量
     @BindView(R.id.total_number)
     TextView total_number;
@@ -241,13 +238,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     //滑动删除的位置
     int swipeNo;
     //支付方式说明
-    String payType;
+    String payType, oldOrderId;
     //轮询handler
     MyHandler mHandler;
-    //服务启动项
-    private Intent intent;
     // 语音合成对象
     private SpeechSynthesizer mTts;
+    //是否先请求过扫码支付
+    private boolean hasRequestedOrder = false;
 
     @Override
     protected int setLayout() {
@@ -271,8 +268,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             }
         });
 
-        intent = new Intent(this, MyPosService.class);
-        startService(intent);
 
         HorizontalPageLayoutManager horizontalPageLayoutManager = new HorizontalPageLayoutManager(3, 4);
 
@@ -469,7 +464,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 public void run() {
                     MyApplication.getSocketTool().sendHeart();
                 }
-            }, 200, 60 * 10 * 1000);
+            }, 200, 60 * 1000);
         }
     }
 
@@ -808,6 +803,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             selectedAdapter.setNewData(productions);//显示挂单数据
             hasHoldOn = false;
             hasGua.setVisibility(View.INVISIBLE);
+            checkPriceForDisplay();
         } else {
             //将当前数据放入挂单list中
             gTemp.addAll(productions);
@@ -825,6 +821,14 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @OnClick(R.id.button2)
     void DeleteAll() {
         clear();
+    }
+
+    @SingleClick
+    @OnClick({R.id.button, R.id.imageView2})
+    void disapper() {
+        authNo = "";
+        time = 0;
+        scanLayer.setVisibility(View.GONE);
     }
 
     /**
@@ -906,6 +910,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             resetAllData();
         }
     }
+
+
 
     /**
      * 重置所有数据与UI，仅限 刷新页面 或者  重新登陆 的情况
@@ -1039,14 +1045,23 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     orderBack = null;
                     setLabelData();
                     //线上支付
+                    if (!hasRequestedOrder) {
+                        Log.e("home", "OnDialogOkClick: 1");
+                        hasRequestedOrder = true;
+                    } else {
+                        orderInfo.setOldOrderId(oldOrderId);
+                        Log.e("home", "OnDialogOkClick: 2  "+PrinterUtil.toJson(orderInfo));
+                    }
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                         @Override
                         public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
                             if (response.getCode().equals("0")) {
                                 orderBack = response.getData();
                                 orderNo = response.getData().getOrderNo();
+                                oldOrderId = response.getData().getOrderId();
                                 scanLayer.setVisibility(View.VISIBLE);
                                 pText.setText(String.format(Locale.CHINA, "%.2f元", totalPrice));
+
                             }
                         }
 
@@ -1055,6 +1070,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             ToastUtils.showLong("网络连接已断开");
                         }
                     });
+
                 }
                 break;
             //现金支付回调
@@ -1067,6 +1083,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 payType = "现金支付";
                 setLabelData();
                 if (MyApplication.getSocketTool().isAlive()) {
+                    if (hasRequestedOrder) {
+                        orderInfo.setOldOrderId(oldOrderId);
+                    }
+                    Log.e("home", "OnDialogOkClick: 3  "+PrinterUtil.toJson(orderInfo));
                     //网络正常走接口
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                         @Override
@@ -1198,6 +1218,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      * charge:找零
      */
     private void PrintOrder(final OrderBack orderBack, final OrderDetails.OrderdetailBean orderdetailBean, final double charge, String type, double totalPrice, double totalCut) {
+        progressDialog.show();
+        hasRequestedOrder = false;
         woeker_p += totalPrice;
         orderNum++;
 
@@ -1239,6 +1261,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         MyOkHttp.mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                progressDialog.dismiss();
                 clear();
             }
         }, 1500);
@@ -1370,7 +1393,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             timer.purge();
             timer = null;
         }
-        stopService(intent);
         EventBus.getDefault().unregister(this);
         DeviceConnFactoryManager.closeAllPort();
         if (ThreadPool.getInstantiation() != null) {
@@ -1491,7 +1513,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             MyOkHttp.mHandler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (progressDialog != null && progressDialog.isShowing()) {
+                                    if (progressDialog.isShowing()) {
                                         progressDialog.dismiss();
                                     }
                                 }
@@ -1537,7 +1559,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         unregisterReceiver(receiver);
     }
 
-    @SingleClick(500)
+    @SingleClick
     @OnClick(R.id.btn_up)
     void btnUp() {
         pageNo--;
@@ -1545,19 +1567,17 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             pageNo = 0;
         }
         scrollHelper.scrollToPosition(pageNo);
-//        rBottom.scrollToPosition(pageNo * 12);
     }
 
     int totalPage = 1;
 
-    @SingleClick(500)
+    @SingleClick
     @OnClick(R.id.btn_next)
     void btnNext() {
         pageNo++;
         if (pageNo > totalPage) {
             pageNo = totalPage;
         }
-//        rBottom.scrollToPosition(pageNo * 12);
         scrollHelper.scrollToPosition(pageNo);
     }
 

@@ -190,19 +190,24 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                     rowsBeans.clear();
                 }
                 rowsBeans.addAll(response.getData().getOrders().getRows());
-                dailyAdapter.setNewData(rowsBeans);
-                s1 = response.getData().getSaleData().getReal();
-                earn1.setText(String.format(Locale.CHINA, "实收金额：%.2f", s1));
-                s2 = response.getData().getSaleData().getVirtual();
-                earn2.setText(String.format(Locale.CHINA, "虚收金额：%.2f", s2));
-                s3 = response.getData().getPushMoneyData().getPushMoney();
-                sellTv.setText(String.format(Locale.CHINA, "提成：%.4f", s3));
-                s4 = response.getData().getSaleData().getTotal();
-                commissionTv.setText(String.format(Locale.CHINA, "营业额：%.2f", s4));
-                timestamp = response.getData().getTimestamp();
-                if (page < response.getData().getOrders().getPageNum()) {
-                    page++;
+                if (rowsBeans.isEmpty()) {
+                    ToastUtils.showLong("无数据");
+                } else {
+                    dailyAdapter.setNewData(rowsBeans);
+                    s1 = response.getData().getSaleData().getReal();
+                    earn1.setText(String.format(Locale.CHINA, "实收金额：%.2f", s1));
+                    s2 = response.getData().getSaleData().getVirtual();
+                    earn2.setText(String.format(Locale.CHINA, "虚收金额：%.2f", s2));
+                    s3 = response.getData().getPushMoneyData().getPushMoney();
+                    sellTv.setText(String.format(Locale.CHINA, "提成：%.4f", s3));
+                    s4 = response.getData().getSaleData().getTotal();
+                    commissionTv.setText(String.format(Locale.CHINA, "营业额：%.2f", s4));
+                    timestamp = response.getData().getTimestamp();
+                    if (page < response.getData().getOrders().getPageNum()) {
+                        page++;
+                    }
                 }
+
                 swipeRefreshLayout.setRefreshing(false);
                 progressDialog.dismiss();
             }

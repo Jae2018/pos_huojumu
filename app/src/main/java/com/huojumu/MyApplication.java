@@ -2,12 +2,14 @@ package com.huojumu;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 //import android.graphics.drawable.BitmapDrawable;
 
 import com.greendao.gen.DaoMaster;
 import com.greendao.gen.DaoSession;
+import com.huojumu.services.MyPosService;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.SocketTool;
 import com.huojumu.utils.SpUtil;
@@ -68,6 +70,8 @@ public class MyApplication extends Application {
 
         String p = "appid=" + getString(R.string.app_id) + "," + SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC;
         SpeechUtility.createUtility(MyApplication.this, p);
+
+        startService(new Intent(this, MyPosService.class));
     }
 
     public static void initSocket() {
@@ -110,4 +114,5 @@ public class MyApplication extends Application {
     public DaoSession getDaoSession() {
         return daoSession;
     }
+
 }

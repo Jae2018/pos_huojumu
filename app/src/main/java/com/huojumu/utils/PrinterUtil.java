@@ -375,6 +375,7 @@ public class PrinterUtil {
             @Override
             public void run() {
                 try {
+                    Log.e(TAG, "run: 1");
                     mPrinter.set80mm();
                     mPrinter.setAlignMode(1);
                     //字体变大

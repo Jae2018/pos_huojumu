@@ -1,11 +1,8 @@
 package com.tsy.sdk.myokhttp.response;
 
-import android.widget.Toast;
-
 import com.google.gson.Gson;
 import com.google.gson.internal.$Gson$Types;
 import com.tsy.sdk.myokhttp.MyOkHttp;
-import com.tsy.sdk.myokhttp.util.LogUtils;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;

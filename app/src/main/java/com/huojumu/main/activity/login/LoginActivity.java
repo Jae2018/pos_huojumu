@@ -50,7 +50,7 @@ public class LoginActivity extends BaseActivity {
 
     private CountDownTimer countDownTimer;
     private DownProgressDialog downProgressDialog;
-//    private CertainDialog dialog;
+
     //重连socket消息flag
     private static final int RECONNECT_SOCKET = 2;
     //重连次数
@@ -172,18 +172,9 @@ public class LoginActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLogin(EventHandler eventHandler) {
-//        if (eventHandler.getType() == 3) {
         SpUtil.save("from_Login", true);
         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
         finish();
-//        } else {
-//            if (dialog == null) {
-//                dialog = new CertainDialog(this);
-//            }
-//            dialog.show();
-//            dialog.setText("注意！", "您当前无法登陆，上一班次未正常交班\n请联系 "
-//                    + eventHandler.getUserName() + " 完成交班\n联系电话：" + eventHandler.getMobile());
-//        }
     }
 
     @Override
@@ -238,13 +229,13 @@ public class LoginActivity extends BaseActivity {
         //定时发送心跳
         if (timer == null) {
             timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    MyApplication.getSocketTool().sendHeart();
-                }
-            }, 200, 5 * 60 * 1000);
         }
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                MyApplication.getSocketTool().sendHeart();
+            }
+        }, 200, 30 * 1000);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

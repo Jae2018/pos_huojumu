@@ -32,6 +32,7 @@ public class OrderInfo implements Parcelable {
      */
 
     private String orderID;
+    private String oldOrderID;
     private String createTime;
     private int shopID;
     private String ordSource;
@@ -47,6 +48,14 @@ public class OrderInfo implements Parcelable {
     private String manualDiscountReason;
     private List<Integer> quanIds;
     private List<DataBean> data;
+
+    public String getOldOrderId() {
+        return oldOrderID;
+    }
+
+    public void setOldOrderId(String oldOrderId) {
+        this.oldOrderID = oldOrderId;
+    }
 
     public int getManualDiscount() {
         return manualDiscount;

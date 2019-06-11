@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -114,6 +115,8 @@ public class PaymentActivity extends BaseActivity {
     private double zkPrice = 0;
     //实收金额
     private double ssPrice = 0;
+//
+    int manualDiscount;
 
     @Override
     protected int setLayout() {
@@ -173,30 +176,30 @@ public class PaymentActivity extends BaseActivity {
             }
         });
 
-        //实收金额
-        earnEdit.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() > 0) {
-                    ssPrice = Integer.parseInt(s.toString().trim());
-                    if (ssPrice <= origionalPrice) {
-                        inputErrorTv1.setVisibility(View.VISIBLE);
-                    } else {
-                        inputErrorTv1.setVisibility(View.INVISIBLE);
-                    }
-                }
-            }
-        });
+//        //实收金额
+//        earnEdit.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                if (s.length() > 0) {
+//                    ssPrice = Integer.parseInt(s.toString().trim());
+//                    if (ssPrice < origionalPrice) {
+//                        inputErrorTv1.setVisibility(View.VISIBLE);
+//                    } else {
+//                        inputErrorTv1.setVisibility(View.INVISIBLE);
+//                    }
+//                }
+//            }
+//        });
     }
 
     @Override
@@ -375,15 +378,16 @@ public class PaymentActivity extends BaseActivity {
     void commitOrder() {
         //现金支付方式
         if (payType.equals("900")) {
+            ssPrice = earnEdit.getText().toString().isEmpty() ? 0 : Double.parseDouble(earnEdit.getText().toString());
             //半价
             if (activesBean != null && activesBean.getPlanType().equals("0")) {
                 if (ssPrice < origionalPrice / 2) {
-                    ToastUtils.showLong("金额输入有误");
+                    ToastUtils.showLong("客户支付金额输入有误");
                     return;
                 }
             } else {
                 if (ssPrice < (origionalPrice - zkPrice)) {
-                    ToastUtils.showLong("金额输入有误");
+                    ToastUtils.showLong("客户支付金额输入有误");
                     return;
                 }
             }
@@ -394,22 +398,19 @@ public class PaymentActivity extends BaseActivity {
         if (activesBean != null) {
             orderInfo.setDiscountsActivity(activesBean.getPlanType());
             orderInfo.setDiscountsType("2");
-        }
-
-        //手动折扣
-        final int manualDiscount = cashPayInput.getText().toString().isEmpty() ? 0 : Integer.parseInt(cashPayInput.getText().toString());
-        if (manualDiscount != 0) {
-            orderInfo.setManualDiscount(manualDiscount);
-        }
-
-        //特殊人群、一律半价
-        if (payType.equals("0")) {
-            orderInfo.setManualDiscount((int) (commitPrice == 0 ? (origionalPrice / 2) : (commitPrice / 2)));
+            //特殊人群、一律半价
+            if (activesBean.getPlanType().equals("0")) {
+                orderInfo.setManualDiscount(origionalPrice / 2);
+            } else {
+                //手动折扣
+                manualDiscount = cashPayInput.getText().toString().isEmpty() ? 0 : Integer.parseInt(cashPayInput.getText().toString());
+                orderInfo.setManualDiscount(manualDiscount);
+            }
         }
 
         //客户支付的金额
-        final double earn = earnEdit.getText().toString().isEmpty() ? 0 : Double.parseDouble(earnEdit.getText().toString());
-
+//        final double earn = earnEdit.getText().toString().isEmpty() ? 0 : Double.parseDouble(earnEdit.getText().toString());
+        Log.e(TAG, "commitOrder: " + PrinterUtil.toJson(orderInfo));
         progressDialog.show();
         NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
             @Override
@@ -419,18 +420,18 @@ public class PaymentActivity extends BaseActivity {
                 orderBack.setPayType(payType);
                 if (commitPrice == 0) {
                     //没有活动
-                    if (earn > origionalPrice) {
+                    if (ssPrice > origionalPrice) {
                         //找零，收款 - 总价 + 手动折扣金额
-                        orderBack.setCharge(earn - origionalPrice + manualDiscount);
+                        orderBack.setCharge(ssPrice - origionalPrice + manualDiscount);
                     }
                 } else {
                     //有活动优惠
-                    if (earn > commitPrice) {
+                    if (ssPrice > commitPrice) {
                         //找零，收款 - 总价 + 手动折扣金额
-                        orderBack.setCharge(earn - commitPrice + manualDiscount);
+                        orderBack.setCharge(ssPrice - commitPrice + manualDiscount);
                     }
                 }
-                orderBack.setCharge(earn - origionalPrice);
+                orderBack.setCharge(ssPrice - origionalPrice);
                 orderBack.setCut(Double.parseDouble(orderBack.getOrigionTotalPrice()) - Double.parseDouble(orderBack.getTotalPrice()));
                 progressDialog.dismiss();
                 if (payType.equals("900")) {
@@ -445,7 +446,7 @@ public class PaymentActivity extends BaseActivity {
             public void onFailure(int statusCode, String code, String error_msg) {
                 progressDialog.dismiss();
                 if (payType.equals("900")) {
-                    EventBus.getDefault().post(new NoNetPayBack(commitPrice, earn, cutPrice, "现金支付"));
+                    EventBus.getDefault().post(new NoNetPayBack(commitPrice, ssPrice, cutPrice, "现金支付"));
                     finish();
                 }
             }

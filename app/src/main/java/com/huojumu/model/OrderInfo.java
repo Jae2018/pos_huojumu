@@ -44,7 +44,7 @@ public class OrderInfo implements Parcelable {
     private String payType;
     private String discountsType;
     private String discountsActivity;
-    private int manualDiscount;
+    private double manualDiscount;
     private String manualDiscountReason;
     private List<Integer> quanIds;
     private List<DataBean> data;
@@ -57,11 +57,11 @@ public class OrderInfo implements Parcelable {
         this.oldOrderID = oldOrderId;
     }
 
-    public int getManualDiscount() {
+    public double getManualDiscount() {
         return manualDiscount;
     }
 
-    public void setManualDiscount(int manualDiscount) {
+    public void setManualDiscount(double manualDiscount) {
         this.manualDiscount = manualDiscount;
     }
 
@@ -321,7 +321,7 @@ public class OrderInfo implements Parcelable {
         dest.writeString(this.payType);
         dest.writeString(this.discountsType);
         dest.writeString(this.discountsActivity);
-        dest.writeInt(this.manualDiscount);
+        dest.writeDouble(this.manualDiscount);
         dest.writeString(this.manualDiscountReason);
         dest.writeList(this.quanIds);
         dest.writeList(this.data);

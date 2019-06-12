@@ -565,10 +565,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
      */
     private void loadData() {
         progressDialog.show();
-        progressDialog.setTitle("加载中...");
         getAdsList();
         getTypeList();
-        getProList("0");
+        getProList(Constant.NORECOMMEND);
         getActiveInfo();
 
     }
@@ -734,11 +733,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     void getRecommend() {
         //是否推荐
         if (isRecommend) {
-            getProList("1");
+            getProList(Constant.RECOMMEND);
             isRecommend = false;
             recommendTv.setText("推荐");
         } else {
-            getProList("0");
+            getProList(Constant.NORECOMMEND);
             isRecommend = true;
             recommendTv.setText("全部");
         }
@@ -1507,8 +1506,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         final String deviceName = UsbUtil.getBQName(HomeActivity.this);
                         final String xpName = UsbUtil.getXPName(HomeActivity.this);
                         if (!deviceName.isEmpty() || !xpName.isEmpty()) {
+//                            progressDialog.setTipTextView("正在连接外接设备，请等待");
                             progressDialog.show();
-                            progressDialog.setTitle("正在连接外接设备，请等待");
+
                             //先主动调用断开连接，释放端口
                             DeviceConnFactoryManager.closeAllPort();
                             PrinterUtil.disconnectPrinter();

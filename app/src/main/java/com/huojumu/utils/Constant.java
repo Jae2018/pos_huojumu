@@ -65,4 +65,7 @@ public interface Constant {
     String PAYCODE = "payAndPrint";
     String START = "start";
 
+    String RECOMMEND = "1";
+    String NORECOMMEND = "0";
+
 }

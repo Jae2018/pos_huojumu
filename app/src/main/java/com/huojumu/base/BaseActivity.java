@@ -1,7 +1,6 @@
 package com.huojumu.base;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
 import com.huojumu.utils.CustomerEngine;
+import com.huojumu.wedgit.CustomProgressDialog;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -25,7 +25,7 @@ import butterknife.ButterKnife;
 public abstract class BaseActivity extends AppCompatActivity {
 
     protected CustomerEngine engine;
-    protected ProgressDialog progressDialog;
+    protected CustomProgressDialog progressDialog;
     public static ArrayList<String> per = new ArrayList<>();
     private String[] permissions = {
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -42,8 +42,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(setLayout());
         ButterKnife.bind(this);
 
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
+        progressDialog = new CustomProgressDialog(this);
+        progressDialog.setTipTextView("加载中...");
+
         engine = CustomerEngine.getInstance(getApplicationContext());
         initView();
         initData();

@@ -276,6 +276,7 @@ public class PrinterUtil {
     }
 
     private static boolean isConnected = false;
+
     /**
      * 连接打印机
      */
@@ -375,11 +376,11 @@ public class PrinterUtil {
             @Override
             public void run() {
                 try {
-                    Log.e(TAG, "run: 1");
+
                     mPrinter.set80mm();
                     mPrinter.setAlignMode(1);
                     //字体变大
-                    mPrinter.setCharSize(1, 1);
+//                    mPrinter.setCharSize(1, 1);
                     //订单流水号
                     String s = orderNo + "\n";
                     mPrinter.printString(s);
@@ -559,7 +560,7 @@ public class PrinterUtil {
                 if (PrinterAPI.SUCCESS == mPrinter.connect(io)) {
                     try {
                         mPrinter.setAlignMode(1);
-                        mPrinter.setCharSize(1, 1);
+//                        mPrinter.setCharSize(1, 1);
                         String s = "退账单";
                         mPrinter.printString(s);
                         mPrinter.printFeed();
@@ -571,10 +572,10 @@ public class PrinterUtil {
                                 + "\n" + "退单时间：" + date
                                 + "\n" + "原订单号：" + details.getOrderdetail().getOrdNo().substring(details.getOrderdetail().getOrdNo().length() - 4)
                                 + "\n" + "操作员工：" + details.getOperator().getNickname()
-                                + "\n" + "员工入职时间：" + details.getOperator().getJoinTime();
+                                + "\n" + "员工入职时间：" + details.getOperator().getJoinTime() + "\n";
                         mPrinter.printString(s);
 
-                        s = "------------------------------------------------";
+                        s = "------------------------------------------------\n";
                         mPrinter.printString(s);
 
                         //商品信息

@@ -16,9 +16,9 @@ android {
     defaultConfig {
         applicationId "com.huojumu"
         minSdkVersion 22
-        targetSdkVersion 28
+        targetSdkVersion 22
         versionCode 1
-        versionName "1.0.4.0"
+        versionName "1.0.4.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = ["appid": "aa223", "appse": "s1231", "adsId": ""]
         renderscriptSupportModeEnabled true

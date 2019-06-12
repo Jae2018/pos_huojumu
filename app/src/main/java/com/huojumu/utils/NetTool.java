@@ -20,6 +20,7 @@ import com.huojumu.model.Specification;
 import com.huojumu.model.StoreInfo;
 import com.huojumu.model.UpdateBean;
 import com.huojumu.model.VipListBean;
+import com.huojumu.model.WorkInfo;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.GsonResponseHandler;
 
@@ -257,11 +258,20 @@ public class NetTool {
                 .enqueue(handler);
     }
 
+    //同步server店员值班信息
+    public static void getSyncData(GsonResponseHandler<BaseBean<WorkInfo>> handler) {
+        okHttp.post()
+                .url(Constant.BASE_URL + "duty/shiftStatistics.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .addParam("storeId", SpUtil.getInt(Constant.STORE_ID) + "")
+                .addParam("pinpaiId", SpUtil.getInt(Constant.PINPAI_ID) + "")
+                .enqueue(handler);
+    }
+
     //广告
     public static void getAdsList(int shopID, GsonResponseHandler<BaseBean<List<AdsBean>>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "system/advsearch.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
-                .addParam("shopID", "" + shopID)
+                .addParam("storeId", "" + shopID)
                 .addParam("fileType", "3")
                 .enqueue(handler);
     }
@@ -277,10 +287,11 @@ public class NetTool {
 
     /**
      * 批量上传本地存储订单
-     * @param data json string
+     *
+     * @param data    json string
      * @param handler callback
      */
-    public static void orderBatch(String data,GsonResponseHandler<BaseBean<String>> handler){
+    public static void orderBatch(String data, GsonResponseHandler<BaseBean<String>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "order/orderBatchAdd.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
                 .addParam("data", data)

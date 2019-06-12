@@ -8,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -115,7 +114,7 @@ public class PaymentActivity extends BaseActivity {
     private double zkPrice = 0;
     //实收金额
     private double ssPrice = 0;
-//
+    //
     int manualDiscount;
 
     @Override
@@ -406,11 +405,13 @@ public class PaymentActivity extends BaseActivity {
                 manualDiscount = cashPayInput.getText().toString().isEmpty() ? 0 : Integer.parseInt(cashPayInput.getText().toString());
                 orderInfo.setManualDiscount(manualDiscount);
             }
+        } else {
+            //手动折扣
+            manualDiscount = cashPayInput.getText().toString().isEmpty() ? 0 : Integer.parseInt(cashPayInput.getText().toString());
+            orderInfo.setManualDiscount(manualDiscount);
         }
 
         //客户支付的金额
-//        final double earn = earnEdit.getText().toString().isEmpty() ? 0 : Double.parseDouble(earnEdit.getText().toString());
-        Log.e(TAG, "commitOrder: " + PrinterUtil.toJson(orderInfo));
         progressDialog.show();
         NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
             @Override
@@ -462,8 +463,7 @@ public class PaymentActivity extends BaseActivity {
     //扫码回调方法次数，19次获取完
     private int time = 0;
     //扫码内容
-    private String authNo;
-    String TAG = PaymentActivity.class.getName();
+    private String authNo = "";
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -509,6 +509,7 @@ public class PaymentActivity extends BaseActivity {
                 @Override
                 public void onFailure(int statusCode, String code, String error_msg) {
                     authNo = "";
+                    ToastUtils.showLong(error_msg);
                 }
             });
         }

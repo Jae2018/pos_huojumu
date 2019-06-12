@@ -66,6 +66,7 @@ import com.huojumu.model.OrderInfo;
 import com.huojumu.model.Production;
 import com.huojumu.model.SmallType;
 import com.huojumu.model.WorkBean;
+import com.huojumu.model.WorkInfo;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.DeviceConnFactoryManager;
 import com.huojumu.utils.MyDividerDecoration;
@@ -245,6 +246,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private SpeechSynthesizer mTts;
     //是否先请求过扫码支付
     private boolean hasRequestedOrder = false;
+    //
+    private boolean isFirstCreate = false;
 
     @Override
     protected int setLayout() {
@@ -254,7 +257,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-
+        isFirstCreate = true;
         sendSocket();
 
         //连接标签机
@@ -567,6 +570,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         getTypeList();
         getProList("0");
         getActiveInfo();
+
     }
 
     /**
@@ -591,6 +595,33 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 }
             }
         }, 5000);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //重新登录后
+        if (SpUtil.getBoolean("from_Login")) {
+            syncData();
+            SpUtil.save("from_Login", false);
+            resetAllData();
+        }
+    }
+
+    /**
+     * 同步工作信息
+     */
+    private void syncData() {
+        NetTool.getSyncData(new GsonResponseHandler<BaseBean<WorkInfo>>() {
+            @Override
+            public void onSuccess(int statusCode, BaseBean<WorkInfo> response) {
+                if (response.getData() != null) {
+                    earnTv.setText(String.format(Locale.CHINA, "%.2f元", response.getData().getPushMoneyData().getTotalMoney()));
+                    orderNumTv.setText(String.format(Locale.CHINA, "%d单", response.getData().getOrderCount()));
+                    workNameTv.setText(SpUtil.getString(Constant.WORKER_NAME));
+                }
+            }
+        });
     }
 
     /**
@@ -897,22 +928,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         startActivity(i);
     }
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //重新登录后
-        if (SpUtil.getBoolean("from_Login")) {
-            SpUtil.save("from_Login", false);
-            workNameTv.setText(SpUtil.getString(Constant.WORKER_NAME));
-            earnTv.setText(String.format(Locale.CHINA, "%.1f元", SpUtil.getFloat(Constant.WORK_P)));
-            orderNumTv.setText(String.format(Locale.CHINA, "%d单", SpUtil.getInt2(Constant.ORDER_NUM)));
-            resetAllData();
-        }
-    }
-
-
-
     /**
      * 重置所有数据与UI，仅限 刷新页面 或者  重新登陆 的情况
      */
@@ -1050,7 +1065,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                         hasRequestedOrder = true;
                     } else {
                         orderInfo.setOldOrderId(oldOrderId);
-                        Log.e("home", "OnDialogOkClick: 2  "+PrinterUtil.toJson(orderInfo));
+                        Log.e("home", "OnDialogOkClick: 2  " + PrinterUtil.toJson(orderInfo));
                     }
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                         @Override
@@ -1086,7 +1101,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     if (hasRequestedOrder) {
                         orderInfo.setOldOrderId(oldOrderId);
                     }
-                    Log.e("home", "OnDialogOkClick: 3  "+PrinterUtil.toJson(orderInfo));
+                    Log.e("home", "OnDialogOkClick: 3  " + PrinterUtil.toJson(orderInfo));
                     //网络正常走接口
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                         @Override

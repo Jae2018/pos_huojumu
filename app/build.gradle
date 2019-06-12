@@ -18,14 +18,17 @@ android {
         minSdkVersion 22
         targetSdkVersion 28
         versionCode 1
-        versionName "1.0.3.8"
+        versionName "1.0.4.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = ["appid": "aa223", "appse": "s1231", "adsId": ""]
         renderscriptSupportModeEnabled true
     }
     buildTypes {
         release {
+            buildConfigField("boolean", "LOG_DEBUG", "false")//配置Log日志
+//            buildConfigField("String", "URL_PERFIX", "\"https://test.com/\"")
             minifyEnabled false
+            pseudoLocalesEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

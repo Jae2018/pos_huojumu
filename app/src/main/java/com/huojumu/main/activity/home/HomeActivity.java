@@ -603,6 +603,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //重新登录后
         if (SpUtil.getBoolean("from_Login")) {
             syncData();
+            workNameTv.setText(SpUtil.getString(Constant.WORKER_NAME));
             SpUtil.save("from_Login", false);
             resetAllData();
         }
@@ -618,7 +619,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 if (response.getData() != null) {
                     earnTv.setText(String.format(Locale.CHINA, "%.2f元", response.getData().getPushMoneyData().getTotalMoney()));
                     orderNumTv.setText(String.format(Locale.CHINA, "%d单", response.getData().getOrderCount()));
-                    workNameTv.setText(SpUtil.getString(Constant.WORKER_NAME));
                 }
             }
         });

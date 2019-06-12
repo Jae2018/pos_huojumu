@@ -177,7 +177,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
         } else {
             daily();
         }
-        PrinterUtil.printDaily(types, commissionTv.getText().toString(), earn2.getText().toString(), earn1.getText().toString(), num, SpUtil.getString(Constant.WORKER_NAME), lastDate);
+        PrinterUtil.printDaily(types, String.valueOf(s4), String.valueOf(s2), String.valueOf(s1), num, SpUtil.getString(Constant.WORKER_NAME), lastDate);
     }
 
     private void getTakeOverInfo() {

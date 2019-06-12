@@ -380,10 +380,11 @@ public class PrinterUtil {
                     mPrinter.set80mm();
                     mPrinter.setAlignMode(1);
                     //字体变大
-//                    mPrinter.setCharSize(1, 1);
+                    mPrinter.setCharSize(1, 1);
                     //订单流水号
                     String s = orderNo + "\n";
                     mPrinter.printString(s);
+                    mPrinter.printFeed();
 
                     //实线
                     mPrinter.printRasterBitmap(MyApplication.getLine1());
@@ -400,11 +401,10 @@ public class PrinterUtil {
 
                     //商品信息
                     mPrinter.setAlignMode(0);
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(settSubTitle());
-                    mPrinter.printString(sb.toString());
+                    String ss = settSubTitle();
+                    mPrinter.printString(ss);
 
-                    sb.delete(0, sb.length() - 1);
+                    StringBuilder sb = new StringBuilder();
                     if (pList != null) {
                         for (Production p : pList) {
                             int n = p.getNumber();
@@ -445,7 +445,8 @@ public class PrinterUtil {
                             + "\n" + printTwoData80("客户实付", cost)
                             + "\n" + printTwoData80("优    惠", cut)
                             + "\n" + printTwoData80("找    零", charge)
-                            + "\n" + printTwoData80("支付方式", type) + "\n";
+                            + "\n" + printTwoData80("支付方式", type)
+                            + "\n";
                     mPrinter.printString(s);
 
                     //虚实线
@@ -518,12 +519,12 @@ public class PrinterUtil {
                         mPrinter.printString(s);
 
                         mPrinter.setCharSize(0, 0);
-                        s = "本次" + t + "时间：" + getDate() + "\n"
-                                + "上次" + t + "时间" + lastDate + "\n"
+                        s = "本次" + t + "时间：" + "\n    " + getDate() + "\n"
+                                + "上次" + t + "时间：" + "\n    " + lastDate + "\n"
                                 + t + "人员：" + workerName + "\n";
                         mPrinter.printString(s);
+                        mPrinter.printFeed();
 
-                        mPrinter.setCharSize(1, 1);
                         s = "交款信息：\n";
                         mPrinter.printString(s);
 
@@ -533,8 +534,8 @@ public class PrinterUtil {
                                 + "总实收金额：" + cash + "\n"
                                 + "总  单  数：" + orderNum + "\n";
                         mPrinter.printString(s);
-
                         mPrinter.printFeed();
+
                         mPrinter.setAlignMode(1);
                         //公司
                         s = "\n技术支持 火炬木科技";
@@ -566,7 +567,7 @@ public class PrinterUtil {
                         mPrinter.printFeed();
 
                         mPrinter.setAlignMode(0);
-                        mPrinter.setCharSize(0, 0);
+//                        mPrinter.setCharSize(0, 0);
                         s = "操作人：" + SpUtil.getString(Constant.WORKER_NAME)
                                 + "\n" + "下单时间：" + details.getOrderdetail().getCreateTime()
                                 + "\n" + "退单时间：" + date
@@ -592,8 +593,11 @@ public class PrinterUtil {
                                     sb.append(printFourData80("-" + bean.getMatName(), String.valueOf(n), String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()))).append("\n");
                             }
                         }
-                        sb.append("\n").append(printTwoData80("订单总金额：", String.valueOf(details.getOrderdetail().getTotalPrice())));
+                        sb.append("\n");
                         mPrinter.printString(sb.toString());
+
+                        s = printTwoData80("订单总金额：", String.valueOf(details.getOrderdetail().getTotalPrice()));
+                        mPrinter.printString(s);
 
                         //公司
                         mPrinter.setAlignMode(1);

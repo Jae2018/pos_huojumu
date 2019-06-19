@@ -56,7 +56,6 @@ import com.huojumu.model.AdsBean;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.BoxPay;
 import com.huojumu.model.H5TaskBean;
-import com.huojumu.model.MakesBean;
 import com.huojumu.model.MatsBean;
 import com.huojumu.model.NativeOrders;
 import com.huojumu.model.NetErrorHandler;
@@ -66,7 +65,6 @@ import com.huojumu.model.OrderDetails;
 import com.huojumu.model.OrderInfo;
 import com.huojumu.model.Production;
 import com.huojumu.model.SmallType;
-import com.huojumu.model.TastesBean;
 import com.huojumu.model.WorkBean;
 import com.huojumu.model.WorkInfo;
 import com.huojumu.utils.Constant;
@@ -415,22 +413,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     public void onPointerMoved(Production production, int direction) {
         //todo 手势回调
         OrderInfo.DataBean dataBean = new OrderInfo.DataBean();
-//        Log.e(TAG, "onPointerMoved: 6" );
         dataBean.setProType(production.getProType());
-//        Log.e(TAG, "onPointerMoved: 5" );
         dataBean.setProId(production.getProId());
-//        Log.e(TAG, "onPointerMoved: 4" );
         dataBean.setMats(new ArrayList<MatsBean>());
-        Log.e(TAG, "onPointerMoved: 3");
         dataBean.setTastes(production.getTastes().subList(0, 1));
-        Log.e(TAG, "onPointerMoved: 2");
         dataBean.setScales(production.getScales().subList(0, 1));
-        Log.e(TAG, "onPointerMoved: 1");
+
         //加入订单数据
         dataBean.setNum(1);
         dataBeans.add(dataBean);
-
-        Log.e(TAG, "onPointerMoved: 0");
 
         //左侧点单列表
         production.setNumber(1);
@@ -642,6 +633,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     protected void onResume() {
         super.onResume();
         workNameTv.setText(SpUtil.getString(Constant.WORKER_NAME));
+        earnTv.setText(String.format(Locale.CHINA, "%.1f元", 0.0));
+        orderNumTv.setText(String.format(Locale.CHINA, "%d单", 0));
         //重新登录后
         if (SpUtil.getBoolean("from_Login") && !SpUtil.getBoolean("firstRun")) {
             syncData();
@@ -1070,13 +1063,15 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     clear();
                     woeker_p = 0;
                     orderNum = 0;
+                    earnTv.setText(String.format(Locale.CHINA, "%.1f元", woeker_p));
+                    orderNumTv.setText(String.format(Locale.CHINA, "%d单", orderNum));
                     ToastUtils.showLong("已完成交班！即将退出登录！");
                     MyOkHttp.mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                         }
-                    }, 1000);
+                    }, 5000);
                     break;
                 case Constant.WORK_BACK_DAILY:
                     SpUtil.save(Constant.WORK_P, (float) 0);
@@ -1135,11 +1130,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     setLabelData();
                     //线上支付
                     if (!hasRequestedOrder) {
-                        Log.e("home", "OnDialogOkClick: 1");
                         hasRequestedOrder = true;
                     } else {
                         orderInfo.setOldOrderId(oldOrderId);
-                        Log.e("home", "OnDialogOkClick: 2  " + PrinterUtil.toJson(orderInfo));
                     }
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                         @Override
@@ -1175,7 +1168,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     if (hasRequestedOrder) {
                         orderInfo.setOldOrderId(oldOrderId);
                     }
-                    Log.e("home", "OnDialogOkClick: 3  " + PrinterUtil.toJson(orderInfo));
                     //网络正常走接口
                     NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
                         @Override

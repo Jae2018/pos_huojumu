@@ -262,6 +262,7 @@ public class NetTool {
     public static void getSyncData(GsonResponseHandler<BaseBean<WorkInfo>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "duty/shiftStatistics.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
+                .addParam("token", SpUtil.getString(Constant.MY_TOKEN).split(" ")[1])
                 .addParam("storeId", SpUtil.getInt(Constant.STORE_ID) + "")
                 .addParam("pinpaiId", SpUtil.getInt(Constant.PINPAI_ID) + "")
                 .enqueue(handler);
@@ -271,7 +272,7 @@ public class NetTool {
     public static void getAdsList(int shopID, GsonResponseHandler<BaseBean<List<AdsBean>>> handler) {
         okHttp.post()
                 .url(Constant.BASE_URL + "system/advsearch.action").addHeader(Constant.TOKEN, SpUtil.getString(Constant.MY_TOKEN))
-                .addParam("storeId", "" + shopID)
+                .addParam("shopID", "" + shopID)
                 .addParam("fileType", "3")
                 .enqueue(handler);
     }

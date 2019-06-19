@@ -268,7 +268,6 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
 
     private void TakeOver() {
         progressDialog.show();
-        Log.e("work", "TakeOver: "+timestamp );
         NetTool.takeOver(timestamp, new GsonResponseHandler<BaseBean<String>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<String> response) {

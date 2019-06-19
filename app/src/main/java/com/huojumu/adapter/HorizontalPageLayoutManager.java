@@ -1,6 +1,7 @@
 package com.huojumu.adapter;
 
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseArray;
@@ -16,9 +17,7 @@ public class HorizontalPageLayoutManager extends RecyclerView.LayoutManager impl
         return null;
     }
 
-    int totalHeight = 0;
     private int totalWidth = 0;
-    private int offsetY = 0;
     private int offsetX = 0;
 
     public HorizontalPageLayoutManager(int rows, int columns) {
@@ -29,7 +28,7 @@ public class HorizontalPageLayoutManager extends RecyclerView.LayoutManager impl
 
     @Override
     public boolean canScrollHorizontally() {
-        return true;
+        return false;
     }
 
 
@@ -146,7 +145,6 @@ public class HorizontalPageLayoutManager extends RecyclerView.LayoutManager impl
     public void onDetachedFromWindow(RecyclerView view, RecyclerView.Recycler recycler) {
         super.onDetachedFromWindow(view, recycler);
         offsetX = 0;
-        offsetY = 0;
     }
 
     private void recycleAndFillItems(RecyclerView.Recycler recycler, RecyclerView.State state) {
@@ -211,18 +209,18 @@ public class HorizontalPageLayoutManager extends RecyclerView.LayoutManager impl
     }
 
     @Override
-    public int computeHorizontalScrollRange(RecyclerView.State state) {
+    public int computeHorizontalScrollRange(@NonNull RecyclerView.State state) {
         computePageSize(state);
         return pageSize * getWidth();
     }
 
     @Override
-    public int computeHorizontalScrollOffset(RecyclerView.State state) {
+    public int computeHorizontalScrollOffset(@NonNull RecyclerView.State state) {
         return offsetX;
     }
 
     @Override
-    public int computeHorizontalScrollExtent(RecyclerView.State state) {
+    public int computeHorizontalScrollExtent(@NonNull RecyclerView.State state) {
         return getWidth();
     }
 }

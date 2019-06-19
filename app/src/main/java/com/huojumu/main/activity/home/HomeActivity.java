@@ -39,10 +39,10 @@ import com.huojumu.R;
 import com.huojumu.adapter.HomeProductAdapter;
 import com.huojumu.adapter.HomeSelectedAdapter;
 import com.huojumu.adapter.HomeTypeAdapter;
-import com.huojumu.adapter.HorizontalPageLayoutManager;
-import com.huojumu.adapter.PagingScrollHelper;
 import com.huojumu.adapter.PinYinAdapter;
 import com.huojumu.base.BaseActivity;
+import com.huojumu.listeners.onPointerMoveListener;
+import com.huojumu.main.activity.MainActivity;
 import com.huojumu.main.activity.dialog.SingleProAddonDialog;
 import com.huojumu.main.activity.login.LoginActivity;
 import com.huojumu.main.dialogs.CashPayDialog;
@@ -56,6 +56,7 @@ import com.huojumu.model.AdsBean;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.BoxPay;
 import com.huojumu.model.H5TaskBean;
+import com.huojumu.model.MakesBean;
 import com.huojumu.model.MatsBean;
 import com.huojumu.model.NativeOrders;
 import com.huojumu.model.NetErrorHandler;
@@ -65,6 +66,7 @@ import com.huojumu.model.OrderDetails;
 import com.huojumu.model.OrderInfo;
 import com.huojumu.model.Production;
 import com.huojumu.model.SmallType;
+import com.huojumu.model.TastesBean;
 import com.huojumu.model.WorkBean;
 import com.huojumu.model.WorkInfo;
 import com.huojumu.utils.Constant;
@@ -121,7 +123,7 @@ import static com.huojumu.utils.DeviceConnFactoryManager.CONN_STATE_FAILED;
 
 
 public class HomeActivity extends BaseActivity implements DialogInterface, SocketBack,
-        SingleProCallback {
+        SingleProCallback, onPointerMoveListener {
 
     //下单列表
     @BindView(R.id.recyclerView)
@@ -169,13 +171,17 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private HomeTypeAdapter typeAdapter;//类别
     private HomeProductAdapter productAdapter;//商品
 
-    private List<Production> tempProduces = new ArrayList<>();//商品列表
+    private List<Production> tempProduces = new ArrayList<>();//商品初始列表
     private ArrayList<ActivesBean> activeBeanList = new ArrayList<>();//活动列表
     private ArrayList<Production> productions = new ArrayList<>();//选择的奶茶
     private Vector<Production> printProducts = new Vector<>();//标签打印的产品
+    private List<Production> gTemp = new ArrayList<>();//挂单商品集合
+
+    //分页数据列表
     private List<Production> typeList = new ArrayList<>();//选择小类后的商品集合
     private List<Production> searchList = new ArrayList<>();//搜索商品结果集合
-    private List<Production> gTemp = new ArrayList<>();//挂单商品集合
+    private List<List<Production>> pLists = new ArrayList<>();//分页显示的商品数据结构
+
     //点单商品信息集合
     private List<OrderInfo.DataBean> dataBeans = new ArrayList<>();
     private List<OrderInfo.DataBean> dataTemp = new ArrayList<>();
@@ -189,7 +195,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private MoreFunctionDialog functionDialog;//功能弹窗
     private CertainDialog certainDialog;//关机确认弹窗
     //商品recycler滑动翻页方法类
-    PagingScrollHelper scrollHelper = new PagingScrollHelper();
+//    PagingScrollHelper scrollHelper = new PagingScrollHelper();
     int pageNo = 0;//当前页数
 
     //订单数据
@@ -246,8 +252,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private SpeechSynthesizer mTts;
     //是否先请求过扫码支付
     private boolean hasRequestedOrder = false;
-    //
-    private boolean isFirstCreate = false;
+    //小类位置
+    int typePosition = 0;
 
     @Override
     protected int setLayout() {
@@ -257,7 +263,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-        isFirstCreate = true;
         sendSocket();
 
         //连接标签机
@@ -272,7 +277,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         });
 
 
-        HorizontalPageLayoutManager horizontalPageLayoutManager = new HorizontalPageLayoutManager(3, 4);
+//        HorizontalPageLayoutManager horizontalPageLayoutManager = new HorizontalPageLayoutManager(3, 4);
 
         //左侧点单列表
         selectedAdapter = new HomeSelectedAdapter(null);
@@ -307,7 +312,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             @Override
             public void onItemSwiped(RecyclerView.ViewHolder viewHolder, int pos) {
                 checkPriceForDisplay();
-                if (pos == -1) {
+                if (!dataBeans.isEmpty() && pos == -1) {
                     dataBeans.remove(swipeNo);
                 }
             }
@@ -329,7 +334,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             @SingleClick
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                scrollHelper.scrollToPosition(0);
+                typePosition = position;
                 typeList.clear();
                 if (position != 0) {
                     m = 1;
@@ -344,11 +349,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                             }
                         }
                     }
-                    productAdapter.setNewData(typeList);
                 } else {
                     m = 0;
-                    productAdapter.setNewData(tempProduces);
                 }
+                resetData(typePosition);
                 for (int i = 0; i < list.size(); i++) {
                     list.get(i).setSelected(position == i);
                 }
@@ -357,8 +361,18 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         });
 
         //商品列表
-        productAdapter = new HomeProductAdapter(tempProduces);
-        rBottom.setLayoutManager(horizontalPageLayoutManager);
+        productAdapter = new HomeProductAdapter(tempProduces, this);
+        rBottom.setLayoutManager(new GridLayoutManager(this, 4) {
+            @Override
+            public boolean canScrollHorizontally() {
+                return false;
+            }
+
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
         rBottom.setAdapter(productAdapter);
 
         productAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -368,7 +382,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 showSpe(position);
             }
         });
-        scrollHelper.setUpRecycleView(rBottom);
 
         //搜索栏
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
@@ -396,6 +409,37 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         cashPayDialog = new CashPayDialog(this, this);
         initSpeaker();
 
+    }
+
+    @Override
+    public void onPointerMoved(Production production, int direction) {
+        //todo 手势回调
+        OrderInfo.DataBean dataBean = new OrderInfo.DataBean();
+//        Log.e(TAG, "onPointerMoved: 6" );
+        dataBean.setProType(production.getProType());
+//        Log.e(TAG, "onPointerMoved: 5" );
+        dataBean.setProId(production.getProId());
+//        Log.e(TAG, "onPointerMoved: 4" );
+        dataBean.setMats(new ArrayList<MatsBean>());
+        Log.e(TAG, "onPointerMoved: 3");
+        dataBean.setTastes(production.getTastes().subList(0, 1));
+        Log.e(TAG, "onPointerMoved: 2");
+        dataBean.setScales(production.getScales().subList(0, 1));
+        Log.e(TAG, "onPointerMoved: 1");
+        //加入订单数据
+        dataBean.setNum(1);
+        dataBeans.add(dataBean);
+
+        Log.e(TAG, "onPointerMoved: 0");
+
+        //左侧点单列表
+        production.setNumber(1);
+        production.setScalePrice(production.getScales().get(0).getPrice());
+        production.setOrigionPrice(production.getScales().get(0).getOrigionPrice());
+        production.setMats(null);
+        productions.add(production);
+        selectedAdapter.setNewData(productions);
+        checkPriceForDisplay();
     }
 
     @Override
@@ -494,11 +538,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         searchList.clear();
         if (typeList.isEmpty()) {
             m = 0;
-            productAdapter.setNewData(tempProduces);
         } else {
             m = 1;
-            productAdapter.setNewData(typeList);
         }
+        resetData(typePosition);
     }
 
     /**
@@ -569,7 +612,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         getTypeList();
         getProList(Constant.NORECOMMEND);
         getActiveInfo();
-
     }
 
     /**
@@ -599,13 +641,19 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     @Override
     protected void onResume() {
         super.onResume();
+        workNameTv.setText(SpUtil.getString(Constant.WORKER_NAME));
         //重新登录后
-        if (SpUtil.getBoolean("from_Login")) {
+        if (SpUtil.getBoolean("from_Login") && !SpUtil.getBoolean("firstRun")) {
             syncData();
-            workNameTv.setText(SpUtil.getString(Constant.WORKER_NAME));
             SpUtil.save("from_Login", false);
             resetAllData();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SpUtil.save("firstRun", false);
     }
 
     /**
@@ -683,6 +731,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         typeAdapter.setNewData(list);
     }
 
+    int page1, leftNum;
+
     /**
      * 获取商品列表
      */
@@ -694,10 +744,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                     public void onSuccess(int statusCode, BaseBean<List<Production>> response) {
                         tempProduces.clear();
                         tempProduces.addAll(response.getData());
-                        productAdapter.setNewData(tempProduces);
                         b3 = true;
+//                        totalPage = response.getData().size() % 12 > 0 ? response.getData().size() / 12 + 1 : response.getData().size() / 12;
+                        page1 = response.getData().size() / 12;
+                        leftNum = response.getData().size() % 12;
+                        totalPage = page1 + (leftNum > 0 ? 1 : 0);
                         tryFinish();
-                        totalPage = response.getData().size() % 12 > 0 ? response.getData().size() / 12 + 1 : response.getData().size() / 12;
+                        resetData(typePosition);
                     }
 
                     @Override
@@ -705,6 +758,28 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
 
                     }
                 });
+    }
+
+    private void resetData(int position) {
+        pLists.clear();
+        if (position == 0) {
+            for (int i = 0; i < page1; i++) {
+                pLists.add(tempProduces.subList(i * 12, 12 * (i + 1)));
+            }
+            if (leftNum > 0) {
+                pLists.add(tempProduces.subList(page1 * 12, tempProduces.size()));
+            }
+        } else {
+            int page = typeList.size() / 12;
+            int left = typeList.size() % 12;
+            for (int i = 0; i < page; i++) {
+                pLists.add(typeList.subList(i * 12, 12 * (i + 1)));
+            }
+            if (left > 0) {
+                pLists.add(typeList.subList(page * 12, typeList.size()));
+            }
+        }
+        productAdapter.setNewData(pLists.get(0));
     }
 
     /**
@@ -760,7 +835,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             //商品数量
             //计算原价，特价除外
             double c = 0;
-            if (!p.getMats().isEmpty()) {
+            if (p.getMats() != null && !p.getMats().isEmpty()) {
                 for (MatsBean m : p.getMats()) {
                     c += m.getIngredientPrice();
                 }
@@ -958,7 +1033,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         //总优惠
         totalCut = 0;
         //商品显示列表
-        productAdapter.setNewData(tempProduces);
+        productAdapter.setNewData(pLists.get(0));
     }
 
     /**
@@ -1580,20 +1655,23 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
         pageNo--;
         if (pageNo < 0) {
             pageNo = 0;
+            return;
         }
-        scrollHelper.scrollToPosition(pageNo);
+        productAdapter.setNewData(pLists.get(pageNo));
     }
 
     int totalPage = 1;
+    String TAG = MainActivity.class.getSimpleName();
 
     @SingleClick
     @OnClick(R.id.btn_next)
     void btnNext() {
         pageNo++;
-        if (pageNo > totalPage) {
-            pageNo = totalPage;
+        if (pageNo >= totalPage) {
+            pageNo = totalPage - 1;
+            return;
         }
-        scrollHelper.scrollToPosition(pageNo);
+        productAdapter.setNewData(pLists.get(pageNo));
     }
 
     /**

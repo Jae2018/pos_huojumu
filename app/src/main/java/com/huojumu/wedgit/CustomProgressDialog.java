@@ -40,10 +40,6 @@ public class CustomProgressDialog extends BaseDialog {
         setCanceledOnTouchOutside(false);
     }
 
-    public void setTipTextView(String msg) {
-        this.tipTextView.setText(msg);
-    }
-
 //    /**
 //     * 得到自定义的progressDialog
 //     *

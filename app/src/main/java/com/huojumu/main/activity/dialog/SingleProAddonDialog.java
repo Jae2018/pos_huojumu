@@ -238,9 +238,6 @@ public class SingleProAddonDialog extends BaseDialog {
         current.setProNameEn(productsBean.getProNameEn());
         current.setAddon(addOnET.getText().toString());//备注
         current.setTasteStr(tastesBean != null ? tastesBean.getTasteName() : "默认口味");
-        OrderInfo.DataBean dataBean = new OrderInfo.DataBean();
-        dataBean.setProType(productsBean.getProType());
-        dataBean.setProId(productsBean.getProId());
 
         if (scaleBean != null) {
             price = scaleBean.getPrice();
@@ -262,6 +259,9 @@ public class SingleProAddonDialog extends BaseDialog {
         current.setMatStr(matStr);
         current.setMateP(matP);
 
+        OrderInfo.DataBean dataBean = new OrderInfo.DataBean();
+        dataBean.setProType(productsBean.getProType());
+        dataBean.setProId(productsBean.getProId());
         dataBean.setMakes(makesBeans);
         dataBean.setMats(matsBeans);
         dataBean.setTastes(tastesBeans);

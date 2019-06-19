@@ -30,7 +30,7 @@ public class HomeSelectedAdapter extends BaseItemDraggableAdapter<Production, Ba
         helper.setText(R.id.tv_home_selected_name, item.getProName() + "   " + item.getScaleStr() + "  * " + item.getNumber() +
                 "  \n" + item.getTasteStr() + "  ￥" + item.getScalePrice());
 
-        if (!item.getMats().isEmpty()) {
+        if (item.getMats() != null && !item.getMats().isEmpty()) {
             for (MatsBean mats : item.getMats()) {
                 TextView t = new TextView(mContext);
                 t.setText(String.format(mContext.getString(R.string.selected_linear_one), mats.getMatName(), item.getNumber(), mats.getIngredientPrice()));

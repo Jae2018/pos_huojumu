@@ -72,6 +72,8 @@ public class MyApplication extends Application {
         SpeechUtility.createUtility(MyApplication.this, p);
 
         startService(new Intent(this, MyPosService.class));
+
+        SpUtil.save("firstRun", true);
     }
 
     public static void initSocket() {

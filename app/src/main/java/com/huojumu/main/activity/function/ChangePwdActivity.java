@@ -1,6 +1,5 @@
 package com.huojumu.main.activity.function;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Handler;
 import android.widget.EditText;

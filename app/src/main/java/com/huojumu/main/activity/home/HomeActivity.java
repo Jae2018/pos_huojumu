@@ -42,15 +42,14 @@ import com.huojumu.adapter.HomeTypeAdapter;
 import com.huojumu.adapter.PinYinAdapter;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.listeners.onPointerMoveListener;
-import com.huojumu.main.activity.MainActivity;
 import com.huojumu.main.activity.dialog.SingleProAddonDialog;
 import com.huojumu.main.activity.login.LoginActivity;
 import com.huojumu.main.dialogs.CashPayDialog;
 import com.huojumu.main.dialogs.CertainDialog;
-import com.huojumu.main.dialogs.DialogInterface;
+import com.huojumu.listeners.DialogInterface;
 import com.huojumu.main.dialogs.MoreFunctionDialog;
 import com.huojumu.main.dialogs.QuickPayDialog;
-import com.huojumu.main.dialogs.SingleProCallback;
+import com.huojumu.listeners.SingleProCallback;
 import com.huojumu.model.ActivesBean;
 import com.huojumu.model.AdsBean;
 import com.huojumu.model.BaseBean;
@@ -75,7 +74,6 @@ import com.huojumu.utils.PowerUtil;
 import com.huojumu.utils.PrinterCommand;
 import com.huojumu.utils.PrinterUtil;
 import com.huojumu.utils.SingleClick;
-import com.huojumu.utils.SocketBack;
 import com.huojumu.utils.SocketTool;
 import com.huojumu.utils.SpUtil;
 import com.huojumu.utils.ThreadFactoryBuilder;
@@ -120,7 +118,7 @@ import static com.huojumu.utils.DeviceConnFactoryManager.ACTION_QUERY_PRINTER_ST
 import static com.huojumu.utils.DeviceConnFactoryManager.CONN_STATE_FAILED;
 
 
-public class HomeActivity extends BaseActivity implements DialogInterface, SocketBack,
+public class HomeActivity extends BaseActivity implements DialogInterface,
         SingleProCallback, onPointerMoveListener {
 
     //下单列表
@@ -193,7 +191,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     private MoreFunctionDialog functionDialog;//功能弹窗
     private CertainDialog certainDialog;//关机确认弹窗
     //商品recycler滑动翻页方法类
-//    PagingScrollHelper scrollHelper = new PagingScrollHelper();
     int pageNo = 0;//当前页数
 
     //订单数据
@@ -273,9 +270,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
                 PrinterUtil.connectPrinter();
             }
         });
-
-
-//        HorizontalPageLayoutManager horizontalPageLayoutManager = new HorizontalPageLayoutManager(3, 4);
 
         //左侧点单列表
         selectedAdapter = new HomeSelectedAdapter(null);
@@ -809,11 +803,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
             isRecommend = true;
             recommendTv.setText("全部");
         }
-    }
-
-    @Override
-    public void callback(String s) {
-
     }
 
     /**
@@ -1653,7 +1642,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface, Socke
     }
 
     int totalPage = 1;
-    String TAG = MainActivity.class.getSimpleName();
 
     @SingleClick
     @OnClick(R.id.btn_next)

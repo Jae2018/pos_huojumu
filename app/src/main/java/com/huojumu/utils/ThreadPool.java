@@ -8,10 +8,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Administrator
- *
- * @author 猿史森林
- *         Date: 2017/11/2
- *         Class description:
+ * <p>
+ * <p>
+ * Date: 2017/11/2
+ * Class description:
  */
 public class ThreadPool {
 
@@ -54,6 +54,7 @@ public class ThreadPool {
         }
         return threadPool;
     }
+
     //为线程池添加任务
     public void addTask(Runnable runnable) {
         if (runnable == null) {

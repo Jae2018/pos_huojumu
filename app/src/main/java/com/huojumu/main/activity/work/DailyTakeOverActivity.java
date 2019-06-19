@@ -6,7 +6,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -19,7 +18,7 @@ import com.huojumu.adapter.WorkDailyAdapter;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.activity.function.OrderDetailActivity;
 import com.huojumu.main.dialogs.CertainDialog;
-import com.huojumu.main.dialogs.DialogInterface;
+import com.huojumu.listeners.DialogInterface;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.DailyInfo;
 import com.huojumu.utils.Constant;
@@ -91,7 +90,7 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
         final LinearLayoutManager manager = new LinearLayoutManager(this);
         dailyRecycler.setLayoutManager(manager);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        itemDecoration.setDrawable(getResources().getDrawable(R.drawable.divider_v));
+        itemDecoration.setDrawable(getResources().getDrawable(R.drawable.divider_v, null));
         dailyRecycler.addItemDecoration(itemDecoration);
 
         dailyAdapter = new WorkDailyAdapter(null);

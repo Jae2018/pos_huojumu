@@ -5,24 +5,12 @@
     <string name="active_des" translatable="false">请扫面下方二维码绑定设备</string>
     <!-- 登录页面 -->
     <!-- 主界面 -->
-    <string name="hold_on" translatable="false">挂单</string>
-    <string name="clear" translatable="false">删除全部</string>
-    <string name="referral" translatable="false">推荐</string>
-    <string name="function" translatable="false">功能</string>
-    <string name="shutdown" translatable="false">关机</string>
 
-    <string name="order_des" translatable="false">整单备注</string>
     <string name="delete" translatable="false">删除</string>
     <string name="number" translatable="false">数量：</string>
     <string name="cut" translatable="false">优惠：</string>
     <string name="price" translatable="false">金额：</string>
 
-    <string name="home_quick_invoice" translatable="false">快捷支付</string>
-    <string name="takeout" translatable="false">外卖</string>
-    <string name="handover" translatable="false">交班</string>
-    <string name="daily" translatable="false">日结</string>
-
-    <string name="str_choice_printer_command">请选择正确的打印机指令</string>
     <string name="str_printer_conn_normal">打印机连接正常</string>
     <string name="str_printer_out_of_paper">打印机缺纸</string>
     <string name="str_printer_open_cover">打印机开盖</string>

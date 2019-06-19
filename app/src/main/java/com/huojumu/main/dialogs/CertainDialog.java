@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import com.huojumu.R;
 import com.huojumu.base.BaseDialog;
+import com.huojumu.listeners.DialogInterface;
 
 import butterknife.BindView;
 import butterknife.OnClick;

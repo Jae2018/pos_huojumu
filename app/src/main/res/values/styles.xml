@@ -9,14 +9,6 @@
         <item name="android:listDivider">@drawable/divider_bg</item>
     </style>
 
-    <style name="SplashTheme" parent="AppTheme">
-        <!-- 将splash图片设置在这，这样这张图片取代白屏 -->
-        <item name="android:windowBackground">@drawable/load_bg</item>
-        <item name="android:windowFullscreen">true</item>
-        <!-- 或者是将主题设置成透明，虽然点击图标会有点小小的卡顿，但是用户体验不影响 -->
-        <!-- <item name="android:windowIsTranslucent">true</item> --> <!-- 透明背景不要了 -->
-    </style>
-
     <style name="FullscreenTheme" parent="AppTheme">
         <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
         <item name="android:windowActionBarOverlay">true</item>
@@ -27,18 +19,6 @@
 
     <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@color/black_overlay</item>
-    </style>
-
-    <style name="HomeButtonStyle">
-        <item name="android:layout_width">@dimen/d_101</item>
-        <item name="android:layout_height">@dimen/d_48</item>
-        <item name="android:layout_marginTop">@dimen/d_8</item>
-        <item name="android:layout_marginBottom">@dimen/d_8</item>
-        <item name="android:layout_marginEnd">@dimen/d_16</item>
-        <item name="android:textSize">@dimen/f_16</item>
-        <item name="android:textColor">@color/btn_text</item>
-        <item name="android:gravity">center</item>
-        <item name="android:background">@color/btn_den</item>
     </style>
 
     <!-- 自定义diaolog   windowBackground 放一张透明背景，去dialog黑边 -->
@@ -71,12 +51,5 @@
     </style>
 
     <!-- 自定义loading dialog -->
-    <style name="loading_dialog" parent="android:style/Theme.Dialog">
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-    </style>
 
 </resources>

@@ -20,7 +20,7 @@ import com.huojumu.adapter.OrderBackContentAdapter;
 import com.huojumu.adapter.OrderEnableBackAdapter;
 import com.huojumu.base.BaseActivity;
 import com.huojumu.main.dialogs.CertainDialog;
-import com.huojumu.main.dialogs.DialogInterface;
+import com.huojumu.listeners.DialogInterface;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.OrderDetails;
 import com.huojumu.model.OrderEnableBackBean;

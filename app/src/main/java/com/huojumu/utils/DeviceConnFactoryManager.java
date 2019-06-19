@@ -37,7 +37,7 @@ import static android.hardware.usb.UsbManager.ACTION_USB_DEVICE_DETACHED;
  */
 public class DeviceConnFactoryManager {
 
-    public PortManager mPort;
+    private PortManager mPort;
 
     private static final String TAG = DeviceConnFactoryManager.class.getSimpleName();
 

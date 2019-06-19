@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.huojumu.R;
 import com.huojumu.base.BaseDialog;
-import com.huojumu.main.dialogs.SingleProCallback;
+import com.huojumu.listeners.SingleProCallback;
 import com.huojumu.model.MakesBean;
 import com.huojumu.model.MatsBean;
 import com.huojumu.model.OrderInfo;

@@ -1,6 +1,5 @@
 package com.huojumu.main.activity.function;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;

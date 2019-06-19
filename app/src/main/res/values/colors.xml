@@ -7,22 +7,15 @@
     <color name="black_overlay">#66000000</color>
     <color name="home_left_bottom">#171827</color>
     <color name="default_bg">#f3f1f7</color>
-    <color name="black90">#383431</color><!--黑色 -->
-    <color name="btn_start">#fefefe</color>
+    <!--黑色 -->
     <color name="btn_den">#c1c1c1</color>
     <color name="btn_text">#333333</color>
-    <color name="main_view_back">#d7d5d5</color>
     <color name="wx_green">#50b528</color>
-    <color name="key_dowm">#9fe1ff</color>
     <color name="red_delete">#d50414</color>
     <color name="home_left">#5e5d66</color>
 
-    <color name="btn_selected">#32424a</color>
-    <color name="btn_unselected">#d2d2d2</color>
     <color name="btn_selected_tow">#09b1c7</color>
     <color name="btn_next">#2a3f49</color>
     <color name="home_bottom">#aa060606</color>
-    <color name="home_quick">#060606</color>
-    <color name="home_text">#b9b9b9</color>
     <color name="home_other_pay">#4e4e4e</color>
 </resources>

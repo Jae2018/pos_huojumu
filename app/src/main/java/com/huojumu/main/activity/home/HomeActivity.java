@@ -419,6 +419,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
 
         //左侧点单列表
         production.setNumber(1);
+        production.setMatStr("默认加料");
+        production.setMateP(0);
+        production.setScaleStr(production.getScales().get(0).getScaName());
         production.setScalePrice(production.getScales().get(0).getPrice());
         production.setOrigionPrice(production.getScales().get(0).getOrigionPrice());
         production.setMats(null);
@@ -1015,7 +1018,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         //总优惠
         totalCut = 0;
         //商品显示列表
-        productAdapter.setNewData(pLists.get(0));
+        if (!pLists.isEmpty()) {
+            productAdapter.setNewData(pLists.get(0));
+        }
     }
 
     /**

@@ -398,7 +398,6 @@ public class PrinterUtil {
                     // 间隔大的虚线
                     mPrinter.setAlignMode(1);
                     mPrinter.printRasterBitmap(MyApplication.getLine2());
-
                     //商品信息
                     mPrinter.setAlignMode(0);
                     String ss = settSubTitle();
@@ -412,7 +411,7 @@ public class PrinterUtil {
                             if (p.getProNameEn() != null && !p.getProNameEn().isEmpty()) {
                                 sb.append(p.getProNameEn()).append("\n");
                             }
-                            if (p.getMats().size() > 0) {
+                            if (p.getMats() != null && p.getMats().size() > 0) {
                                 for (MatsBean bean : p.getMats()) {
                                     sb.append(printFourData80("--" + bean.getMatName(), "x" + n, String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()))).append("\n");
                                 }
@@ -425,7 +424,7 @@ public class PrinterUtil {
                             if (p.getProNameEn() != null && !p.getProNameEn().isEmpty()) {
                                 sb.append(p.getProNameEn()).append("\n");
                             }
-                            if (p.getMats().size() > 0) {
+                            if (p.getMats() != null && p.getMats().size() > 0) {
                                 for (OrderDetails.OrderdetailBean.ProsBean.MatsBean bean : p.getMats()) {
                                     sb.append(printFourData80("--" + bean.getMatName(), "x" + n, String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()))).append("\n");
                                 }

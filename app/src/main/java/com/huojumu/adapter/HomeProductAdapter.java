@@ -48,11 +48,6 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
             @Override
             public boolean onTouch(View v, MotionEvent e) {
 
-//                 onTouch 1: 1__65__41__105
-//  onTouch 2: 129__65__169__105
-// onTouch 3: 65__1__105__41
-// onTouch 4: 65__129__105__169
-
                 switch (e.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
                         pointer1OldCoorX = e.getX();
@@ -75,32 +70,23 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
                             float deltaY = Math.abs(pointer1NewCoorY - pointer1OldCoorY);
 
                             if (deltaX > deltaY && deltaX > mTouchSlop) {
-                                Log.e(TAG, "onTouch: 横向");
                                 //横向滑动
                                 if ((pointer1NewCoorX - pointer1OldCoorX) > 100) {
                                     //向右
                                     moveListener.onPointerMoved(item, 2);
-                                    Log.e(TAG, "onTouch: 2");
-
                                 } else if ((pointer1NewCoorX - pointer1OldCoorX) < -100) {
                                     //向左
                                     moveListener.onPointerMoved(item, 0);
-                                    Log.e(TAG, "onTouch: 0");
-
                                 }
                             } else if (deltaY > deltaX) {
-                                Log.e(TAG, "onTouch: 纵向");
                                 //纵向滑动
                                 if ((pointer1NewCoorY - pointer1OldCoorY) > 100) {
                                     //向下
-                                    Log.e(TAG, "onTouch: 3");
                                     moveListener.onPointerMoved(item, 3);
 
                                 } else if ((pointer1NewCoorY - pointer1OldCoorY) < -100) {
                                     //向上
-                                    Log.e(TAG, "onTouch: 1");
                                     moveListener.onPointerMoved(item, 1);
-
                                 }
                             }
                         }

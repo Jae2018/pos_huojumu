@@ -94,6 +94,11 @@ public class MyPosService extends Service {
                                 }
                                 uploadStrs.clear();
                             }
+
+                            @Override
+                            public void onFailure(int statusCode, String code, String error_msg) {
+                                uploadStrs.clear();
+                            }
                         });
                     }
                 }

@@ -4,6 +4,8 @@
     android:id="@+id/parent_relative"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:focusable="true"
     android:focusableInTouchMode="true"
     tools:context=".main.activity.home.HomeActivity">
@@ -274,6 +276,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/line"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:layout_toEndOf="@+id/linear1"
         android:background="@color/default_bg">
 
@@ -384,20 +388,6 @@
             android:text="@string/next_page"
             android:textColor="@android:color/white" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView3"
-            android:layout_width="@dimen/d_700"
-            android:layout_height="@dimen/d_640"
-            android:layout_marginTop="@dimen/d_48"
-            android:overScrollMode="never" />
-
-        <!--<android.support.v4.view.ViewPager-->
-            <!--android:id="@+id/viewpager"-->
-            <!--android:layout_width="@dimen/d_700"-->
-            <!--android:layout_height="@dimen/d_640"-->
-            <!--android:layout_marginTop="@dimen/d_48"-->
-            <!--android:overScrollMode="never" />-->
-
         <LinearLayout
             android:id="@+id/btn_search"
             android:layout_width="@dimen/d_240"
@@ -440,6 +430,15 @@
                     android:src="@drawable/clear" />
             </LinearLayout>
         </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView3"
+            android:layout_width="@dimen/d_700"
+            android:layout_height="@dimen/d_640"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:layout_marginTop="@dimen/d_48"
+            android:overScrollMode="never" />
 
     </RelativeLayout>
 

@@ -15,6 +15,15 @@ public class ScaleBean implements Parcelable {
     private String type;
     private double capacity;
     private double origionPrice;
+    private String tcposition;
+
+    public String getTcposition() {
+        return tcposition;
+    }
+
+    public void setTcposition(String tcposition) {
+        this.tcposition = tcposition;
+    }
 
     public String getScaNameEn() {
         return scaNameEn;

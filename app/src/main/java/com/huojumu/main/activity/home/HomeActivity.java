@@ -63,6 +63,7 @@ import com.huojumu.model.OrderBack;
 import com.huojumu.model.OrderDetails;
 import com.huojumu.model.OrderInfo;
 import com.huojumu.model.Production;
+import com.huojumu.model.ScaleBean;
 import com.huojumu.model.SmallType;
 import com.huojumu.model.WorkBean;
 import com.huojumu.model.WorkInfo;
@@ -404,30 +405,37 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
     }
 
     @Override
-    public void onPointerMoved(Production production, int direction) {
+    public void onPointerMoved(Production production, int direction, ScaleBean scaleBean) {
         //todo 手势回调
-        OrderInfo.DataBean dataBean = new OrderInfo.DataBean();
-        dataBean.setProType(production.getProType());
-        dataBean.setProId(production.getProId());
-        dataBean.setMats(new ArrayList<MatsBean>());
-        dataBean.setTastes(production.getTastes().subList(0, 1));
-        dataBean.setScales(production.getScales().subList(0, 1));
+        if (scaleBean != null) {
+            OrderInfo.DataBean dataBean = new OrderInfo.DataBean();
+            dataBean.setProType(production.getProType());
+            dataBean.setProId(production.getProId());
+            dataBean.setMats(new ArrayList<MatsBean>());
+            dataBean.setTastes(production.getTastes().subList(0, 1));
+            //switch
+            List<ScaleBean> s = new ArrayList<>();
+            s.add(scaleBean);
+            dataBean.setScales(s);
 
-        //加入订单数据
-        dataBean.setNum(1);
-        dataBeans.add(dataBean);
+            //加入订单数据
+            dataBean.setNum(1);
+            dataBeans.add(dataBean);
 
-        //左侧点单列表
-        production.setNumber(1);
-        production.setMatStr("默认加料");
-        production.setMateP(0);
-        production.setScaleStr(production.getScales().get(0).getScaName());
-        production.setScalePrice(production.getScales().get(0).getPrice());
-        production.setOrigionPrice(production.getScales().get(0).getOrigionPrice());
-        production.setMats(null);
-        productions.add(production);
-        selectedAdapter.setNewData(productions);
-        checkPriceForDisplay();
+            Production p = new Production();
+            //左侧点单列表
+            p.setProName(production.getProName());
+            p.setNumber(1);
+            p.setMatStr("默认加料");
+            p.setMateP(0);
+            p.setScaleStr(scaleBean.getScaName());
+            p.setScalePrice(scaleBean.getPrice());
+            p.setOrigionPrice(scaleBean.getOrigionPrice());
+            p.setMats(null);
+            productions.add(p);
+            selectedAdapter.setNewData(productions);
+            checkPriceForDisplay();
+        }
     }
 
     @Override

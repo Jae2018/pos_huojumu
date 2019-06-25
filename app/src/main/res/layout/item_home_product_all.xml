@@ -2,8 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/d_170"
     android:layout_height="@dimen/d_170"
-    android:background="@drawable/pro_border"
     android:layout_marginBottom="@dimen/d_10"
+    android:background="@drawable/pro_border"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:padding="@dimen/d_1">
 
     <ImageView
@@ -45,51 +47,57 @@
         android:textSize="@dimen/f_24"
         android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/left_tv"
-        android:layout_width="@dimen/d_40"
-        android:layout_height="@dimen/d_40"
-        android:layout_centerVertical="true"
-        android:background="@drawable/move_tv_selector"
-        android:textColor="@color/addon_text_selector"
-        android:padding="@dimen/d_4"
-        android:visibility="invisible"
-        android:gravity="center"
-        android:text="小杯" />
+    <LinearLayout
+        android:id="@+id/linear_types"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
 
-    <TextView
-        android:id="@+id/right_tv"
-        android:layout_width="@dimen/d_40"
-        android:layout_height="@dimen/d_40"
-        android:layout_alignParentEnd="true"
-        android:background="@drawable/move_tv_selector"
-        android:textColor="@color/addon_text_selector"
-        android:padding="@dimen/d_4"
-        android:visibility="invisible"
-        android:layout_centerVertical="true"
-        android:text="大杯" />
+        <RelativeLayout
+            android:id="@+id/relative_types"
+            android:layout_width="@dimen/d_240"
+            android:layout_height="@dimen/d_240"
+            android:visibility="gone"
+            android:background="#aaeeeeee">
 
-    <TextView
-        android:id="@+id/top_tv"
-        android:layout_width="@dimen/d_40"
-        android:layout_height="@dimen/d_40"
-        android:layout_centerHorizontal="true"
-        android:visibility="invisible"
-        android:background="@drawable/move_tv_selector"
-        android:textColor="@color/addon_text_selector"
-        android:padding="@dimen/d_4"
-        android:gravity="bottom"
-        android:text="加冰" />
+            <TextView
+                android:id="@+id/left_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:textColor="@android:color/white" />
 
-    <TextView
-        android:id="@+id/bottom_tv"
-        android:layout_width="@dimen/d_40"
-        android:layout_height="@dimen/d_40"
-        android:layout_alignParentBottom="true"
-        android:visibility="invisible"
-        android:background="@drawable/move_tv_selector"
-        android:textColor="@color/addon_text_selector"
-        android:padding="@dimen/d_4"
-        android:layout_centerHorizontal="true"
-        android:text="常温" />
+            <TextView
+                android:id="@+id/right_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:background="@color/colorPrimary"
+                android:layout_centerVertical="true"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:id="@+id/top_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:background="@color/colorPrimary"
+                android:gravity="bottom"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:id="@+id/bottom_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="@color/colorPrimary"
+                android:layout_centerHorizontal="true"
+                android:textColor="@android:color/white" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
 </RelativeLayout>

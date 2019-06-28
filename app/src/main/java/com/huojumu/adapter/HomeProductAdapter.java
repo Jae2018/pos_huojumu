@@ -27,7 +27,7 @@ import java.util.TimerTask;
  */
 public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHolder> {
 
-    private boolean moved;
+    private boolean moved, showed;
     private float pointer1OldCoorX, pointer1NewCoorX;
     private float pointer1OldCoorY, pointer1NewCoorY;
     private int iNumber1, iNumber2, iNumber3, iNumber4;
@@ -108,14 +108,14 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
                         pointer1OldCoorX = e.getX();
                         pointer1OldCoorY = e.getY();
                         moved = false;
+                        showed = false;
                         timer = new Timer();
                         timer.schedule(new TimerTask() {
                             @Override
                             public void run() {
                                 time++;
-                                Log.e(TAG, "onTouch: timer count" + time);
+
                                 if (time == 2) {
-                                    Log.e(TAG, "onTouch: timer");
                                     timer.cancel();
                                     timer.purge();
                                     timer = null;
@@ -123,6 +123,7 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
                                     handler.post(new Runnable() {
                                         @Override
                                         public void run() {
+                                            showed = true;
                                             showArror(helper, true);
                                         }
                                     });
@@ -131,17 +132,16 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
                         }, 0, 500);
                         break;
                     case MotionEvent.ACTION_MOVE:
-
                         moved = true;
                         //手指个数满足条件,判断每个手指的滑动方向
                         pointer1NewCoorX = e.getX();
                         pointer1NewCoorY = e.getY();
                         break;
                     case MotionEvent.ACTION_UP:
-                        showArror(helper, false);
-                        if (!moved) {
-                            v.performClick();
-                        } else {
+//                        if (!moved) {
+//                            v.performClick();
+//                        } else {
+                        if (showed) {
                             float deltaX = Math.abs(pointer1NewCoorX - pointer1OldCoorX);
                             float deltaY = Math.abs(pointer1NewCoorY - pointer1OldCoorY);
 
@@ -180,7 +180,13 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
                                     }
                                 }
                             }
+                            showArror(helper, false);
+                            showed = false;
+                        } else {
+                            v.performClick();
                         }
+//                        }
+
                         break;
                 }
                 return true;

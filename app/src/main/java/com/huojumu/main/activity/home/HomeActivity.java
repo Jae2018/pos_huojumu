@@ -408,7 +408,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
 
     @Override
     public void onPointerMoved(Production production, int direction, ScaleBean scaleBean) {
-        //todo 手势回调
         if (scaleBean != null) {
             OrderInfo.DataBean dataBean = new OrderInfo.DataBean();
             dataBean.setProType(production.getProType());

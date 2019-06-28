@@ -1,5 +1,7 @@
 package com.huojumu.adapter;
 
+import android.annotation.SuppressLint;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -13,9 +15,10 @@ import com.huojumu.R;
 import com.huojumu.listeners.onPointerMoveListener;
 import com.huojumu.model.Production;
 import com.huojumu.utils.GlideApp;
-import com.huojumu.utils.PrinterUtil;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @author : Jie
@@ -29,6 +32,10 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
     private float pointer1OldCoorY, pointer1NewCoorY;
     private int iNumber1, iNumber2, iNumber3, iNumber4;
     private onPointerMoveListener moveListener;
+    private Timer timer;
+    private int time = 0;
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler();
 
     public HomeProductAdapter(@Nullable List<Production> data, onPointerMoveListener moveListener) {
         super(R.layout.item_home_product_all, data);
@@ -71,16 +78,21 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
         }
         if (iNumber1 == -1) {
             type1 = "";
+            helper.setVisible(R.id.right_tv, false);
         }
         if (iNumber2 == -1) {
             type2 = "";
+            helper.setVisible(R.id.bottom_tv, false);
         }
         if (iNumber3 == -1) {
             type3 = "";
+            helper.setVisible(R.id.left_tv, false);
         }
         if (iNumber4 == -1) {
             type4 = "";
+            helper.setVisible(R.id.top_tv, false);
         }
+
         helper.setText(R.id.tv_product_name, item.getProName())
                 .setText(R.id.tv_product_cut, String.valueOf(item.getMinPrice()))
                 .setText(R.id.right_tv, type1)
@@ -96,9 +108,30 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
                         pointer1OldCoorX = e.getX();
                         pointer1OldCoorY = e.getY();
                         moved = false;
-                        showArror(helper, true);
+                        timer = new Timer();
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                time++;
+                                Log.e(TAG, "onTouch: timer count" + time);
+                                if (time == 2) {
+                                    Log.e(TAG, "onTouch: timer");
+                                    timer.cancel();
+                                    timer.purge();
+                                    timer = null;
+                                    time = 0;
+                                    handler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            showArror(helper, true);
+                                        }
+                                    });
+                                }
+                            }
+                        }, 0, 500);
                         break;
                     case MotionEvent.ACTION_MOVE:
+
                         moved = true;
                         //手指个数满足条件,判断每个手指的滑动方向
                         pointer1NewCoorX = e.getX();
@@ -134,10 +167,8 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
                                 if ((pointer1NewCoorY - pointer1OldCoorY) > 70) {
                                     //向下
                                     try {
-                                        Log.e(TAG, "onTouch: down ok");
                                         moveListener.onPointerMoved(item, 3, item.getScales().get(iNumber2));
                                     } catch (Exception e1) {
-                                        Log.e(TAG, "onTouch: down error" + e1.getLocalizedMessage());
                                         moveListener.onPointerMoved(item, 3, null);
                                     }
                                 } else if ((pointer1NewCoorY - pointer1OldCoorY) < -70) {

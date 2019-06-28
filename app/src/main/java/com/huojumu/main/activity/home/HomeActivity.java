@@ -115,6 +115,8 @@ import butterknife.OnClick;
 import static android.hardware.usb.UsbManager.ACTION_USB_DEVICE_ATTACHED;
 import static android.hardware.usb.UsbManager.ACTION_USB_DEVICE_DETACHED;
 import static com.huojumu.utils.Constant.ACTION_USB_PERMISSION;
+import static com.huojumu.utils.Constant.ORDER_NUM;
+import static com.huojumu.utils.Constant.WORK_P;
 import static com.huojumu.utils.DeviceConnFactoryManager.ACTION_QUERY_PRINTER_STATE;
 import static com.huojumu.utils.DeviceConnFactoryManager.CONN_STATE_FAILED;
 
@@ -638,8 +640,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
     protected void onResume() {
         super.onResume();
         workNameTv.setText(SpUtil.getString(Constant.WORKER_NAME));
-        earnTv.setText(String.format(Locale.CHINA, "%.1f元", 0.0));
-        orderNumTv.setText(String.format(Locale.CHINA, "%d单", 0));
+        earnTv.setText(String.format(Locale.CHINA, "%.1f元", SpUtil.getFloat(WORK_P)));
+        orderNumTv.setText(String.format(Locale.CHINA, "%d单", SpUtil.getInt(ORDER_NUM)));
         //重新登录后
         if (SpUtil.getBoolean("from_Login") && !SpUtil.getBoolean("firstRun")) {
             syncData();

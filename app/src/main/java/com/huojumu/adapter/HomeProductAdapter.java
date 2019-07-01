@@ -3,10 +3,8 @@ package com.huojumu.adapter;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.widget.ImageView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -54,8 +52,7 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
         String type2 = "";
         String type3 = "";
         String type4 = "";
-        ViewConfiguration configuration = ViewConfiguration.get(mContext);
-        final int mTouchSlop = configuration.getScaledPagingTouchSlop();
+
         for (int i = 0; i < item.getScales().size(); i++) {
             switch (item.getScales().get(i).getTcposition()) {
                 case "3":
@@ -105,6 +102,7 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
 
                 switch (e.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
+
                         pointer1OldCoorX = e.getX();
                         pointer1OldCoorY = e.getY();
                         moved = false;
@@ -120,11 +118,12 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
                                     timer.purge();
                                     timer = null;
                                     time = 0;
+
                                     handler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            showed = true;
                                             showArror(helper, true);
+                                            showed = true;
                                         }
                                     });
                                 }
@@ -132,20 +131,19 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
                         }, 0, 500);
                         break;
                     case MotionEvent.ACTION_MOVE:
+
                         moved = true;
                         //手指个数满足条件,判断每个手指的滑动方向
                         pointer1NewCoorX = e.getX();
                         pointer1NewCoorY = e.getY();
                         break;
                     case MotionEvent.ACTION_UP:
-//                        if (!moved) {
-//                            v.performClick();
-//                        } else {
-                        if (showed) {
+
+                        if (showed && moved) {
                             float deltaX = Math.abs(pointer1NewCoorX - pointer1OldCoorX);
                             float deltaY = Math.abs(pointer1NewCoorY - pointer1OldCoorY);
 
-                            if (deltaX > deltaY && deltaX > mTouchSlop) {
+                            if (deltaX > deltaY) {
                                 //横向滑动
                                 if ((pointer1NewCoorX - pointer1OldCoorX) > 70) {
                                     //向右
@@ -180,15 +178,20 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
                                     }
                                 }
                             }
+
                             showArror(helper, false);
                             showed = false;
                         } else {
+                            showArror(helper, false);
+                            timer.cancel();
+                            timer.purge();
+                            timer = null;
                             v.performClick();
                         }
-//                        }
 
                         break;
                 }
+
                 return true;
             }
         });

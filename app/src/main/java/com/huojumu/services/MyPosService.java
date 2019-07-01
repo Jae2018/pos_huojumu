@@ -26,7 +26,7 @@ public class MyPosService extends Service {
     private List<NativeOrders> nativeOrdersList;
     private List<OrderInfo> uploadStrs = new ArrayList<>();
     private NativeOrdersDao ordersDao;
-    private Timer timer;//,timer2
+    private Timer timer;
     private Gson gson = new Gson();
 
     @Override
@@ -56,16 +56,6 @@ public class MyPosService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
-
-//    private void startSocket(){
-//        timer2 = new Timer();
-//        timer2.schedule(new TimerTask() {
-//            @Override
-//            public void run() {
-//                MyApplication.getSocketTool().sendHeart();
-//            }
-//        }, 10, 30 * 1000);
-//    }
 
     /**
      * 轮询数据库，间隔上传

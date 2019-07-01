@@ -202,12 +202,11 @@ public class DailyTakeOverActivity extends BaseActivity implements DialogInterfa
                     sellTv.setText(String.format(Locale.CHINA, "提成：%.4f", s3));
                     s4 = response.getData().getSaleData().getTotal();
                     commissionTv.setText(String.format(Locale.CHINA, "营业额：%.2f", s4));
-                    timestamp = response.getData().getTimestamp();
                     if (page < response.getData().getOrders().getPageNum()) {
                         page++;
                     }
                 }
-
+                timestamp = response.getData().getTimestamp();
                 swipeRefreshLayout.setRefreshing(false);
                 progressDialog.dismiss();
             }

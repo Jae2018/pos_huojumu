@@ -57,6 +57,7 @@ public class OrdersListActivity extends BaseActivity {
                 }
             }
         }, recyclerView);
+
         listAdapter.setUpFetchListener(new BaseQuickAdapter.UpFetchListener() {
             @Override
             public void onUpFetch() {
@@ -108,4 +109,9 @@ public class OrdersListActivity extends BaseActivity {
         finish();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        rowsBeanList.clear();
+    }
 }

@@ -639,13 +639,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
     protected void onResume() {
         super.onResume();
         workNameTv.setText(SpUtil.getString(Constant.WORKER_NAME));
-        earnTv.setText(String.format(Locale.CHINA, "%.1f元", SpUtil.getFloat(WORK_P)));
-        orderNumTv.setText(String.format(Locale.CHINA, "%d单", SpUtil.getInt(ORDER_NUM)));
+        syncData();
         //重新登录后
         if (SpUtil.getBoolean("from_Login") && !SpUtil.getBoolean("firstRun")) {
-            syncData();
             SpUtil.save("from_Login", false);
             resetAllData();
+            //挂单
+            gTemp.clear();
         }
     }
 
@@ -663,6 +663,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
             @Override
             public void onSuccess(int statusCode, BaseBean<WorkInfo> response) {
                 if (response.getData() != null) {
+                    SpUtil.save(ORDER_NUM, response.getData().getOrderCount());
+                    SpUtil.save(WORK_P, (float) response.getData().getPushMoneyData().getTotalMoney());
                     earnTv.setText(String.format(Locale.CHINA, "%.2f元", response.getData().getPushMoneyData().getTotalMoney()));
                     orderNumTv.setText(String.format(Locale.CHINA, "%d单", response.getData().getOrderCount()));
                 }
@@ -744,12 +746,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                         tempProduces.clear();
                         tempProduces.addAll(response.getData());
                         b3 = true;
-//                        totalPage = response.getData().size() % 12 > 0 ? response.getData().size() / 12 + 1 : response.getData().size() / 12;
                         page1 = response.getData().size() / 12;
                         leftNum = response.getData().size() % 12;
                         totalPage = page1 + (leftNum > 0 ? 1 : 0);
-                        tryFinish();
                         resetData(typePosition);
+                        tryFinish();
                     }
 
                     @Override
@@ -1005,8 +1006,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         searchList.clear();
         searchStr = "";
         edit_search.setText("");
-        //挂单
-        gTemp.clear();
+
         //订单
         orderInfo = null;
         dataBeans.clear();
@@ -1068,7 +1068,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                     orderNum = 0;
                     earnTv.setText(String.format(Locale.CHINA, "%.1f元", woeker_p));
                     orderNumTv.setText(String.format(Locale.CHINA, "%d单", orderNum));
-                    ToastUtils.showLong("已完成交班！即将退出登录！");
+                    ToastUtils.showLong("已完成交班！即将返回登录页面！");
                     MyOkHttp.mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -1450,7 +1450,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                 p.setProName(name);
                 p.setProNameEn(nameEn);
                 p.setTasteStr(taste);
-                p.setScalePrice(Double.parseDouble(h5TaskBean.getData().getOrderdetail().getPros().get(i).getSumPrice()));
+                p.setScalePrice(h5TaskBean.getData().getOrderdetail().getPros().get(i).getSumPrice() == null ? h5TaskBean.getData().getOrderdetail().getPros().get(i).getPrice() : Double.parseDouble(h5TaskBean.getData().getOrderdetail().getPros().get(i).getSumPrice()));
                 p.setNumber(count);
                 p.setScaleStr(h5TaskBean.getData().getOrderdetail().getPros().get(i).getScaleName());
                 p.setMatStr(h5TaskBean.getData().getOrderdetail().getPros().get(i).getMatStr());

@@ -43,7 +43,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         progressDialog = new CustomProgressDialog(this);
-//        progressDialog.setTipTextView("加载中...");
 
         engine = CustomerEngine.getInstance(getApplicationContext());
         initView();

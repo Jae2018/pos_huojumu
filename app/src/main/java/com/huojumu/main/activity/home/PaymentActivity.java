@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -116,6 +117,8 @@ public class PaymentActivity extends BaseActivity {
     private double ssPrice = 0;
     //
     int manualDiscount;
+    //半价
+    private boolean isHalf = false;
 
     @Override
     protected int setLayout() {
@@ -150,33 +153,9 @@ public class PaymentActivity extends BaseActivity {
             }
         });
 
-        //折扣金额
-        cashPayInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        earnEdit.setHint(origionalPrice + "");
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() > 0) {
-                    zkPrice = Integer.parseInt(s.toString().trim());
-                    if (zkPrice <= origionalPrice) {
-                        inputErrorTv.setVisibility(View.INVISIBLE);
-                    } else {
-                        inputErrorTv.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
-        });
-
-//        //实收金额
-//        earnEdit.addTextChangedListener(new TextWatcher() {
+//        cashPayInput.addTextChangedListener(new TextWatcher() {
 //            @Override
 //            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 //
@@ -190,15 +169,16 @@ public class PaymentActivity extends BaseActivity {
 //            @Override
 //            public void afterTextChanged(Editable s) {
 //                if (s.length() > 0) {
-//                    ssPrice = Integer.parseInt(s.toString().trim());
-//                    if (ssPrice < origionalPrice) {
-//                        inputErrorTv1.setVisibility(View.VISIBLE);
+//                    if (isHalf) {
+//
+//
 //                    } else {
-//                        inputErrorTv1.setVisibility(View.INVISIBLE);
+//
 //                    }
 //                }
 //            }
 //        });
+
     }
 
     @Override
@@ -291,14 +271,18 @@ public class PaymentActivity extends BaseActivity {
         if (activesBean != null) {
             switch (activesBean.getPlanType()) {
                 case "0":
+                    isHalf = true;
                     commitPrice = origionalPrice / 2;
                     cutPrice = origionalPrice - commitPrice;
+                    earnEdit.setHint(commitPrice + "");
                     break;
                 case "1":
+                    isHalf = false;
                     commitPrice = origionalPrice * activesBean.getRatio() / 100;
                     cutPrice = origionalPrice - commitPrice;
                     break;
                 case "2":
+                    isHalf = false;
                     if (origionalPrice >= activesBean.getUpToPrice()) {
                         commitPrice = origionalPrice - activesBean.getOffPrice();
                     } else {
@@ -306,9 +290,11 @@ public class PaymentActivity extends BaseActivity {
                     }
                     break;
                 case "3":
+                    isHalf = false;
                     commitPrice = origionalPrice;
                     break;
                 case "4":
+                    isHalf = false;
                     if (number >= activesBean.getUpToCount()) {
                         commitPrice = origionalPrice - productions.get(0).getScalePrice() - productions.get(0).getMateP();
                         cutPrice = productions.get(0).getScalePrice() - productions.get(0).getMateP();
@@ -378,16 +364,27 @@ public class PaymentActivity extends BaseActivity {
         //现金支付方式
         if (payType.equals("900")) {
             ssPrice = earnEdit.getText().toString().isEmpty() ? 0 : Double.parseDouble(earnEdit.getText().toString());
+            zkPrice = cashPayInput.getText().toString().isEmpty() ? 0 : Double.parseDouble(cashPayInput.getText().toString());
             //半价
             if (activesBean != null && activesBean.getPlanType().equals("0")) {
-                if (ssPrice < origionalPrice / 2) {
-                    ToastUtils.showLong("客户支付金额输入有误");
+                if (ssPrice + zkPrice < origionalPrice / 2) {
+                    ToastUtils.showLong("金额输入有误");
                     return;
+                } else if (zkPrice > origionalPrice / 2) {
+                    ToastUtils.showLong("折扣金额不能大于商品价格");
+                    return;
+                } else if (zkPrice == 0 && ssPrice < origionalPrice / 2) {
+                    ToastUtils.showLong("金额输入有误");
                 }
             } else {
-                if (ssPrice < (origionalPrice - zkPrice)) {
-                    ToastUtils.showLong("客户支付金额输入有误");
+                if (ssPrice + zkPrice < origionalPrice) {
+                    ToastUtils.showLong("金额输入有误");
                     return;
+                } else if (zkPrice > origionalPrice) {
+                    ToastUtils.showLong("折扣金额不能大于商品价格");
+                    return;
+                } else if (zkPrice == 0 && ssPrice < origionalPrice) {
+                    ToastUtils.showLong("金额输入有误");
                 }
             }
         }
@@ -413,6 +410,7 @@ public class PaymentActivity extends BaseActivity {
 
         //客户支付的金额
         progressDialog.show();
+
         NetTool.postOrder(PrinterUtil.toJson(orderInfo), new GsonResponseHandler<BaseBean<OrderBack>>() {
             @Override
             public void onSuccess(int statusCode, BaseBean<OrderBack> response) {

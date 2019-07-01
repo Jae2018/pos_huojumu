@@ -3,6 +3,7 @@ package com.huojumu.adapter;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -102,33 +103,37 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
 
                 switch (e.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
+                        if (e.getActionIndex() == 0) {
+                            Log.e(TAG, "onTouch printer index : " + e.getActionIndex());
+                            pointer1OldCoorX = e.getX();
+                            pointer1OldCoorY = e.getY();
+                            moved = false;
+                            showed = false;
+                            timer = new Timer();
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    time++;
 
-                        pointer1OldCoorX = e.getX();
-                        pointer1OldCoorY = e.getY();
-                        moved = false;
-                        showed = false;
-                        timer = new Timer();
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                time++;
-
-                                if (time == 2) {
-                                    timer.cancel();
-                                    timer.purge();
-                                    timer = null;
-                                    time = 0;
-
-                                    handler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            showArror(helper, true);
-                                            showed = true;
+                                    if (time == 2) {
+                                        if (timer != null) {
+                                            timer.cancel();
+                                            timer.purge();
+                                            timer = null;
                                         }
-                                    });
+                                        time = 0;
+
+                                        handler.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                showArror(helper, true);
+                                                showed = true;
+                                            }
+                                        });
+                                    }
                                 }
-                            }
-                        }, 0, 500);
+                            }, 0, 500);
+                        }
                         break;
                     case MotionEvent.ACTION_MOVE:
 
@@ -183,9 +188,11 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
                             showed = false;
                         } else {
                             showArror(helper, false);
-                            timer.cancel();
-                            timer.purge();
-                            timer = null;
+                            if (timer != null) {
+                                timer.cancel();
+                                timer.purge();
+                                timer = null;
+                            }
                             v.performClick();
                         }
 

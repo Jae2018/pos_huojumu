@@ -36,6 +36,7 @@
 
         <RelativeLayout
             android:layout_width="@dimen/d_350"
+            android:layout_marginTop="@dimen/d_10"
             android:layout_height="wrap_content">
 
             <TextView
@@ -72,6 +73,7 @@
         <RelativeLayout
             android:layout_width="@dimen/d_350"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_10"
             android:orientation="horizontal">
 
             <TextView
@@ -88,7 +90,7 @@
                 android:layout_height="@dimen/d_40"
                 android:inputType="number"
                 android:layout_marginStart="@dimen/d_100"
-                android:hint="请输入优惠多少元"
+                android:hint="0 元"
                 android:textColorHint="@android:color/white"
                 android:textColor="@android:color/white"
                 android:gravity="start"

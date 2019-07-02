@@ -81,8 +81,15 @@ public class MyPosService extends Service {
                                 //上传成功后清空数据库
                                 if (response.getCode().equals("0")) {
                                     ordersDao.deleteAll();
+                                    uploadStrs.clear();
+                                } else {
+                                    for (NativeOrders nativeOrders : nativeOrdersList) {
+                                        if (nativeOrders.getOrderJson().contains(response.getData())) {
+                                            nativeOrdersList.remove(nativeOrders);
+                                            ordersDao.delete(nativeOrders);
+                                        }
+                                    }
                                 }
-                                uploadStrs.clear();
                             }
 
                             @Override

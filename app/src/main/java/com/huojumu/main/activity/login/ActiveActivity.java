@@ -44,7 +44,11 @@ public class ActiveActivity extends BaseActivity {
         requestPermission();
 
         //生成设备编码二维码
-        uuid = SpUtil.getString(Constant.UUID);
+        if (SpUtil.getString(Constant.EQP_NO) == null || SpUtil.getString(Constant.EQP_NO).isEmpty()) {
+            uuid = SpUtil.getString(Constant.UUID);
+        } else {
+            uuid = SpUtil.getString(Constant.EQP_NO);
+        }
         Bitmap b = QrUtil.createQRCode(ActiveActivity.this, uuid);
         qr_img.setImageBitmap(b);
     }

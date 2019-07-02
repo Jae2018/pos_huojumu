@@ -30,8 +30,11 @@ public class OrderBack {
     private String creatTime;
     //本地添加
     private String payType;
+    //找零
     private double charge;
+    //实收
     private double total;
+    //减额
     private double cut;
 
     public double getCut() {

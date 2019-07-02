@@ -6,9 +6,6 @@ import android.content.DialogInterface;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -375,6 +372,7 @@ public class PaymentActivity extends BaseActivity {
                     return;
                 } else if (zkPrice == 0 && ssPrice < origionalPrice / 2) {
                     ToastUtils.showLong("金额输入有误");
+                    return;
                 }
             } else {
                 if (ssPrice + zkPrice < origionalPrice) {
@@ -385,6 +383,7 @@ public class PaymentActivity extends BaseActivity {
                     return;
                 } else if (zkPrice == 0 && ssPrice < origionalPrice) {
                     ToastUtils.showLong("金额输入有误");
+                    return;
                 }
             }
         }
@@ -430,7 +429,7 @@ public class PaymentActivity extends BaseActivity {
                         orderBack.setCharge(ssPrice - commitPrice + manualDiscount);
                     }
                 }
-                orderBack.setCharge(ssPrice - origionalPrice);
+                orderBack.setTotal(ssPrice);
                 orderBack.setCut(Double.parseDouble(orderBack.getOrigionTotalPrice()) - Double.parseDouble(orderBack.getTotalPrice()));
                 progressDialog.dismiss();
                 if (payType.equals("900")) {
@@ -456,6 +455,7 @@ public class PaymentActivity extends BaseActivity {
     @OnClick(R.id.pay_cancel)
     void payCancel() {
         finish();
+        // TODO: 2019/7/1  实付金额修改
     }
 
     //扫码回调方法次数，19次获取完

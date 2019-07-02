@@ -47,7 +47,9 @@ public class MyApplication extends Application {
         //初始化sp
         SpUtil.Instance(this);
         //产生唯一uuid
-        SpUtil.save(Constant.UUID, UUID.randomUUID().toString());
+        if (SpUtil.getString(Constant.EQP_NO) == null || SpUtil.getString(Constant.EQP_NO).isEmpty()) {
+            SpUtil.save(Constant.UUID, UUID.randomUUID().toString());
+        }
 
         //初始化websocket
         initSocket();

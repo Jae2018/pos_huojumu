@@ -1312,13 +1312,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
             //正常情况
             PrinterUtil.printString80(productions, null, "C" + orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4),
                     SpUtil.getString(Constant.WORKER_NAME), orderBack.getTotalPrice(), orderBack.getTotalPrice(),
-                    orderBack.getTotalPrice(), String.valueOf(charge),
+                    String.valueOf(totalPrice), String.valueOf(charge),
                     String.valueOf(totalCut), orderBack.getCreatTime(), type);
         } else if (orderdetailBean != null) {
             //微信小程序
             PrinterUtil.printString80(null, orderdetailBean.getPros(), "W" + orderdetailBean.getOrdNo().substring(orderdetailBean.getOrdNo().length() - 4),
                     SpUtil.getString(Constant.WORKER_NAME), String.valueOf(orderdetailBean.getTotalPrice()), String.valueOf(orderdetailBean.getTotalPrice()),
-                    String.valueOf(orderdetailBean.getTotalPrice()), String.valueOf(charge),
+                    String.valueOf(totalPrice), String.valueOf(charge),
                     String.valueOf(totalCut), orderdetailBean.getCreateTime(), type);
         } else {
             //断网状态
@@ -1395,7 +1395,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         //结算回调，有网
         orderNo = orderBack.getOrderNo();
         setLabelData();
-        PrintOrder(orderBack, null, orderBack.getCharge() < 0 ? 0 : orderBack.getCharge(), orderBack.getPayType().equals("900") ? "现金支付" : orderBack.getPayType().equals("010") ? "微信支付" : "支付宝支付", Double.parseDouble(orderBack.getTotalPrice()), orderBack.getCut() < 0 ? 0 : orderBack.getCut());
+        PrintOrder(orderBack, null, orderBack.getCharge() < 0 ? 0 : orderBack.getCharge(), orderBack.getPayType().equals("900") ? "现金支付" : orderBack.getPayType().equals("010") ? "微信支付" : "支付宝支付", orderBack.getTotal(), orderBack.getCut() < 0 ? 0 : orderBack.getCut());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

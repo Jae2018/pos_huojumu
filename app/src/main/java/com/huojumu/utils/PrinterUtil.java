@@ -343,7 +343,6 @@ public class PrinterUtil {
         return simpleDateFormat.format(date);
     }
 
-
     /**
      * 设置命令
      */
@@ -368,10 +367,19 @@ public class PrinterUtil {
     }
 
     /**
-     * 打印文本80mm小票样式 48 字节
+     * @param pList        本地订单数据
+     * @param prosBeanList 小程序订单数据
+     * @param orderNo      订单id
+     * @param name         员工姓名
+     * @param totalMoney   消费金额
+     * @param ssPrice      实收金额
+     * @param charge       找零
+     * @param cut          优惠
+     * @param date         日期
+     * @param type         支付方式
      */
     public static void printString80(final List<Production> pList, final List<OrderDetails.OrderdetailBean.ProsBean> prosBeanList, final String orderNo, final String name, final String totalMoney,
-                                     final String earn, final String cost, final String charge, final String cut, final String date, final String type) {
+                                     final String ssPrice, final String charge, final String cut, final String date, final String type) {
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
             public void run() {
@@ -401,37 +409,41 @@ public class PrinterUtil {
                     //商品信息
                     mPrinter.setAlignMode(0);
                     String ss = settSubTitle();
-                    mPrinter.printString(ss);
+                    mPrinter.printString(ss, "GBK", true);
 
-                    StringBuilder sb = new StringBuilder();
                     if (pList != null) {
                         for (Production p : pList) {
                             int n = p.getNumber();
-                            sb.append(printFourData80(p.getProName(), "x" + n, String.valueOf(p.getScalePrice()), String.valueOf(n * p.getScalePrice()))).append("\n");
+                            String s1 = printFourData80(p.getProName(), "x" + n, String.valueOf(p.getScalePrice()), String.valueOf(n * p.getScalePrice()));
+                            mPrinter.printString(s1, "GBK", true);
                             if (p.getProNameEn() != null && !p.getProNameEn().isEmpty()) {
-                                sb.append(p.getProNameEn()).append("\n");
+                                String s2 = p.getProNameEn();
+                                mPrinter.printString(s2, "GBK", true);
                             }
                             if (p.getMats() != null && p.getMats().size() > 0) {
                                 for (MatsBean bean : p.getMats()) {
-                                    sb.append(printFourData80("--" + bean.getMatName(), "x" + n, String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()))).append("\n");
+                                    String s3 = printFourData80("--" + bean.getMatName(), "x" + n, String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()));
+                                    mPrinter.printString(s3, "GBK", true);
                                 }
                             }
                         }
                     } else if (prosBeanList != null) {
                         for (OrderDetails.OrderdetailBean.ProsBean p : prosBeanList) {
                             int n = p.getProCount();
-                            sb.append(printFourData80(p.getProName(), "x" + n, String.valueOf(p.getPrice()), String.valueOf(n * p.getPrice()))).append("\n");
+                            String s1 = printFourData80(p.getProName(), "x" + n, String.valueOf(p.getPrice()), String.valueOf(n * p.getPrice()));
+                            mPrinter.printString(s1, "GBK", true);
                             if (p.getProNameEn() != null && !p.getProNameEn().isEmpty()) {
-                                sb.append(p.getProNameEn()).append("\n");
+                                String s2 = p.getProNameEn();
+                                mPrinter.printString(s2, "GBK", true);
                             }
                             if (p.getMats() != null && p.getMats().size() > 0) {
                                 for (OrderDetails.OrderdetailBean.ProsBean.MatsBean bean : p.getMats()) {
-                                    sb.append(printFourData80("--" + bean.getMatName(), "x" + n, String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()))).append("\n");
+                                    String s3 = printFourData80("--" + bean.getMatName(), "x" + n, String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()));
+                                    mPrinter.printString(s3, "GBK", true);
                                 }
                             }
                         }
                     }
-                    mPrinter.printString(sb.toString());
 
                     //间隔小的虚线
                     mPrinter.setAlignMode(1);
@@ -440,8 +452,8 @@ public class PrinterUtil {
                     //交易金额明细
                     mPrinter.setFontStyle(0);
                     s = "\n" + printTwoData80("消费金额", totalMoney)
-                            + "\n" + printTwoData80("应收金额", earn)
-                            + "\n" + printTwoData80("客户实付", cost)
+                            + "\n" + printTwoData80("应收金额", totalMoney)
+                            + "\n" + printTwoData80("客户实付", ssPrice)
                             + "\n" + printTwoData80("优    惠", cut)
                             + "\n" + printTwoData80("找    零", charge)
                             + "\n" + printTwoData80("支付方式", type)
@@ -560,48 +572,49 @@ public class PrinterUtil {
                 if (PrinterAPI.SUCCESS == mPrinter.connect(io)) {
                     try {
                         mPrinter.setAlignMode(1);
-//                        mPrinter.setCharSize(1, 1);
+
                         String s = "退账单";
                         mPrinter.printString(s);
                         mPrinter.printFeed();
 
                         mPrinter.setAlignMode(0);
-//                        mPrinter.setCharSize(0, 0);
+
                         s = "操作人：" + SpUtil.getString(Constant.WORKER_NAME)
                                 + "\n" + "下单时间：" + details.getOrderdetail().getCreateTime()
                                 + "\n" + "退单时间：" + date
                                 + "\n" + "原订单号：" + details.getOrderdetail().getOrdNo().substring(details.getOrderdetail().getOrdNo().length() - 4)
-                                + "\n" + "操作员工：" + details.getOperator().getNickname()
-                                + "\n" + "员工入职时间：" + details.getOperator().getJoinTime() + "\n";
+                                + "\n" + "操作员工：" + SpUtil.getString(Constant.WORKER_NAME)
+                                + "\n" + "员工入职时间：" + (details.getMember() == null ? details.getOperator().getJoinTime() : details.getMember().getJoinTime()) + "\n";
                         mPrinter.printString(s);
 
                         s = "------------------------------------------------\n";
                         mPrinter.printString(s);
 
                         //商品信息
-                        StringBuilder sb = new StringBuilder();
-                        sb.append(printFourData80("商品名称", "数量", "单价", "金额")).append("\n");
+                        s = printFourData80("商品名称", "数量", "单价", "金额");
+                        mPrinter.printString(s, "GBK", true);
 
                         mPrinter.setFontStyle(1);
                         for (int i = 0; i < details.getOrderdetail().getPros().size(); i++) {
                             int n = details.getOrderdetail().getPros().get(i).getProCount();
-                            sb.append(printFourData80(details.getOrderdetail().getPros().get(i).getProName(), String.valueOf(details.getOrderdetail().getPros().get(i).getCups().size()), String.valueOf(details.getOrderdetail().getPros().get(i).getPrice()),
-                                    String.valueOf(details.getOrderdetail().getPros().get(i).getCups().size() * details.getOrderdetail().getPros().get(i).getPrice()))).append("\n");
+                            String s1 = printFourData80(details.getOrderdetail().getPros().get(i).getProName(), String.valueOf(details.getOrderdetail().getPros().get(i).getCups().size()), String.valueOf(details.getOrderdetail().getPros().get(i).getPrice()),
+                                    String.valueOf(details.getOrderdetail().getPros().get(i).getCups().size() * details.getOrderdetail().getPros().get(i).getPrice()));
+                            mPrinter.printString(s1, "GBK", true);
                             if (!details.getOrderdetail().getPros().get(i).getMats().isEmpty()) {
-                                for (OrderDetails.OrderdetailBean.ProsBean.MatsBean bean : details.getOrderdetail().getPros().get(i).getMats())
-                                    sb.append(printFourData80("-" + bean.getMatName(), String.valueOf(n), String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()))).append("\n");
+                                for (OrderDetails.OrderdetailBean.ProsBean.MatsBean bean : details.getOrderdetail().getPros().get(i).getMats()) {
+                                    String s2 = printFourData80("-" + bean.getMatName(), String.valueOf(n), String.valueOf(bean.getIngredientPrice()), String.valueOf(n * bean.getIngredientPrice()));
+                                    mPrinter.printString(s2, "GBK", true);
+                                }
                             }
                         }
-                        sb.append("\n");
-                        mPrinter.printString(sb.toString());
 
                         s = printTwoData80("订单总金额：", String.valueOf(details.getOrderdetail().getTotalPrice()));
-                        mPrinter.printString(s);
+                        mPrinter.printString(s, "GBK", true);
 
                         //公司
                         mPrinter.setAlignMode(1);
                         s = "\n技术支持：火炬木科技";
-                        mPrinter.printString(s);
+                        mPrinter.printString(s, "GBK", true);
 
                         mPrinter.cutPaper(66, 0);
                     } catch (Exception e) {

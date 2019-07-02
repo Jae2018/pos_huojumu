@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.huojumu.R;
 import com.huojumu.base.BaseDialog;
 import com.huojumu.listeners.DialogInterface;
@@ -37,7 +38,7 @@ public class CashPayDialog extends BaseDialog {
     private DialogInterface anInterface;
 
     private double totalPrice = 0;//订单金额
-    private int earnMoney = 0;//收取金额
+    private double earnMoney = 0;//收取金额
 
     public CashPayDialog(@NonNull Context context, DialogInterface anInterface) {
         super(context);
@@ -66,7 +67,7 @@ public class CashPayDialog extends BaseDialog {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() > 0) {
-                    earnMoney = Integer.valueOf(s.toString().trim());
+                    earnMoney = Double.valueOf(s.toString().trim());
                 }
             }
         });
@@ -100,7 +101,15 @@ public class CashPayDialog extends BaseDialog {
 
     @OnClick(R.id.cash_dialog_ok)
     void OnOk() {
-        anInterface.OnDialogOkClick(0, earnMoney, totalPrice, (earnMoney == 0) ? 0 : earnMoney - totalPrice, "CashPayDialog");
+        if (earnMoney == 0) {
+            earnMoney = totalPrice;
+        } else {
+            if (earnMoney < totalPrice) {
+                ToastUtils.showLong("输入金额不能小于商品实际价格");
+                return;
+            }
+        }
+        anInterface.OnDialogOkClick(0, earnMoney, totalPrice, earnMoney - totalPrice, "CashPayDialog");
         clear();
     }
 

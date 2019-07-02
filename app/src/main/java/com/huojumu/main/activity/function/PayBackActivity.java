@@ -185,8 +185,8 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
                     payTypeTv.setText(String.format("支付方式：%s", response.getData().getOrderdetail().getPayType().equals("900") ? "现金支付" : response.getData().getOrderdetail().getPayType().equals("010") ? "微信支付" : "支付宝支付"));
                 }
                 if (response.getData().getOperator() != null) {
-                    operator.setText(String.format("操作员工：%s", response.getData().getOperator().getNickname()));
-                    join.setText(String.format("员工入职时间：%s", response.getData().getOperator().getJoinTime()));
+                    operator.setText(String.format("操作员工：%s", SpUtil.getString(Constant.WORKER_NAME)));
+                    join.setText(String.format("员工入职时间：%s", response.getData().getOperator().getJoinTime() == null ? "" : response.getData().getOperator().getJoinTime()));
                 }
                 if (refreshLayout.isRefreshing()) {
                     refreshLayout.setRefreshing(false);
@@ -202,11 +202,6 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
             }
         });
     }
-
-//    @OnClick(R.id.iv_search_order)
-//    void search() {
-//        getEnableBackOrderList();
-//    }
 
     @OnClick(R.id.iv_back)
     void back() {
@@ -236,9 +231,13 @@ public class PayBackActivity extends BaseActivity implements DialogInterface {
                 if (response.getCode().equals("0")) {
                     clearRight();
                     PrinterUtil.printPayBack(details, response.getData());
-                    float price = (float) (p - total);
-                    num = num - 1;
-                    EventBus.getDefault().post(new WorkBean(num, price));
+                    //单数-1
+                    num--;
+                    //金额减少
+                    float p = SpUtil.getFloat(Constant.WORK_P) - (float) total;
+                    //存储新的订单数量与金额
+                    SpUtil.save(Constant.WORK_P, p);
+                    SpUtil.save(Constant.ORDER_NUM, num);
                     ToastUtils.showLong("退单成功！");
                 } else {
                     ToastUtils.showLong(response.getMsg());

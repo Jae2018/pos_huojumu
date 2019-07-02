@@ -114,8 +114,8 @@ public class PaymentActivity extends BaseActivity {
     private double ssPrice = 0;
     //
     int manualDiscount;
-    //半价
-    private boolean isHalf = false;
+    //找零
+    double charge = 0;
 
     @Override
     protected int setLayout() {
@@ -150,7 +150,7 @@ public class PaymentActivity extends BaseActivity {
             }
         });
 
-        earnEdit.setHint(origionalPrice + "");
+        earnEdit.setText(origionalPrice + "");
 
 //        cashPayInput.addTextChangedListener(new TextWatcher() {
 //            @Override
@@ -268,18 +268,18 @@ public class PaymentActivity extends BaseActivity {
         if (activesBean != null) {
             switch (activesBean.getPlanType()) {
                 case "0":
-                    isHalf = true;
+//                    isHalf = true;
                     commitPrice = origionalPrice / 2;
                     cutPrice = origionalPrice - commitPrice;
-                    earnEdit.setHint(commitPrice + "");
+                    earnEdit.setText(commitPrice + "");
                     break;
                 case "1":
-                    isHalf = false;
+//                    isHalf = false;
                     commitPrice = origionalPrice * activesBean.getRatio() / 100;
                     cutPrice = origionalPrice - commitPrice;
                     break;
                 case "2":
-                    isHalf = false;
+//                    isHalf = false;
                     if (origionalPrice >= activesBean.getUpToPrice()) {
                         commitPrice = origionalPrice - activesBean.getOffPrice();
                     } else {
@@ -287,11 +287,11 @@ public class PaymentActivity extends BaseActivity {
                     }
                     break;
                 case "3":
-                    isHalf = false;
+//                    isHalf = false;
                     commitPrice = origionalPrice;
                     break;
                 case "4":
-                    isHalf = false;
+//                    isHalf = false;
                     if (number >= activesBean.getUpToCount()) {
                         commitPrice = origionalPrice - productions.get(0).getScalePrice() - productions.get(0).getMateP();
                         cutPrice = productions.get(0).getScalePrice() - productions.get(0).getMateP();
@@ -376,13 +376,13 @@ public class PaymentActivity extends BaseActivity {
                 }
             } else {
                 if (ssPrice + zkPrice < origionalPrice) {
-                    ToastUtils.showLong("金额输入有误");
+                    ToastUtils.showLong("金额输入有误。");
                     return;
                 } else if (zkPrice > origionalPrice) {
                     ToastUtils.showLong("折扣金额不能大于商品价格");
                     return;
                 } else if (zkPrice == 0 && ssPrice < origionalPrice) {
-                    ToastUtils.showLong("金额输入有误");
+                    ToastUtils.showLong("金额输入有误！");
                     return;
                 }
             }
@@ -416,25 +416,29 @@ public class PaymentActivity extends BaseActivity {
                 orderNo = response.getData().getOrderNo();
                 orderBack = response.getData();
                 orderBack.setPayType(payType);
-                if (commitPrice == 0) {
+                if (activesBean == null) {
                     //没有活动
-                    if (ssPrice > origionalPrice) {
+                    if (ssPrice >= origionalPrice) {
                         //找零，收款 - 总价 + 手动折扣金额
-                        orderBack.setCharge(ssPrice - origionalPrice + manualDiscount);
+                        charge = ssPrice - origionalPrice + manualDiscount;
                     }
                 } else {
                     //有活动优惠
-                    if (ssPrice > commitPrice) {
+                    if (ssPrice >= commitPrice) {
                         //找零，收款 - 总价 + 手动折扣金额
-                        orderBack.setCharge(ssPrice - commitPrice + manualDiscount);
+                        charge = ssPrice - commitPrice + manualDiscount;
                     }
                 }
+                orderBack.setCharge(charge);
                 orderBack.setTotal(ssPrice);
-                orderBack.setCut(Double.parseDouble(orderBack.getOrigionTotalPrice()) - Double.parseDouble(orderBack.getTotalPrice()));
+                double cut = manualDiscount;
+                orderBack.setCut(cut);
+                String creatTime = response.getData().getCreatTime();
+
                 progressDialog.dismiss();
                 if (payType.equals("900")) {
                     //现金
-                    EventBus.getDefault().post(orderBack);
+                    EventBus.getDefault().post(new OrderBack(orderNo, payType, charge, ssPrice, cut, creatTime));
                     finish();
                 }
 
@@ -455,7 +459,6 @@ public class PaymentActivity extends BaseActivity {
     @OnClick(R.id.pay_cancel)
     void payCancel() {
         finish();
-        // TODO: 2019/7/1  实付金额修改
     }
 
     //扫码回调方法次数，19次获取完

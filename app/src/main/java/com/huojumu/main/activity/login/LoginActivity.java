@@ -3,8 +3,6 @@ package com.huojumu.main.activity.login;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.CountDownTimer;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,7 +15,6 @@ import com.huojumu.down.DownProgressDialog;
 import com.huojumu.main.activity.home.HomeActivity;
 import com.huojumu.model.BaseBean;
 import com.huojumu.model.EventHandler;
-import com.huojumu.model.NetErrorHandler;
 import com.huojumu.model.UpdateBean;
 import com.huojumu.utils.Constant;
 import com.huojumu.utils.NetTool;
@@ -33,7 +30,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.lang.ref.WeakReference;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -55,7 +51,7 @@ public class LoginActivity extends BaseActivity {
     private static final int RECONNECT_SOCKET = 2;
     //重连次数
     private static int RECONNECT_TIME = 1;
-    private MyHandler mHandler;
+//    private MyHandler mHandler;
 
     @Override
     protected int setLayout() {
@@ -65,7 +61,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-        mHandler = new MyHandler(this);
+//        mHandler = new MyHandler(this);
     }
 
     @Override
@@ -98,25 +94,6 @@ public class LoginActivity extends BaseActivity {
     void backBind() {
         startActivity(new Intent(this, ActiveActivity.class));
     }
-
-    //    @TargetApi(Build.VERSION_CODES.O)
-//    private void checkInstallPermission(){
-//        boolean haveInstallPermission = getPackageManager().canRequestPackageInstalls();
-//        if(!haveInstallPermission){
-//            //权限没有打开则提示用户去手动打开
-//            Uri packageURI = Uri.parse("package:"+ getPackageName());
-//            Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,packageURI);
-//            startActivityForResult(intent, Constant.INSTALL_PERMISS_CODE);
-//        }
-//    }
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (resultCode == RESULT_OK && requestCode == Constant.INSTALL_PERMISS_CODE) {
-//            downProgressDialog.installApk();
-//        }
-//    }
 
     @Override
     protected void onResume() {
@@ -151,12 +128,12 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 ToastUtils.showLong("网络错误");
-                mHandler.sendEmptyMessageDelayed(RECONNECT_SOCKET, 100);
+//                mHandler.sendEmptyMessageDelayed(RECONNECT_SOCKET, 100);
             }
         });
     }
 
-    @SingleClick(3000)
+    @SingleClick(1500)
     @OnClick(R.id.qr_image)
     void refreshCode() {
         if (countDownTimer != null) {
@@ -172,9 +149,11 @@ public class LoginActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLogin(EventHandler eventHandler) {
-        SpUtil.save("from_Login", true);
-        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-        finish();
+        if (eventHandler.getType() == 3) {
+            SpUtil.save("from_Login", true);
+            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+            finish();
+        }
     }
 
     @Override
@@ -196,34 +175,34 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    private static class MyHandler extends Handler {
-        private WeakReference<LoginActivity> mActivity;
+//    private static class MyHandler extends Handler {
+//        private WeakReference<LoginActivity> mActivity;
+//
+//        MyHandler(LoginActivity activity) {
+//            mActivity = new WeakReference<>(activity);
+//        }
+//
+//        @Override
+//        public void handleMessage(Message msg) {
+//            LoginActivity activity = mActivity.get();
+//            if (msg.what == RECONNECT_SOCKET) {
+//                //尝试重连
+//                if (activity != null && !MyApplication.getSocketTool().isAlive()) {
+//                    sendEmptyMessageDelayed(RECONNECT_SOCKET, (5 * 1000) * RECONNECT_TIME);
+//                    activity.reconnectSocket();
+//                }
+//            }
+//        }
+//    }
 
-        MyHandler(LoginActivity activity) {
-            mActivity = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            LoginActivity activity = mActivity.get();
-            if (msg.what == RECONNECT_SOCKET) {
-                //尝试重连
-                if (activity != null && !MyApplication.getSocketTool().isAlive()) {
-                    sendEmptyMessageDelayed(RECONNECT_SOCKET, (5 * 1000) * RECONNECT_TIME);
-                    activity.reconnectSocket();
-                }
-            }
-        }
-    }
-
-    /**
-     * 重启socket
-     */
-    private void reconnectSocket() {
-        RECONNECT_TIME++;
-        MyApplication.initSocket();
-        sendSocket();
-    }
+//    /**
+//     * 重启socket
+//     */
+//    private void reconnectSocket() {
+//        RECONNECT_TIME++;
+//        MyApplication.initSocket();
+//        sendSocket();
+//    }
 
     private void sendSocket() {
         //定时发送心跳
@@ -238,23 +217,23 @@ public class LoginActivity extends BaseActivity {
         }, 200, 30 * 1000);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void netState(NetErrorHandler netErrorHandler) {
-        if (netErrorHandler.isConnected()) {
-            //网络正常
-            RECONNECT_TIME = 1;
-        } else {
-            //无法正常连接到服务器
-            MyApplication.getSocketTool().stopSocket();
-            //关闭心跳，不继续发送，轮询时间段重启websocket，首次延迟10秒
-            if (timer != null) {
-                timer.cancel();
-                timer.purge();
-                timer = null;
-                if (RECONNECT_TIME == 1) {
-                    mHandler.sendEmptyMessageDelayed(RECONNECT_SOCKET, 10000);
-                }
-            }
-        }
-    }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void netState(NetErrorHandler netErrorHandler) {
+//        if (netErrorHandler.isConnected()) {
+//            //网络正常
+//            RECONNECT_TIME = 1;
+//        } else {
+//            //无法正常连接到服务器
+//            MyApplication.getSocketTool().stopSocket();
+//            //关闭心跳，不继续发送，轮询时间段重启websocket，首次延迟10秒
+//            if (timer != null) {
+//                timer.cancel();
+//                timer.purge();
+//                timer = null;
+//                if (RECONNECT_TIME == 1) {
+//                    mHandler.sendEmptyMessageDelayed(RECONNECT_SOCKET, 10000);
+//                }
+//            }
+//        }
+//    }
 }

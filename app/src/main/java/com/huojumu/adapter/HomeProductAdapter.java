@@ -3,7 +3,6 @@ package com.huojumu.adapter;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -104,7 +103,7 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
                 switch (e.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
                         if (e.getActionIndex() == 0) {
-                            Log.e(TAG, "onTouch printer index : " + e.getActionIndex());
+
                             pointer1OldCoorX = e.getX();
                             pointer1OldCoorY = e.getY();
                             moved = false;
@@ -152,6 +151,7 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
                                 if (deltaX > deltaY) {
                                     //横向滑动
                                     if ((pointer1NewCoorX - pointer1OldCoorX) > 70) {
+                                        setSelected(helper, true, false, false, false);
                                         //向右
                                         try {
                                             moveListener.onPointerMoved(item, 2, item.getScales().get(iNumber1));
@@ -159,6 +159,7 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
                                             moveListener.onPointerMoved(item, 2, null);
                                         }
                                     } else if ((pointer1NewCoorX - pointer1OldCoorX) < -70) {
+                                        setSelected(helper, false, false, true, false);
                                         //向左
                                         try {
                                             moveListener.onPointerMoved(item, 0, item.getScales().get(iNumber3));
@@ -169,6 +170,7 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
                                 } else if (deltaY > deltaX) {
                                     //纵向滑动
                                     if ((pointer1NewCoorY - pointer1OldCoorY) > 70) {
+                                        setSelected(helper, false, true, false, false);
                                         //向下
                                         try {
                                             moveListener.onPointerMoved(item, 3, item.getScales().get(iNumber2));
@@ -176,6 +178,7 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
                                             moveListener.onPointerMoved(item, 3, null);
                                         }
                                     } else if ((pointer1NewCoorY - pointer1OldCoorY) < -70) {
+                                        setSelected(helper, false, false, false, true);
                                         //向上
                                         try {
                                             moveListener.onPointerMoved(item, 1, item.getScales().get(iNumber4));
@@ -208,6 +211,13 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
 
     private void showArror(BaseViewHolder helper, boolean b) {
         helper.setVisible(R.id.relative_types, b);
+    }
+
+    private void setSelected(BaseViewHolder helper, boolean b1, boolean b2, boolean b3, boolean b4) {
+        helper.getView(R.id.right_tv).setSelected(b1);
+        helper.getView(R.id.bottom_tv).setSelected(b2);
+        helper.getView(R.id.left_tv).setSelected(b3);
+        helper.getView(R.id.top_tv).setSelected(b4);
     }
 
 }

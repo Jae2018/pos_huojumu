@@ -418,13 +418,13 @@ public class PaymentActivity extends BaseActivity {
                 orderBack.setPayType(payType);
                 if (activesBean == null) {
                     //没有活动
-                    if (ssPrice >= origionalPrice) {
+                    if ((ssPrice + manualDiscount) >= origionalPrice) {
                         //找零，收款 - 总价 + 手动折扣金额
                         charge = ssPrice - origionalPrice + manualDiscount;
                     }
                 } else {
                     //有活动优惠
-                    if (ssPrice >= commitPrice) {
+                    if ((ssPrice + manualDiscount) >= commitPrice) {
                         //找零，收款 - 总价 + 手动折扣金额
                         charge = ssPrice - commitPrice + manualDiscount;
                     }

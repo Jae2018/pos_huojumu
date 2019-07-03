@@ -57,42 +57,46 @@
             android:id="@+id/relative_types"
             android:layout_width="@dimen/d_240"
             android:layout_height="@dimen/d_240"
-            android:visibility="gone"
-            android:background="#aaeeeeee">
+            android:background="#aaeeeeee"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/left_tv"
-                android:layout_width="@dimen/d_80"
-                android:layout_height="@dimen/d_80"
-                android:background="@drawable/move_check_selector"
+                android:layout_width="@dimen/d_72"
+                android:layout_height="@dimen/d_72"
                 android:layout_centerVertical="true"
-                android:gravity="center" />
+                android:background="@drawable/move_check_selector"
+                android:gravity="center"
+                android:padding="@dimen/d_2" />
 
             <TextView
                 android:id="@+id/right_tv"
-                android:layout_width="@dimen/d_80"
-                android:layout_height="@dimen/d_80"
+                android:layout_width="@dimen/d_72"
+                android:layout_height="@dimen/d_72"
                 android:layout_alignParentEnd="true"
-                android:gravity="center"
+                android:layout_centerVertical="true"
                 android:background="@drawable/move_check_selector"
-                android:layout_centerVertical="true" />
+                android:gravity="center"
+                android:padding="@dimen/d_2" />
 
             <TextView
                 android:id="@+id/top_tv"
-                android:layout_width="@dimen/d_80"
-                android:layout_height="@dimen/d_80"
+                android:layout_width="@dimen/d_72"
+                android:layout_height="@dimen/d_72"
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/move_check_selector"
-                android:gravity="center" />
+                android:gravity="center"
+                android:padding="@dimen/d_2" />
 
             <TextView
                 android:id="@+id/bottom_tv"
-                android:layout_width="@dimen/d_80"
-                android:layout_height="@dimen/d_80"
+                android:layout_width="@dimen/d_72"
+                android:layout_height="@dimen/d_72"
                 android:layout_alignParentBottom="true"
-                android:background="@drawable/move_check_selector"
                 android:layout_centerHorizontal="true"
-                android:gravity="center" />
+                android:background="@drawable/move_check_selector"
+                android:gravity="center"
+                android:padding="@dimen/d_2" />
         </RelativeLayout>
 
     </LinearLayout>

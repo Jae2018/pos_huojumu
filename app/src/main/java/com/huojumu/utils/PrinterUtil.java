@@ -455,7 +455,6 @@ public class PrinterUtil {
                     //间隔小的虚线
                     mPrinter.setAlignMode(1);
                     mPrinter.printRasterBitmap(MyApplication.getLine3());
-                    mPrinter.printFeed();
 
                     //交易金额明细
                     mPrinter.setFontStyle(0);

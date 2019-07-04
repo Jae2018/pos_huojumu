@@ -437,7 +437,7 @@ public class PaymentActivity extends BaseActivity {
                 orderBack.setCut(cut);
                 String creatTime = response.getData().getCreatTime();
                 String origionTotalPrice = isHalf ? (Double.parseDouble(response.getData().getOrigionTotalPrice()) / 2 + "") : response.getData().getOrigionTotalPrice();
-                String totalPrice = isHalf ? (Double.parseDouble(response.getData().getTotalPrice()) / 2 + "") : response.getData().getTotalPrice();
+                String totalPrice = response.getData().getTotalPrice();
 
                 progressDialog.dismiss();
                 if (payType.equals("900")) {

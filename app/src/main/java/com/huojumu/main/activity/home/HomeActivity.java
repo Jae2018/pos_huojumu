@@ -570,7 +570,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
     private void showSpe(final int position) {
         Production production;
         if (m == 0) {
-            production = tempProduces.get(position);
+            production = pLists.get(pageNo).get(position);
         } else if (m == 1) {
             production = typeList.get(position);
         } else {

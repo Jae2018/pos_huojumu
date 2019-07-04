@@ -116,6 +116,8 @@ public class PaymentActivity extends BaseActivity {
     int manualDiscount;
     //找零
     double charge = 0;
+    //
+    boolean isHalf = false;
 
     @Override
     protected int setLayout() {
@@ -268,18 +270,18 @@ public class PaymentActivity extends BaseActivity {
         if (activesBean != null) {
             switch (activesBean.getPlanType()) {
                 case "0":
-//                    isHalf = true;
+                    isHalf = true;
                     commitPrice = origionalPrice / 2;
                     cutPrice = origionalPrice - commitPrice;
                     earnEdit.setText(commitPrice + "");
                     break;
                 case "1":
-//                    isHalf = false;
+                    isHalf = false;
                     commitPrice = origionalPrice * activesBean.getRatio() / 100;
                     cutPrice = origionalPrice - commitPrice;
                     break;
                 case "2":
-//                    isHalf = false;
+                    isHalf = false;
                     if (origionalPrice >= activesBean.getUpToPrice()) {
                         commitPrice = origionalPrice - activesBean.getOffPrice();
                     } else {
@@ -287,11 +289,11 @@ public class PaymentActivity extends BaseActivity {
                     }
                     break;
                 case "3":
-//                    isHalf = false;
+                    isHalf = false;
                     commitPrice = origionalPrice;
                     break;
                 case "4":
-//                    isHalf = false;
+                    isHalf = false;
                     if (number >= activesBean.getUpToCount()) {
                         commitPrice = origionalPrice - productions.get(0).getScalePrice() - productions.get(0).getMateP();
                         cutPrice = productions.get(0).getScalePrice() - productions.get(0).getMateP();
@@ -394,7 +396,7 @@ public class PaymentActivity extends BaseActivity {
             orderInfo.setDiscountsActivity(activesBean.getPlanType());
             orderInfo.setDiscountsType("2");
             //特殊人群、一律半价
-            if (activesBean.getPlanType().equals("0")) {
+            if (isHalf) {
                 orderInfo.setManualDiscount(origionalPrice / 2);
             } else {
                 //手动折扣
@@ -434,11 +436,13 @@ public class PaymentActivity extends BaseActivity {
                 double cut = manualDiscount;
                 orderBack.setCut(cut);
                 String creatTime = response.getData().getCreatTime();
+                String origionTotalPrice = isHalf ? (Double.parseDouble(response.getData().getOrigionTotalPrice()) / 2 + "") : response.getData().getOrigionTotalPrice();
+                String totalPrice = isHalf ? (Double.parseDouble(response.getData().getTotalPrice()) / 2 + "") : response.getData().getTotalPrice();
 
                 progressDialog.dismiss();
                 if (payType.equals("900")) {
                     //现金
-                    EventBus.getDefault().post(new OrderBack(orderNo, payType, charge, ssPrice, cut, creatTime));
+                    EventBus.getDefault().post(new OrderBack(orderNo, payType, charge, ssPrice, cut, creatTime, origionTotalPrice, totalPrice));
                     finish();
                 }
 

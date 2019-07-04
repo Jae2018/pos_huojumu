@@ -423,6 +423,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
             Production p = new Production();
             //左侧点单列表
             p.setProName(production.getProName());
+            p.setProNameEn(production.getProNameEn());
             p.setNumber(1);
             p.setMatStr("默认加料");
             p.setMateP(0);
@@ -504,6 +505,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                 @Override
                 public void run() {
                     MyApplication.getSocketTool().sendHeart();
+                    Log.e("home", "sendHeart: ");
                 }
             }, 200, 60 * 1000);
         }
@@ -778,7 +780,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                 pLists.add(typeList.subList(page * 12, typeList.size()));
             }
         }
-        productAdapter.setNewData(pLists.get(0));
+        if (!pLists.isEmpty()) {
+            productAdapter.setNewData(pLists.get(0));
+        }
     }
 
     /**
@@ -1077,6 +1081,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                     SpUtil.save(Constant.WORK_P, (float) 0);
                     SpUtil.save(Constant.ORDER_NUM, 0);
                     ToastUtils.showLong("系统将于30秒之后关机!");
+                    startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                     MyOkHttp.mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -1309,12 +1314,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         if (orderBack != null) {
             //正常情况
             PrinterUtil.printString80(productions, null, "C" + orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4),
-                    SpUtil.getString(Constant.WORKER_NAME), orderBack.getOrigionTotalPrice(), String.valueOf(ssPrice), String.valueOf(charge),
+                    SpUtil.getString(Constant.WORKER_NAME), orderBack.getOrigionTotalPrice(), orderBack.getTotalPrice(), String.valueOf(ssPrice), String.valueOf(charge),
                     String.valueOf(totalCut), orderBack.getCreatTime(), type);
         } else if (orderdetailBean != null) {
             //微信小程序
             PrinterUtil.printString80(null, orderdetailBean.getPros(), "W" + orderdetailBean.getOrdNo().substring(orderdetailBean.getOrdNo().length() - 4),
-                    SpUtil.getString(Constant.WORKER_NAME), String.valueOf(orderdetailBean.getTotalPrice()), String.valueOf(ssPrice), String.valueOf(charge),
+                    SpUtil.getString(Constant.WORKER_NAME), String.valueOf(orderdetailBean.getTotalPrice()), String.valueOf(orderdetailBean.getTotalPrice()), String.valueOf(ssPrice), String.valueOf(charge),
                     String.valueOf(totalCut), orderdetailBean.getCreateTime(), type);
         } else {
             //断网状态
@@ -1322,7 +1327,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
             //保存订单信息json
             ((MyApplication) getApplication()).getDaoSession().getNativeOrdersDao().insert(new NativeOrders(System.currentTimeMillis(), PrinterUtil.toJson(orderInfo)));
 
-            PrinterUtil.printString80(productions, null, orderNo, SpUtil.getString(Constant.WORKER_NAME), String.valueOf(totalPrice),
+            PrinterUtil.printString80(productions, null, orderNo, SpUtil.getString(Constant.WORKER_NAME), String.valueOf(totalPrice), String.valueOf(totalPrice),
                     earn1 == 0 ? String.valueOf(ssPrice) : String.valueOf(earn1), String.valueOf(charge),
                     String.valueOf(totalCut), PrinterUtil.getDate(), type);
         }
@@ -1376,10 +1381,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void paymentBack(OrderBack orderBack) {
         this.orderBack = orderBack;
-        //todo 结算回调，有网
         orderNo = orderBack.getOrderNo();
         setLabelData();
-        Log.e("home", "paymentBack: " + orderBack.getOrderNo());
         PrintOrder(orderBack, null, orderBack.getCharge() < 0 ? 0 : orderBack.getCharge(), orderBack.getPayType().equals("900") ? "现金支付" : orderBack.getPayType().equals("010") ? "微信支付" : "支付宝支付", orderBack.getTotal(), orderBack.getCut() < 0 ? 0 : orderBack.getCut());
     }
 

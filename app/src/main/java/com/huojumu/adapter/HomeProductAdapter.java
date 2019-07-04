@@ -34,6 +34,7 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
     private int time = 0;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler();
+    private boolean isNotUp;
 
     public HomeProductAdapter(@Nullable List<Production> data, onPointerMoveListener moveListener) {
         super(R.layout.item_home_product_all, data);
@@ -90,6 +91,16 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
             helper.setVisible(R.id.top_tv, false);
         }
 
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (isNotUp) {
+                    showed = true;
+                    showArror(helper, true);
+                }
+            }
+        };
+
         helper.setText(R.id.tv_product_name, item.getProName())
                 .setText(R.id.tv_product_cut, String.valueOf(item.getMinPrice()))
                 .setText(R.id.right_tv, type1)
@@ -99,106 +110,96 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
                 .itemView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent e) {
-
                 switch (e.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
                         if (e.getActionIndex() == 0) {
-
                             pointer1OldCoorX = e.getX();
                             pointer1OldCoorY = e.getY();
                             moved = false;
-                            showed = false;
+                            isNotUp = false;
                             timer = new Timer();
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {
                                     time++;
-
                                     if (time == 2) {
+                                        isNotUp = true;
                                         if (timer != null) {
                                             timer.cancel();
                                             timer.purge();
                                             timer = null;
                                         }
                                         time = 0;
-
-                                        handler.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                showArror(helper, true);
-                                                showed = true;
-                                            }
-                                        });
                                     }
                                 }
                             }, 0, 500);
+
+                            handler.postDelayed(runnable, 1100);
                         }
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        if (e.getActionIndex() == 0) {
-                            moved = true;
-                            //手指个数满足条件,判断每个手指的滑动方向
-                            pointer1NewCoorX = e.getX();
-                            pointer1NewCoorY = e.getY();
-                        }
+                        isNotUp = true;
+                        moved = true;
+                        //手指个数满足条件,判断每个手指的滑动方向
+                        pointer1NewCoorX = e.getX();
+                        pointer1NewCoorY = e.getY();
                         break;
                     case MotionEvent.ACTION_UP:
-                        if (e.getActionIndex() == 0) {
-                            if (showed && moved) {
-                                float deltaX = Math.abs(pointer1NewCoorX - pointer1OldCoorX);
-                                float deltaY = Math.abs(pointer1NewCoorY - pointer1OldCoorY);
+                        //
+                        isNotUp = false;
+                        if (showed && moved) {
+                            float deltaX = Math.abs(pointer1NewCoorX - pointer1OldCoorX);
+                            float deltaY = Math.abs(pointer1NewCoorY - pointer1OldCoorY);
 
-                                if (deltaX > deltaY) {
-                                    //横向滑动
-                                    if ((pointer1NewCoorX - pointer1OldCoorX) > 70) {
-                                        setSelected(helper, true, false, false, false);
-                                        //向右
-                                        try {
-                                            moveListener.onPointerMoved(item, 2, item.getScales().get(iNumber1));
-                                        } catch (Exception e1) {
-                                            moveListener.onPointerMoved(item, 2, null);
-                                        }
-                                    } else if ((pointer1NewCoorX - pointer1OldCoorX) < -70) {
-                                        setSelected(helper, false, false, true, false);
-                                        //向左
-                                        try {
-                                            moveListener.onPointerMoved(item, 0, item.getScales().get(iNumber3));
-                                        } catch (Exception e1) {
-                                            moveListener.onPointerMoved(item, 0, null);
-                                        }
+                            if (deltaX > deltaY) {
+                                //横向滑动
+                                if ((pointer1NewCoorX - pointer1OldCoorX) > 70) {
+                                    setSelected(helper, true, false, false, false);
+                                    //向右
+                                    try {
+                                        moveListener.onPointerMoved(item, 2, item.getScales().get(iNumber1));
+                                    } catch (Exception e1) {
+                                        moveListener.onPointerMoved(item, 2, null);
                                     }
-                                } else if (deltaY > deltaX) {
-                                    //纵向滑动
-                                    if ((pointer1NewCoorY - pointer1OldCoorY) > 70) {
-                                        setSelected(helper, false, true, false, false);
-                                        //向下
-                                        try {
-                                            moveListener.onPointerMoved(item, 3, item.getScales().get(iNumber2));
-                                        } catch (Exception e1) {
-                                            moveListener.onPointerMoved(item, 3, null);
-                                        }
-                                    } else if ((pointer1NewCoorY - pointer1OldCoorY) < -70) {
-                                        setSelected(helper, false, false, false, true);
-                                        //向上
-                                        try {
-                                            moveListener.onPointerMoved(item, 1, item.getScales().get(iNumber4));
-                                        } catch (Exception e1) {
-                                            moveListener.onPointerMoved(item, 1, null);
-                                        }
+                                } else if ((pointer1NewCoorX - pointer1OldCoorX) < -70) {
+                                    setSelected(helper, false, false, true, false);
+                                    //向左
+                                    try {
+                                        moveListener.onPointerMoved(item, 0, item.getScales().get(iNumber3));
+                                    } catch (Exception e1) {
+                                        moveListener.onPointerMoved(item, 0, null);
                                     }
                                 }
-
-                                showArror(helper, false);
-                                showed = false;
-                            } else {
-                                showArror(helper, false);
-                                if (timer != null) {
-                                    timer.cancel();
-                                    timer.purge();
-                                    timer = null;
+                            } else if (deltaY > deltaX) {
+                                //纵向滑动
+                                if ((pointer1NewCoorY - pointer1OldCoorY) > 70) {
+                                    setSelected(helper, false, true, false, false);
+                                    //向下
+                                    try {
+                                        moveListener.onPointerMoved(item, 3, item.getScales().get(iNumber2));
+                                    } catch (Exception e1) {
+                                        moveListener.onPointerMoved(item, 3, null);
+                                    }
+                                } else if ((pointer1NewCoorY - pointer1OldCoorY) < -70) {
+                                    setSelected(helper, false, false, false, true);
+                                    //向上
+                                    try {
+                                        moveListener.onPointerMoved(item, 1, item.getScales().get(iNumber4));
+                                    } catch (Exception e1) {
+                                        moveListener.onPointerMoved(item, 1, null);
+                                    }
                                 }
-                                v.performClick();
                             }
+                        } else {
+                            handler.removeCallbacks(runnable);
+                            v.performClick();
+                        }
+                        showArror(helper, false);
+                        showed = false;
+                        if (timer != null) {
+                            timer.cancel();
+                            timer.purge();
+                            timer = null;
                         }
                         break;
                 }

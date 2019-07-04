@@ -3,6 +3,7 @@ package com.huojumu.main.activity.login;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -213,6 +214,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void run() {
                 MyApplication.getSocketTool().sendHeart();
+                Log.e("login", "sendHeart: ");
             }
         }, 200, 30 * 1000);
     }

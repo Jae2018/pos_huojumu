@@ -2,6 +2,7 @@ package com.huojumu.main.activity.login;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.huojumu.MyApplication;
@@ -67,6 +68,7 @@ public class ActiveActivity extends BaseActivity {
                 @Override
                 public void run() {
                     MyApplication.getSocketTool().sendHeart();
+                    Log.e("bind", "sendHeart: ");
                 }
             }, 10, 60 * 1000);
         }

@@ -37,13 +37,15 @@ public class OrderBack {
     //减额
     private double cut;
 
-    public OrderBack(String orderNo, String payType, double charge, double total, double cut, String creatTime) {
+    public OrderBack(String orderNo, String payType, double charge, double total, double cut, String creatTime, String origionTotalPrice, String totalPrice) {
         this.orderNo = orderNo;
         this.payType = payType;
         this.charge = charge;
         this.total = total;
         this.cut = cut;
         this.creatTime = creatTime;
+        this.origionTotalPrice = origionTotalPrice;
+        this.totalPrice = totalPrice;
     }
 
     public double getCut() {

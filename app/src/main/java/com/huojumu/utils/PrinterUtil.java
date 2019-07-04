@@ -285,13 +285,16 @@ public class PrinterUtil {
         io = new USBAPI(MyApplication.getContext());
         if (PrinterAPI.SUCCESS == mPrinter.connect(io)) {
             isConnected = true;
-            Log.e("SUCCESS", "SUCCESS");
+            Log.e("connectPrinter", "init SUCCESS");
         } else {
             isConnected = false;
-            Log.e("SUCCESS1", "SUCCESS1");
+            Log.e("connectPrinter", "init failed");
         }
     }
 
+    /**
+     * @return 是否成功实例化print sdk
+     */
     public static boolean isIsConnected() {
         return isConnected;
     }
@@ -350,7 +353,9 @@ public class PrinterUtil {
         mPrinter.writeIO(bytes, 0, bytes.length, 100);
     }
 
-    //开钱箱
+    /**
+     * 开钱箱
+     */
     public static void OpenMoneyBox() {
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
@@ -360,7 +365,7 @@ public class PrinterUtil {
                         set(OPEN_BOX);
                     }
                 } catch (Exception e) {
-                    Log.e(TAG, "run: ");
+                    Log.e(TAG, "open money box error: ");
                 }
             }
         });
@@ -378,7 +383,7 @@ public class PrinterUtil {
      * @param date         日期
      * @param type         支付方式
      */
-    public static void printString80(final List<Production> pList, final List<OrderDetails.OrderdetailBean.ProsBean> prosBeanList, final String orderNo, final String name, final String totalMoney,
+    public static void printString80(final List<Production> pList, final List<OrderDetails.OrderdetailBean.ProsBean> prosBeanList, final String orderNo, final String name, final String totalMoney, final String money,
                                      final String ssPrice, final String charge, final String cut, final String date, final String type) {
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
@@ -419,6 +424,7 @@ public class PrinterUtil {
                             if (p.getProNameEn() != null && !p.getProNameEn().isEmpty()) {
                                 String s2 = p.getProNameEn();
                                 mPrinter.printString(s2, "GBK", true);
+                                Log.e(TAG, "English name print" + s2);
                             }
                             if (p.getMats() != null && p.getMats().size() > 0) {
                                 for (MatsBean bean : p.getMats()) {
@@ -435,6 +441,7 @@ public class PrinterUtil {
                             if (p.getProNameEn() != null && !p.getProNameEn().isEmpty()) {
                                 String s2 = p.getProNameEn();
                                 mPrinter.printString(s2, "GBK", true);
+                                Log.e(TAG, "English name print" + s2);
                             }
                             if (p.getMats() != null && p.getMats().size() > 0) {
                                 for (OrderDetails.OrderdetailBean.ProsBean.MatsBean bean : p.getMats()) {
@@ -448,23 +455,34 @@ public class PrinterUtil {
                     //间隔小的虚线
                     mPrinter.setAlignMode(1);
                     mPrinter.printRasterBitmap(MyApplication.getLine3());
+                    mPrinter.printFeed();
 
                     //交易金额明细
                     mPrinter.setFontStyle(0);
-                    s = "\n" + printTwoData80("消费金额", totalMoney)
-                            + "\n" + printTwoData80("应收金额", totalMoney)
-                            + "\n" + printTwoData80("客户实付", ssPrice)
-                            + "\n" + printTwoData80("优    惠", cut)
-                            + "\n" + printTwoData80("找    零", charge)
-                            + "\n" + printTwoData80("支付方式", type)
-                            + "\n";
-                    mPrinter.printString(s);
 
-                    //虚实线
-                    mPrinter.printRasterBitmap(MyApplication.getLine4());
+                    String list = "\n" + printTwoData80("消费金额", totalMoney);
+                    mPrinter.printString(list, "GBK", true);
+
+                    list = printTwoData80("应收金额", money);
+                    mPrinter.printString(list, "GBK", true);
+
+                    list = printTwoData80("客户实付", ssPrice);
+                    mPrinter.printString(list, "GBK", true);
+
+                    list = printTwoData80("优    惠", cut);
+                    mPrinter.printString(list, "GBK", true);
+
+                    list = printTwoData80("找    零", charge);
+                    mPrinter.printString(list, "GBK", true);
+
+                    list = printTwoData80("支付方式", type);
+                    mPrinter.printString(list, "GBK", true);
 
                     //居中
                     mPrinter.setAlignMode(1);
+                    //虚实线
+                    mPrinter.printRasterBitmap(MyApplication.getLine4());
+
                     //logo图片9
                     mPrinter.printRasterBitmap(MyApplication.getLogo());
 
@@ -472,8 +490,8 @@ public class PrinterUtil {
                     mPrinter.setCharSize(1, 1);
                     mPrinter.setAlignMode(1);
                     String[] ns = SpUtil.getString(Constant.STORE_NAME).split("：");
-                    s = ns[0] + "\n" + ns[1] + "\n\n";
-                    mPrinter.printString(s);
+                    s = ns[0] + "\n" + ns[1] + "\n";
+                    mPrinter.printString(s, "GBK", true);
 
                     //企业文化描述
                     mPrinter.setCharSize(0, 0);
@@ -484,14 +502,15 @@ public class PrinterUtil {
                     //品牌二维码
                     mPrinter.setAlignMode(1);
                     mPrinter.printRasterBitmap(MyApplication.getQrcode());
+                    mPrinter.printFeed();
 
                     //投诉、加盟热线
-                    s = "\n投诉、加盟热线：010-62655878";
+                    s = "投诉、加盟热线：010-62655878";
                     mPrinter.printString(s, "GBK", true);
 
                     //公司
                     s = "技术支持 火炬木科技";
-                    mPrinter.printString(s);
+                    mPrinter.printString(s, "GBK", true);
 
                     mPrinter.cutPaper(66, 0);
 
@@ -518,41 +537,58 @@ public class PrinterUtil {
             public void run() {
                 if (PrinterAPI.SUCCESS == mPrinter.connect(io)) {
                     try {
+                        mPrinter.set80mm();
                         mPrinter.setAlignMode(1);
                         mPrinter.setCharSize(1, 1);
-                        String t = type == 1 ? "交班" : "日结\n";
-                        mPrinter.printString(t);
+                        String t = type == 1 ? "交班" : "日结";
+                        mPrinter.printString(t, "GBK", true);
                         mPrinter.printFeed();
 
                         //居左
                         mPrinter.setAlignMode(0);
-                        String s = t + "日期：\n";
-                        mPrinter.printString(s);
+                        String s = t + "日期：";
+                        mPrinter.printString(s, "GBK", true);
 
                         mPrinter.setCharSize(0, 0);
-                        s = "本次" + t + "时间：" + "\n    " + getDate() + "\n"
-                                + "上次" + t + "时间：" + "\n    " + lastDate + "\n"
-                                + t + "人员：" + workerName + "\n";
-                        mPrinter.printString(s);
-                        mPrinter.printFeed();
-
-                        s = "交款信息：\n";
-                        mPrinter.printString(s);
-
-                        mPrinter.setCharSize(0, 0);
-                        s = "本次" + t + "销售总额：" + total + "\n"
-                                + "总虚收金额：" + mobilePay + "\n"
-                                + "总实收金额：" + cash + "\n"
-                                + "总  单  数：" + orderNum + "\n";
-                        mPrinter.printString(s);
-                        mPrinter.printFeed();
+                        s = "本次" + t + "时间：" + "\n    " + getDate();
+                        mPrinter.printString(s, "GBK", true);
+                        s = "上次" + t + "时间：" + "\n    " + lastDate;
+                        mPrinter.printString(s, "GBK", true);
+                        s = t + "人员：" + workerName;
+                        mPrinter.printString(s, "GBK", true);
 
                         mPrinter.setAlignMode(1);
+                        mPrinter.printRasterBitmap(MyApplication.getLine3());
+                        mPrinter.printFeed();
+
+                        mPrinter.setAlignMode(0);
+                        s = "交款信息：";
+                        mPrinter.printString(s, "GBK", true);
+
+                        mPrinter.setCharSize(0, 0);
+                        s = "本次" + t + "销售总额：" + total;
+                        mPrinter.printString(s, "GBK", true);
+                        s = "总虚收金额：" + mobilePay;
+                        mPrinter.printString(s, "GBK", true);
+                        s = "总实收金额：" + cash;
+                        mPrinter.printString(s, "GBK", true);
+                        s = "总  单  数：" + orderNum;
+                        mPrinter.printString(s, "GBK", true);
+
+                        mPrinter.printFeed();
+                        mPrinter.printFeed();
+
                         //公司
-                        s = "\n技术支持 火炬木科技";
-                        mPrinter.printString(s);
+                        mPrinter.setAlignMode(1);
+                        s = "技术支持 火炬木科技";
+                        mPrinter.printString(s, "GBK", true);
+
+                        mPrinter.printFeed();
 
                         mPrinter.cutPaper(66, 0);
+
+                        //清空缓存命令
+                        set(CLEAR_TEMP);
                     } catch (Exception e) {
                         ToastUtils.showLong("打印机连接出错");
                     }
@@ -571,30 +607,36 @@ public class PrinterUtil {
             public void run() {
                 if (PrinterAPI.SUCCESS == mPrinter.connect(io)) {
                     try {
+                        mPrinter.set80mm();
                         mPrinter.setAlignMode(1);
-
                         String s = "退账单";
-                        mPrinter.printString(s);
-                        mPrinter.printFeed();
+                        mPrinter.printString(s, "GBK", true);
 
                         mPrinter.setAlignMode(0);
 
-                        s = "操作人：" + SpUtil.getString(Constant.WORKER_NAME)
-                                + "\n" + "下单时间：" + details.getOrderdetail().getCreateTime()
-                                + "\n" + "退单时间：" + date
-                                + "\n" + "原订单号：" + details.getOrderdetail().getOrdNo().substring(details.getOrderdetail().getOrdNo().length() - 4)
-                                + "\n" + "操作员工：" + SpUtil.getString(Constant.WORKER_NAME)
-                                + "\n" + "员工入职时间：" + (details.getMember() == null ? details.getOperator().getJoinTime() : details.getMember().getJoinTime()) + "\n";
-                        mPrinter.printString(s);
+                        s = "操作人：" + SpUtil.getString(Constant.WORKER_NAME);
+                        mPrinter.printString(s, "GBK", true);
+                        s = "下单时间：" + details.getOrderdetail().getCreateTime();
+                        mPrinter.printString(s, "GBK", true);
+                        s = "退单时间：" + date;
+                        mPrinter.printString(s, "GBK", true);
+                        s = "原订单号：" + details.getOrderdetail().getOrdNo().substring(details.getOrderdetail().getOrdNo().length() - 4);
+                        mPrinter.printString(s, "GBK", true);
+                        s = "操作员工：" + SpUtil.getString(Constant.WORKER_NAME);
+                        mPrinter.printString(s, "GBK", true);
+                        s = "员工入职时间：" + (details.getMember() == null ? details.getOperator().getJoinTime() : details.getMember().getJoinTime());
+                        mPrinter.printString(s, "GBK", true);
 
-                        s = "------------------------------------------------\n";
-                        mPrinter.printString(s);
+                        //线
+                        mPrinter.setAlignMode(1);
+                        mPrinter.printRasterBitmap(MyApplication.getLine3());
+                        mPrinter.printFeed();
 
                         //商品信息
+                        mPrinter.setFontStyle(1);
                         s = printFourData80("商品名称", "数量", "单价", "金额");
                         mPrinter.printString(s, "GBK", true);
 
-                        mPrinter.setFontStyle(1);
                         for (int i = 0; i < details.getOrderdetail().getPros().size(); i++) {
                             int n = details.getOrderdetail().getPros().get(i).getProCount();
                             String s1 = printFourData80(details.getOrderdetail().getPros().get(i).getProName(), String.valueOf(details.getOrderdetail().getPros().get(i).getCups().size()), String.valueOf(details.getOrderdetail().getPros().get(i).getPrice()),
@@ -608,15 +650,20 @@ public class PrinterUtil {
                             }
                         }
 
+                        mPrinter.printFeed();
                         s = printTwoData80("订单总金额：", String.valueOf(details.getOrderdetail().getTotalPrice()));
                         mPrinter.printString(s, "GBK", true);
+                        mPrinter.printFeed();
 
                         //公司
                         mPrinter.setAlignMode(1);
-                        s = "\n技术支持：火炬木科技";
+                        s = "技术支持：火炬木科技";
                         mPrinter.printString(s, "GBK", true);
 
                         mPrinter.cutPaper(66, 0);
+
+                        //清空缓存命令
+                        set(CLEAR_TEMP);
                     } catch (Exception e) {
                         Log.e(TAG, "printPayBack: " + e.getMessage());
                     }

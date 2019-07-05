@@ -156,12 +156,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
     TextView orderNumTv;
     @BindView(R.id.image_net_state)
     ImageView netStateIv;
-    @BindView(R.id.tv_recommend)
-    TextView recommendTv;
     @BindView(R.id.scan_layer)
     LinearLayout scanLayer;
     @BindView(R.id.textView)
     TextView pText;
+    @BindView(R.id.tv_store_name)
+    TextView tv_store_name;
 
     private HomeSelectedAdapter selectedAdapter;//所选
     private HomeTypeAdapter typeAdapter;//类别
@@ -401,6 +401,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         cashPayDialog = new CashPayDialog(this, this);
         initSpeaker();
 
+        String name = SpUtil.getString(Constant.STORE_NAME).split("：")[1];
+        tv_store_name.setText(name);
     }
 
     @Override
@@ -813,11 +815,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         if (isRecommend) {
             getProList(Constant.RECOMMEND);
             isRecommend = false;
-            recommendTv.setText("推荐");
         } else {
             getProList(Constant.NORECOMMEND);
             isRecommend = true;
-            recommendTv.setText("全部");
         }
     }
 
@@ -1009,7 +1009,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         searchList.clear();
         searchStr = "";
         edit_search.setText("");
-
+        pageNo = 0;
         //订单
         orderInfo = null;
         dataBeans.clear();
@@ -1179,19 +1179,19 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                         public void onSuccess(int statusCode, BaseBean<OrderBack> response) {
                             orderNo = response.getData().getOrderNo();
                             orderBack = response.getData();
-                            PrintOrder(orderBack, null, charge < 0 ? 0 : charge, "现金支付", earn == 0 ? totalPrice : earn, totalCut);
+                            PrintOrder(orderBack, null, charge < 0 ? 0 : charge, "现金支付", earn == 0 ? totalPrice : earn, totalCut, "门店点单");
                         }
 
                         @Override
                         public void onFailure(int statusCode, String code, String error_msg) {
                             SocketTool.getInstance().setAlive(false);
                             netStateIv.setImageResource(R.drawable.wifi_error);
-                            PrintOrder(orderBack, null, charge < 0 ? 0 : charge, "现金支付", earn == 0 ? totalPrice : earn, totalCut);
+                            PrintOrder(orderBack, null, charge < 0 ? 0 : charge, "现金支付", earn == 0 ? totalPrice : earn, totalCut, "门店点单");
                         }
                     });
                 } else {
                     //网络不正常走本地
-                    PrintOrder(orderBack, null, charge < 0 ? 0 : charge, "现金支付", earn == 0 ? totalPrice : earn, totalCut);
+                    PrintOrder(orderBack, null, charge < 0 ? 0 : charge, "现金支付", earn == 0 ? totalPrice : earn, totalCut, "门店点单");
                 }
                 break;
             case "CertainDialog":
@@ -1228,7 +1228,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                                 Log.e("home:", code != 0 ? "语音合成失败,错误码: " + code : "ok");
                             }
                         }
-                        PrintOrder(orderBack, null, change < 0 ? 0 : change, orderInfo.getPayType().equals("010") ? "微信支付" : "支付宝支付", totalPrice, totalCut);
+                        PrintOrder(orderBack, null, change < 0 ? 0 : change, orderInfo.getPayType().equals("010") ? "微信支付" : "支付宝支付", totalPrice, totalCut, "门店点单");
                     } else {
                         ToastUtils.showLong(response.getMsg());
                     }
@@ -1303,7 +1303,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
      * 打印订单小票，分 连接上服务器 与 未连接上服务器
      * charge:找零
      */
-    private void PrintOrder(final OrderBack orderBack, final OrderDetails.OrderdetailBean orderdetailBean, final double charge, String type, double ssPrice, double totalCut) {
+    private void PrintOrder(final OrderBack orderBack, final OrderDetails.OrderdetailBean orderdetailBean, final double charge, String type, double ssPrice, double totalCut, String source) {
         progressDialog.show();
         hasRequestedOrder = false;
         woeker_p += totalPrice;
@@ -1315,12 +1315,12 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
             //正常情况
             PrinterUtil.printString80(productions, null, "C" + orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4),
                     SpUtil.getString(Constant.WORKER_NAME), orderBack.getOrigionTotalPrice(), orderBack.getTotalPrice(), String.valueOf(ssPrice), String.valueOf(charge),
-                    String.valueOf(totalCut), orderBack.getCreatTime(), type);
+                    String.valueOf(totalCut), orderBack.getCreatTime(), type, source);
         } else if (orderdetailBean != null) {
             //微信小程序
             PrinterUtil.printString80(null, orderdetailBean.getPros(), "W" + orderdetailBean.getOrdNo().substring(orderdetailBean.getOrdNo().length() - 4),
                     SpUtil.getString(Constant.WORKER_NAME), String.valueOf(orderdetailBean.getTotalPrice()), String.valueOf(orderdetailBean.getTotalPrice()), String.valueOf(ssPrice), String.valueOf(charge),
-                    String.valueOf(totalCut), orderdetailBean.getCreateTime(), type);
+                    String.valueOf(totalCut), orderdetailBean.getCreateTime(), type, source);
         } else {
             //断网状态
             orderNo = orderNum < 10 ? "N000" + orderNum : orderNum < 100 ? "N00" + orderNum : orderNum < 1000 ? "N0" + orderNum : "N" + orderNum;
@@ -1329,7 +1329,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
 
             PrinterUtil.printString80(productions, null, orderNo, SpUtil.getString(Constant.WORKER_NAME), String.valueOf(totalPrice), String.valueOf(totalPrice),
                     earn1 == 0 ? String.valueOf(ssPrice) : String.valueOf(earn1), String.valueOf(charge),
-                    String.valueOf(totalCut), PrinterUtil.getDate(), type);
+                    String.valueOf(totalCut), PrinterUtil.getDate(), type, source);
         }
         //订单置空
         orderInfo = null;
@@ -1383,13 +1383,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         this.orderBack = orderBack;
         orderNo = orderBack.getOrderNo();
         setLabelData();
-        PrintOrder(orderBack, null, orderBack.getCharge() < 0 ? 0 : orderBack.getCharge(), orderBack.getPayType().equals("900") ? "现金支付" : orderBack.getPayType().equals("010") ? "微信支付" : "支付宝支付", orderBack.getTotal(), orderBack.getCut() < 0 ? 0 : orderBack.getCut());
+        PrintOrder(orderBack, null, orderBack.getCharge() < 0 ? 0 : orderBack.getCharge(), orderBack.getPayType().equals("900") ? "现金支付" : orderBack.getPayType().equals("010") ? "微信支付" : "支付宝支付", orderBack.getTotal(), orderBack.getCut() < 0 ? 0 : orderBack.getCut(), "门店点单");
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void paymentNativeBack(NoNetPayBack noNetPayBack) {
         //结算回调，无网
-        PrintOrder(null, null, noNetPayBack.getCharge() < 0 ? 0 : orderBack.getCharge(), noNetPayBack.getType(), noNetPayBack.getTotalPrice(), noNetPayBack.getCut() < 0 ? 0 : noNetPayBack.getCut());
+        PrintOrder(null, null, noNetPayBack.getCharge() < 0 ? 0 : orderBack.getCharge(), noNetPayBack.getType(), noNetPayBack.getTotalPrice(), noNetPayBack.getCut() < 0 ? 0 : noNetPayBack.getCut(), "门店点单");
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -1417,8 +1417,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void H5Payment(H5TaskBean h5TaskBean) {
         //来自小程序点单，加入线程池中
+        String s = (h5TaskBean.getData().getOrderdetail().getOrdSource().equals("1") ? "微信" : "支付宝") + "小程序";
         if (mTts != null) {
-            int code = mTts.startSpeaking("有来自小程序的订单，请查看", mTtsListener);
+            String ss = "有来自" + s + "的订单，请查看";
+            int code = mTts.startSpeaking(ss, mTtsListener);
             Log.e("home:", code != 0 ? "语音合成失败,错误码: " + code : "ok");
         }
         setLabelDataFromH5(h5TaskBean);
@@ -1429,7 +1431,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         orderNum++;
         SpUtil.save(Constant.ORDER_NUM, orderNum);
 
-        PrintOrder(null, h5TaskBean.getData().getOrderdetail(), 0, "微信支付", h5TaskBean.getData().getOrderdetail().getTotalPrice(), 0);
+        PrintOrder(null, h5TaskBean.getData().getOrderdetail(), 0, "微信支付", h5TaskBean.getData().getOrderdetail().getTotalPrice(), 0, s);
     }
 
     private void setLabelDataFromH5(H5TaskBean h5TaskBean) {

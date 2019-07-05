@@ -55,15 +55,14 @@
 
         <RelativeLayout
             android:id="@+id/relative_types"
-            android:layout_width="@dimen/d_240"
-            android:layout_height="@dimen/d_240"
-            android:background="#aaeeeeee"
+            android:layout_width="@dimen/d_200"
+            android:layout_height="@dimen/d_200"
             android:visibility="gone">
 
             <TextView
                 android:id="@+id/left_tv"
-                android:layout_width="@dimen/d_72"
-                android:layout_height="@dimen/d_72"
+                android:layout_width="@dimen/d_64"
+                android:layout_height="@dimen/d_64"
                 android:layout_centerVertical="true"
                 android:background="@drawable/move_check_selector"
                 android:gravity="center"
@@ -71,8 +70,8 @@
 
             <TextView
                 android:id="@+id/right_tv"
-                android:layout_width="@dimen/d_72"
-                android:layout_height="@dimen/d_72"
+                android:layout_width="@dimen/d_64"
+                android:layout_height="@dimen/d_64"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="@drawable/move_check_selector"
@@ -81,8 +80,8 @@
 
             <TextView
                 android:id="@+id/top_tv"
-                android:layout_width="@dimen/d_72"
-                android:layout_height="@dimen/d_72"
+                android:layout_width="@dimen/d_64"
+                android:layout_height="@dimen/d_64"
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/move_check_selector"
                 android:gravity="center"
@@ -90,8 +89,8 @@
 
             <TextView
                 android:id="@+id/bottom_tv"
-                android:layout_width="@dimen/d_72"
-                android:layout_height="@dimen/d_72"
+                android:layout_width="@dimen/d_64"
+                android:layout_height="@dimen/d_64"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/move_check_selector"

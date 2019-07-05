@@ -19,6 +19,7 @@
     <dimen name="d_40">40dp</dimen>
     <dimen name="d_48">48dp</dimen>
     <dimen name="d_50">50dp</dimen>
+    <dimen name="d_52">52dp</dimen>
     <dimen name="d_56">56dp</dimen>
     <dimen name="d_60">60dp</dimen>
     <dimen name="d_64">64dp</dimen>
@@ -38,6 +39,7 @@
     <dimen name="d_180">180dp</dimen>
     <dimen name="d_200">200dp</dimen>
     <dimen name="d_210">210dp</dimen>
+    <dimen name="d_220">220dp</dimen>
     <dimen name="d_240">240dp</dimen>
     <dimen name="d_250">250dp</dimen>
     <dimen name="d_280">280dp</dimen>

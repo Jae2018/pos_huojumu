@@ -35,92 +35,109 @@
                 android:scaleType="centerInside"
                 android:src="@drawable/top2" />
 
-            <RelativeLayout
-                android:id="@+id/linear2"
-                android:layout_width="@dimen/d_250"
+            <TextView
+                android:id="@+id/tv_store_name"
+                android:layout_width="@dimen/d_120"
                 android:layout_height="match_parent"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/d_120"
-                android:paddingTop="@dimen/d_6">
+                android:layout_marginStart="@dimen/d_60"
+                android:gravity="center"
+                android:paddingLeft="@dimen/d_10"
+                android:paddingRight="@dimen/d_10"
+                android:textColor="@android:color/white" />
 
-                <TextView
-                    android:id="@+id/tv1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="日期："
-                    android:textColor="@android:color/white" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
 
-                <TextView
-                    android:id="@+id/tv_date"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@+id/tv1"
-                    android:gravity="end"
-                    android:textColor="@android:color/white" />
+                <RelativeLayout
+                    android:id="@+id/relative1"
+                    android:layout_width="@dimen/d_210"
+                    android:layout_height="match_parent"
+                    android:paddingTop="@dimen/d_6">
 
-                <TextView
-                    android:id="@+id/tv2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv1"
-                    android:layout_marginTop="@dimen/d_8"
-                    android:text="当前收入："
-                    android:textColor="@android:color/white" />
+                    <TextView
+                        android:id="@+id/tv3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="当前在班人员："
+                        android:textColor="@android:color/white" />
 
-                <TextView
-                    android:id="@+id/tv_earn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv1"
-                    android:layout_marginTop="@dimen/d_8"
-                    android:layout_toEndOf="@+id/tv2"
-                    android:gravity="end"
-                    android:textColor="@android:color/white" />
-            </RelativeLayout>
+                    <TextView
+                        android:id="@+id/tv_worker_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/d_36"
+                        android:layout_toEndOf="@+id/tv3"
+                        android:gravity="end"
+                        android:textColor="@android:color/white" />
 
-            <RelativeLayout
-                android:layout_width="@dimen/d_210"
-                android:layout_height="match_parent"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/d_80"
-                android:layout_toEndOf="@id/linear2"
-                android:paddingTop="@dimen/d_6">
+                    <TextView
+                        android:id="@+id/tv4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv3"
+                        android:layout_marginTop="@dimen/d_8"
+                        android:text="当前出单："
+                        android:textColor="@android:color/white" />
 
-                <TextView
-                    android:id="@+id/tv3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="当前在班人员："
-                    android:textColor="@android:color/white" />
+                    <TextView
+                        android:id="@+id/tv_order_num"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv3"
+                        android:layout_marginTop="@dimen/d_8"
+                        android:layout_toEndOf="@+id/tv4"
+                        android:gravity="end"
+                        android:textColor="@android:color/white" />
+                </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/tv_worker_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/d_36"
-                    android:layout_toEndOf="@+id/tv3"
-                    android:gravity="end"
-                    android:textColor="@android:color/white" />
+                <View
+                    android:layout_width="@dimen/d_60"
+                    android:layout_height="match_parent" />
 
-                <TextView
-                    android:id="@+id/tv4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv3"
-                    android:layout_marginTop="@dimen/d_8"
-                    android:text="当前出单："
-                    android:textColor="@android:color/white" />
+                <RelativeLayout
+                    android:id="@+id/relative2"
+                    android:layout_width="@dimen/d_250"
+                    android:layout_height="match_parent"
+                    android:paddingTop="@dimen/d_6">
 
-                <TextView
-                    android:id="@+id/tv_order_num"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv3"
-                    android:layout_marginTop="@dimen/d_8"
-                    android:layout_toEndOf="@+id/tv4"
-                    android:gravity="end"
-                    android:textColor="@android:color/white" />
-            </RelativeLayout>
+                    <TextView
+                        android:id="@+id/tv1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="日期："
+                        android:textColor="@android:color/white" />
+
+                    <TextView
+                        android:id="@+id/tv_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@+id/tv1"
+                        android:gravity="end"
+                        android:textColor="@android:color/white" />
+
+                    <TextView
+                        android:id="@+id/tv2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv1"
+                        android:layout_marginTop="@dimen/d_8"
+                        android:text="当前收入："
+                        android:textColor="@android:color/white" />
+
+                    <TextView
+                        android:id="@+id/tv_earn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv1"
+                        android:layout_marginTop="@dimen/d_8"
+                        android:layout_toEndOf="@+id/tv2"
+                        android:gravity="end"
+                        android:textColor="@android:color/white" />
+                </RelativeLayout>
+            </LinearLayout>
+
 
             <ImageView
                 android:id="@+id/image_net_state"
@@ -171,6 +188,7 @@
         android:layout_width="@dimen/d_250"
         android:layout_height="match_parent"
         android:layout_below="@+id/line"
+        android:layout_marginBottom="@dimen/d_60"
         android:orientation="vertical">
 
         <TextView
@@ -199,9 +217,10 @@
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="@dimen/d_250"
-        android:layout_height="@dimen/d_50"
+        android:layout_height="@dimen/d_60"
         android:layout_alignParentBottom="true"
         android:background="@color/home_left_bottom"
+        android:gravity="center_vertical"
         android:padding="@dimen/d_4">
 
         <TextView
@@ -276,10 +295,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/line"
-        android:clipChildren="false"
-        android:clipToPadding="false"
         android:layout_toEndOf="@+id/linear1"
-        android:background="@color/default_bg">
+        android:background="@color/default_bg"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
         <ImageView
             android:id="@+id/button1"
@@ -308,61 +327,23 @@
             android:background="@drawable/clear_btn_selector"
             android:contentDescription="@string/des" />
 
-        <LinearLayout
+        <ImageView
             android:id="@+id/button4"
             android:layout_width="@dimen/d_96"
             android:layout_height="@dimen/d_48"
             android:layout_marginStart="@dimen/d_16"
             android:layout_toEndOf="@id/button2"
-            android:background="@drawable/home_btn_refresh"
-            android:orientation="horizontal">
+            android:background="@drawable/recommend_btn_selector"
+            android:contentDescription="@string/des" />
 
-            <ImageView
-                android:layout_width="@dimen/d_24"
-                android:layout_height="@dimen/d_24"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/d_8"
-                android:contentDescription="@string/des"
-                android:src="@drawable/icon_recommened" />
-
-            <TextView
-                android:id="@+id/tv_recommend"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/d_8"
-                android:layout_marginEnd="@dimen/d_8"
-                android:text="推荐"
-                android:textColor="@android:color/white" />
-
-        </LinearLayout>
-
-        <LinearLayout
+        <ImageView
             android:id="@+id/button5"
             android:layout_width="@dimen/d_96"
             android:layout_height="@dimen/d_48"
             android:layout_marginStart="@dimen/d_16"
             android:layout_toEndOf="@id/button4"
-            android:background="@drawable/home_btn_refresh"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="@dimen/d_24"
-                android:layout_height="@dimen/d_24"
-                android:layout_gravity="center_vertical"
-                android:contentDescription="@string/des"
-                android:src="@drawable/refresh" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/d_8"
-                android:text="刷新"
-                android:textColor="@android:color/white" />
-
-        </LinearLayout>
+            android:background="@drawable/refresh_btn_selector"
+            android:contentDescription="@string/des" />
 
         <TextView
             android:id="@+id/btn_up"
@@ -435,9 +416,9 @@
             android:id="@+id/recyclerView3"
             android:layout_width="@dimen/d_700"
             android:layout_height="@dimen/d_640"
+            android:layout_marginTop="@dimen/d_52"
             android:clipChildren="false"
             android:clipToPadding="false"
-            android:layout_marginTop="@dimen/d_48"
             android:overScrollMode="never" />
 
     </RelativeLayout>

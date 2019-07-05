@@ -132,9 +132,9 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
                                         time = 0;
                                     }
                                 }
-                            }, 0, 500);
+                            }, 0, 149);
 
-                            handler.postDelayed(runnable, 1100);
+                            handler.postDelayed(runnable, 300);
                         }
                         break;
                     case MotionEvent.ACTION_MOVE:

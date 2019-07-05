@@ -232,7 +232,7 @@ public class PrinterUtil {
         for (int i = 0; i < 7; i++) {
             sb.append(" ");//7 bytes
         }
-        sb.append(fourth).append("\n");
+        sb.append(fourth);
 
         return sb.toString();
     }
@@ -384,7 +384,7 @@ public class PrinterUtil {
      * @param type         支付方式
      */
     public static void printString80(final List<Production> pList, final List<OrderDetails.OrderdetailBean.ProsBean> prosBeanList, final String orderNo, final String name, final String totalMoney, final String money,
-                                     final String ssPrice, final String charge, final String cut, final String date, final String type) {
+                                     final String ssPrice, final String charge, final String cut, final String date, final String type, final String source) {
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
             public void run() {
@@ -400,7 +400,7 @@ public class PrinterUtil {
                     mPrinter.printFeed();
 
                     //实线
-                    mPrinter.printRasterBitmap(MyApplication.getLine1());
+                    mPrinter.printRasterBitmap(MyApplication.getLine3());
 
                     //员工名 + 时间
                     s = "收银员：" + name + "\n" + "下单时间：" + date + "\n";
@@ -424,7 +424,6 @@ public class PrinterUtil {
                             if (p.getProNameEn() != null && !p.getProNameEn().isEmpty()) {
                                 String s2 = p.getProNameEn();
                                 mPrinter.printString(s2, "GBK", true);
-                                Log.e(TAG, "English name print" + s2);
                             }
                             if (p.getMats() != null && p.getMats().size() > 0) {
                                 for (MatsBean bean : p.getMats()) {
@@ -441,7 +440,6 @@ public class PrinterUtil {
                             if (p.getProNameEn() != null && !p.getProNameEn().isEmpty()) {
                                 String s2 = p.getProNameEn();
                                 mPrinter.printString(s2, "GBK", true);
-                                Log.e(TAG, "English name print" + s2);
                             }
                             if (p.getMats() != null && p.getMats().size() > 0) {
                                 for (OrderDetails.OrderdetailBean.ProsBean.MatsBean bean : p.getMats()) {
@@ -477,10 +475,13 @@ public class PrinterUtil {
                     list = printTwoData80("支付方式", type);
                     mPrinter.printString(list, "GBK", true);
 
+                    list = printTwoData80("订单来源", source);
+                    mPrinter.printString(list, "GBK", true);
+
                     //居中
                     mPrinter.setAlignMode(1);
                     //虚实线
-                    mPrinter.printRasterBitmap(MyApplication.getLine4());
+                    mPrinter.printRasterBitmap(MyApplication.getLine3());
 
                     //logo图片9
                     mPrinter.printRasterBitmap(MyApplication.getLogo());

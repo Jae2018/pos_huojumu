@@ -1649,7 +1649,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
             pageNo = 0;
             return;
         }
-        productAdapter.setNewData(pLists.get(pageNo));
+        if (pLists.size() > 1) {
+            productAdapter.setNewData(pLists.get(pageNo));
+        } else {
+            productAdapter.setNewData(pLists.get(0));
+        }
     }
 
     int totalPage = 1;
@@ -1662,7 +1666,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
             pageNo = totalPage - 1;
             return;
         }
-        productAdapter.setNewData(pLists.get(pageNo));
+        if (pLists.size() > 1) {
+            productAdapter.setNewData(pLists.get(pageNo));
+        } else {
+            productAdapter.setNewData(pLists.get(0));
+        }
     }
 
     /**

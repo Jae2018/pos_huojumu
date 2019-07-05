@@ -24,8 +24,7 @@ public class HomeTypeAdapter extends BaseQuickAdapter<SmallType, BaseViewHolder>
     @Override
     protected void convert(BaseViewHolder helper, SmallType item) {
         helper.setText(R.id.tv_small_type, item.getTypeName())
-                .setTextColor(R.id.tv_small_type, item.isSelected() ? Color.WHITE : Color.BLACK)
-                .setBackgroundRes(R.id.tv_small_type, item.isSelected() ? R.drawable.home_btn_page : R.drawable.type_btn_unselected);
-//                .setBackgroundColor(R.id.tv_small_type, item.isSelected() ? mContext.getResources().getColor(R.color.btn_selected) : mContext.getResources().getColor(R.color.btn_unselected));
+                .setTextColor(R.id.tv_small_type, Color.WHITE)
+                .setBackgroundRes(R.id.tv_small_type, item.isSelected() ? R.drawable.type_selected : R.drawable.type_n);
     }
 }

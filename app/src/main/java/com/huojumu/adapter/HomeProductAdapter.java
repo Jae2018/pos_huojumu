@@ -102,7 +102,7 @@ public class HomeProductAdapter extends BaseQuickAdapter<Production, BaseViewHol
         };
 
         helper.setText(R.id.tv_product_name, item.getProName())
-                .setText(R.id.tv_product_cut, String.valueOf(item.getMinPrice()))
+                .setText(R.id.tv_product_cut, "￥ " + item.getMinPrice())
                 .setText(R.id.right_tv, type1)
                 .setText(R.id.bottom_tv, type2)
                 .setText(R.id.left_tv, type3)

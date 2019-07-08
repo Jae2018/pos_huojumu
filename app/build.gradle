@@ -18,7 +18,7 @@ android {
         minSdkVersion 22
         targetSdkVersion 22
         versionCode 1
-        versionName "1.0.5.2"
+        versionName "1.0.5.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = ["appid": "aa223", "appse": "s1231", "adsId": ""]
         renderscriptSupportModeEnabled true
@@ -154,4 +154,5 @@ dependencies {
     api 'org.aspectj:aspectjrt:1.8.9'
     implementation 'com.qianwen:update-app:3.5.2'
     implementation 'com.github.xuexiangjys.XAOP:xaop-runtime:1.0.1'
+    implementation 'com.android.support:cardview-v7:28.0.0'
 }

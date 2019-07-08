@@ -23,7 +23,6 @@
     <dimen name="d_56">56dp</dimen>
     <dimen name="d_60">60dp</dimen>
     <dimen name="d_64">64dp</dimen>
-    <dimen name="d_72">72dp</dimen>
     <dimen name="d_80">80dp</dimen>
     <dimen name="d_84">84dp</dimen>
     <dimen name="d_90">90dp</dimen>
@@ -39,7 +38,6 @@
     <dimen name="d_180">180dp</dimen>
     <dimen name="d_200">200dp</dimen>
     <dimen name="d_210">210dp</dimen>
-    <dimen name="d_220">220dp</dimen>
     <dimen name="d_240">240dp</dimen>
     <dimen name="d_250">250dp</dimen>
     <dimen name="d_280">280dp</dimen>
@@ -48,7 +46,7 @@
     <dimen name="d_360">360dp</dimen>
     <dimen name="d_420">424dp</dimen>
     <dimen name="d_640">560dp</dimen>
-    <dimen name="d_700">740dp</dimen>
+    <dimen name="d_700">720dp</dimen>
     <dimen name="d_860">860dp</dimen>
     <!-- fonts' sp -->
     <dimen name="f_16">16sp</dimen>

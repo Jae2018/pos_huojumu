@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.huojumu.R;
@@ -43,23 +44,26 @@ public class SingleProAddonDialog extends BaseDialog {
     TagFlowLayout flowLayout2;
     @BindView(R.id.id_flowlayout3)
     TagFlowLayout flowLayout3;
-    @BindView(R.id.id_flowlayout4)
-    TagFlowLayout flowLayout4;
+    //    @BindView(R.id.id_flowlayout4)
+//    TagFlowLayout flowLayout4;
     @BindView(R.id.textView3)
     TextView t3;
     @BindView(R.id.textView5)
     TextView t4;
     @BindView(R.id.textView16)
     TextView t5;
-    @BindView(R.id.textView17)
-    TextView t6;
+    //    @BindView(R.id.textView17)
+//    TextView t6;
     @BindView(R.id.image)
     ImageView image;
 
     @BindView(R.id.tv_home_addon_number)
-    EditText numTV;//数量
+    TextView numTV;//数量
     @BindView(R.id.et_addon)
     EditText addOnET;//备注
+
+    @BindView(R.id.linear_keyboard)
+    LinearLayout linear_keyboard;
 
     @BindView(R.id.tv_product_name)
     TextView name;
@@ -140,7 +144,7 @@ public class SingleProAddonDialog extends BaseDialog {
             TagAdapter tastesAdapter = new TagAdapter<TastesBean>(productsBean.getTastes()) {
                 @Override
                 public View getView(FlowLayout parent, int position, TastesBean o) {
-                    TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
+                    TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv2,
                             flowLayout2, false);
                     tv.setText(o.getTasteName());
                     return tv;
@@ -173,7 +177,7 @@ public class SingleProAddonDialog extends BaseDialog {
             flowLayout3.setAdapter(new TagAdapter<MatsBean>(productsBean.getMats()) {
                 @Override
                 public View getView(FlowLayout parent, int position, MatsBean o) {
-                    TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
+                    TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv2,
                             flowLayout3, false);
                     tv.setGravity(Gravity.CENTER);
                     tv.setText(String.format("%s\n￥ %s", o.getMatName(), o.getIngredientPrice()));
@@ -229,7 +233,7 @@ public class SingleProAddonDialog extends BaseDialog {
         tastesBeans.clear();
 
         if (numTV.getText().length() > 0) {
-            number = Integer.parseInt(numTV.getText().toString().trim());
+            number = Integer.parseInt(numTV.getText().toString().isEmpty() ? "1" : numTV.getText().toString());
         }
 
         if (scaleBean != null) {
@@ -273,6 +277,66 @@ public class SingleProAddonDialog extends BaseDialog {
         callback.onSingleCallBack(productsBean.getProId(), number, current, dataBean, origionPrice, price);
 
         current = null;
+    }
+
+//    @OnClick(R.id.iv_input_show)
+//    void showKeyboard(){
+//        linear_keyboard.setVisibility(View.INVISIBLE);
+//    }
+
+    private String cNumber = "1";
+
+    @OnClick({R.id.tv_no0, R.id.tv_no1, R.id.tv_no2, R.id.tv_no3, R.id.tv_no4, R.id.tv_no5, R.id.tv_no6, R.id.tv_no7, R.id.tv_no8, R.id.tv_no9, R.id.tv_no_delete, R.id.tv_no_ok})
+    void onNoClick(View view) {
+        switch (view.getId()) {
+            case R.id.tv_no0:
+                if (cNumber.isEmpty()) {
+                    cNumber = "1";
+                    return;
+                }
+                cNumber += "0";
+
+                break;
+            case R.id.tv_no1:
+                cNumber += "1";
+                break;
+            case R.id.tv_no2:
+                cNumber += "2";
+                break;
+            case R.id.tv_no3:
+                cNumber += "3";
+                break;
+            case R.id.tv_no4:
+                cNumber += "4";
+                break;
+            case R.id.tv_no5:
+                cNumber += "5";
+                break;
+            case R.id.tv_no6:
+                cNumber += "6";
+                break;
+            case R.id.tv_no7:
+                cNumber += "7";
+                break;
+            case R.id.tv_no8:
+                cNumber += "8";
+                break;
+            case R.id.tv_no9:
+                cNumber += "9";
+                break;
+            case R.id.tv_no_delete:
+                if (cNumber.length() > 1) {
+                    cNumber = cNumber.substring(0, cNumber.length() - 2);
+                } else {
+                    cNumber = "";
+                }
+                break;
+        }
+        if (cNumber.length() > 3) {
+            cNumber = "999";
+        }
+
+        numTV.setText(cNumber);
     }
 
 }

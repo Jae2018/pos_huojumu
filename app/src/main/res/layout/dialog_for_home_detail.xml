@@ -1,242 +1,415 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/d_700"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="@dimen/d_8">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/image"
-            android:layout_width="@dimen/d_200"
-            android:layout_height="@dimen/d_200"
-            android:layout_margin="@dimen/d_10"
-            android:background="@drawable/pro_border"
-            android:contentDescription="@string/des"
-            android:src="@drawable/placeholder" />
-
-        <android.support.v4.widget.NestedScrollView
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="@dimen/d_700"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/d_8">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+            <android.support.v7.widget.CardView
+                android:layout_width="@dimen/d_200"
+                android:layout_height="@dimen/d_200"
+                android:layout_margin="@dimen/d_10">
+
+                <ImageView
+                    android:id="@+id/image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/des"
+                    android:src="@drawable/placeholder" />
+            </android.support.v7.widget.CardView>
+
+            <android.support.v4.widget.NestedScrollView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/d_36"
-                    android:layout_marginTop="@dimen/d_8"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/d_10"
-                        android:text="名称："
-                        android:textSize="@dimen/f_16"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tv_product_name"
-                        android:layout_width="@dimen/d_160"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="@dimen/d_16"
-                        android:paddingRight="@dimen/d_16"
-                        android:textSize="@dimen/f_16" />
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:focusable="true"
-                        android:focusableInTouchMode="true"
-                        android:gravity="center">
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/d_36"
+                        android:layout_marginTop="@dimen/d_8"
+                        android:gravity="center_vertical">
 
-                        <ImageView
-                            android:id="@+id/add"
-                            android:layout_width="@dimen/d_36"
-                            android:layout_height="@dimen/d_36"
-                            android:src="@mipmap/icon_sub"
-                            android:contentDescription="@string/des" />
-
-                        <EditText
-                            android:id="@+id/tv_home_addon_number"
-                            android:layout_width="@dimen/d_80"
-                            android:layout_height="@dimen/d_48"
-                            android:gravity="center"
-                            android:inputType="number"
-                            android:maxLength="3"
-                            android:hint="1"
-                            android:textSize="@dimen/f_20"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/d_10"
+                            android:text="名称："
+                            android:textSize="@dimen/f_16"
                             android:textStyle="bold" />
 
-                        <ImageView
-                            android:id="@+id/sub"
-                            android:layout_width="@dimen/d_36"
-                            android:layout_height="@dimen/d_36"
-                            android:src="@mipmap/icon_add"
-                            android:contentDescription="@string/des" />
+                        <TextView
+                            android:id="@+id/tv_product_name"
+                            android:layout_width="@dimen/d_160"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/d_16"
+                            android:paddingRight="@dimen/d_16"
+                            android:textSize="@dimen/f_16" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:id="@+id/add"
+                                android:layout_width="@dimen/d_36"
+                                android:layout_height="@dimen/d_36"
+                                android:contentDescription="@string/des"
+                                android:src="@mipmap/icon_sub" />
+
+                            <TextView
+                                android:id="@+id/tv_home_addon_number"
+                                android:layout_width="@dimen/d_84"
+                                android:layout_height="@dimen/d_36"
+                                android:background="@drawable/pro_border"
+                                android:gravity="center"
+                                android:maxLength="3"
+                                android:padding="@dimen/d_2"
+                                android:text="1"
+                                android:textSize="@dimen/f_20"
+                                android:textStyle="bold" />
+
+                            <ImageView
+                                android:id="@+id/sub"
+                                android:layout_width="@dimen/d_36"
+                                android:layout_height="@dimen/d_36"
+                                android:contentDescription="@string/des"
+                                android:src="@mipmap/icon_add" />
+                        </LinearLayout>
+
+                        <!--<TextView-->
+                        <!--android:id="@+id/iv_input_show"-->
+                        <!--android:layout_width="@dimen/d_40"-->
+                        <!--android:layout_height="@dimen/d_40"-->
+                        <!--android:background="@drawable/search_btn_selector"-->
+                        <!--android:contentDescription="@string/des"-->
+                        <!--android:gravity="center"-->
+                        <!--android:text="键"-->
+                        <!--android:textSize="@dimen/f_18" />-->
+
                     </LinearLayout>
 
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/d_10">
-
-                    <TextView
-                        android:id="@+id/textView3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/d_10"
-                        android:layout_marginTop="@dimen/d_20"
-                        android:text="规格："
-                        android:textSize="@dimen/f_16"
-                        android:textStyle="bold" />
-
-                    <com.zhy.view.flowlayout.TagFlowLayout
-                        android:id="@+id/id_flowlayout1"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/d_10"
-                        android:layout_marginEnd="@dimen/d_10"
-                        android:minHeight="@dimen/d_40" />
-                </LinearLayout>
+                        android:layout_marginTop="@dimen/d_10">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/d_10">
+                        <TextView
+                            android:id="@+id/textView3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/d_10"
+                            android:layout_marginTop="@dimen/d_20"
+                            android:text="规格："
+                            android:textSize="@dimen/f_16"
+                            android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/textView5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/d_10"
-                        android:layout_marginTop="@dimen/d_20"
-                        android:gravity="center_vertical"
-                        android:text="口味："
-                        android:textSize="@dimen/f_16"
-                        android:textStyle="bold" />
+                        <com.zhy.view.flowlayout.TagFlowLayout
+                            android:id="@+id/id_flowlayout1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/d_10"
+                            android:layout_marginEnd="@dimen/d_10"
+                            android:minHeight="@dimen/d_40" />
+                    </LinearLayout>
 
-                    <com.zhy.view.flowlayout.TagFlowLayout
-                        android:id="@+id/id_flowlayout2"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/d_10"
-                        android:layout_marginEnd="@dimen/d_10" />
-                </LinearLayout>
+                        android:layout_marginTop="@dimen/d_10">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/d_10">
+                        <TextView
+                            android:id="@+id/textView5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/d_10"
+                            android:layout_marginTop="@dimen/d_20"
+                            android:gravity="center_vertical"
+                            android:text="口味："
+                            android:textSize="@dimen/f_16"
+                            android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/textView16"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/d_10"
-                        android:layout_marginTop="@dimen/d_20"
-                        android:gravity="center_vertical"
-                        android:text="加料："
-                        android:textSize="@dimen/f_16"
-                        android:textStyle="bold" />
+                        <com.zhy.view.flowlayout.TagFlowLayout
+                            android:id="@+id/id_flowlayout2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/d_10"
+                            android:layout_marginEnd="@dimen/d_10" />
+                    </LinearLayout>
 
-                    <com.zhy.view.flowlayout.TagFlowLayout
-                        android:id="@+id/id_flowlayout3"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/d_10"
-                        android:layout_marginEnd="@dimen/d_10" />
-                </LinearLayout>
+                        android:layout_marginTop="@dimen/d_10">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/d_10">
+                        <TextView
+                            android:id="@+id/textView16"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/d_10"
+                            android:layout_marginTop="@dimen/d_20"
+                            android:gravity="center_vertical"
+                            android:text="加料："
+                            android:textSize="@dimen/f_16"
+                            android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/textView17"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/d_10"
-                        android:layout_marginTop="@dimen/d_20"
-                        android:gravity="center_vertical"
-                        android:text="做法："
-                        android:textSize="@dimen/f_16"
-                        android:textStyle="bold" />
+                        <com.zhy.view.flowlayout.TagFlowLayout
+                            android:id="@+id/id_flowlayout3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/d_10"
+                            android:layout_marginEnd="@dimen/d_10" />
+                    </LinearLayout>
 
-                    <com.zhy.view.flowlayout.TagFlowLayout
-                        android:id="@+id/id_flowlayout4"
+                    <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginTop="@dimen/d_10">-->
+
+                    <!--<TextView-->
+                    <!--android:id="@+id/textView17"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginStart="@dimen/d_10"-->
+                    <!--android:layout_marginTop="@dimen/d_20"-->
+                    <!--android:gravity="center_vertical"-->
+                    <!--android:text="做法："-->
+                    <!--android:textSize="@dimen/f_16"-->
+                    <!--android:textStyle="bold" />-->
+
+                    <!--<com.zhy.view.flowlayout.TagFlowLayout-->
+                    <!--android:id="@+id/id_flowlayout4"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginStart="@dimen/d_10"-->
+                    <!--android:layout_marginEnd="@dimen/d_10" />-->
+                    <!--</LinearLayout>-->
+
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/d_10"
-                        android:layout_marginEnd="@dimen/d_10" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/d_56"
-                    android:layout_marginTop="@dimen/d_10"
-                    android:baselineAligned="false"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/textView6"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="@dimen/d_10"
-                        android:gravity="center_vertical"
-                        android:text="备注："
-                        android:textSize="@dimen/f_16"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/et_addon"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/input_border"
+                        android:layout_height="@dimen/d_56"
+                        android:layout_marginTop="@dimen/d_10"
+                        android:baselineAligned="false"
                         android:focusable="true"
                         android:focusableInTouchMode="true"
-                        android:hint="@string/des"
-                        android:inputType="textMultiLine"
-                        android:maxLength="100"
-                        android:padding="@dimen/d_4" />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
+                        <TextView
+                            android:id="@+id/textView6"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/d_10"
+                            android:gravity="center_vertical"
+                            android:text="备注："
+                            android:textSize="@dimen/f_16"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/et_addon"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/input_border"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:hint="@string/des"
+                            android:inputType="textMultiLine"
+                            android:maxLength="100"
+                            android:padding="@dimen/d_4" />
+
+                    </LinearLayout>
                 </LinearLayout>
+
+            </android.support.v4.widget.NestedScrollView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linear_keyboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/d_20">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_40"
+                android:gravity="center"
+                android:text="快捷输入键盘"
+                android:textSize="@dimen/f_22" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_no1"
+                    android:layout_width="@dimen/d_64"
+                    android:layout_height="@dimen/d_64"
+                    android:background="@drawable/search_btn_selector"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textSize="@dimen/f_24"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_no2"
+                    android:layout_width="@dimen/d_64"
+                    android:layout_height="@dimen/d_64"
+                    android:background="@drawable/search_btn_selector"
+                    android:gravity="center"
+                    android:text="2"
+                    android:textSize="@dimen/f_24"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_no3"
+                    android:layout_width="@dimen/d_64"
+                    android:layout_height="@dimen/d_64"
+                    android:background="@drawable/search_btn_selector"
+                    android:gravity="center"
+                    android:text="3"
+                    android:textSize="@dimen/f_24"
+                    android:textStyle="bold" />
             </LinearLayout>
 
-        </android.support.v4.widget.NestedScrollView>
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
+                <TextView
+                    android:id="@+id/tv_no4"
+                    android:layout_width="@dimen/d_64"
+                    android:layout_height="@dimen/d_64"
+                    android:background="@drawable/search_btn_selector"
+                    android:gravity="center"
+                    android:text="4"
+                    android:textSize="@dimen/f_24"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_no5"
+                    android:layout_width="@dimen/d_64"
+                    android:layout_height="@dimen/d_64"
+                    android:background="@drawable/search_btn_selector"
+                    android:gravity="center"
+                    android:text="5"
+                    android:textSize="@dimen/f_24"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_no6"
+                    android:layout_width="@dimen/d_64"
+                    android:layout_height="@dimen/d_64"
+                    android:background="@drawable/search_btn_selector"
+                    android:gravity="center"
+                    android:text="6"
+                    android:textSize="@dimen/f_24"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_no7"
+                    android:layout_width="@dimen/d_64"
+                    android:layout_height="@dimen/d_64"
+                    android:background="@drawable/search_btn_selector"
+                    android:gravity="center"
+                    android:text="7"
+                    android:textSize="@dimen/f_24"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_no8"
+                    android:layout_width="@dimen/d_64"
+                    android:layout_height="@dimen/d_64"
+                    android:background="@drawable/search_btn_selector"
+                    android:gravity="center"
+                    android:text="8"
+                    android:textSize="@dimen/f_24"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_no9"
+                    android:layout_width="@dimen/d_64"
+                    android:layout_height="@dimen/d_64"
+                    android:background="@drawable/search_btn_selector"
+                    android:gravity="center"
+                    android:text="9"
+                    android:textSize="@dimen/f_24"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/d_24">
+
+                <TextView
+                    android:id="@+id/tv_no0"
+                    android:layout_width="@dimen/d_64"
+                    android:layout_height="@dimen/d_64"
+                    android:background="@drawable/search_btn_selector"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textSize="@dimen/f_24"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_no_ok"
+                    android:layout_width="@dimen/d_64"
+                    android:layout_height="@dimen/d_64" />
+
+                <TextView
+                    android:id="@+id/tv_no_delete"
+                    android:layout_width="@dimen/d_64"
+                    android:layout_height="@dimen/d_64"
+                    android:background="@drawable/search_btn_selector"
+                    android:gravity="center"
+                    android:text="del"
+                    android:textSize="@dimen/f_24"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/d_64"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="@dimen/d_16">
+        android:layout_marginTop="@dimen/d_16"
+        android:gravity="center_horizontal">
 
         <Button
             android:id="@+id/btn_home_addon_cancel"
-            android:layout_width="@dimen/d_160"
+            android:layout_width="@dimen/d_200"
             android:layout_height="wrap_content"
-            android:background="@drawable/green_cancel"
+            android:background="@drawable/pro_cancel"
             android:text="取 消"
-            android:textColor="@android:color/white"
+            android:textColor="#ff5157"
             android:textSize="@dimen/f_18" />
 
         <View
@@ -245,11 +418,13 @@
 
         <Button
             android:id="@+id/btn_home_addon_ok"
-            android:layout_width="@dimen/d_160"
+            android:layout_width="@dimen/d_200"
             android:layout_height="wrap_content"
-            android:background="@drawable/blue_ok"
+            android:background="@drawable/pro_ok"
             android:text="确 定"
             android:textColor="@android:color/white"
             android:textSize="@dimen/f_18" />
     </LinearLayout>
+
+
 </LinearLayout>

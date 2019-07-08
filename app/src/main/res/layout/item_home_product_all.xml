@@ -1,115 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="@dimen/d_170"
     android:layout_height="@dimen/d_170"
     android:layout_marginBottom="@dimen/d_10"
-    android:background="@drawable/pro_border"
     android:clipChildren="false"
     android:clipToPadding="false"
-    android:padding="@dimen/d_1">
+    app:cardElevation="@dimen/d_1">
 
-    <ImageView
-        android:id="@+id/iv_product_url"
-        android:layout_width="@dimen/d_140"
-        android:layout_height="@dimen/d_140"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/d_10"
-        android:contentDescription="@string/des" />
+    <RelativeLayout
+        android:layout_width="@dimen/d_170"
+        android:layout_height="@dimen/d_170">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/px_1"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/d_30"
-        android:background="@color/btn_den" />
+        <ImageView
+            android:id="@+id/iv_product_url"
+            android:layout_width="@dimen/d_140"
+            android:layout_height="@dimen/d_140"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@string/des" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/d_30"
-        android:paddingLeft="@dimen/d_10"
-        android:paddingRight="@dimen/d_10"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/px_1"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/d_30"
+            android:background="@color/btn_den" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_30"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/d_10"
+            android:paddingRight="@dimen/d_10">
+
+            <TextView
+                android:id="@+id/tv_product_name"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical" />
+
+            <TextView
+                android:id="@+id/tv_product_cut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical" />
+
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/tv_product_name"
-            android:layout_width="0dp"
+            android:id="@+id/tv_for_sell_out"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical" />
+            android:background="#bb222222"
+            android:gravity="bottom|center_horizontal"
+            android:text="已售罄"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/f_24"
+            android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/tv_product_cut"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/linear_types"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="end|center_vertical" />
+            android:gravity="center">
 
-    </LinearLayout>
+            <RelativeLayout
+                android:id="@+id/relative_types"
+                android:layout_width="@dimen/d_200"
+                android:layout_height="@dimen/d_200"
+                android:visibility="gone">
 
-    <TextView
-        android:id="@+id/tv_for_sell_out"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#bb222222"
-        android:gravity="bottom|center_horizontal"
-        android:text="已售罄"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/f_24"
-        android:visibility="gone" />
+                <TextView
+                    android:id="@+id/left_tv"
+                    android:layout_width="@dimen/d_64"
+                    android:layout_height="@dimen/d_64"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/move_check_selector"
+                    android:gravity="center"
+                    android:padding="@dimen/d_2" />
 
-    <LinearLayout
-        android:id="@+id/linear_types"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center">
+                <TextView
+                    android:id="@+id/right_tv"
+                    android:layout_width="@dimen/d_64"
+                    android:layout_height="@dimen/d_64"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/move_check_selector"
+                    android:gravity="center"
+                    android:padding="@dimen/d_2" />
 
-        <RelativeLayout
-            android:id="@+id/relative_types"
-            android:layout_width="@dimen/d_200"
-            android:layout_height="@dimen/d_200"
-            android:visibility="gone">
+                <TextView
+                    android:id="@+id/top_tv"
+                    android:layout_width="@dimen/d_64"
+                    android:layout_height="@dimen/d_64"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/move_check_selector"
+                    android:gravity="center"
+                    android:padding="@dimen/d_2" />
 
-            <TextView
-                android:id="@+id/left_tv"
-                android:layout_width="@dimen/d_64"
-                android:layout_height="@dimen/d_64"
-                android:layout_centerVertical="true"
-                android:background="@drawable/move_check_selector"
-                android:gravity="center"
-                android:padding="@dimen/d_2" />
+                <TextView
+                    android:id="@+id/bottom_tv"
+                    android:layout_width="@dimen/d_64"
+                    android:layout_height="@dimen/d_64"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/move_check_selector"
+                    android:gravity="center"
+                    android:padding="@dimen/d_2" />
+            </RelativeLayout>
 
-            <TextView
-                android:id="@+id/right_tv"
-                android:layout_width="@dimen/d_64"
-                android:layout_height="@dimen/d_64"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/move_check_selector"
-                android:gravity="center"
-                android:padding="@dimen/d_2" />
-
-            <TextView
-                android:id="@+id/top_tv"
-                android:layout_width="@dimen/d_64"
-                android:layout_height="@dimen/d_64"
-                android:layout_centerHorizontal="true"
-                android:background="@drawable/move_check_selector"
-                android:gravity="center"
-                android:padding="@dimen/d_2" />
-
-            <TextView
-                android:id="@+id/bottom_tv"
-                android:layout_width="@dimen/d_64"
-                android:layout_height="@dimen/d_64"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:background="@drawable/move_check_selector"
-                android:gravity="center"
-                android:padding="@dimen/d_2" />
-        </RelativeLayout>
-
-    </LinearLayout>
+        </LinearLayout>
 
 
-</RelativeLayout>
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

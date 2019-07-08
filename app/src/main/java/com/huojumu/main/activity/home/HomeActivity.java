@@ -104,6 +104,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -167,7 +168,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
     private HomeTypeAdapter typeAdapter;//类别
     private HomeProductAdapter productAdapter;//商品
 
-    private List<Production> tempProduces = new ArrayList<>();//商品初始列表
+    private List<Production> tempProduces = new CopyOnWriteArrayList<>();//商品初始列表
     private ArrayList<ActivesBean> activeBeanList = new ArrayList<>();//活动列表
     private ArrayList<Production> productions = new ArrayList<>();//选择的奶茶
     private Vector<Production> printProducts = new Vector<>();//标签打印的产品
@@ -176,7 +177,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
     //分页数据列表
     private List<Production> typeList = new ArrayList<>();//选择小类后的商品集合
     private List<Production> searchList = new ArrayList<>();//搜索商品结果集合
-    private List<List<Production>> pLists = new ArrayList<>();//分页显示的商品数据结构
+    private List<List<Production>> pLists = new CopyOnWriteArrayList<>();//分页显示的商品数据结构
 
     //点单商品信息集合
     private List<OrderInfo.DataBean> dataBeans = new ArrayList<>();
@@ -507,7 +508,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                 @Override
                 public void run() {
                     MyApplication.getSocketTool().sendHeart();
-                    Log.e("home", "sendHeart: ");
                 }
             }, 200, 60 * 1000);
         }
@@ -763,7 +763,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                 });
     }
 
-    private void resetData(int position) {
+    private void resetData(int position) {//todo
         pLists.clear();
         if (position == 0) {
             for (int i = 0; i < page1; i++) {

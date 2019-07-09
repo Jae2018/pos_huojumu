@@ -234,7 +234,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
     //优惠
     double change;
     //倒计时
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy 年 MM 月 dd 日  hh : mm : ss", Locale.CHINA);
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy 年 MM 月 dd 日  HH : mm : ss", Locale.CHINA);
     Date curDate = new Date();
     //实收金额
     double earn1;
@@ -763,7 +763,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                 });
     }
 
-    private void resetData(int position) {//todo
+    private void resetData(int position) {
         pLists.clear();
         if (position == 0) {
             for (int i = 0; i < page1; i++) {

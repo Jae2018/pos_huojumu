@@ -3,6 +3,7 @@ package com.huojumu.main.activity.login;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -48,12 +49,6 @@ public class LoginActivity extends BaseActivity {
     private CountDownTimer countDownTimer;
     private DownProgressDialog downProgressDialog;
 
-    //重连socket消息flag
-    private static final int RECONNECT_SOCKET = 2;
-    //重连次数
-    private static int RECONNECT_TIME = 1;
-//    private MyHandler mHandler;
-
     @Override
     protected int setLayout() {
         return R.layout.activity_login;
@@ -62,13 +57,35 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-//        mHandler = new MyHandler(this);
     }
 
     @Override
     protected void initData() {
+
+    }
+
+    @OnClick(R.id.tv_back_bind)
+    void backBind() {
+        startActivity(new Intent(this, ActiveActivity.class));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sendSocket();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getCode();
+                checkVersion();
+            }
+        }, 1000);
+
+    }
+
+    private void checkVersion() {
         progressDialog.show();
-        getCode();
         NetTool.updateApk(new GsonResponseHandler<UpdateBean>() {
             @Override
             public void onSuccess(int statusCode, UpdateBean response) {
@@ -89,17 +106,6 @@ public class LoginActivity extends BaseActivity {
                 progressDialog.dismiss();
             }
         });
-    }
-
-    @OnClick(R.id.tv_back_bind)
-    void backBind() {
-        startActivity(new Intent(this, ActiveActivity.class));
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        sendSocket();
     }
 
     private void getCode() {
@@ -129,7 +135,6 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onFailure(int statusCode, String code, String error_msg) {
                 ToastUtils.showLong("网络错误");
-//                mHandler.sendEmptyMessageDelayed(RECONNECT_SOCKET, 100);
             }
         });
     }
@@ -176,35 +181,6 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-//    private static class MyHandler extends Handler {
-//        private WeakReference<LoginActivity> mActivity;
-//
-//        MyHandler(LoginActivity activity) {
-//            mActivity = new WeakReference<>(activity);
-//        }
-//
-//        @Override
-//        public void handleMessage(Message msg) {
-//            LoginActivity activity = mActivity.get();
-//            if (msg.what == RECONNECT_SOCKET) {
-//                //尝试重连
-//                if (activity != null && !MyApplication.getSocketTool().isAlive()) {
-//                    sendEmptyMessageDelayed(RECONNECT_SOCKET, (5 * 1000) * RECONNECT_TIME);
-//                    activity.reconnectSocket();
-//                }
-//            }
-//        }
-//    }
-
-//    /**
-//     * 重启socket
-//     */
-//    private void reconnectSocket() {
-//        RECONNECT_TIME++;
-//        MyApplication.initSocket();
-//        sendSocket();
-//    }
-
     private void sendSocket() {
         //定时发送心跳
         if (timer == null) {
@@ -219,23 +195,4 @@ public class LoginActivity extends BaseActivity {
         }, 200, 30 * 1000);
     }
 
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void netState(NetErrorHandler netErrorHandler) {
-//        if (netErrorHandler.isConnected()) {
-//            //网络正常
-//            RECONNECT_TIME = 1;
-//        } else {
-//            //无法正常连接到服务器
-//            MyApplication.getSocketTool().stopSocket();
-//            //关闭心跳，不继续发送，轮询时间段重启websocket，首次延迟10秒
-//            if (timer != null) {
-//                timer.cancel();
-//                timer.purge();
-//                timer = null;
-//                if (RECONNECT_TIME == 1) {
-//                    mHandler.sendEmptyMessageDelayed(RECONNECT_SOCKET, 10000);
-//                }
-//            }
-//        }
-//    }
 }

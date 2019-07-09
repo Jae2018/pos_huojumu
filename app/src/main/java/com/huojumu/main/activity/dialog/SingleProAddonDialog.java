@@ -118,7 +118,7 @@ public class SingleProAddonDialog extends BaseDialog {
                 public View getView(FlowLayout parent, int position, ScaleBean o) {
                     TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
                             flowLayout1, false);
-                    tv.setText(String.format("%s\n￥ %s", o.getScaName(), o.getPrice()));
+                    tv.setText(String.format("%s  ￥ %s", o.getScaName(), o.getPrice()));
                     return tv;
                 }
             };
@@ -144,7 +144,7 @@ public class SingleProAddonDialog extends BaseDialog {
             TagAdapter tastesAdapter = new TagAdapter<TastesBean>(productsBean.getTastes()) {
                 @Override
                 public View getView(FlowLayout parent, int position, TastesBean o) {
-                    TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv2,
+                    TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
                             flowLayout2, false);
                     tv.setText(o.getTasteName());
                     return tv;
@@ -177,10 +177,10 @@ public class SingleProAddonDialog extends BaseDialog {
             flowLayout3.setAdapter(new TagAdapter<MatsBean>(productsBean.getMats()) {
                 @Override
                 public View getView(FlowLayout parent, int position, MatsBean o) {
-                    TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv2,
+                    TextView tv = (TextView) mInflater.inflate(R.layout.flow_tv,
                             flowLayout3, false);
                     tv.setGravity(Gravity.CENTER);
-                    tv.setText(String.format("%s\n￥ %s", o.getMatName(), o.getIngredientPrice()));
+                    tv.setText(String.format("%s  ￥ %s", o.getMatName(), o.getIngredientPrice()));
                     return tv;
                 }
             });
@@ -326,7 +326,7 @@ public class SingleProAddonDialog extends BaseDialog {
                 break;
             case R.id.tv_no_delete:
                 if (cNumber.length() > 1) {
-                    cNumber = cNumber.substring(0, cNumber.length() - 2);
+                    cNumber = cNumber.substring(0, cNumber.length() - 1);
                 } else {
                     cNumber = "";
                 }

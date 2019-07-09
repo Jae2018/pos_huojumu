@@ -16,23 +16,29 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <!-- 在 屏幕最顶部显示-->
     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.READ_LOGS"
+    <uses-permission
+        android:name="android.permission.READ_LOGS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <!-- 静默安装、重启 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
+    <uses-permission
+        android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name= "android.permission.RESTART_PACKAGES" />
-    <uses-permission android:name="android.permission.INSTALL_PACKAGES"
+    <uses-permission android:name="android.permission.RESTART_PACKAGES" />
+    <uses-permission
+        android:name="android.permission.INSTALL_PACKAGES"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.DELETE_PACKAGES"
+    <uses-permission
+        android:name="android.permission.DELETE_PACKAGES"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.INSTALL_LOCATION_PROVIDER"
+    <uses-permission
+        android:name="android.permission.INSTALL_LOCATION_PROVIDER"
         tools:ignore="ProtectedPermissions" />
 
     <application
@@ -53,13 +59,12 @@
             android:value="${appse}" />
 
         <activity
-            android:name="com.huojumu.main.activity.login.ActiveActivity"
+            android:name=".main.activity.login.ActiveActivity"
             android:configChanges="keyboard|navigation"
             android:launchMode="singleInstance"
-            android:screenOrientation="landscape">
-        </activity>
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.huojumu.main.activity.login.LoginActivity"
+            android:name=".main.activity.login.LoginActivity"
             android:configChanges="keyboard|navigation"
             android:launchMode="singleInstance"
             android:screenOrientation="landscape"
@@ -67,7 +72,7 @@
 
         </activity>
         <activity
-            android:name="com.huojumu.main.activity.home.HomeActivity"
+            android:name=".main.activity.home.HomeActivity"
             android:configChanges="keyboard|navigation"
             android:launchMode="singleTask"
             android:screenOrientation="landscape"
@@ -80,22 +85,22 @@
                 android:resource="@xml/device_filter" />
         </activity>
         <activity
-            android:name="com.huojumu.main.activity.work.DailyTakeOverActivity"
+            android:name=".main.activity.work.DailyTakeOverActivity"
             android:configChanges="keyboard|navigation"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
-            android:name="com.huojumu.main.activity.function.InventoryActivity"
+            android:name=".main.activity.function.InventoryActivity"
             android:configChanges="keyboard|navigation"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
-            android:name="com.huojumu.main.activity.function.InventoryDetailActivity"
+            android:name=".main.activity.function.InventoryDetailActivity"
             android:configChanges="keyboard|navigation"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
-            android:name="com.huojumu.main.activity.MainActivity"
+            android:name=".main.activity.MainActivity"
             android:configChanges="keyboard|navigation"
             android:screenOrientation="landscape">
             <intent-filter>
@@ -105,42 +110,48 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.huojumu.main.activity.function.ChangePwdActivity"
+            android:name=".main.activity.function.ChangePwdActivity"
             android:configChanges="keyboard|navigation"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
-            android:name="com.huojumu.main.activity.function.VipActivity"
+            android:name=".main.activity.function.VipActivity"
             android:configChanges="keyboard|navigation"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
-            android:name="com.huojumu.main.activity.function.MaterialActivity"
+            android:name=".main.activity.function.MaterialActivity"
             android:configChanges="keyboard|navigation"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity
-            android:name="com.huojumu.main.activity.function.OrdersListActivity"
+            android:name=".main.activity.function.OrdersListActivity"
             android:configChanges="keyboard|navigation"
             android:screenOrientation="landscape" />
         <activity
-            android:name="com.huojumu.main.activity.function.PayBackActivity"
+            android:name=".main.activity.function.PayBackActivity"
             android:configChanges="keyboard|navigation"
             android:screenOrientation="landscape" />
         <activity
-            android:name="com.huojumu.main.activity.function.SettingActivity"
+            android:name=".main.activity.function.SettingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="landscape" />
         <activity
-            android:name="com.huojumu.main.activity.home.PaymentActivity"
+            android:name=".main.activity.home.PaymentActivity"
             android:configChanges="keyboard|navigation" />
         <activity
             android:name=".main.activity.function.OrderDetailActivity"
             android:configChanges="keyboard|navigation" />
-        <receiver android:name="com.huojumu.receiver.PosReceiver">
+
+        <receiver android:name=".receiver.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.HOME" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".receiver.ReInstallReceiver">
+            <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
                 <data android:scheme="package" />
             </intent-filter>
@@ -149,8 +160,8 @@
         <service android:name=".services.MyPosService" />
 
         <provider
-            android:authorities="com.huojumu.FileProdiver"
             android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.huojumu.FileProdiver"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

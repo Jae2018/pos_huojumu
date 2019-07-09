@@ -14,7 +14,6 @@ import android.util.Log;
 import com.blankj.utilcode.util.ToastUtils;
 import com.huojumu.MyApplication;
 import com.huojumu.R;
-import com.huojumu.receiver.PosReceiver;
 import com.tools.io.BluetoothPort;
 import com.tools.io.EthernetPort;
 import com.tools.io.PortManager;
@@ -131,7 +130,6 @@ public class DeviceConnFactoryManager {
     public static final int CONN_STATE_FAILED = CONN_STATE_DISCONNECT << 2;
     public static final int CONN_STATE_CONNECTED = CONN_STATE_DISCONNECT << 3;
     public PrinterReader reader;
-    private PosReceiver receiver;
 
     public enum CONN_METHOD {
         //蓝牙连接

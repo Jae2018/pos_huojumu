@@ -37,12 +37,11 @@
 
             <TextView
                 android:id="@+id/tv_store_name"
-                android:layout_width="@dimen/d_120"
+                android:layout_width="@dimen/d_160"
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/d_60"
-                android:gravity="center"
-                android:paddingLeft="@dimen/d_10"
-                android:paddingRight="@dimen/d_10"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/f_20"
                 android:textColor="@android:color/white" />
 
             <LinearLayout
@@ -303,7 +302,7 @@
         <ImageView
             android:id="@+id/button1"
             android:layout_width="@dimen/d_96"
-            android:layout_height="@dimen/d_48"
+            android:layout_height="@dimen/d_44"
             android:layout_marginStart="@dimen/d_10"
             android:background="@drawable/gua_btn_selector"
             android:contentDescription="@string/des" />
@@ -321,7 +320,7 @@
         <ImageView
             android:id="@+id/button2"
             android:layout_width="@dimen/d_96"
-            android:layout_height="@dimen/d_48"
+            android:layout_height="@dimen/d_44"
             android:layout_marginStart="@dimen/d_16"
             android:layout_toEndOf="@id/button1"
             android:background="@drawable/clear_btn_selector"
@@ -330,7 +329,7 @@
         <ImageView
             android:id="@+id/button4"
             android:layout_width="@dimen/d_96"
-            android:layout_height="@dimen/d_48"
+            android:layout_height="@dimen/d_44"
             android:layout_marginStart="@dimen/d_16"
             android:layout_toEndOf="@id/button2"
             android:background="@drawable/recommend_btn_selector"
@@ -339,7 +338,7 @@
         <ImageView
             android:id="@+id/button5"
             android:layout_width="@dimen/d_96"
-            android:layout_height="@dimen/d_48"
+            android:layout_height="@dimen/d_44"
             android:layout_marginStart="@dimen/d_16"
             android:layout_toEndOf="@id/button4"
             android:background="@drawable/refresh_btn_selector"
@@ -347,8 +346,8 @@
 
         <TextView
             android:id="@+id/btn_up"
-            android:layout_width="@dimen/d_80"
-            android:layout_height="@dimen/d_30"
+            android:layout_width="@dimen/d_100"
+            android:layout_height="@dimen/d_40"
             android:layout_marginTop="@dimen/d_6"
             android:layout_marginEnd="@dimen/d_16"
             android:layout_toStartOf="@+id/btn_next"
@@ -359,8 +358,8 @@
 
         <TextView
             android:id="@+id/btn_next"
-            android:layout_width="@dimen/d_80"
-            android:layout_height="@dimen/d_30"
+            android:layout_width="@dimen/d_96"
+            android:layout_height="@dimen/d_40"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/d_6"
             android:layout_marginEnd="@dimen/d_40"
@@ -388,7 +387,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d_10"
-                android:background="@drawable/input_border">
+                android:background="@drawable/home_search_bg">
 
                 <TextView
                     android:id="@+id/edit_search"
@@ -405,10 +404,9 @@
 
                 <ImageView
                     android:id="@+id/input_clear_btn"
-                    android:layout_width="@dimen/d_36"
+                    android:layout_width="@dimen/d_44"
                     android:layout_height="@dimen/d_36"
-                    android:contentDescription="@string/des"
-                    android:src="@drawable/clear" />
+                    android:contentDescription="@string/des" />
             </LinearLayout>
         </LinearLayout>
 
@@ -436,14 +434,14 @@
         <ImageView
             android:id="@+id/btn_home_quick_pay"
             android:layout_width="@dimen/d_119"
-            android:layout_height="@dimen/d_50"
+            android:layout_height="@dimen/d_48"
             android:background="@drawable/pay_btn_selector"
             android:contentDescription="@string/des" />
 
         <ImageView
             android:id="@+id/btn_home_check"
             android:layout_width="@dimen/d_91"
-            android:layout_height="@dimen/d_50"
+            android:layout_height="@dimen/d_48"
             android:layout_marginStart="@dimen/d_32"
             android:background="@drawable/checkout_btn_selector"
             android:contentDescription="@string/des"

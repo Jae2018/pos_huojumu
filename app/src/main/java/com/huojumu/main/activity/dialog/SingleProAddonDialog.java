@@ -279,14 +279,9 @@ public class SingleProAddonDialog extends BaseDialog {
         current = null;
     }
 
-//    @OnClick(R.id.iv_input_show)
-//    void showKeyboard(){
-//        linear_keyboard.setVisibility(View.INVISIBLE);
-//    }
-
     private String cNumber = "1";
 
-    @OnClick({R.id.tv_no0, R.id.tv_no1, R.id.tv_no2, R.id.tv_no3, R.id.tv_no4, R.id.tv_no5, R.id.tv_no6, R.id.tv_no7, R.id.tv_no8, R.id.tv_no9, R.id.tv_no_delete, R.id.tv_no_ok})
+    @OnClick({R.id.tv_no0, R.id.tv_no1, R.id.tv_no2, R.id.tv_no3, R.id.tv_no4, R.id.tv_no5, R.id.tv_no6, R.id.tv_no7, R.id.tv_no8, R.id.tv_no9, R.id.tv_no_delete})
     void onNoClick(View view) {
         switch (view.getId()) {
             case R.id.tv_no0:
@@ -295,7 +290,6 @@ public class SingleProAddonDialog extends BaseDialog {
                     return;
                 }
                 cNumber += "0";
-
                 break;
             case R.id.tv_no1:
                 cNumber += "1";

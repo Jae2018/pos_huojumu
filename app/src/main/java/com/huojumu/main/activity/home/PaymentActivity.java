@@ -1,15 +1,14 @@
 package com.huojumu.main.activity.home;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -55,9 +54,9 @@ public class PaymentActivity extends BaseActivity {
     @BindView(R.id.active_recycler)
     RecyclerView activeRecycler;
     @BindView(R.id.et_input1)
-    EditText earnEdit;
+    TextView earnEdit;
     @BindView(R.id.et_input)
-    EditText cashPayInput;
+    TextView cashPayInput;
     @BindView(R.id.tv_payment_code_msg)
     TextView MsgTv;
     @BindView(R.id.layout_cash)
@@ -113,18 +112,23 @@ public class PaymentActivity extends BaseActivity {
     //实收金额
     private double ssPrice = 0;
     //
-    int manualDiscount;
+    private int manualDiscount;
     //找零
-    double charge = 0;
+    private double charge = 0;
     //
-    boolean isHalf = false;
+    private boolean isHalf = false;
+    //
+    private OrderBack orderBack;
+    //哪个输入框
+    private boolean inputNo = true;
+    //
+    private String cNumber = "", gNumber = "0";
 
     @Override
     protected int setLayout() {
         return R.layout.activity_payment;
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void initView() {
         productions = getIntent().getParcelableArrayListExtra("proList");
@@ -152,32 +156,9 @@ public class PaymentActivity extends BaseActivity {
             }
         });
 
-        earnEdit.setText(origionalPrice + "");
-
-//        cashPayInput.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                if (s.length() > 0) {
-//                    if (isHalf) {
-//
-//
-//                    } else {
-//
-//                    }
-//                }
-//            }
-//        });
-
+        earnEdit.setText(String.valueOf(origionalPrice));
+        cNumber = String.valueOf(origionalPrice);
+        cashPayInput.setText(gNumber);
     }
 
     @Override
@@ -264,6 +245,127 @@ public class PaymentActivity extends BaseActivity {
     }
 
     /**
+     * 是否实收输入
+     */
+    @OnClick(R.id.earn_rel)
+    void onEarnInput() {
+        inputNo = true;
+    }
+
+    /**
+     * 是否手动减额输入
+     */
+    @OnClick(R.id.cut_rel)
+    void onCutInput() {
+        inputNo = false;
+    }
+
+    @OnClick({R.id.tv_no0, R.id.tv_no1, R.id.tv_no2, R.id.tv_no3, R.id.tv_no4, R.id.tv_no5, R.id.tv_no6, R.id.tv_no7, R.id.tv_no8, R.id.tv_no9, R.id.tv_not, R.id.tv_no_delete})
+    void onInputNo(View view) {
+        switch (view.getId()) {
+            case R.id.tv_no0:
+                if (cNumber.equals("0") || gNumber.equals("0")) {
+                    return;
+                }
+                if (inputNo) {
+                    cNumber += "0";
+                } else {
+                    gNumber += "0";
+                }
+
+                break;
+            case R.id.tv_no1:
+                if (inputNo) {
+                    cNumber += "1";
+                } else {
+                    gNumber += "1";
+                }
+                break;
+            case R.id.tv_no2:
+                if (inputNo) {
+                    cNumber += "2";
+                } else {
+                    gNumber += "2";
+                }
+                break;
+            case R.id.tv_no3:
+                if (inputNo) {
+                    cNumber += "3";
+                } else {
+                    gNumber += "3";
+                }
+                break;
+            case R.id.tv_no4:
+                if (inputNo) {
+                    cNumber += "4";
+                } else {
+                    gNumber += "4";
+                }
+                break;
+            case R.id.tv_no5:
+                if (inputNo) {
+                    cNumber += "5";
+                } else {
+                    gNumber += "5";
+                }
+                break;
+            case R.id.tv_no6:
+                if (inputNo) {
+                    cNumber += "6";
+                } else {
+                    gNumber += "6";
+                }
+                break;
+            case R.id.tv_no7:
+                if (inputNo) {
+                    cNumber += "7";
+                } else {
+                    gNumber += "7";
+                }
+                break;
+            case R.id.tv_no8:
+                if (inputNo) {
+                    cNumber += "8";
+                } else {
+                    gNumber += "8";
+                }
+                break;
+            case R.id.tv_no9:
+                if (inputNo) {
+                    cNumber += "9";
+                } else {
+                    gNumber += "9";
+                }
+                break;
+            case R.id.tv_not:
+                if (inputNo) {
+                    if (!cNumber.contains(".")) {
+                        cNumber += ".";
+                    }
+                } else {
+                    if (!gNumber.contains(".")) {
+                        gNumber += ".";
+                    }
+                }
+                break;
+            case R.id.tv_no_delete:
+                if (inputNo) {
+                    cNumber = "";
+                } else {
+                    gNumber = "";
+                }
+                break;
+        }
+
+        earnEdit.setText(cNumber);
+        if (isHalf && !inputNo) {
+            ToastUtils.showLong("半价与手动折扣不能同时进行");
+        } else {
+            cashPayInput.setText(gNumber);
+        }
+    }
+
+    /**
      * 计算活动价格
      */
     private void calculatePrice() {
@@ -273,7 +375,7 @@ public class PaymentActivity extends BaseActivity {
                     isHalf = true;
                     commitPrice = origionalPrice / 2;
                     cutPrice = origionalPrice - commitPrice;
-                    earnEdit.setText(commitPrice + "");
+                    earnEdit.setText(String.valueOf(commitPrice));
                     break;
                 case "1":
                     isHalf = false;
@@ -305,6 +407,7 @@ public class PaymentActivity extends BaseActivity {
         } else {
             commitPrice = origionalPrice;
         }
+        cNumber = String.valueOf(commitPrice);
     }
 
     /**
@@ -355,15 +458,18 @@ public class PaymentActivity extends BaseActivity {
         layoutBank.setVisibility(position == 4 ? View.VISIBLE : View.GONE);
     }
 
-    OrderBack orderBack;
-
     @SingleClick
     @OnClick(R.id.pay_commit)
     void commitOrder() {
         //现金支付方式
         if (payType.equals("900")) {
-            ssPrice = earnEdit.getText().toString().isEmpty() ? 0 : Double.parseDouble(earnEdit.getText().toString());
-            zkPrice = cashPayInput.getText().toString().isEmpty() ? 0 : Double.parseDouble(cashPayInput.getText().toString());
+            try {
+                ssPrice = earnEdit.getText().toString().isEmpty() ? 0 : Double.parseDouble(earnEdit.getText().toString());
+                zkPrice = cashPayInput.getText().toString().isEmpty() ? 0 : Double.parseDouble(cashPayInput.getText().toString());
+            } catch (Exception e) {
+                ToastUtils.showLong("输入有误，请重新输入");
+                Log.e("okhttp3", "error");
+            }
             //半价
             if (activesBean != null && activesBean.getPlanType().equals("0")) {
                 if (ssPrice + zkPrice < origionalPrice / 2) {

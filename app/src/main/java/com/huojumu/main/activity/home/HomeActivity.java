@@ -122,6 +122,8 @@ import static com.huojumu.utils.DeviceConnFactoryManager.CONN_STATE_FAILED;
 public class HomeActivity extends BaseActivity implements DialogInterface,
         SingleProCallback, onPointerMoveListener {
 
+    String TAG = HomeActivity.class.getSimpleName();
+
     //下单列表
     @BindView(R.id.recyclerView)
     RecyclerView left;
@@ -1309,6 +1311,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         woeker_p += totalPrice;
 
         orderNum++;
+        countsTemp = printProducts.size();
+        counts = printProducts.size();
 
         //小票数据
         if (orderBack != null) {
@@ -1340,6 +1344,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         //存储工作记录
         SpUtil.save(Constant.WORK_P, woeker_p);
         SpUtil.save(Constant.ORDER_NUM, orderNum);
+
         printLabel();
 
         MyOkHttp.mHandler.postDelayed(new Runnable() {
@@ -1352,9 +1357,21 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
     }
 
     /**
+     * 单次打印标签的数量
+     */
+    private int counts;
+    private int countsTemp;
+
+    /**
      * 打印标签
      */
     private void printLabel() {
+        if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] == null ||
+                !DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getConnState()) {
+            ToastUtils.showLong("标签打印机未连接");
+            return;
+        }
+
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
             public void run() {
@@ -1365,14 +1382,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                     scheduledExecutorService.schedule(threadFactoryBuilder.newThread(new Runnable() {
                         @Override
                         public void run() {
+                            counts--;
                             if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].getCurrentPrinterCommand() == PrinterCommand.TSC) {
-                                for (int i = 0; i < printProducts.size(); i++) {
-                                    sendLabel(printProducts.get(i).getProName(), printProducts.get(i).getTasteStr(), printProducts.get(i).getScalePrice() + "",
-                                            i, printProducts.size(), printProducts.get(i).getMatStr(), printProducts.get(i).getScaleStr(), printProducts.get(i).getProNameEn());
-                                }
+                                sendLabel(printProducts.get(counts).getProName(), printProducts.get(counts).getTasteStr(), String.valueOf(printProducts.get(counts).getScalePrice()),
+                                        counts, countsTemp, printProducts.get(counts).getMatStr(), printProducts.get(counts).getScaleStr(), printProducts.get(counts).getProNameEn());
                             }
                         }
-                    }), 1000, TimeUnit.MILLISECONDS);
+                    }), 500, TimeUnit.MILLISECONDS);
                 }
             }
         });
@@ -1503,19 +1519,25 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         // 清除打印缓冲区
         tsc.addCls();
         // 绘制简体中文
+        //店名
         tsc.addText(0, 0, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 SpUtil.getString(Constant.STORE_NAME) + "\n");
+        //商品中文名
         tsc.addText(50, 32, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 pName + "\n");
+        //商品英文名
         tsc.addText(50, 62, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 proNameEn + "\n");
+        //加料
         if (matStr == null || matStr.isEmpty()) {
             matStr = "默认加料";
         }
         tsc.addText(0, 90, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 matStr);
+        //规格
         tsc.addText(0, 120, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 scale + "\n");
+        //
         tsc.addText(0, 150, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                 pContent + " ￥" + price + " " + "\n");
         tsc.addText(0, 180, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
@@ -1549,6 +1571,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         registerReceiver(receiver, filter);
     }
 
+
     public BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1567,17 +1590,18 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                         break;
                     //Usb连接断开、蓝牙连接断开广播
                     case ACTION_USB_DEVICE_DETACHED:
+
                         break;
                     //Usb连接断开、蓝牙连接广播
                     case ACTION_USB_DEVICE_ATTACHED:
                         final String deviceName = UsbUtil.getBQName(HomeActivity.this);
                         final String xpName = UsbUtil.getXPName(HomeActivity.this);
                         if (!deviceName.isEmpty() || !xpName.isEmpty()) {
-//                            progressDialog.setTipTextView("正在连接外接设备，请等待");
-                            progressDialog.show();
+                            if (!progressDialog.isShowing()) {
+                                progressDialog.show();
+                            }
 
                             //先主动调用断开连接，释放端口
-                            DeviceConnFactoryManager.closeAllPort();
                             PrinterUtil.disconnectPrinter();
                             MyOkHttp.mHandler.postDelayed(new Runnable() {
                                 @Override
@@ -1604,21 +1628,28 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                         break;
                     case DeviceConnFactoryManager.ACTION_CONN_STATE:
                         int state = intent.getIntExtra(DeviceConnFactoryManager.STATE, -1);
-//                    int deviceId = intent.getIntExtra(DeviceConnFactoryManager.DEVICE_ID, -1);
+                        int deviceId = intent.getIntExtra(DeviceConnFactoryManager.DEVICE_ID, -1);
                         switch (state) {
                             case DeviceConnFactoryManager.CONN_STATE_DISCONNECT:
-//                            if (id == deviceId) {
-//                                ToastUtils.showLong("标签打印机已断开连接");
-//                            }
+                                if (id == deviceId) {
+                                    ToastUtils.showShort("标签打印机已断开连接");
+                                }
+                                //还剩余的标签打印数量 5 2
+                                for (int i = countsTemp; i > counts + 1; i--) {
+                                    printProducts.remove(i - 1);
+                                }
                                 break;
                             case DeviceConnFactoryManager.CONN_STATE_CONNECTING:
 
                                 break;
                             case DeviceConnFactoryManager.CONN_STATE_CONNECTED:
-//                            ToastUtils.showLong("标签打印机已连接");
+                                counts += 1;
+                                if (!printProducts.isEmpty()) {
+                                    printLabel();
+                                }
                                 break;
                             case CONN_STATE_FAILED:
-//                            ToastUtils.showLong("标签打印机连接失败");
+
                                 break;
                             default:
                                 break;
@@ -1628,12 +1659,20 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                         //重启service
                         startService(intent);
                         break;
+                    case ACTION_QUERY_PRINTER_STATE:
+                        if (counts > 0) {
+                            printLabel();
+                        } else {
+                            printProducts.clear();
+                        }
+                        break;
                     default:
                         break;
                 }
             }
         }
     };
+
 
     @Override
     protected void onStop() {

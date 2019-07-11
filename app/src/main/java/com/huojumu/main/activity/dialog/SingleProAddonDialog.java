@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -59,8 +58,8 @@ public class SingleProAddonDialog extends BaseDialog {
 
     @BindView(R.id.tv_home_addon_number)
     TextView numTV;//数量
-    @BindView(R.id.et_addon)
-    EditText addOnET;//备注
+//    @BindView(R.id.et_addon)
+//    EditText addOnET;//备注
 
     @BindView(R.id.linear_keyboard)
     LinearLayout linear_keyboard;
@@ -258,7 +257,7 @@ public class SingleProAddonDialog extends BaseDialog {
         current.setProType(productsBean.getProType());
         current.setProName(productsBean.getProName());
         current.setProNameEn(productsBean.getProNameEn());
-        current.setAddon(addOnET.getText().toString());//备注
+        current.setAddon("");//备注
         current.setTasteStr(tastesBean != null ? tastesBean.getTasteName() : "默认口味");
         current.setMatStr(matStr);
         current.setMateP(matP);

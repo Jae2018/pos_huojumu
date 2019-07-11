@@ -1,6 +1,7 @@
 package com.huojumu.base;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.view.WindowManager;
 import com.huojumu.utils.CustomerEngine;
 import com.huojumu.wedgit.CustomProgressDialog;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Timer;
 
@@ -78,5 +80,23 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        disableStatusBar();
+        super.onWindowFocusChanged(hasFocus);
+    }
+
+    public void disableStatusBar() {
+        String N = "statusbar";
+        try {
+            Object service = getSystemService(N);
+            @SuppressLint("PrivateApi") Class<?> statusBarManager = Class.forName("android.app.StatusBarManager");
+            Method expand = statusBarManager.getMethod("disable", int.class);
+            //判断版本大小
+            expand.invoke(service, 0x00010000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

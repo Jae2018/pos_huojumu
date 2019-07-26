@@ -1502,62 +1502,66 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
      * 发送标签
      */
     void sendLabel(String pName, String pContent, String price, int i, int number, String matStr, String scale, String proNameEn) {
-        i = i + 1;
-        LabelCommand tsc = new LabelCommand();
-        // 设置标签尺寸，按照实际尺寸设置
-        tsc.addSize(40, 30);
-        // 设置标签间隙，按照实际尺寸设置，如果为无间隙纸则设置为0
-        tsc.addGap(2);
-        // 设置打印方向
-        tsc.addDirection(LabelCommand.DIRECTION.FORWARD, LabelCommand.MIRROR.NORMAL);
-        // 开启带Response的打印，用于连续打印
-        tsc.addQueryPrinterStatus(LabelCommand.RESPONSE_MODE.ON);
-        // 设置原点坐标
-        tsc.addReference(10, 3);
-        // 撕纸模式开启
-        tsc.addTear(EscCommand.ENABLE.ON);
-        // 清除打印缓冲区
-        tsc.addCls();
-        // 绘制简体中文
-        //店名
-        tsc.addText(0, 0, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
-                SpUtil.getString(Constant.STORE_NAME) + "\n");
-        //商品中文名
-        tsc.addText(50, 32, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
-                pName + "\n");
-        //商品英文名
-        tsc.addText(50, 62, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
-                proNameEn + "\n");
-        //加料
-        if (matStr == null || matStr.isEmpty()) {
-            matStr = "默认加料";
-        }
-        tsc.addText(0, 90, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
-                matStr);
-        //规格
-        tsc.addText(0, 120, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
-                scale + "\n");
-        //
-        tsc.addText(0, 150, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
-                pContent + " ￥" + price + " " + "\n");
-        tsc.addText(0, 180, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
-                SpUtil.getString(Constant.WORKER_NAME) + " " + i + "/" + number + "\n");
-        tsc.addText(0, 210, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
-                PrinterUtil.getTabTime() + orderNo.substring(orderNo.length() - 4) + "-" + PrinterUtil.getTabHour() + "\n");
-        // 绘制图片
-        Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.logo9);
-        tsc.addBitmap(235, 40, LabelCommand.BITMAP_MODE.OVERWRITE, 70, b);
-        // 打印标签
-        tsc.addPrint(1, 1);
-        // 打印标签后 蜂鸣器响
-        tsc.addSound(2, 100);
+        try {
+            i = i + 1;
+            LabelCommand tsc = new LabelCommand();
+            // 设置标签尺寸，按照实际尺寸设置
+            tsc.addSize(40, 30);
+            // 设置标签间隙，按照实际尺寸设置，如果为无间隙纸则设置为0
+            tsc.addGap(2);
+            // 设置打印方向
+            tsc.addDirection(LabelCommand.DIRECTION.FORWARD, LabelCommand.MIRROR.NORMAL);
+            // 开启带Response的打印，用于连续打印
+            tsc.addQueryPrinterStatus(LabelCommand.RESPONSE_MODE.ON);
+            // 设置原点坐标
+            tsc.addReference(10, 3);
+            // 撕纸模式开启
+            tsc.addTear(EscCommand.ENABLE.ON);
+            // 清除打印缓冲区
+            tsc.addCls();
+            // 绘制简体中文
+            //店名
+            tsc.addText(0, 0, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+                    SpUtil.getString(Constant.STORE_NAME) + "\n");
+            //商品中文名
+            tsc.addText(50, 32, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+                    pName + "\n");
+            //商品英文名
+            tsc.addText(50, 62, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+                    proNameEn + "\n");
+            //加料
+            if (matStr == null || matStr.isEmpty()) {
+                matStr = "默认加料";
+            }
+            tsc.addText(0, 90, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+                    matStr);
+            //规格
+            tsc.addText(0, 120, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+                    scale + "\n");
+            //
+            tsc.addText(0, 150, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+                    pContent + " ￥" + price + " " + "\n");
+            tsc.addText(0, 180, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+                    SpUtil.getString(Constant.WORKER_NAME) + " " + i + "/" + number + "\n");
+            tsc.addText(0, 210, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
+                    PrinterUtil.getTabTime() + orderNo.substring(orderNo.length() - 4) + "-" + PrinterUtil.getTabHour() + "\n");
+            // 绘制图片
+            Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.logo9);
+            tsc.addBitmap(235, 40, LabelCommand.BITMAP_MODE.OVERWRITE, 70, b);
+            // 打印标签
+            tsc.addPrint(1, 1);
+            // 打印标签后 蜂鸣器响
+            tsc.addSound(2, 100);
 
-        Vector<Byte> datas = tsc.getCommand();
-        // 发送数据
-        if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] == null) {
-            return;
+            Vector<Byte> datas = tsc.getCommand();
+            // 发送数据
+            if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] == null) {
+                return;
+            }
+            DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].sendDataImmediately(datas);
+        } catch (Exception e) {
+            Log.e(TAG, "print label error");
         }
-        DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id].sendDataImmediately(datas);
     }
 
     @Override

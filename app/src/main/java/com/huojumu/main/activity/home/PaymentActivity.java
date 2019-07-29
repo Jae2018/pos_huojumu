@@ -2,6 +2,7 @@ package com.huojumu.main.activity.home;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -249,6 +250,10 @@ public class PaymentActivity extends BaseActivity {
     @OnClick(R.id.earn_rel)
     void onEarnInput() {
         inputNo = true;
+        earnEdit.setBackgroundColor(Color.WHITE);
+        cashPayInput.setBackgroundColor(Color.TRANSPARENT);
+        earnEdit.setTextColor(Color.GRAY);
+        cashPayInput.setTextColor(Color.WHITE);
     }
 
     /**
@@ -257,6 +262,10 @@ public class PaymentActivity extends BaseActivity {
     @OnClick(R.id.cut_rel)
     void onCutInput() {
         inputNo = false;
+        earnEdit.setBackgroundColor(Color.TRANSPARENT);
+        cashPayInput.setBackgroundColor(Color.WHITE);
+        earnEdit.setTextColor(Color.WHITE);
+        cashPayInput.setTextColor(Color.GRAY);
     }
 
 

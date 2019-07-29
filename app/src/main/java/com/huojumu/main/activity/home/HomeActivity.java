@@ -347,7 +347,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                 } else {
                     m = 0;
                 }
-                resetData(typePosition);
+                pageNo = 0;
+                resetData(position);
                 for (int i = 0; i < list.size(); i++) {
                     list.get(i).setSelected(position == i);
                 }
@@ -451,8 +452,6 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
 
     /**
      * 外界设备扫码回调（扫描枪）
-     * @param event
-     * @return
      */
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -553,7 +552,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         } else {
             m = 1;
         }
-        resetData(typePosition);
+        resetData(0);
     }
 
     /**
@@ -766,7 +765,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                         page1 = response.getData().size() / 12;
                         leftNum = response.getData().size() % 12;
                         totalPage = page1 + (leftNum > 0 ? 1 : 0);
-                        resetData(typePosition);
+                        resetData(0);
                         tryFinish();
                     }
 
@@ -777,6 +776,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                 });
     }
 
+    /**
+     * 重置显示列表数据
+     *
+     * @param position 类型
+     */
     private void resetData(int position) {
         pLists.clear();
         if (position == 0) {

@@ -280,7 +280,7 @@ public class SingleProAddonDialog extends BaseDialog {
 
     private String cNumber = "1";
 
-    @OnClick({R.id.tv_no0, R.id.tv_no1, R.id.tv_no2, R.id.tv_no3, R.id.tv_no4, R.id.tv_no5, R.id.tv_no6, R.id.tv_no7, R.id.tv_no8, R.id.tv_no9, R.id.tv_no_delete})
+    @OnClick({R.id.tv_no0, R.id.tv_no1, R.id.tv_no2, R.id.tv_no3, R.id.tv_no4, R.id.tv_no5, R.id.tv_no6, R.id.tv_no7, R.id.tv_no8, R.id.tv_no9, R.id.tv_no_delete, R.id.tv_no_ok})
     void onNoClick(View view) {
         switch (view.getId()) {
             case R.id.tv_no0:
@@ -323,6 +323,9 @@ public class SingleProAddonDialog extends BaseDialog {
                 } else {
                     cNumber = "";
                 }
+                break;
+            case R.id.tv_no_ok:
+                cNumber = "1";
                 break;
         }
         if (cNumber.length() > 3) {

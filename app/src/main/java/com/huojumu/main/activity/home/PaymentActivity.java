@@ -44,8 +44,7 @@ import butterknife.OnClick;
 /**
  * @author : Jie
  * Date: 2018/11/26
- * Description: qq：494669467，wx：s494669467
- * 结账
+ * Description: 结账
  */
 public class PaymentActivity extends BaseActivity {
 
@@ -87,7 +86,7 @@ public class PaymentActivity extends BaseActivity {
     private String payType = "900";
     //活动集合
     private ArrayList<ActivesBean> activesBeans;
-    //
+    //订单列表
     private ArrayList<Production> productions;
     //订单总价（原价）
     private double origionalPrice;
@@ -105,24 +104,24 @@ public class PaymentActivity extends BaseActivity {
     private ActivesBean activesBean;
     //订单数据
     private OrderInfo orderInfo;
-    //
+    //订单号
     private String orderNo;
     //折扣金额
     private double zkPrice = 0;
     //实收金额
     private double ssPrice = 0;
-    //
+    //手动折扣金额
     private int manualDiscount;
     //找零
     private double charge = 0;
-    //
+    //半价
     private boolean isHalf = false;
-    //
+    //服务器回馈订单信息
     private OrderBack orderBack;
     //哪个输入框
     private boolean inputNo = true;
-    //
-    private String cNumber = "", gNumber = "0";
+    //数字键盘输入
+    private String cNumber = "", gNumber = "";
 
     @Override
     protected int setLayout() {
@@ -260,10 +259,15 @@ public class PaymentActivity extends BaseActivity {
         inputNo = false;
     }
 
+
+    /**
+     * 数字键盘对应的按钮
+     */
     @OnClick({R.id.tv_no0, R.id.tv_no1, R.id.tv_no2, R.id.tv_no3, R.id.tv_no4, R.id.tv_no5, R.id.tv_no6, R.id.tv_no7, R.id.tv_no8, R.id.tv_no9, R.id.tv_not, R.id.tv_no_delete})
     void onInputNo(View view) {
         switch (view.getId()) {
             case R.id.tv_no0:
+                //如果本来就是0，不能再后面添加0
                 if (cNumber.equals("0") || gNumber.equals("0")) {
                     return;
                 }
@@ -272,7 +276,6 @@ public class PaymentActivity extends BaseActivity {
                 } else {
                     gNumber += "0";
                 }
-
                 break;
             case R.id.tv_no1:
                 if (inputNo) {
@@ -357,7 +360,10 @@ public class PaymentActivity extends BaseActivity {
                 break;
         }
 
-        earnEdit.setText(cNumber);
+        double d1 = Double.parseDouble(cNumber.equals("") ? "0" : cNumber);
+        double d2 = Double.parseDouble(gNumber.equals("") ? "0" : gNumber);
+        double d = d1 - d2;
+        earnEdit.setText(String.valueOf(d));
         if (isHalf && !inputNo) {
             ToastUtils.showLong("半价与手动折扣不能同时进行");
         } else {

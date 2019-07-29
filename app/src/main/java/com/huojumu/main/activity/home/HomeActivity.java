@@ -408,6 +408,13 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         tv_store_name.setText(name);
     }
 
+    /**
+     * 手势回调
+     *
+     * @param production 选择的商品
+     * @param direction  位置
+     * @param scaleBean  规格
+     */
     @Override
     public void onPointerMoved(Production production, int direction, ScaleBean scaleBean) {
         if (scaleBean != null) {
@@ -442,6 +449,11 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         }
     }
 
+    /**
+     * 外界设备扫码回调（扫描枪）
+     * @param event
+     * @return
+     */
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         //扫码监听，系统的软键盘  按下去是 -1, 不管，不拦截
@@ -892,7 +904,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
     /**
      * 挂单
      */
-    @SingleClick(500)
+    @SingleClick
     @OnClick(R.id.button1)
     void OrderHoldOn() {
         //无选择数据 且 无挂单数据，按钮无响应
@@ -928,6 +940,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         clear();
     }
 
+    /**
+     * 扫码取消
+     */
     @SingleClick
     @OnClick({R.id.button, R.id.imageView2})
     void disapper() {
@@ -1060,6 +1075,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         inputClear();
     }
 
+    /**
+     * 交班、日结回调
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -1246,6 +1264,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
     }
 
 
+    /**
+     * 扫码完毕回调
+     */
     @Override
     public void OnUsbCallBack(String name) {
         authNo = "";
@@ -1271,15 +1292,20 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         }
     }
 
-    //请求USB权限
+    /**
+     * 请求USB权限，（这个可以通过修改framework代码绕过，不用每次连接POS都弹窗）
+     * @param usbDevice printer
+     */
     protected void getPermission(UsbDevice usbDevice) {
         //请求权限
         PendingIntent mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
         usbManager.requestPermission(usbDevice, mPermissionIntent);
     }
 
+    /**
+     * 标签机数据
+     */
     private void setLabelData() {
-        //标签机数据
         printProducts.clear();
 
         for (int i = 0; i < productions.size(); i++) {
@@ -1394,6 +1420,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         });
     }
 
+    /**
+     * 结算页面回调（正常状态）
+     * @param orderBack 回调订单信息
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void paymentBack(OrderBack orderBack) {
         this.orderBack = orderBack;
@@ -1402,12 +1432,20 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         PrintOrder(orderBack, null, orderBack.getCharge() < 0 ? 0 : orderBack.getCharge(), orderBack.getPayType().equals("900") ? "现金支付" : orderBack.getPayType().equals("010") ? "微信支付" : "支付宝支付", orderBack.getTotal(), orderBack.getCut() < 0 ? 0 : orderBack.getCut(), "门店点单");
     }
 
+    /**
+     * 结算页面回调（断网、无法连上server状态）
+     * @param noNetPayBack 回调订单信息
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void paymentNativeBack(NoNetPayBack noNetPayBack) {
         //结算回调，无网
         PrintOrder(null, null, noNetPayBack.getCharge() < 0 ? 0 : orderBack.getCharge(), noNetPayBack.getType(), noNetPayBack.getTotalPrice(), noNetPayBack.getCut() < 0 ? 0 : noNetPayBack.getCut(), "门店点单");
     }
 
+    /**
+     * 哦安短是否正常连上server
+     * @param netErrorHandler 断网回调信息
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void netState(NetErrorHandler netErrorHandler) {
         if (netErrorHandler.isConnected()) {
@@ -1430,6 +1468,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         }
     }
 
+    /**
+     * 小程序、公众号下单信息
+     * @param h5TaskBean 小程序下单信息
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void H5Payment(H5TaskBean h5TaskBean) {
         //来自小程序点单，加入线程池中
@@ -1472,6 +1514,10 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         }
     }
 
+    /**
+     * 连接标签机
+     * @param usbDevice POS printer
+     */
     private void usbConn(UsbDevice usbDevice) {
         new DeviceConnFactoryManager.Build()
                 .setId(id)
@@ -1485,6 +1531,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //释放资源
         if (timer != null) {
             timer.cancel();
             timer.purge();
@@ -1538,21 +1585,23 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
             //规格
             tsc.addText(0, 120, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                     scale + "\n");
-            //
+            //数量、价格
             tsc.addText(0, 150, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                     pContent + " ￥" + price + " " + "\n");
+            //工作人员信息，标签index
             tsc.addText(0, 180, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                     SpUtil.getString(Constant.WORKER_NAME) + " " + i + "/" + number + "\n");
+            //时间
             tsc.addText(0, 210, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, LabelCommand.FONTMUL.MUL_1, LabelCommand.FONTMUL.MUL_1,
                     PrinterUtil.getTabTime() + orderNo.substring(orderNo.length() - 4) + "-" + PrinterUtil.getTabHour() + "\n");
-            // 绘制图片
+            // 绘制logo图片
             Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.logo9);
             tsc.addBitmap(235, 40, LabelCommand.BITMAP_MODE.OVERWRITE, 70, b);
             // 打印标签
             tsc.addPrint(1, 1);
             // 打印标签后 蜂鸣器响
             tsc.addSound(2, 100);
-
+            //命令bytes
             Vector<Byte> datas = tsc.getCommand();
             // 发送数据
             if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[id] == null) {
@@ -1576,6 +1625,9 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
     }
 
 
+    /**
+     * 广播
+     */
     public BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

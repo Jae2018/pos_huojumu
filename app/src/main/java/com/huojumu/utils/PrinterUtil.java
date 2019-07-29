@@ -24,7 +24,7 @@ import java.util.Locale;
 /**
  * @author : Jie
  * Date: 2018/5/25
- * Description: 打印机辅助类
+ * Description: 打印机辅助类，内置打印机SDK有问题，使用stringbuidler()会出现问题
  */
 public class PrinterUtil {
 
@@ -457,16 +457,16 @@ public class PrinterUtil {
                     //交易金额明细
                     mPrinter.setFontStyle(0);
 
-                    String list = "\n" + printTwoData80("消费金额", totalMoney);
+                    String list = "\n" + printTwoData80("订单原价", totalMoney);
                     mPrinter.printString(list, "GBK", true);
 
-                    list = printTwoData80("应收金额", money);
+                    list = printTwoData80("优惠金额", cut);
+                    mPrinter.printString(list, "GBK", true);
+
+                    list = printTwoData80("订单现价", money);
                     mPrinter.printString(list, "GBK", true);
 
                     list = printTwoData80("客户实付", ssPrice);
-                    mPrinter.printString(list, "GBK", true);
-
-                    list = printTwoData80("优    惠", cut);
                     mPrinter.printString(list, "GBK", true);
 
                     list = printTwoData80("找    零", charge);

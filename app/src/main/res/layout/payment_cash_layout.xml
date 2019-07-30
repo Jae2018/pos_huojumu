@@ -87,7 +87,7 @@
                 android:layout_width="@dimen/d_100"
                 android:layout_height="@dimen/d_40"
                 android:gravity="center_vertical"
-                android:text="手动减额："
+                android:text="优惠金额："
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/f_20" />
 

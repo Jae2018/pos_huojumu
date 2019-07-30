@@ -389,7 +389,6 @@ public class PrinterUtil {
             @Override
             public void run() {
                 try {
-
                     mPrinter.set80mm();
                     mPrinter.setAlignMode(1);
                     //字体变大
@@ -457,7 +456,7 @@ public class PrinterUtil {
                     //交易金额明细
                     mPrinter.setFontStyle(0);
 
-                    String list = "\n" + printTwoData80("订单原价", totalMoney);
+                    String list = printTwoData80("订单原价", totalMoney);
                     mPrinter.printString(list, "GBK", true);
 
                     list = printTwoData80("优惠金额", cut);

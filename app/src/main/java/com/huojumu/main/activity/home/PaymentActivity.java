@@ -90,7 +90,7 @@ public class PaymentActivity extends BaseActivity {
     //订单列表
     private ArrayList<Production> productions;
     //订单总价（原价）
-    private double origionalPrice;
+    private double origionalPrice = 0;
     //订单计算后的价格
     private double commitPrice = 0;
     //订单商品数量
@@ -107,12 +107,10 @@ public class PaymentActivity extends BaseActivity {
     private OrderInfo orderInfo;
     //订单号
     private String orderNo;
-    //折扣金额
-    private double zkPrice = 0;
     //实收金额
     private double ssPrice = 0;
     //手动折扣金额
-    private int manualDiscount;
+    private double manualDiscount = 0;
     //找零
     private double charge = 0;
     //半价
@@ -123,6 +121,7 @@ public class PaymentActivity extends BaseActivity {
     private boolean inputNo = true;
     //数字键盘输入
     private String cNumber = "", gNumber = "";
+    private double pPrice = 0;
 
     @Override
     protected int setLayout() {
@@ -133,6 +132,8 @@ public class PaymentActivity extends BaseActivity {
     protected void initView() {
         productions = getIntent().getParcelableArrayListExtra("proList");
         orderInfo = getIntent().getParcelableExtra("orderInfo");
+        pPrice = getIntent().getDoubleExtra("pPrice", 0);
+        Log.e("pay", "pPrice: " + pPrice);
 
         activesBeans = getIntent().getParcelableArrayListExtra("actives");
 
@@ -370,13 +371,12 @@ public class PaymentActivity extends BaseActivity {
         }
 
         double d1 = Double.parseDouble(cNumber.equals("") ? "0" : cNumber);
-        double d2 = Double.parseDouble(gNumber.equals("") ? "0" : gNumber);
-        double d = d1 - d2;
-        earnEdit.setText(String.valueOf(d));
+        double d = (origionalPrice - d1) > 0 ? (origionalPrice - d1) : 0;
+        earnEdit.setText(cNumber);
         if (isHalf && !inputNo) {
             ToastUtils.showLong("半价与手动折扣不能同时进行");
         } else {
-            cashPayInput.setText(gNumber);
+            cashPayInput.setText(String.valueOf(d));
         }
     }
 
@@ -388,9 +388,10 @@ public class PaymentActivity extends BaseActivity {
             switch (activesBean.getPlanType()) {
                 case "0":
                     isHalf = true;
-                    commitPrice = origionalPrice / 2;
-                    cutPrice = origionalPrice - commitPrice;
+                    commitPrice = origionalPrice - pPrice / 2;
+                    cutPrice = pPrice / 2;
                     earnEdit.setText(String.valueOf(commitPrice));
+                    Log.e("pay", "calculatePrice: " + origionalPrice + "___" + pPrice);
                     break;
                 case "1":
                     isHalf = false;
@@ -480,34 +481,9 @@ public class PaymentActivity extends BaseActivity {
         if (payType.equals("900")) {
             try {
                 ssPrice = earnEdit.getText().toString().isEmpty() ? 0 : Double.parseDouble(earnEdit.getText().toString());
-                zkPrice = cashPayInput.getText().toString().isEmpty() ? 0 : Double.parseDouble(cashPayInput.getText().toString());
             } catch (Exception e) {
                 ToastUtils.showLong("输入有误，请重新输入");
                 Log.e("okhttp3", "error");
-            }
-            //半价
-            if (activesBean != null && activesBean.getPlanType().equals("0")) {
-                if (ssPrice + zkPrice < origionalPrice / 2) {
-                    ToastUtils.showLong("金额输入有误");
-                    return;
-                } else if (zkPrice > origionalPrice / 2) {
-                    ToastUtils.showLong("折扣金额不能大于商品价格");
-                    return;
-                } else if (zkPrice == 0 && ssPrice < origionalPrice / 2) {
-                    ToastUtils.showLong("金额输入有误");
-                    return;
-                }
-            } else {
-                if (ssPrice + zkPrice < origionalPrice) {
-                    ToastUtils.showLong("金额输入有误。");
-                    return;
-                } else if (zkPrice > origionalPrice) {
-                    ToastUtils.showLong("折扣金额不能大于商品价格");
-                    return;
-                } else if (zkPrice == 0 && ssPrice < origionalPrice) {
-                    ToastUtils.showLong("金额输入有误！");
-                    return;
-                }
             }
         }
 
@@ -516,17 +492,18 @@ public class PaymentActivity extends BaseActivity {
         if (activesBean != null) {
             orderInfo.setDiscountsActivity(activesBean.getPlanType());
             orderInfo.setDiscountsType("2");
-            //特殊人群、一律半价
+            //特殊人群、一律半价，不包括加料等额外的
             if (isHalf) {
-                orderInfo.setManualDiscount(origionalPrice / 2);
+                orderInfo.setManualDiscount(pPrice / 2);
+                manualDiscount = pPrice / 2;
             } else {
                 //手动折扣
-                manualDiscount = cashPayInput.getText().toString().isEmpty() ? 0 : Integer.parseInt(cashPayInput.getText().toString());
+                manualDiscount = cashPayInput.getText().toString().isEmpty() ? 0 : Double.parseDouble(cashPayInput.getText().toString());
                 orderInfo.setManualDiscount(manualDiscount);
             }
         } else {
             //手动折扣
-            manualDiscount = cashPayInput.getText().toString().isEmpty() ? 0 : Integer.parseInt(cashPayInput.getText().toString());
+            manualDiscount = cashPayInput.getText().toString().isEmpty() ? 0 : Double.parseDouble(cashPayInput.getText().toString());
             orderInfo.setManualDiscount(manualDiscount);
         }
 
@@ -543,27 +520,26 @@ public class PaymentActivity extends BaseActivity {
                     //没有活动
                     if ((ssPrice + manualDiscount) >= origionalPrice) {
                         //找零，收款 - 总价 + 手动折扣金额
-                        charge = ssPrice - origionalPrice + manualDiscount;
+                        charge = ssPrice - origionalPrice;
                     }
                 } else {
                     //有活动优惠
                     if ((ssPrice + manualDiscount) >= commitPrice) {
                         //找零，收款 - 总价 + 手动折扣金额
-                        charge = ssPrice - commitPrice + manualDiscount;
+                        charge = ssPrice - commitPrice;
                     }
                 }
                 orderBack.setCharge(charge);
                 orderBack.setTotal(ssPrice);
-                double cut = manualDiscount;
-                orderBack.setCut(cut);
+                orderBack.setCut(manualDiscount);
                 String creatTime = response.getData().getCreatTime();
-                String origionTotalPrice = isHalf ? (Double.parseDouble(response.getData().getOrigionTotalPrice()) / 2 + "") : response.getData().getOrigionTotalPrice();
+                String origionTotalPrice = String.valueOf(origionalPrice);
                 String totalPrice = response.getData().getTotalPrice();
 
                 progressDialog.dismiss();
                 if (payType.equals("900")) {
                     //现金
-                    EventBus.getDefault().post(new OrderBack(orderNo, payType, charge, ssPrice, cut, creatTime, origionTotalPrice, totalPrice));
+                    EventBus.getDefault().post(new OrderBack(orderNo, payType, charge, ssPrice, manualDiscount, creatTime, origionTotalPrice, totalPrice));
                     finish();
                 }
 
@@ -627,6 +603,7 @@ public class PaymentActivity extends BaseActivity {
                     authNo = "";
                     if (response.getCode().equals("0")) {
                         EventBus.getDefault().post(orderBack);
+                        finish();
                     } else {
                         ToastUtils.showLong(response.getMsg());
                     }

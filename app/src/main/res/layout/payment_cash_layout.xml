@@ -176,7 +176,7 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="@dimen/d_64">
 
 
             <TextView
@@ -222,8 +222,9 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/d_24">
+            android:layout_height="@dimen/d_64"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/tv_no9"
@@ -248,12 +249,11 @@
             <TextView
                 android:id="@+id/tv_not"
                 android:layout_width="@dimen/d_64"
-                android:layout_height="@dimen/d_64"
+                android:layout_height="wrap_content"
                 android:background="@drawable/search_btn_selector"
                 android:gravity="center"
-                android:paddingStart="@dimen/d_6"
-                android:text="."
-                android:textSize="@dimen/f_30" />
+                android:textSize="@dimen/f_30"
+                android:text="." />
 
             <TextView
                 android:id="@+id/tv_no_delete"

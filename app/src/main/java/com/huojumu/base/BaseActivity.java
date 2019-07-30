@@ -82,7 +82,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        disableStatusBar();
+//        disableStatusBar();
         super.onWindowFocusChanged(hasFocus);
     }
 

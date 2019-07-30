@@ -240,6 +240,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
     Date curDate = new Date();
     //实收金额
     double earn1;
+    //
+    double pPrice = 0;
     //滑动删除的位置
     int swipeNo;
     //支付方式说明
@@ -846,6 +848,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         totalPrice = 0.0;
         totalCut = 0.0;
         totalCount = 0;
+        pPrice = 0.0;
 
         for (Production p : productions) {
             //商品数量
@@ -858,6 +861,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
             }
             //总价
             totalPrice += p.getScalePrice() * p.getNumber() + c * p.getNumber();
+            //光单品不断加料总价
+            pPrice += p.getScalePrice() * p.getNumber();
             //总数量
             totalCount += p.getNumber();
             //总优惠
@@ -1018,6 +1023,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         }
         i.putExtra("totalCount", totalCount);
         i.putExtra("orderTotal", totalPrice);
+        i.putExtra("pPrice", pPrice);
         startActivity(i);
     }
 
@@ -1433,7 +1439,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         this.orderBack = orderBack;
         orderNo = orderBack.getOrderNo();
         setLabelData();
-        PrintOrder(orderBack, null, orderBack.getCharge() < 0 ? 0 : orderBack.getCharge(), orderBack.getPayType().equals("900") ? "现金支付" : orderBack.getPayType().equals("010") ? "微信支付" : "支付宝支付", orderBack.getTotal(), orderBack.getCut() < 0 ? 0 : orderBack.getCut(), "门店点单");
+        PrintOrder(orderBack, null, orderBack.getCharge() < 0 ? 0 : orderBack.getCharge(), orderBack.getPayType().equals("900") ? "现金支付" : orderBack.getPayType().equals("010") ? "微信支付" : "支付宝支付",
+                orderBack.getTotal(), orderBack.getCut() < 0 ? 0 : orderBack.getCut(), "门店点单");
     }
 
     /**

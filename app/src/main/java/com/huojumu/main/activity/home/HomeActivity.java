@@ -1353,7 +1353,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         //小票数据
         if (orderBack != null) {
             //正常情况
-            PrinterUtil.printString80(productions, null, "C" + orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4),
+            PrinterUtil.printString80(printProducts, null, "C" + orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4),
                     SpUtil.getString(Constant.WORKER_NAME), orderBack.getOrigionTotalPrice(), orderBack.getTotalPrice(), String.valueOf(ssPrice), String.valueOf(charge),
                     String.valueOf(totalCut), orderBack.getCreatTime(), type, source);
         } else if (orderdetailBean != null) {
@@ -1367,7 +1367,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
             //保存订单信息json
             ((MyApplication) getApplication()).getDaoSession().getNativeOrdersDao().insert(new NativeOrders(System.currentTimeMillis(), PrinterUtil.toJson(orderInfo)));
 
-            PrinterUtil.printString80(productions, null, orderNo, SpUtil.getString(Constant.WORKER_NAME), String.valueOf(totalPrice), String.valueOf(totalPrice),
+            PrinterUtil.printString80(printProducts, null, orderNo, SpUtil.getString(Constant.WORKER_NAME), String.valueOf(totalPrice), String.valueOf(totalPrice),
                     earn1 == 0 ? String.valueOf(ssPrice) : String.valueOf(earn1), String.valueOf(charge),
                     String.valueOf(totalCut), PrinterUtil.getDate(), type, source);
         }
@@ -1389,7 +1389,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
                 progressDialog.dismiss();
                 clear();
             }
-        }, 1500);
+        }, 3000);
     }
 
     /**

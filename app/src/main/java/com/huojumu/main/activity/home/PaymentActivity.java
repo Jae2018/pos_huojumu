@@ -390,7 +390,7 @@ public class PaymentActivity extends BaseActivity {
                     isHalf = true;
                     commitPrice = origionalPrice - pPrice / 2;
                     cutPrice = pPrice / 2;
-                    earnEdit.setText(String.valueOf(commitPrice));
+//                    earnEdit.setText(String.valueOf(commitPrice));
                     cashPayInput.setText(String.valueOf(cutPrice));
                     break;
                 case "1":

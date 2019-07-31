@@ -174,6 +174,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
     private ArrayList<ActivesBean> activeBeanList = new ArrayList<>();//活动列表
     private ArrayList<Production> productions = new ArrayList<>();//选择的奶茶
     private Vector<Production> printProducts = new Vector<>();//标签打印的产品
+    private ArrayList<Production> printProList = new ArrayList<>();//结算打印
     private List<Production> gTemp = new ArrayList<>();//挂单商品集合
 
     //分页数据列表
@@ -1317,6 +1318,8 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
      */
     private void setLabelData() {
         printProducts.clear();
+        printProList.clear();
+        printProList.addAll(productions);
 
         for (int i = 0; i < productions.size(); i++) {
             String name = productions.get(i).getProName();
@@ -1353,7 +1356,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
         //小票数据
         if (orderBack != null) {
             //正常情况
-            PrinterUtil.printString80(printProducts, null, "C" + orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4),
+            PrinterUtil.printString80(printProList, null, "C" + orderBack.getOrderNo().substring(orderBack.getOrderNo().length() - 4),
                     SpUtil.getString(Constant.WORKER_NAME), orderBack.getOrigionTotalPrice(), orderBack.getTotalPrice(), String.valueOf(ssPrice), String.valueOf(charge),
                     String.valueOf(totalCut), orderBack.getCreatTime(), type, source);
         } else if (orderdetailBean != null) {
@@ -1367,7 +1370,7 @@ public class HomeActivity extends BaseActivity implements DialogInterface,
             //保存订单信息json
             ((MyApplication) getApplication()).getDaoSession().getNativeOrdersDao().insert(new NativeOrders(System.currentTimeMillis(), PrinterUtil.toJson(orderInfo)));
 
-            PrinterUtil.printString80(printProducts, null, orderNo, SpUtil.getString(Constant.WORKER_NAME), String.valueOf(totalPrice), String.valueOf(totalPrice),
+            PrinterUtil.printString80(printProList, null, orderNo, SpUtil.getString(Constant.WORKER_NAME), String.valueOf(totalPrice), String.valueOf(totalPrice),
                     earn1 == 0 ? String.valueOf(ssPrice) : String.valueOf(earn1), String.valueOf(charge),
                     String.valueOf(totalCut), PrinterUtil.getDate(), type, source);
         }

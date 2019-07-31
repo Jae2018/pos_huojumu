@@ -237,7 +237,6 @@ public class PaymentActivity extends BaseActivity {
                 //选择活动优惠套餐
                 activesBean = activesBeans.get(position);
                 calculatePrice();
-                cashTotalTv.setText(String.valueOf(commitPrice));
                 onlineTv.setText(String.valueOf(commitPrice));
             }
         });
@@ -390,7 +389,7 @@ public class PaymentActivity extends BaseActivity {
                     isHalf = true;
                     commitPrice = origionalPrice - pPrice / 2;
                     cutPrice = pPrice / 2;
-//                    earnEdit.setText(String.valueOf(commitPrice));
+                    earnEdit.setText(String.valueOf(commitPrice));
                     cashPayInput.setText(String.valueOf(cutPrice));
                     break;
                 case "1":
@@ -542,7 +541,6 @@ public class PaymentActivity extends BaseActivity {
                     EventBus.getDefault().post(new OrderBack(orderNo, payType, charge, ssPrice, manualDiscount, creatTime, origionTotalPrice, totalPrice));
                     finish();
                 }
-
             }
 
             @Override
